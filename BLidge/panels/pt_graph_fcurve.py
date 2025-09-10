@@ -19,7 +19,7 @@ def get_fcurve_axis(fcurveId: str, axis: str):
 
 class BLIDGE_PT_FCurveAccessor(bpy.types.Panel):
 
-    bl_label = 'BLidge'
+    bl_label = 'BLidgeRN'
     bl_category = 'F-Curve'
     bl_space_type = 'GRAPH_EDITOR'
     bl_region_type = 'UI'

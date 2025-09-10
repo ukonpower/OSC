@@ -10,8 +10,8 @@ from ..operators.ot_export import (BLIDGE_OT_GLTFExport,BLIDGE_OT_SceneExport)
 
 class BLIDGE_PT_Controls(bpy.types.Panel):
 
-    bl_label = 'BLidge'
-    bl_category = 'BLidge'
+    bl_label = 'BLidgeRN'
+    bl_category = 'BLidgeRN'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
 

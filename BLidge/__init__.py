@@ -1,5 +1,5 @@
 bl_info = {
-    "name" : "blidge",
+    "name" : "BLidgeRN",
     "author" : "ukonpower",
     "description" : "",
     "blender" : (4, 2, 0),
