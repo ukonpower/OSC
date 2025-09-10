@@ -32,3 +32,10 @@ tmp
 storybook-static
 
 .serena
+
+# blidge
+
+node_modules
+*.pyc
+lib/
+!lib/__init__.py
