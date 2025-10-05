@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-このファイルは、このリポジトリで作業するときのClaude Code (claude.ai/code)向けのガイダンスを提供します。
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## プロジェクト概要
 
@@ -39,6 +39,11 @@ npm run lint    # ESLintチェック
 ```bash
 npm run storybook       # ポート6006でStorybook開発サーバー起動
 npm run build:storybook # Storybookビルド
+```
+
+### Blenderアドオン
+```bash
+npm run blender:link    # BLidgeアドオンをBlenderアドオンディレクトリにシンボリックリンク
 ```
 
 ## アーキテクチャ
@@ -81,10 +86,12 @@ npm run build:storybook # Storybookビルド
 - コンポーネントはカメラコントロール、マテリアル、ポストプロセス効果、ユーティリティが可能
 
 ### アーキテクチャ理解のための重要ファイル
-- `src/ts/Resources/scene.json`: メインシーン設定
+- `data/scene.json`: メインシーン設定（プロダクションビルドで使用）
+- `src/ts/Resources/scene.json`: 開発用シーン設定
 - `src/ts/Resources/_data/componentList.ts`: 利用可能コンポーネントのレジストリ
 - `src/ts/Globals/index.ts`: グローバルWebGLコンテキストとユニフォーム
 - `packages/orengine/index.tsx`: メインエンジンエントリーポイント
+- `BLidge/__init__.py`: Blenderアドオンエントリーポイント
 
 ## ShaderMinifierセットアップ
 
@@ -124,3 +131,39 @@ npm run build:storybook # Storybookビルド
 
 ### ガイド (`docs/guides/`)
 - `setup.md`: 詳細なインストール手順と開発環境構築
+
+## パス解決とモジュールエイリアス
+
+両方のVite設定ファイル（`vite.config.ts`と`vite-player.config.ts`）で以下のパスエイリアスが設定されています：
+
+```typescript
+{
+  "glpower": "packages/glpower/packages/glpower/src",
+  "maxpower": "packages/maxpower",
+  "orengine": "packages/orengine",
+  "~": "src"
+}
+```
+
+インポート時は以下のように使用：
+- `import { ... } from 'glpower'` - WebGL基本機能
+- `import { ... } from 'maxpower'` - コンポーネントシステム
+- `import { ... } from 'orengine'` - エンジンコア
+- `import { ... } from '~/ts/...'` - プロジェクトルート（src/）からの相対パス
+
+## BLidgeシステム（Blender統合）
+
+BLidgeはBlenderとエンジン間のブリッジを提供するPythonアドオンです：
+
+### 主要機能
+- リアルタイムシーン同期（WebSocket経由）
+- GLTFエクスポート
+- シーンデータのJSON変換
+- カスタムオブジェクトプロパティとアニメーション管理
+- バーチャルメッシュレンダリング
+
+### アドオン構成
+- `BLidge/operators/`: エクスポート、同期、オブジェクト操作のオペレーター
+- `BLidge/panels/`: Blender UIパネル
+- `BLidge/utils/`: シーン/アニメーションパーサー、WebSocketサーバー
+- `BLidge/renderer/`: バーチャルメッシュレンダラーとシェーダー
