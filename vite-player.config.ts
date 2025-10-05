@@ -5,7 +5,6 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 import playerJson from './data/scene.json';
-import { nameCache, MangledJsonLoader, SaveNameCache } from './plugins/MangleManager';
 import { ShaderMinifierLoader } from './plugins/ShaderMinifierLoader';
 
 
@@ -13,8 +12,8 @@ const basePath = process.env.BASE_PATH ?? "";
 
 // player.jsonからreservedに追加するプロパティ名を抽出
 export default defineConfig( {
-        root: 'src',
-        base: basePath,
+	root: 'src',
+	base: basePath,
 	server: {
 		port: 3000,
 		host: "0.0.0.0",
@@ -72,7 +71,6 @@ export default defineConfig( {
 							],
 						}
 					},
-					nameCache,
 					compress: {
 						passes: 16,
 						arguments: true,
@@ -107,13 +105,11 @@ export default defineConfig( {
 		},
 	},
 	plugins: [
-		MangledJsonLoader(),
 		ShaderMinifierLoader(),
 		visualizer( {
 			template: "treemap",
 			gzipSize: true,
 		} ),
-		SaveNameCache(),
 	],
 	define: {
 		BASE_PATH: `"${basePath}"`

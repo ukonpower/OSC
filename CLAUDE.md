@@ -2,6 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ 重要：64KB制約によるコーディングガイドライン
+
+**このプロジェクトは64KBのソースコードにビルドする必要があります。これは最優先の制約です。**
+
+以下の原則を**必ず**守ってコーディングしてください：
+
+1. **過剰な関数やファイルの切り分けは控える** - 必要最小限のモジュール分割に留める
+2. **多少人間が読みづらくても処理的に正しければ短いコードを書く** - 簡潔さを優先
+3. **似たような処理があれば適度に共通化** - 重複コードを削減してサイズ削減
+4. **コメントはビルド時に自動で削除されるので気にせず、人間が読みやすいようにちゃんとコメントをする** - 保守性のため積極的にコメント記述
+5. **変数名はビルド時に自動的にマングルされるので、文字数などは気にせずわかりやすく記述する** - 可読性のため明確な変数名を使用
+
+コードレビュー時は常にファイルサイズへの影響を考慮してください。
+
 ## プロジェクト概要
 
 OREngineは64KB intro demo制作を目的とした軽量WebGL 3Dエンジンです。TypeScriptで構築され、コンポーネントベースアーキテクチャとReact統合サポートを特徴としています。
@@ -39,11 +53,6 @@ npm run lint    # ESLintチェック
 ```bash
 npm run storybook       # ポート6006でStorybook開発サーバー起動
 npm run build:storybook # Storybookビルド
-```
-
-### Blenderアドオン
-```bash
-npm run blender:link    # BLidgeアドオンをBlenderアドオンディレクトリにシンボリックリンク
 ```
 
 ## アーキテクチャ
@@ -91,7 +100,6 @@ npm run blender:link    # BLidgeアドオンをBlenderアドオンディレク�
 - `src/ts/Resources/_data/componentList.ts`: 利用可能コンポーネントのレジストリ
 - `src/ts/Globals/index.ts`: グローバルWebGLコンテキストとユニフォーム
 - `packages/orengine/index.tsx`: メインエンジンエントリーポイント
-- `BLidge/__init__.py`: Blenderアドオンエントリーポイント
 
 ## ShaderMinifierセットアップ
 
@@ -107,7 +115,7 @@ npm run blender:link    # BLidgeアドオンをBlenderアドオンディレク�
 
 - プロジェクトはNode.jsバージョン管理にVoltaを使用（v23.3.0）
 - WebGLコンテキストとグローバルユニフォームは`Globals`モジュールで管理
-- シーンデータはJSONから読み込まれ、Blender統合（BLidgeシステム）で編集可能
+- シーンデータはJSONから読み込まれる
 - 開発モードでコンポーネントホットリロードをサポート
 - ビルドシステムはサイズ最適化のため積極的な最小化とプロパティマングルを含む
 
@@ -125,9 +133,6 @@ npm run blender:link    # BLidgeアドオンをBlenderアドオンディレク�
 - `entity.md`: エンティティシステムとシーングラフ管理
 - `components.md`: コンポーネントシステムの設計と標準コンポーネント
 - `render-pipeline.md`: レンダリングパイプラインとシェーダーシステム
-
-### インテグレーション (`docs/integration/`)
-- `blender.md`: BLidgeシステムによるBlender連携とアセットパイプライン
 
 ### ガイド (`docs/guides/`)
 - `setup.md`: 詳細なインストール手順と開発環境構築
@@ -150,20 +155,3 @@ npm run blender:link    # BLidgeアドオンをBlenderアドオンディレク�
 - `import { ... } from 'maxpower'` - コンポーネントシステム
 - `import { ... } from 'orengine'` - エンジンコア
 - `import { ... } from '~/ts/...'` - プロジェクトルート（src/）からの相対パス
-
-## BLidgeシステム（Blender統合）
-
-BLidgeはBlenderとエンジン間のブリッジを提供するPythonアドオンです：
-
-### 主要機能
-- リアルタイムシーン同期（WebSocket経由）
-- GLTFエクスポート
-- シーンデータのJSON変換
-- カスタムオブジェクトプロパティとアニメーション管理
-- バーチャルメッシュレンダリング
-
-### アドオン構成
-- `BLidge/operators/`: エクスポート、同期、オブジェクト操作のオペレーター
-- `BLidge/panels/`: Blender UIパネル
-- `BLidge/utils/`: シーン/アニメーションパーサー、WebSocketサーバー
-- `BLidge/renderer/`: バーチャルメッシュレンダラーとシェーダー

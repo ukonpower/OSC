@@ -12,8 +12,8 @@ const basePath = process.env.BASE_PATH ?? "";
 
 // https://vitejs.dev/config/
 export default defineConfig( {
-        root: 'src',
-        base: basePath,
+	root: 'src',
+	base: basePath,
 	server: {
 		port: 3000,
 		host: "0.0.0.0",
