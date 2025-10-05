@@ -25,17 +25,11 @@
 				{
 					"name": "BLidgeClient",
 					"props": {
-						"mode": "json",
-						"gltf": true,
+						"mode": "websocket",
+						"gltf": false,
 						"gltfPath": "/scene.glb",
 						"websocket/url": "ws://localhost:3100"
 					}
-				},
-				{
-					"name": "UniformControls"
-				},
-				{
-					"name": "TextureGenerator"
 				}
 			]
 		},
@@ -62,25 +56,6 @@
 				},
 				{
 					"name": "MainCamera"
-				}
-			]
-		},
-		{
-			"path": "/root/blidgeRoot/OREngine",
-			"components": [
-				{
-					"name": "OREngineLogoMaterial"
-				}
-			]
-		},
-		{
-			"path": "/root/blidgeRoot/OREngineCube",
-			"components": [
-				{
-					"name": "OREngineCubeMaterial"
-				},
-				{
-					"name": "ObjectRotate"
 				}
 			]
 		}
