@@ -108,8 +108,9 @@ vec2 base( float et, float ft, float scale ) {
 
 }
 
+// より豊かなコード進行: Am - F - C - G
 const float baseLine[] = float[](
-	10.0, 6.0, 3.0, 5.0, 10.0, 6.0, 3.0, 5.0
+	10.0, 6.0, 3.0, 8.0, 10.0, 8.0, 5.0, 8.0
 );
 
 vec2 base1( float mt, float ft ) { 
@@ -276,16 +277,17 @@ vec2 kick1( float mt, float ft ) {
 	Melody
 -------------------------------*/
 
+// よりキャッチーなメロディ進行
 const float melodyArray[] = float[](
 	1.0, 10.0, 13.0,
 	3.0, 8.0, 12.0,
 	5.0, 10.0, 13.0,
 
-	5.0, 10.0, 13.0,
-	3.0, 12.0, 15.0,
-	1.0, 10.0, 13.0,
+	5.0, 10.0, 15.0,
+	6.0, 13.0, 18.0,
+	8.0, 13.0, 17.0,
 
-	1.0, 8.0, 12.0,
+	5.0, 12.0, 17.0,
 	3.0, 12.0, 15.0
 );
 
@@ -562,8 +564,77 @@ vec2 howahowa3 ( float mt, float ft, float pitch ) {
 }
 
 float getFrec( float t, float m, vec4 b8 ) {
-	
+
 	return t - ( m * 16.0 + max( 0.0, b8.y - m * 2.0 ) * 8.0 ) * ( 60.0 / uBPM ) ;
+
+}
+
+/*-------------------------------
+	Arpeggio - キラキラしたアルペジオ
+-------------------------------*/
+
+vec2 arpeggio( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+
+	// アルペジオパターン
+	int notes[] = int[]( 0, 4, 7, 12, 7, 4 );
+	int noteIndex = int( mod( floor( mt * 4.0 ), 6.0 ) );
+
+	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float note = scale + float( notes[noteIndex] ) + pitch;
+
+	float envTime = fract( mt * 4.0 );
+	float env = exp( -envTime * 8.0 );
+	env *= smoothstep( 0.0, 0.005, envTime );
+
+	// ディチューンで厚みを出す
+	for( int i = 0; i < 2; i++ ) {
+		float detune = float(i) * 0.003;
+		o += ssin( ft * s2f( note ) * ( 1.0 + detune ) + vec2( float(i) * 0.3, 0.0 ) ) * env;
+	}
+
+	return o * 0.08;
+
+}
+
+/*-------------------------------
+	Pad - 温かいパッドサウンド
+-------------------------------*/
+
+vec2 pad( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b16 = beat( mt, 16.0 );
+
+	float scale = baseLine[ int( b16.x / 2.0 ) % 8 ];
+
+	float envTime = fract( b16.z );
+	float env = smoothstep( 0.0, 0.3, envTime ) * smoothstep( 1.0, 0.7, envTime );
+
+	// コードを構成する音
+	int chord[] = int[]( 0, 4, 7 );
+
+	for( int i = 0; i < 3; i++ ) {
+		float note = scale + float( chord[i] ) + pitch - 12.0;
+
+		// 複数のオシレーターでリッチなサウンド
+		for( int j = 0; j < 3; j++ ) {
+			float detune = ( float(j) - 1.0 ) * 0.004;
+			float phase = float(j) * 0.2;
+			o += ssin( ft * s2f( note ) * ( 1.0 + detune ) + phase ) * env;
+		}
+	}
+
+	// ステレオ広がり
+	float pan = ssin( mt * 0.1 ) * 0.5;
+	o.x *= 1.0 + pan;
+	o.y *= 1.0 - pan;
+
+	return o * 0.03;
 
 }
 
@@ -592,29 +663,18 @@ vec2 music( float t ) {
 		t = getFrec( t, 0.0, beat8 );
 
 		o += kick1( mt, t );
-		o += snare1( mt, t ); 
-		o += howahowa1( mt, t, 0.0 ) * step( beat16.w, 1.878 );
+		o += snare1( mt, t );
+		o += pad( mt, t, 0.0 ) * 0.5; // イントロにパッド
 	}
 
 	if( isin( beat16.y, 2.0, 6.0 ) ) {
 
 		t = getFrec( t, 2.0, beat8 );
 
-		o += base1( mt, t );
 		o += kick1( mt, t );
 		o += snare2( mt, t );
-		o += xylophone( mt, t, 0.0 );
-		o += howahowa2( mt, t, 0.0 ) * 0.7;
-
-		if( isin( beat16.w, 3.75, 6.0 ) ) {
-
-			// o += base3( mt, t );
-
-			// o += zowaa(mt, t, 3.0, 8.0 ) * 0.7;
-			o += zowaa( mt, t, 0.0, 4.0 )  * 0.75;
-
-			
-		}
+		o += arpeggio( mt, t, 12.0 ); // アルペジオ
+		o += pad( mt, t, 0.0 ); // パッド
 
 	}
 
@@ -622,9 +682,9 @@ vec2 music( float t ) {
 
 		t = getFrec( t, 6.0, beat8 );
 
-		o += base2( mt, t );
 		o += snare3( mt, t );
 		o += kick1( mt, t );
+		o += arpeggio( mt, t, 0.0 ) * 1.2; // より強いアルペジオ
 
 	}
 
@@ -632,23 +692,19 @@ vec2 music( float t ) {
 
 		t = getFrec( t, 8.0, beat8 );
 
-		o += xylophone( mt, t, 0.0 );
-	
+		o += pad( mt, t, 12.0 ) * 0.8; // 高音域パッド
+
 	}
 
 	if( isin( beat16.y, 9.0, 12.0 ) ) {
 
 		t = getFrec( t, 9.0, beat8 );
 
-		float mt_ = mt;
-		mt_ -= 16.0;
-		
-		o += base1( mt, t );
 		o += kick1( mt, t );
 		o += snare2( mt, t );
-		o += xylophone(mt_, t, 3.0 );
-		o += howahowa3( mt_, t, 3.0 ) * 0.7;
-		o += zowaa(mt_, t, 3.0, 8.0 ) * 0.7;
+		o += arpeggio( mt, t, 24.0 ) * 0.9; // 高音域アルペジオ
+		o += arpeggio( mt, t, 0.0 ) * 0.6; // 低音域アルペジオも重ねる
+		o += pad( mt, t, 3.0 ); // パッド
 
 	}
 
@@ -656,25 +712,27 @@ vec2 music( float t ) {
 
 		t = getFrec( t, 12.0, beat8 );
 
-		o += base1( mt, t );  
 		o += kick1( mt, t );
 		o += snare1( mt, t );
-		o += xylophone( mt, t, 0.0 );
-		o += howahowa3( mt, t, 0.0 ) * 0.7;
+		o += arpeggio( mt, t, 12.0 );
+		o += pad( mt, t, 0.0 );
 
 	}
 
 	if( isin( beat16.y, 13.0, 14.0 ) ) {
-		
+
 		t = getFrec( t, 13.0, beat8 );
-		
+
 		o += kick1( mt, t );
 		o += snare1( mt, t );
-		o += xylophone( mt, t, 0.0 );
+		o += pad( mt, t, 0.0 ) * 0.7; // アウトロにパッド
 
 	}
 
-	// o += shuwaa( mt, t );
+	// ホワイトノイズエフェクトを特定のセクションで追加
+	if( isin( beat16.y, 5.0, 6.0 ) || isin( beat16.y, 11.0, 12.0 ) ) {
+		o += shuwaa( mt, t ) * 0.3;
+	}
 
 	return o;
 	
