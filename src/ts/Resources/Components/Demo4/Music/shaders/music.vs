@@ -90,7 +90,7 @@ vec4 beat( float time, float beat ) {
 
 // コード進行: Am - F - C - G
 const float baseLine[] = float[](
-	10.0, 6.0, 3.0, 8.0, 10.0, 8.0, 5.0, 8.0
+	10.0, 6.0, 3.0, 8.0, 10.0, 6.0, 3.0, 8.0
 );
 
 
@@ -287,15 +287,26 @@ vec2 pad( float mt, float ft, float pitch ) {
 
 	vec2 o = vec2( 0.0 );
 
-	vec4 b16 = beat( mt, 16.0 );
+	vec4 b32 = beat( mt, 32.0 );
 
-	float scale = baseLine[ int( b16.x / 2.0 ) % 8 ];
+	// arpeggio_fastと同じタイミングでコード進行を取得
+	int chordIndex = int( b32.x / 4.0 ) % 8;
+	float scale = baseLine[ chordIndex ];
 
-	float envTime = fract( b16.z );
+	float envTime = fract( b32.z / 4.0 );
 	float env = smoothstep( 0.0, 0.3, envTime ) * smoothstep( 1.0, 0.7, envTime );
 
-	// コードを構成する音
-	int chord[] = int[]( 0, 4, 7 );
+	// コード進行に合わせたボイシング
+	int chord[3];
+	if( chordIndex == 0 || chordIndex == 4 ) {
+		// マイナーコード
+		// chord[0] = 0; chord[1] = 3; chord[2] = 7;
+		// chord[0] = 0; chord[1] = 4; chord[2] = 7;
+
+	} else {
+		// メジャーコード
+		// chord[0] = 0; chord[1] = 4; chord[2] = 7;
+	}
 
 	for( int i = 0; i < 3; i++ ) {
 		float note = scale + float( chord[i] ) + pitch - 12.0;
