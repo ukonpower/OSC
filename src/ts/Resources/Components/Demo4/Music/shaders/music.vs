@@ -21,26 +21,25 @@ float whiteNoise(float time)
     return fract(sin(dot(vec2( time ), vec2(12.9898,78.233))) * 43758.5453);
 }
 
-
 float saw(float time){
 
     return fract(-time)*2.-1.;
-	
+
 }
 
 vec2 saw( vec2 time ) {
 
-	return vec2( 
+	return vec2(
 		saw( time.x ),
 		saw( time.y )
 	);
-	
+
 }
 
 float square( float time) {
 
 	return sign( fract( time ) - 0.1 );
-	
+
 }
 
 float tri(float time ){
@@ -53,11 +52,11 @@ float ssin(float time ) {
 
 vec2 ssin( vec2 time ) {
 
-	return vec2( 
+	return vec2(
 		ssin( time.x ),
 		ssin( time.y )
 	);
-	
+
 }
 
 float s2f( float scale ){
@@ -89,90 +88,11 @@ vec4 beat( float time, float beat ) {
 	Base
 -------------------------------*/
 
-vec2 base( float et, float ft, float scale ) {
-
-	vec2 o = vec2( 0.0 );
-
-	scale -= 12.0;
-
-	for(float i = 0.0; i < 2.0; i++){
-
-		float v = ssin( ft * s2f( scale - 0.0 ) );
-		v =  tanh( ssin( ft * s2f( scale - 12.0 ) + v * 0.1 + float( i ) * 0.1 ) * 1.0 * 1.15 );
-
-		o += v;
- 
-	}
-	
-	return o;
-
-}
-
-// より豊かなコード進行: Am - F - C - G
+// コード進行: Am - F - C - G
 const float baseLine[] = float[](
 	10.0, 6.0, 3.0, 8.0, 10.0, 8.0, 5.0, 8.0
 );
 
-vec2 base1( float mt, float ft ) { 
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 bt = beat( mt / 4.0 , 4.0 );
-
-	float scale = baseLine[ int( bt.x ) % 8 ];
-
-	scale -= 12.0 * 2.0;
-
-	float et = fract( bt.x );
-
-	o += base( et, ft, scale ) * smoothstep( 0.95, 0.75, et );
-	o *= smoothstep( 0.0, 0.001, et );
-	
-	return o * 0.20;
-
-}
-
-vec2 base2( float mt, float ft ) { 
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 bt = beat( mt , 8.0 );
-
-	float scale = 10.0;
-
-	scale -= 12.0 * 2.0;
-
-	float et = fract( bt.z ) * 2.0;
-
-	o += base( et, ft, scale ) * smoothstep( 0.95, 0.75, et );
-	o *= smoothstep( 0.0, 0.001, et );
-	
-	return o * 0.20;
-
-}
-
-vec2 base3( float mt, float ft ) {
-	
-	vec2 o = vec2( 0.0 );
-
-	vec4 bt = beat( mt / 4.0 , 4.0 );
-
-	float scale = baseLine[ int( bt.x ) % 8 ];
-
-	// scale -= 12.0 * 2.0;
-
-	float et = fract( bt.x );
-
-	for(int i = 0; i < 3; i++){
-
-		// o += base( et, ft, scale + 12.0 * float(  i - 1 ) ) * exp( -(1.0 - et) * 5.0 );
-
-	}
-	o *= smoothstep( 0.0, 0.001, et );
-	
-	return o * 0.05;
-
-}
 
 /*-------------------------------
 	Snare
@@ -207,26 +127,14 @@ vec2 snare1( float mt, float ft ) {
 
 }
 
-vec2 snare2( float mt, float ft ) { 
+vec2 snare2( float mt, float ft ) {
 
 	vec2 o = vec2( 0.0 );
 
 	vec4 bt = beat( mt, 2.0 );
 
 	o += snare( bt.z - (0.5), fract( ft ), 0.25 );
-	
-	return o * 0.8;
 
-}
-
-vec2 snare3( float mt, float ft ) { 
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 bt = beat( mt, 4.0 );
-
-	o += snare( bt.z - (0.725), fract( ft ), 0.5 );
-	
 	return o * 0.8;
 
 }
@@ -273,295 +181,8 @@ vec2 kick1( float mt, float ft ) {
 
 }
 
-/*-------------------------------
-	Melody
--------------------------------*/
 
-// よりキャッチーなメロディ進行
-const float melodyArray[] = float[](
-	1.0, 10.0, 13.0,
-	3.0, 8.0, 12.0,
-	5.0, 10.0, 13.0,
 
-	5.0, 10.0, 15.0,
-	6.0, 13.0, 18.0,
-	8.0, 13.0, 17.0,
-
-	5.0, 12.0, 17.0,
-	3.0, 12.0, 15.0
-);
-
-vec3 getMelody( float mt ) {
-
-	float ph = floor( mod( mt, 8.0 ) / 4.0 );
-
-	vec4 b16 = beat( mt, 16.0 );
-	vec4 b4 = beat( mt, 4.0 );
-	vec4 b6 = beat( mod(mt, 4.0) / (4.0 / ( 16.0 / 3.0 )), 6.0 );
-
-	float envScale = 1.0;
-	float envTime = fract( b6.x );
-
-	float scaleIndex = floor( b6.x ) * 3.0 + ph * 9.0;
-
-	if( b6.x > 2.0 ) {
-
-		scaleIndex = (mod( b4.y, 2.0 ) == 0.0) ? 2.0 * 3.0 : 5.0 * 3.0; 
-		envTime = b6.x - 2.0;
-		envScale = 2.0;
-
-	}
-
-	if( mod(b4.y, 4.0) >= 3.0 ) {
-
-		scaleIndex = mod( b16.y, 2.0 ) == 0.0 ? 6.0 * 3.0 : 7.0 * 3.0;
-		envScale = 4.0;
-		envTime = b4.x;
-		
-	}
-
-	float env = exp( envTime * -0.4 );
-	env *= smoothstep( 0.0, 0.001, envTime );
-
-	return vec3(
-		scaleIndex,
-		envTime,
-		envScale
-	);
-	
-}
-
-/*-------------------------------
-	zowaa
--------------------------------*/
-
-vec2 zowaa( float mt, float ft, float pitch, float offset ) {
-
-	vec2 o = vec2( 0.0 );
-
-	mt -= offset * 16.0;
-
-	vec3 ml = getMelody( mt );
-
-	float start = 1.0;
-
-	if( mt < 0.0 ) {
-
-		ml = vec3(
-			0.0,
-			1.0,
-			1.0
-		);
-
-		start = exp( -(1.0 - linearstep( -3.75, 0.0, mt )) * 5.0 );
-
-	}
-
-	float envTime = ml.y;
-	float env = start;
-	env *= smoothstep( 0.0, 0.001, envTime );
-
-	float fft = ft;
-	fft += 0.01 * exp( envTime * -8.0 );
-
-	float wave =  ssin( mt * 0.25 ) * 0.5 + 0.5;
-
-	for(int i = 0; i < 3; i++){
-
-		float s = melodyArray[ int( ml.x ) + i ] + pitch - 12.0;
-
-		vec2 v = vec2( 0.0 );
-
-		// for(int j = 0; j < 12; j++){
-			
-		// 	float w = float( j ) / 12.0;
-			
-		// 	v += ssin( 
-		// 		ft * s2f(  s - 12.0 ) + 
-		// 		saw( 
-		// 			ft * s2f( s - 12.0 * 1.0 + float( j ) * 12.0 ) + w 
-		// 		) * 0.2 + vec2( 0.2, 0.0 ) 
-		// 	) * env * start * (0.1 + ( 1.0 - w ) * 0.9);
-
-		// }
-
-		v += ( ssin( ft * s2f(s) + vec2( 0.5, 0.0 )  ) + ssin( ft * s2f(s) * 1.004 + vec2( 0.0, 0.1 ) ) ) * 0.5;
-		// v += base( envTime, ft, s + 12.0 );
-
-		o += v * 0.15;
-			
-	}
-
-	// o *= tanh( sin( easeIn(start, 2.5) * (PI * 5.0 + PI / 2.0) ) * 2.0 ) * 0.8;
-	o *= start;
-	o *= smoothstep( 0.0, 1.5, envTime );
-
-	return o;
-
-}
-
-/*-------------------------------
-	Shuwaa
--------------------------------*/
-
-vec2 shuwaa( float mt, float ft ) {
-
-	vec2 o = vec2( 0.0 );
-	vec4 b = beat( mt, 16.0 );
-
-	vec2 v = vec2( 0.0 );
-
-	float env = b.z;
-	float ft_ = linearstep(0.3, 1.0, env ) * 1.0;
-
-	float noise = ((noiseValue( vec3(ft_ * 5500.0 * env) - 0.5) * 1.8) ) * 0.1 * exp(-6.*smoothstep( 1.0,0.3,env)) * smoothstep(1.0,.99,env);
-    v += noise;
-
-	o += v;
-
-	return o;
-
-}
-
-/*-------------------------------
-	xylophone
--------------------------------*/
-
-vec2 xylophone( float mt, float ft, float pitch ) {
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 b6 = beat( mod(mt, 4.0) / (4.0 / ( 16.0 / 3.0 )), 6.0 );
-
-	vec3 ml = getMelody( mt );
-
-	ft -= 0.005 * exp( -70.0 * ml.y );
-	
-	float envTime = ml.y;
-	float env = exp( envTime * -0.4 );
-	env *= smoothstep( 0.0, 0.001, envTime );
-
-	for(int i = 0; i < 3; i++){
-
-		float s = melodyArray[ int( ml.x ) + i ] - 12.0 * 2.0 + pitch;
-
-		for(int j = 0; j < 4; j++){
-			
-			float v = 0.0;
-		
-			v = ssin( ft * s2f( s - 12.0 ) + float(j) / 4.0 * 0.5 ) * env;
-			
-			v += ( 
-				ssin( ft * s2f( s ) + v * 0.25 + float(j) / 4.0 * PI ) * 
-				( 
-					1.0 +
-					ssin( b6.x * 1.0 ) * 0.4 +
-					exp( envTime * -10.0) * 5.0 
-				)
-			) * env;
-
-			v *= float( i ) * 0.7 + 0.3;
-
-			o += v * 0.015 * 0.6;
-
-		}
-			
-	}
-
-	return o;
-
-}
-
-/*-------------------------------
-	Howahowa
--------------------------------*/
-
-const float howahowaArray[] = float[] (
-	-9.0, -6.0, -2.0, 1.0, 5.0, 8.0, 10.0, 13.0, 15.0, 17.0
-);
-
-float howahowa( float et, float ft, float s ) {
-
-	float o = 0.0;
-
-	float v = ssin( ft * s2f( s ) ) * 0.1;
-	v *= smoothstep( 0.0, 1.0, et );
-	v *= smoothstep( 1.0, 0.99, et );
-
-	o += v;
-
-	return o;
-
-}
-
-vec2 howahowa1( float mt, float ft, float pitch ) {
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 b4 = beat( mt, 4.0 );
-	vec4 b14 = beat( mt * 4.0, 8.0 );
-
-	int index = int( floor( b14.x + 2.0 ) );
-
-	float s = howahowaArray[ index ];
-
-	float v = howahowa( fract( b14.x ), ft, s + pitch );
-	o += v * 0.8;
-
-	float rd = mt * 0.5;
-
-	o.x *= ssin( rd );
-	o.y *= ssin( rd + PI );
-
-	return o;
-
-}
-
-vec2 howahowa2( float mt, float ft, float pitch ) {
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 b4 = beat( mt, 4.0 );
-	vec4 b14 = beat( mt * 4.0, 8.0 );
-
-	int index = int( floor( b14.x + abs( 2.0 - mod(b4.y, 4.0) ) ) );
-
-	float s = howahowaArray[ index ];
-
-	float v = howahowa( fract( b14.x ), ft, s + pitch );
-
-	o += v * 0.8;
-
-	float rd = mt * 0.5;
-	o.x *= ssin( rd );
-	o.y *= ssin( rd + PI );
-
-	return o;
-
-}
-
-vec2 howahowa3 ( float mt, float ft, float pitch ) {
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 b4 = beat( mt, 4.0 );
-	vec4 b14 = beat( mt * 4.0, 8.0 );
-
-	int index = int( mod( floor( mt * 4.0 ) * 3.0 + 8.0, 8.0 ) +  abs( 2.0 - mod(b4.y, 4.0) ) );
-
-	float s = howahowaArray[ index ];
-
-	float v = howahowa( fract( b14.x ), ft, s + pitch );
-
-	o += v * 0.8;
-
-	float rd = mt * 0.5;
-	o.x *= ssin( rd );
-	o.y *= ssin( rd + PI );
-
-	return o;
-
-}
 
 float getFrec( float t, float m, vec4 b8 ) {
 
@@ -579,7 +200,7 @@ vec2 arpeggio( float mt, float ft, float pitch ) {
 
 	vec4 b32 = beat( mt, 32.0 );
 
-	// アルペジオパターン
+	// アルペジオパターン: 上昇→下降
 	int notes[] = int[]( 0, 4, 7, 12, 7, 4 );
 	int noteIndex = int( mod( floor( mt * 4.0 ), 6.0 ) );
 
@@ -597,6 +218,64 @@ vec2 arpeggio( float mt, float ft, float pitch ) {
 	}
 
 	return o * 0.08;
+
+}
+
+// アルペジオバリエーション1: 速い16分音符パターン
+vec2 arpeggio_fast( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+
+	// 速いパターン: 16分音符
+	int notes[] = int[]( 0, 4, 7, 12 );
+	int noteIndex = int( mod( floor( mt * 8.0 ), 4.0 ) );
+
+	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float note = scale + float( notes[noteIndex] ) + pitch;
+
+	float envTime = fract( mt * 8.0 );
+	float env = exp( -envTime * 12.0 );
+	env *= smoothstep( 0.0, 0.003, envTime );
+
+	// シンプルな波形
+	o += ssin( ft * s2f( note ) ) * env;
+
+	// ステレオ効果
+	float pan = float(noteIndex) / 4.0;
+	o.x *= 1.0 + pan * 0.3;
+	o.y *= 1.0 - pan * 0.3;
+
+	return o * 0.06;
+
+}
+
+// アルペジオバリエーション2: トリルパターン
+vec2 arpeggio_trill( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+
+	// トリル: 2音を交互に
+	int notes[] = int[]( 0, 4 );
+	int noteIndex = int( mod( floor( mt * 8.0 ), 2.0 ) );
+
+	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float note = scale + float( notes[noteIndex] ) + pitch;
+
+	float envTime = fract( mt * 8.0 );
+	float env = exp( -envTime * 10.0 );
+	env *= smoothstep( 0.0, 0.004, envTime );
+
+	// 複数のオシレーターで豊かな音色
+	for( int i = 0; i < 3; i++ ) {
+		float detune = (float(i) - 1.0) * 0.005;
+		o += ssin( ft * s2f( note ) * (1.0 + detune) + float(i) * 0.2 ) * env;
+	}
+
+	return o * 0.04;
 
 }
 
@@ -653,90 +332,126 @@ vec2 music( float t ) {
 	vec4 beat8 = beat( mt, 8.0 );
 	vec4 beat16 = beat( mt, 16.0 );
 
-	// click
-	
-	// o += step( fract( beat4.x ), 0.1 ) * ssin( t * s2f(3.0) * 2.0 ) * 0.03;
-	// o += step( fract( beat4.x / 4.0 ), 0.05 ) * ssin( t * s2f(12.0) * 2.0 ) * 0.02;
-
+	// イントロ: アルペジオ単体で始まる (0-2小節)
 	if( isin( beat16.y, 0.0, 2.0 ) ) {
 
 		t = getFrec( t, 0.0, beat8 );
 
-		o += kick1( mt, t );
-		o += snare1( mt, t );
-		o += pad( mt, t, 0.0 ) * 0.5; // イントロにパッド
+		// メインアルペジオ
+		o += arpeggio( mt, t, 0.0 );
+
+		// 徐々にパッドを追加
+		float fadeIn = smoothstep( 0.0, 8.0, mt );
+		o += pad( mt, t, 0.0 ) * 0.3 * fadeIn;
 	}
 
+	// 展開部A: アルペジオ+リズム+パッド (2-6小節)
 	if( isin( beat16.y, 2.0, 6.0 ) ) {
 
 		t = getFrec( t, 2.0, beat8 );
 
+		// メインアルペジオ
+		o += arpeggio( mt, t, 0.0 );
+
+		// 1オクターブ上のアルペジオを薄く重ねる
+		o += arpeggio( mt, t, 12.0 ) * 0.5;
+
+		// リズムセクション
 		o += kick1( mt, t );
-		o += snare2( mt, t );
-		o += arpeggio( mt, t, 12.0 ); // アルペジオ
-		o += pad( mt, t, 0.0 ); // パッド
+		o += snare1( mt, t );
+
+		// パッド
+		o += pad( mt, t, 0.0 ) * 0.6;
 
 	}
 
+	// 展開部B: アルペジオバリエーション (6-8小節)
 	if( isin( beat16.y, 6.0, 8.0 ) ) {
 
 		t = getFrec( t, 6.0, beat8 );
 
-		// o += snare3( mt, t );
-		// o += kick1( mt, t );
-		o += arpeggio( mt, t, 0.0 );
-		
+		// 低音域アルペジオ
+		o += arpeggio( mt, t, -12.0 ) * 0.8;
+
+		// 中音域に速いアルペジオを追加
+		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
+
+		// 高音域アルペジオ
+		o += arpeggio( mt, t, 12.0 ) * 0.6;
+
+		// 軽いスネア
+		o += snare2( mt, t ) * 0.5;
 
 	}
 
+	// クライマックス準備: 高音域パッド (8-9小節)
 	if( isin( beat16.y, 8.0, 9.0 ) ) {
 
 		t = getFrec( t, 8.0, beat8 );
 
-		o += pad( mt, t, 12.0 ) * 0.8; // 高音域パッド
+		// アルペジオ継続
+		o += arpeggio( mt, t, 0.0 );
+		o += arpeggio( mt, t, 12.0 ) * 0.7;
+
+		// 高音域パッド
+		o += pad( mt, t, 12.0 ) * 0.8;
 
 	}
 
+	// クライマックス: 多層アルペジオ+全要素 (9-12小節)
 	if( isin( beat16.y, 9.0, 12.0 ) ) {
 
 		t = getFrec( t, 9.0, beat8 );
 
+		// 3層のアルペジオ + バリエーション
+		o += arpeggio( mt, t, -12.0 ) * 0.5;       // 低音域
+		o += arpeggio( mt, t, 0.0 ) * 0.8;         // 中音域
+		o += arpeggio_fast( mt, t, 12.0 ) * 1.0;   // 速い高音域
+		o += arpeggio_trill( mt, t, 24.0 ) * 1.2;  // トリル最高音域
+
+		// フルリズムセクション
 		o += kick1( mt, t );
 		o += snare2( mt, t );
-		o += arpeggio( mt, t, 24.0 ) * 0.9; // 高音域アルペジオ
-		o += arpeggio( mt, t, 0.0 ) * 0.6; // 低音域アルペジオも重ねる
-		o += pad( mt, t, 3.0 ); // パッド
+
+		// パッド
+		o += pad( mt, t, 3.0 );
 
 	}
 
+	// アウトロ準備 (12-13小節)
 	if( isin( beat16.y, 12.0, 13.0 ) ) {
 
 		t = getFrec( t, 12.0, beat8 );
 
+		// アルペジオをメインに
+		o += arpeggio( mt, t, 0.0 );
+		o += arpeggio( mt, t, 12.0 ) * 0.6;
+
+		// リズムセクション
 		o += kick1( mt, t );
 		o += snare1( mt, t );
-		o += arpeggio( mt, t, 12.0 );
-		o += pad( mt, t, 0.0 );
+
+		// パッド
+		o += pad( mt, t, 0.0 ) * 0.5;
 
 	}
 
+	// アウトロ: アルペジオ単体にフェードアウト (13-14小節)
 	if( isin( beat16.y, 13.0, 14.0 ) ) {
 
 		t = getFrec( t, 13.0, beat8 );
 
-		o += kick1( mt, t );
-		o += snare1( mt, t );
-		o += pad( mt, t, 0.0 ) * 0.7; // アウトロにパッド
+		// アルペジオのみ
+		o += arpeggio( mt, t, 0.0 );
 
-	}
+		// フェードアウト
+		float fadeOut = smoothstep( 8.0, 0.0, mt - 13.0 * (60.0 / uBPM) * (uBPM / 60.0) );
+		o += pad( mt, t, 0.0 ) * 0.4 * fadeOut;
 
-	// ホワイトノイズエフェクトを特定のセクションで追加
-	if( isin( beat16.y, 5.0, 6.0 ) || isin( beat16.y, 11.0, 12.0 ) ) {
-		o += shuwaa( mt, t ) * 0.3;
 	}
 
 	return o;
-	
+
 }
 
 void main( void ) {
