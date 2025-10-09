@@ -260,7 +260,7 @@ export class Engine extends MXP.Entity {
 		this._time.current = newTime;
 		this._time.engine += this._time.delta;
 		this._time.code += this._time.delta * ( this._frame.playing ? 1 : 0 );
-		this._frame.current = this._time.code * 60;
+		this._frame.current = this._time.code * this._frameSetting.fps;
 
 		const event = this.createEntityUpdateEvent( { forceDraw: param?.forceDraw } );
 
@@ -344,7 +344,7 @@ export class Engine extends MXP.Entity {
 
 	public seek( frame: number ) {
 
-		this._time.code = frame / 60;
+		this._time.code = frame / this._frameSetting.fps;
 		this._frame.current = frame;
 
 		this.emit( "update/frame/play", [ this._frame ] );

@@ -7,6 +7,7 @@ import { Glitch } from '../Components/Camera/MainCamera/PostProcess/Glitch/index
 import { OverlayMixer } from '../Components/Camera/MainCamera/PostProcess/OverlayMixer/index.ts';
 import { PixelSort } from '../Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from '../Components/Camera/MainCamera/index.ts';
+import { Music } from '../Components/Demo4/Music/index.ts';
 import { DemoMusic } from '../Components/DemoProject/DemoMusic/index.ts';
 import { OREngineCubeMaterial } from '../Components/DemoProject/OREngineCubeMaterial/index.ts';
 import { OREngineLogoMaterial } from '../Components/DemoProject/OREngineLogoMaterial/index.ts';
@@ -23,6 +24,9 @@ import { UniformControls } from '../Components/Utilities/UniformsControls/index.
 export const COMPONENTLIST: {[key: string]: any} = {
 	Camera: {
 		MainCamera,
+	},
+	Demo4: {
+		Music,
 	},
 	DemoProject: {
 		DemoMusic,
