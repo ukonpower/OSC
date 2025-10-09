@@ -155,3 +155,7 @@ npm run build:storybook # Storybookビルド
 - `import { ... } from 'maxpower'` - コンポーネントシステム
 - `import { ... } from 'orengine'` - エンジンコア
 - `import { ... } from '~/ts/...'` - プロジェクトルート（src/）からの相対パス
+
+## 音楽シェーダーシステム
+
+このプロジェクトではGLSLシェーダーで音楽を生成する独自システムを実装しています。詳細は [`MUSIC.md`](./MUSIC.md) を参照してください。
