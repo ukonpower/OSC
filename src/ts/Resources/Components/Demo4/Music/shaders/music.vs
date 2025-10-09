@@ -682,9 +682,10 @@ vec2 music( float t ) {
 
 		t = getFrec( t, 6.0, beat8 );
 
-		o += snare3( mt, t );
-		o += kick1( mt, t );
-		o += arpeggio( mt, t, 0.0 ) * 1.2; // より強いアルペジオ
+		// o += snare3( mt, t );
+		// o += kick1( mt, t );
+		o += arpeggio( mt, t, 0.0 );
+		
 
 	}
 
