@@ -63,9 +63,11 @@ export const useTimelineContext = () => {
 
 			const onLoadProject = () => {
 
-				const props = scene.serialize();
+				const duration = scene.getField<number>( "timeline/duration" ) || 100;
 
-				// setViewPort( [ 0, 0, props[ "timeline/duration" ], 0 ] );
+				console.log( duration );
+
+				setViewPort( [ 0, 0, duration, 0 ] );
 
 			};
 

@@ -128,6 +128,12 @@ export class Editor extends MXP.Serializable {
 
 		} );
 
+		this._engine.on( "update/blidge/scene", () => {
+
+			this.emit( "loadedProject" );
+
+		} );
+
 		/*-------------------------------
 			Fields
 		-------------------------------*/
