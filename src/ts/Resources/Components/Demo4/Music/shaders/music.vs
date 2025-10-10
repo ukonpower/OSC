@@ -294,18 +294,18 @@ vec2 pad( float mt, float ft, float pitch ) {
 	float scale = baseLine[ chordIndex ];
 
 	float envTime = fract( b32.z / 4.0 );
-	float env = smoothstep( 0.0, 0.3, envTime ) * smoothstep( 1.0, 0.7, envTime );
+	float env = smoothstep( 0.0, 0.01, envTime ) * smoothstep( 1.0, 0.7, envTime );
 
 	// コード進行に合わせたボイシング
 	int chord[3];
 	if( chordIndex == 0 || chordIndex == 4 ) {
 		// マイナーコード
-		// chord[0] = 0; chord[1] = 3; chord[2] = 7;
-		// chord[0] = 0; chord[1] = 4; chord[2] = 7;
+		chord[0] = 0; chord[1] = 3; chord[2] = 7;
+		chord[0] = 0; chord[1] = 4; chord[2] = 7;
 
 	} else {
 		// メジャーコード
-		// chord[0] = 0; chord[1] = 4; chord[2] = 7;
+		chord[0] = 0; chord[1] = 4; chord[2] = 7;
 	}
 
 	for( int i = 0; i < 3; i++ ) {
@@ -352,12 +352,11 @@ vec2 music( float t ) {
 		o += arpeggio( mt, t, 0.0 );
 
 		// 徐々にパッドを追加
-		float fadeIn = smoothstep( 0.0, 8.0, mt );
-		o += pad( mt, t, 0.0 ) * 0.3 * fadeIn;
+		o += pad( mt, t, 0.0 ) * 0.3;
 	}
 
 	// 展開部A: アルペジオ+リズム+パッド (2-6小節)
-	if( isin( beat16.y, 2.0, 6.0 ) ) {
+	if( isin( beat16.y, 2.0, 4.0 ) ) {
 
 		t = getFrec( t, 2.0, beat8 );
 
@@ -369,15 +368,24 @@ vec2 music( float t ) {
 
 		// リズムセクション
 		o += kick1( mt, t );
-		o += snare1( mt, t );
 
 		// パッド
 		o += pad( mt, t, 0.0 ) * 0.6;
 
 	}
 
+	if( isin( beat4.y, 16.0, 17.0 ) ) {
+
+		t = getFrec( t, 0.0, beat8 );
+
+		// メインアルペジオ
+		o += arpeggio( mt, t, -12.0 ) * step( beat4.x, 4.0 );
+		
+
+	}
+
 	// 展開部B: アルペジオバリエーション (6-8小節)
-	if( isin( beat16.y, 6.0, 8.0 ) ) {
+	if( isin( beat16.y, 8.0, 9.0 ) ) {
 
 		t = getFrec( t, 6.0, beat8 );
 
@@ -398,34 +406,34 @@ vec2 music( float t ) {
 	// クライマックス準備: 高音域パッド (8-9小節)
 	if( isin( beat16.y, 8.0, 9.0 ) ) {
 
-		t = getFrec( t, 8.0, beat8 );
+		// t = getFrec( t, 8.0, beat8 );
 
-		// アルペジオ継続
-		o += arpeggio( mt, t, 0.0 );
-		o += arpeggio( mt, t, 12.0 ) * 0.7;
+		// // アルペジオ継続
+		// o += arpeggio( mt, t, 0.0 );
+		// o += arpeggio( mt, t, 12.0 ) * 0.7;
 
-		// 高音域パッド
-		o += pad( mt, t, 12.0 ) * 0.8;
+		// // 高音域パッド
+		// o += pad( mt, t, 12.0 ) * 0.8;
 
 	}
 
 	// クライマックス: 多層アルペジオ+全要素 (9-12小節)
 	if( isin( beat16.y, 9.0, 12.0 ) ) {
 
-		t = getFrec( t, 9.0, beat8 );
+		// t = getFrec( t, 9.0, beat8 );
 
-		// 3層のアルペジオ + バリエーション
-		o += arpeggio( mt, t, -12.0 ) * 0.5;       // 低音域
-		o += arpeggio( mt, t, 0.0 ) * 0.8;         // 中音域
-		o += arpeggio_fast( mt, t, 12.0 ) * 1.0;   // 速い高音域
-		o += arpeggio_trill( mt, t, 24.0 ) * 1.2;  // トリル最高音域
+		// // 3層のアルペジオ + バリエーション
+		// o += arpeggio( mt, t, -12.0 ) * 0.5;       // 低音域
+		// o += arpeggio( mt, t, 0.0 ) * 0.8;         // 中音域
+		// o += arpeggio_fast( mt, t, 12.0 ) * 1.0;   // 速い高音域
+		// o += arpeggio_trill( mt, t, 24.0 ) * 1.2;  // トリル最高音域
 
-		// フルリズムセクション
-		o += kick1( mt, t );
-		o += snare2( mt, t );
+		// // フルリズムセクション
+		// o += kick1( mt, t );
+		// o += snare2( mt, t );
 
-		// パッド
-		o += pad( mt, t, 3.0 );
+		// // パッド
+		// o += pad( mt, t, 3.0 );
 
 	}
 
@@ -445,19 +453,22 @@ vec2 music( float t ) {
 		// パッド
 		o += pad( mt, t, 0.0 ) * 0.5;
 
+		o *= 0.0;
+
+
 	}
 
 	// アウトロ: アルペジオ単体にフェードアウト (13-14小節)
 	if( isin( beat16.y, 13.0, 14.0 ) ) {
 
-		t = getFrec( t, 13.0, beat8 );
+		// t = getFrec( t, 13.0, beat8 );
 
-		// アルペジオのみ
-		o += arpeggio( mt, t, 0.0 );
+		// // アルペジオのみ
+		// o += arpeggio( mt, t, 0.0 );
 
-		// フェードアウト
-		float fadeOut = smoothstep( 8.0, 0.0, mt - 13.0 * (60.0 / uBPM) * (uBPM / 60.0) );
-		o += pad( mt, t, 0.0 ) * 0.4 * fadeOut;
+		// // フェードアウト
+		// float fadeOut = smoothstep( 8.0, 0.0, mt - 13.0 * (60.0 / uBPM) * (uBPM / 60.0) );
+		// o += pad( mt, t, 0.0 ) * 0.4 * fadeOut;
 
 	}
 
