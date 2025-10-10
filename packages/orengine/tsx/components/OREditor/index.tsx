@@ -112,10 +112,10 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 		editorElm = (
 			<div className={style.editor}>
 				<div className={style.vert}>
-					<div className={`${style.flex}`}>
+					<div style={{ height: '25vh' }}>
 						<Screen />
 					</div>
-					<div className={style.horiz} style={{ height: '55vh' }}>
+					<div className={style.horiz} style={{ height: '45vh' }}>
 						<div className={style.vert} style={{ width: '45vw' }}>
 							<div style={{ flex: '1' }}>
 								<PanelContainer>
@@ -127,7 +127,7 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 									</Panel>
 								</PanelContainer>
 							</div>
-							<div style={{ height: '15vh' }}>
+							<div style={{ height: '12vh' }}>
 								<PanelContainer>
 									<Panel title='Timer' noPadding>
 										<Timer />
