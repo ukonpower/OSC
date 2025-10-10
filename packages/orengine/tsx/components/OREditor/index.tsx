@@ -143,7 +143,7 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 							</PanelContainer>
 						</div>
 					</div>
-					<div style={{ height: '15vh' }}>
+					<div style={{ height: '30vh' }}>
 						<PanelContainer>
 							<Panel title='Timeline' noPadding>
 								<ErrorBoundary fallback={<div>エラーだよ</div>}>

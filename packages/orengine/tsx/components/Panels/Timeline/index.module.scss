@@ -1,3 +1,5 @@
+@use '~/styles/common' as *;
+
 .timeline {
 	width: 100%;
 	height: 100%;
@@ -9,6 +11,10 @@
 	height: 100%;
 	display: flex;
 
+	// スマホ時は縦並び（タイムライン表示が上、再生制御が下）
+	@media (max-width: $sp-width) {
+		flex-direction: column-reverse;
+	}
 }
 
 .content {
@@ -21,4 +27,11 @@
 
 .setting {
 	width: 150px;
+	flex-shrink: 0;
+
+	// スマホ時は横幅100%、高さを固定
+	@media (max-width: $sp-width) {
+		width: 100%;
+		height: 150px;
+	}
 }

@@ -5,6 +5,10 @@ import { useSerializableField } from '../../../../hooks/useSerializableProps';
 import { Label } from '../../../Label';
 import { Panel } from '../../../Panel';
 import { Value } from '../../../Value';
+import { Button } from '../../../Button';
+import { PlayIcon } from '../../../Icons/PlayIcon';
+import { PauseIcon } from '../../../Icons/PauseIcon';
+import { StopIcon } from '../../../Icons/StopIcon';
 import { useTimeline } from '../../../../hooks/useTimeline';
 
 import style from './index.module.scss';
@@ -29,8 +33,46 @@ export const TimelineSetting = () => {
 	const [ duration, setDuration ] = useSerializableField<number>( glEditor?.engine, "timeline/duration" );
 	const [ fps, setFps ] = useSerializableField<number>( glEditor?.engine, "timeline/fps" );
 
+	// 再生制御
+	const handlePlayPause = useCallback( () => {
+
+		if ( glEditor?.engine ) {
+
+			if ( framePlay.playing ) {
+
+				glEditor.engine.stop();
+
+			} else {
+
+				glEditor.engine.play();
+
+			}
+
+		}
+
+	}, [ glEditor, framePlay.playing ] );
+
+	const handleStop = useCallback( () => {
+
+		if ( glEditor?.engine ) {
+
+			glEditor.engine.stop();
+			glEditor.engine.seek( 0 );
+
+		}
+
+	}, [ glEditor ] );
+
 	return <div className={style.timelineSetting}>
 		<Panel>
+			<div className={style.playControls}>
+				<Button onClick={handlePlayPause}>
+					{framePlay.playing ? <PauseIcon /> : <PlayIcon />}
+				</Button>
+				<Button onClick={handleStop}>
+					<StopIcon />
+				</Button>
+			</div>
 			<Label title='current'>
 				 <Value value={Math.floor( framePlay?.current || 0 )} readOnly />
 				 </Label>
