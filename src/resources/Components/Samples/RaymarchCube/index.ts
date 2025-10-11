@@ -1,12 +1,12 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import yashimaFrag from './shaders/yashima.fs';
+import raymarchCubeFrag from './shaders/raymarchCube.fs';
 
 import { globalUniforms } from '~/globals';
 
 
-export class Yashima extends MXP.Component {
+export class RaymarchCube extends MXP.Component {
 
 	constructor( param: MXP.ComponentParams ) {
 
@@ -24,7 +24,7 @@ export class Yashima extends MXP.Component {
 		// material
 
 		const mat = new MXP.Material( {
-			frag: MXP.hotGet( 'yashimaFrag', yashimaFrag ),
+			frag: MXP.hotGet( 'raymarchCubeFrag', raymarchCubeFrag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
 		} );
 
@@ -36,11 +36,11 @@ export class Yashima extends MXP.Component {
 
 		if ( import.meta.hot ) {
 
-			import.meta.hot.accept( './shaders/yashima.fs', ( module ) => {
+			import.meta.hot.accept( './shaders/raymarchCube.fs', ( module ) => {
 
 				if ( module ) {
 
-					mat.frag = MXP.hotUpdate( 'yashimaFrag', module.default );
+					mat.frag = MXP.hotUpdate( 'raymarchCubeFrag', module.default );
 
 					mat.requestUpdate();
 

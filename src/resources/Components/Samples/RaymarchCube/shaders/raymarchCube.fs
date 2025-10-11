@@ -7,10 +7,6 @@
 #include <noise_cyclic>
 #include <noise_value>
 
-uniform float uTimeE;
-uniform sampler2D uNoiseTex;
-uniform sampler2D uEnvMap;
-
 #include <rm_h>
 
 SDFResult D( vec3 p ) {
