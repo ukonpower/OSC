@@ -5,6 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 import playerJson from './data/scene.json';
+import { ResourceManager } from './plugins/ResourceManager';
 import { ShaderMinifierLoader } from './plugins/ShaderMinifierLoader';
 
 
@@ -106,6 +107,7 @@ export default defineConfig( {
 		},
 	},
 	plugins: [
+		ResourceManager(),
 		ShaderMinifierLoader(),
 		visualizer( {
 			template: "treemap",

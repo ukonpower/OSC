@@ -7,9 +7,21 @@ import { Plugin } from 'vite';
 let watcher: chokidar.FSWatcher | null = null;
 
 const componentsDir = "./src/resources/Components/";
-const componentListFile = "./src/resources/_data/componentList.ts";
 
-const updateComponentList = ( ) => {
+// 開発環境とプロダクションで異なるcomponentListファイルを生成
+const componentListFileDev = "./src/resources/_comps.dev.ts";
+const componentListFileProd = "./src/resources/_comps.ts";
+
+const updateComponentList = ( isProduction: boolean = false ) => {
+
+	const componentListFile = isProduction ? componentListFileProd : componentListFileDev;
+
+	// プロダクションビルド時に除外するディレクトリ
+	const excludeDirsProduction = [ 'Samples', '_DevOnly' ];
+	// 開発環境では除外なし
+	const excludeDirsDev: string[] = [];
+
+	const excludeDirs = isProduction ? excludeDirsProduction : excludeDirsDev;
 
 	const getIndexTsFiles = ( dir: string, fileList:string[] = [] ) => {
 
@@ -17,17 +29,17 @@ const updateComponentList = ( ) => {
 
 		files.forEach( file => {
 
-			// _で始まるディレクトリはスキップ
-			if ( file.startsWith( '_' ) && fs.statSync( path.join( dir, file ) ).isDirectory() ) {
-
-				return;
-
-			}
-
 			const filePath = path.join( dir, file );
 			const stat = fs.statSync( filePath );
 
 			if ( stat.isDirectory() ) {
+
+				// 除外リストにあるディレクトリはスキップ
+				if ( excludeDirs.includes( file ) ) {
+
+					return;
+
+				}
 
 				getIndexTsFiles( filePath, fileList );
 
@@ -63,11 +75,19 @@ const updateComponentList = ( ) => {
 
 		const componentName = componentClassNameArray[ 2 ];
 
+		// componentListファイルからの相対パスを計算（./で始まるように）
+		let relativePath = path.relative( path.dirname( componentListFile ), file ).replace( /\\/g, '/' );
+		if ( ! relativePath.startsWith( '.' ) ) {
+
+			relativePath = './' + relativePath;
+
+		}
+
 		return {
 
 			name: componentName,
 			path: path.relative( path.dirname( componentsDir ), file ).replace( /\\/g, '/' ),
-			relativePath: path.relative( path.dirname( componentListFile ), file ).replace( /\\/g, '/' ),
+			relativePath: relativePath,
 
 
 		};
@@ -169,75 +189,90 @@ const updateComponentList = ( ) => {
 
 };
 
-export const ResourceManager = (): Plugin => ( {
-	name: 'ResourceManager',
-	enforce: 'pre',
-	configureServer: ( server ) => {
+export const ResourceManager = (): Plugin => {
 
-		if ( watcher !== null ) {
+	let isProduction = false;
 
-			watcher.close();
+	return {
+		name: 'ResourceManager',
+		enforce: 'pre',
+		config: ( config, { mode } ) => {
 
-		}
+			isProduction = mode === 'production';
 
-		watcher = chokidar.watch( componentsDir, {
-			ignored: /[\\/\\]\./,
-			persistent: true
-		} );
+			// ファイル生成を先に実行
+			updateComponentList( isProduction );
 
-		const onAddFile = ( ) => {
+		},
+		configureServer: ( server ) => {
 
-			updateComponentList();
+			if ( watcher !== null ) {
 
-		};
-
-		const onUnlinkFile = ( ) => {
-
-			updateComponentList();
-
-		};
-
-		const onChangeFile = ( path: string ) => {
-
-			if ( path.endsWith( 'index.ts' ) ) {
-
-				updateComponentList();
+				watcher.close();
 
 			}
 
-		};
+			watcher = chokidar.watch( componentsDir, {
+				ignored: /[\\/\\]\./,
+				persistent: true
+			} );
 
-		watcher.on( 'ready', () => {
+			const onAddFile = ( ) => {
 
-			watcher.on( 'add', onAddFile );
+				updateComponentList( false ); // 開発環境
 
-			watcher.on( 'change', onChangeFile );
+			};
 
-			watcher.on( 'unlink', onUnlinkFile );
+			const onUnlinkFile = ( ) => {
 
-			watcher.on( 'error', function ( err ) {
+				updateComponentList( false ); // 開発環境
 
-				console.log( `Watcher error: ${err}` );
+			};
+
+			const onChangeFile = ( path: string ) => {
+
+				if ( path.endsWith( 'index.ts' ) ) {
+
+					updateComponentList( false ); // 開発環境
+
+				}
+
+			};
+
+			watcher.on( 'ready', () => {
+
+				watcher.on( 'add', onAddFile );
+
+				watcher.on( 'change', onChangeFile );
+
+				watcher.on( 'unlink', onUnlinkFile );
+
+				watcher.on( 'error', function ( err ) {
+
+					console.log( `Watcher error: ${err}` );
+
+				} );
 
 			} );
 
-		} );
 
+		},
+		buildStart: () => {
 
-	},
-	buildStart: () => {
+			console.log( `[ResourceManager] buildStart - isProduction: ${isProduction}` );
+			updateComponentList( isProduction );
 
-		updateComponentList();
+		},
+		buildEnd: () => {
 
-	},
-	buildEnd: () => {
+			if ( watcher ) {
 
-		if ( watcher ) {
+				watcher.close();
+				watcher = null;
 
-			watcher.close();
-			watcher = null;
+			}
 
-		}
+		},
+	};
 
-	},
-} );
+};

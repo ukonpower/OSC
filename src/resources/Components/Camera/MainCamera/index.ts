@@ -4,7 +4,7 @@ import { Engine } from 'orengine';
 
 import { ShakeViewer } from '../../ObjectControls/CameraShake';
 import { LookAt } from '../../ObjectControls/LookAt';
-import { OrbitControls } from '../../ObjectControls/OrbitControls';
+import { OrbitControls } from '../../_DevOnly/OrbitControls';
 import { BLidgeClient } from '../../Utilities/BLidgeClient';
 
 import { Bloom } from './PostProcess/Bloom';
