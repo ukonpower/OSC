@@ -23,7 +23,7 @@ export default defineConfig( {
 		minify: 'terser',
 		rollupOptions: {
 			input: {
-				"main": "./src/ts/Player/index.ts"
+				"main": "./src/Player/index.ts"
 			},
 			output: {
 				entryFileNames: 'index.js'
