@@ -2,17 +2,20 @@ import * as MXP from 'maxpower';
 import { OREditor, OREngine } from "orengine/react";
 import { OREngineProjectData } from "packages/orengine/ts/Engine/ProjectSerializer";
 import { useEffect, useState } from "react";
+import ReactDOM from 'react-dom/client';
 
 import ProjectData from "~/../data/scene.json";
 import { gl } from "~/Globals";
 import { initResouces } from "~/Resources";
 import { FileSystem } from "~/Utils/FileSystem";
 
+import '~/styles/style.scss';
+
 const fileSystem = new FileSystem();
 
 initResouces();
 
-export const EditorPage = () => {
+const EditorPage = () => {
 
 	const [ projectData, setProjectData ] = useState<OREngineProjectData>();
 	const [ editorData, setEditorData ] = useState<MXP.SerializeField>();
@@ -55,3 +58,11 @@ export const EditorPage = () => {
 	);
 
 };
+
+ReactDOM.createRoot( document.getElementById( 'root' )! ).render(
+	<>
+		{/* <React.StrictMode> */}
+		<EditorPage />
+		{/* </React.StrictMode> */}
+	</>
+);
