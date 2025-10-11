@@ -2,6 +2,7 @@ import { FramePlay } from "orengine/features/OREngine/core";
 import { useState, useCallback, useEffect, useRef } from "react";
 
 import { useOREditor } from "../../../../../features/OREditor/Hooks/useOREditor";
+import { useSerializableField } from "../../../../../hooks/useSerializableProps";
 
 
 export const useTimelineContext = () => {
@@ -14,6 +15,9 @@ export const useTimelineContext = () => {
 		current: 0,
 		playing: false,
 	} );
+
+	// durationをリアクティブに監視
+	const [ duration ] = useSerializableField<number>( glEditor?.engine, "timeline/duration" );
 
 	// range
 
@@ -30,6 +34,18 @@ export const useTimelineContext = () => {
 
 	const musicBuffer = glEditor?.audioBuffer;
 	const [ musicBufferVersion, setMusicBufferVersion ] = useState<number>();
+
+	// duration が変更されたらビューポートを更新
+	useEffect( () => {
+
+		if ( duration !== undefined ) {
+
+			console.log( "Timeline duration updated:", duration );
+			setViewPort( [ 0, 0, duration, 0 ] );
+
+		}
+
+	}, [ duration ] );
 
 	// events
 
@@ -60,31 +76,15 @@ export const useTimelineContext = () => {
 
 			};
 
-			// load
-
-			const onLoadProject = () => {
-
-				const duration = scene.getField<number>( "timeline/duration" ) || 100;
-
-				console.log( duration );
-
-				setViewPort( [ 0, 0, duration, 0 ] );
-
-			};
-
-			onLoadProject();
-
 			// addlistener
 
 			scene.on( "update/frame/play", onUpdateFramePlay );
 			scene.on( "update/music", onUpdateMusic );
-			glEditor.on( "loadedProject", onLoadProject );
 
 			return () => {
 
 				scene.off( "update/frame/play", onUpdateFramePlay );
 				scene.off( "update/music", onUpdateMusic );
-				glEditor.off( "loadedProject", onLoadProject );
 
 			};
 

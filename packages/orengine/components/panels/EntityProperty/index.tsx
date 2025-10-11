@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
-import { useOREditor } from "../../../features/OREditor/Hooks/useOREditor";
-import { useSerializableField } from "../../../hooks/useSerializableProps";
 import { Block } from "../../../components/composites/Block";
 import { SerializeFieldView } from "../../../components/composites/SerializeFieldView";
+import { useOREditor } from "../../../features/OREditor/Hooks/useOREditor";
+import { useSerializableField } from "../../../hooks/useSerializableProps";
 
 import { ComponentAdd } from "./ComponentAdd";
 import { ComponentList } from "./ComponentList";
