@@ -16,13 +16,6 @@ const updateComponentList = ( isProduction: boolean = false ) => {
 
 	const componentListFile = isProduction ? componentListFileProd : componentListFileDev;
 
-	// プロダクションビルド時に除外するディレクトリ
-	const excludeDirsProduction = [ 'Samples', '_DevOnly' ];
-	// 開発環境では除外なし
-	const excludeDirsDev: string[] = [];
-
-	const excludeDirs = isProduction ? excludeDirsProduction : excludeDirsDev;
-
 	const getIndexTsFiles = ( dir: string, fileList:string[] = [] ) => {
 
 		const files = fs.readdirSync( dir );
@@ -34,8 +27,8 @@ const updateComponentList = ( isProduction: boolean = false ) => {
 
 			if ( stat.isDirectory() ) {
 
-				// 除外リストにあるディレクトリはスキップ
-				if ( excludeDirs.includes( file ) ) {
+				// プロダクションビルド時は_から始まるディレクトリを除外
+				if ( isProduction && file.startsWith( '_' ) ) {
 
 					return;
 

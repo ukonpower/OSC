@@ -113,14 +113,14 @@ export const ShaderMinifierLoader = (): Plugin => {
 
 			// through
 
-			if ( skip || true ) {
+			// if ( skip || false ) {
 
-				return {
-					code: `export default ${JSON.stringify( code )};`,
-					map: { mappings: '' }
-				};
+			// 	return {
+			// 		code: `export default ${JSON.stringify( code )};`,
+			// 		map: { mappings: '' }
+			// 	};
 
-			}
+			// }
 
 			// MINIFIER!!
 			try {

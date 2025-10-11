@@ -14,7 +14,6 @@ import { ObjectRotate } from './Components/ObjectControls/ObjectRotate/index.ts'
 import { TextureGenerator } from './Components/Texture/TextureGenerator/index.ts';
 import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
-import { RaymarchCube } from './Components/_Samples/RaymarchCube/index.ts';
 
 export const COMPONENTLIST: {[key: string]: any} = {
 	Camera: {
@@ -34,8 +33,5 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	Utilities: {
 		BLidgeClient,
 		UniformControls,
-	},
-	_Samples: {
-		RaymarchCube,
 	},
 };
