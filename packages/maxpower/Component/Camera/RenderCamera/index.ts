@@ -27,7 +27,7 @@ export class RenderCamera extends Camera {
 
 	constructor( params: MXP.ComponentParams<{gl: WebGL2RenderingContext}> ) {
 
-		super( params );
+		super( params as any );
 
 		this.dofParams = {
 			focusDistance: 0.5,

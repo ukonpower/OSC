@@ -9,6 +9,8 @@ import style from './index.module.scss';
 type Props = ValueProps<number> & {
 	onChange?: ( value: number ) => void;
 	step?: number;
+	min?: number;
+	max?: number;
 };
 
 export const InputNumber = ( props: Props ) => {
@@ -75,7 +77,7 @@ export const InputNumber = ( props: Props ) => {
 			max={props.max}
 			onChange={( e ) => {
 
-				props.onChange( Number( e.target.value ) );
+				props.onChange?.( Number( e.target.value ) );
 
 			}}
 			onPointerDown={onPointerDown}
