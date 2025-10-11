@@ -167,7 +167,6 @@ export class MainCamera extends MXP.Component {
 
 		if ( import.meta.env.DEV ) {
 
-			this._orbitControls = undefined;
 			this._orbitControls = this.entity.addComponent( OrbitControls );
 			this._orbitControls.setElm( canvas );
 			this._orbitControls.enabled = false;
