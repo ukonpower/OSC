@@ -1,6 +1,6 @@
 
 import * as GLP from 'glpower';
-import { OREngineProjectData } from "packages/orengine/ts/Engine/ProjectSerializer";
+import { OREngineProjectData } from "packages/orengine/features/OREngine/core/ProjectSerializer";
 import { useEffect } from "react";
 
 import { OREngineContext } from "./Context/OREngineContext";

@@ -1,6 +1,6 @@
 import * as MXP from 'maxpower';
 import { OREditor, OREngine } from "orengine/react";
-import { OREngineProjectData } from "packages/orengine/ts/Engine/ProjectSerializer";
+import { OREngineProjectData } from "packages/orengine/features/OREngine/core/ProjectSerializer";
 import { useEffect, useState } from "react";
 import ReactDOM from 'react-dom/client';
 

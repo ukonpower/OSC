@@ -1,8 +1,8 @@
-export * from "./ts/Engine";
-export * from "./ts/Editor";
-export * from "./ts/Engine/TexProcedural";
-export * from "./ts/Engine/Keyboard";
-export * from "./ts/Engine/Pointer";
-export * from "./ts/Engine/Modeler";
-export * from "./ts/Engine/Resources";
+export * from "./features/OREngine/core";
+export * from "./features/OREditor/core";
+export * from "./features/OREngine/core/TexProcedural";
+export * from "./features/OREngine/core/Keyboard";
+export * from "./features/OREngine/core/Pointer";
+export * from "./features/OREngine/core/Modeler";
+export * from "./features/OREngine/core/Resources";
 

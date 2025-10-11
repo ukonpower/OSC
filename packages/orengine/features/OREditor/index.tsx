@@ -1,6 +1,6 @@
 
 import * as MXP from 'maxpower';
-import { OREngineProjectData } from 'packages/orengine/ts/Engine/ProjectSerializer';
+import { OREngineProjectData } from 'packages/orengine/features/OREngine/core/ProjectSerializer';
 import React, { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 

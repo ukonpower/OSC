@@ -2,7 +2,7 @@ import * as MXP from 'maxpower';
 import { FramePlay } from 'orengine';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
-import { OREngineProjectFrame } from '../../../ts/Engine/ProjectSerializer';
+import { OREngineProjectFrame } from '../../OREngine/core/ProjectSerializer';
 import { useOREditor } from '../../OREditor/Hooks/useOREditor';
 
 import { AudioViewRenderer } from './AudioViewRenderer';

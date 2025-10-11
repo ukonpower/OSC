@@ -1,9 +1,10 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import { Engine } from '../Engine';
-import { FrameDebugger } from '../Engine/FrameDebugger';
-import { Keyboard, PressedKeys } from '../Engine/Keyboard';
+import { Engine } from '../../OREngine/core';
+import { FrameDebugger } from '../../OREngine/core/FrameDebugger';
+import { Keyboard, PressedKeys } from '../../OREngine/core/Keyboard';
+
 
 export type EditorTimelineLoop = {
 	enabled: boolean,

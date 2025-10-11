@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { useOREngine } from "../../../OREngine/Hooks/useOREngine";
-import { Editor } from "../../../../ts/Editor";
+import { Editor } from "../../core";
 
 
 export const useOREditorContext = ( ) => {

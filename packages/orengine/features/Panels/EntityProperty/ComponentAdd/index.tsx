@@ -1,9 +1,9 @@
 
 import * as MXP from 'maxpower';
-import { ComponentGroup, ResouceComponentItem } from 'packages/orengine/ts/Engine/Resources';
+import { ComponentGroup, ResouceComponentItem } from 'packages/orengine/features/OREngine/core/Resources';
 import React, { MouseEvent, ReactNode, useCallback, useState } from 'react';
 
-import { Engine } from '../../../../ts/Engine';
+import { Engine } from '../../../OREngine/core';
 import { useMouseMenu } from '../../../../hooks/useMouseMenu';
 import { useMouseMenuItem } from '../../../../hooks/useMouseMenuItem';
 import { Button } from '../../../../components/primitives/Button';
