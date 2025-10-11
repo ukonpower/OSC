@@ -18,6 +18,7 @@ declare module '*.fs'{
 
 declare global {
   const BASE_PATH: string;
+  var BASE_PATH: string; // also declare as var for compatibility
 }
 
 type HooksContext<T> = Partial<ReturnType<T>>

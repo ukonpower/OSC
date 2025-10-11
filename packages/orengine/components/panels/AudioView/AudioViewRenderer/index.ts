@@ -1,7 +1,7 @@
 import * as GLP from 'glpower';
 
-import { OREngineProjectFrame } from '~/ts/gl/IO/ProjectSerializer';
-import { FramePlay } from '~/ts/gl/OREngine';
+import { OREngineProjectFrame, FramePlay } from '../../../../features/OREngine/core';
+
 
 export class AudioViewRenderer extends GLP.EventEmitter {
 

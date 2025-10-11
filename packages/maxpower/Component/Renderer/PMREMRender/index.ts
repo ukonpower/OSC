@@ -1,9 +1,14 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import { PostProcessRenderer } from '../PostProcessRenderer';
+// import { PostProcessRenderer } from '../PostProcessRenderer';
 
 import pmremFrag from './shaders/pmrem.fs';
+
+// Temporary type definition until PostProcessRenderer is implemented
+type PostProcessRenderer = {
+	renderPostProcess: ( postProcess: MXP.PostProcess, camera: any, resolution: GLP.Vector ) => void;
+};
 
 type SwapBuffer = {rt1: GLP.GLPowerFrameBuffer, rt2: GLP.GLPowerFrameBuffer};
 

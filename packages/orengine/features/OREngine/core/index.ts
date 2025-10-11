@@ -4,6 +4,11 @@ import * as MXP from 'maxpower';
 import { OREngineProjectData, OREngineProjectFrame, ProjectSerializer } from './ProjectSerializer';
 import { Resources } from './Resources';
 
+// Re-export types for easier importing
+export type { OREngineProjectData, OREngineProjectFrame } from './ProjectSerializer';
+export { ProjectSerializer } from './ProjectSerializer';
+export { Resources } from './Resources';
+
 export interface SceneTime {
 	current: number;
 	engine: number;

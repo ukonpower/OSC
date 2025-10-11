@@ -1,6 +1,6 @@
 import * as GLP from 'glpower';
-import { SelectList } from 'packages/orengine/tsx/components/Input/InputSelect';
-import { ValueOpt } from 'packages/orengine/tsx/components/Value';
+import { ValueOpt } from 'orengine/components/composites/Value';
+import { SelectList } from 'orengine/components/primitives/Input/InputSelect';
 
 interface SerializeFieldFormatVector {
 	type: "vector",
