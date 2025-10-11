@@ -87,15 +87,14 @@ export const AudioView = () => {
 		onUpdateFramePlay( engine.frame );
 
 		engine.on( "fields/update", onUpdateSceneProps );
-		engine.on( "update/music", onUpdateMusic );
 		engine.on( "update/frame/play", onUpdateFramePlay );
-
+		engine.on( "update/audioBuffer", onUpdateMusic );
 
 		return () => {
 
 			engine.off( "update/frame/setting", onUpdateSceneProps );
-			engine.off( "update/music", onUpdateMusic );
 			engine.off( "update/frame/play", onUpdateFramePlay );
+			engine.off( "update/audioBuffer", onUpdateMusic );
 
 		};
 

@@ -4,6 +4,8 @@ import * as MXP from 'maxpower';
 import { OREngineProjectData, OREngineProjectFrame, ProjectSerializer } from './ProjectSerializer';
 import { Resources } from './Resources';
 
+import { BLidgeClient } from '~/resources/Components/Utilities/BLidgeClient';
+
 // Re-export types for easier importing
 export type { OREngineProjectData, OREngineProjectFrame } from './ProjectSerializer';
 export { ProjectSerializer } from './ProjectSerializer';
@@ -26,6 +28,9 @@ export class Engine extends MXP.Entity {
 	public static resources: Resources;
 	public static instances: Map<WebGL2RenderingContext, Engine>;
 	public enableRender: boolean;
+
+	// DEV環境でのみ使用するプロパティ
+	private _audioBuffer: AudioBuffer | null;
 
 	private _renderer: MXP.Renderer;
 	private _gl: WebGL2RenderingContext;
@@ -104,6 +109,10 @@ export class Engine extends MXP.Entity {
 
 		this.seek( 0 );
 		this.enableRender = true;
+
+		// audio (DEV only)
+
+		this._audioBuffer = null;
 
 		// root
 
@@ -226,6 +235,12 @@ export class Engine extends MXP.Entity {
 
 	}
 
+	public get audioBuffer() {
+
+		return this._audioBuffer;
+
+	}
+
 	/*-------------------------------
 		Init Engine
 	-------------------------------*/
@@ -282,6 +297,57 @@ export class Engine extends MXP.Entity {
 			);
 
 		}
+
+	}
+
+	/*-------------------------------
+		Component Registration (DEV only)
+	-------------------------------*/
+
+	/**
+	 * Musicコンポーネントを登録（DEV環境でのみ使用）
+	 */
+	public registerMusic( music: any ) {
+
+		// MusicコンポーネントのイベントをリッスンしてaudioBufferを管理
+		music.on( "update/music", ( buffer: AudioBuffer ) => {
+
+			this._audioBuffer = buffer;
+
+			// audioBufferが更新されたことを通知
+			this.emit( "update/audioBuffer", [ buffer ] );
+
+		} );
+
+		// 登録されたことを通知（Editorなどが追加のリスナーを設定可能）
+		this.emit( "register/music", [ music ] );
+
+	}
+
+	/**
+	 * BLidgeClientコンポーネントを登録（DEV環境でのみ使用）
+	 */
+	public registerBLidgeClient( blidgeClient: BLidgeClient ) {
+
+		// BLidgeClientのイベントをリッスンしてEngineを制御
+		blidgeClient.on( "update/blidge/frame", ( e: any ) => {
+
+			this.seek( e.current );
+
+			if ( e.playing && ! this.frame.playing ) {
+
+				this.play();
+
+			} else if ( ! e.playing && this.frame.playing ) {
+
+				this.stop();
+
+			}
+
+		} );
+
+		// 登録されたことを通知
+		this.emit( "register/blidgeClient", [ blidgeClient ] );
 
 	}
 

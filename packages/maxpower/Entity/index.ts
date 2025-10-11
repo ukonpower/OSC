@@ -507,32 +507,6 @@ export class Entity extends Serializable {
 		Event
 	-------------------------------*/
 
-	public noticeEventChilds( eventName: string, opt: any ) {
-
-		this.emit( eventName, opt );
-
-		for ( let i = 0; i < this.children.length; i ++ ) {
-
-			const c = this.children[ i ];
-
-			c.noticeEventChilds( eventName, opt );
-
-		}
-
-	}
-
-	public noticeEventParent( eventName: string, opt?: any ) {
-
-		this.emit( eventName, opt );
-
-		if ( this.parent ) {
-
-			this.parent.noticeEventParent( eventName, opt );
-
-		}
-
-	}
-
 	public traverse( cb: ( entity: Entity ) => void ) {
 
 		cb( this );

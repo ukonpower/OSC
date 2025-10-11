@@ -4,6 +4,8 @@ import { Engine } from 'orengine';
 import { gl } from '~/globals';
 import SceneData from '~/resources/scene.json';
 
+const BASE_PATH = import.meta.env.BASE_URL || "/";
+
 /**
  * BLidgeClient
  * BLidgeを使用してBlenderなどの3Dツールとリアルタイムに連携するためのコンポーネント
@@ -68,7 +70,7 @@ export class BLidgeClient extends MXP.Component {
 
 			if ( this.entity ) {
 
-				this.entity.noticeEventParent( "update/blidge/frame", [ frame ] );
+				this.emit( "update/blidge/frame", [ frame ] );
 
 			}
 
@@ -152,6 +154,9 @@ export class BLidgeClient extends MXP.Component {
 		} );
 		// WebSocket URL設定
 		ws.field( "url", () => this.connection.url, v => this.connection.url = v );
+
+		const engine = Engine.getInstance( gl );
+		engine.registerBLidgeClient( this );
 
 	}
 

@@ -53,7 +53,7 @@ export const useTimelineContext = () => {
 
 		if ( glEditor ) {
 
-			const scene = glEditor.engine;
+			const engine = glEditor.engine;
 
 			// frame
 
@@ -63,14 +63,13 @@ export const useTimelineContext = () => {
 
 			};
 
-			onUpdateFramePlay( scene.frame );
+			onUpdateFramePlay( engine.frame );
 
-
-			// music
+			// music - Engineのイベントをリッスン
 
 			let bufferVersion = 0;
 
-			const onUpdateMusic = () => {
+			const onUpdateAudioBuffer = () => {
 
 				setMusicBufferVersion( bufferVersion ++ );
 
@@ -78,13 +77,13 @@ export const useTimelineContext = () => {
 
 			// addlistener
 
-			scene.on( "update/frame/play", onUpdateFramePlay );
-			scene.on( "update/music", onUpdateMusic );
+			engine.on( "update/frame/play", onUpdateFramePlay );
+			engine.on( "update/audioBuffer", onUpdateAudioBuffer );
 
 			return () => {
 
-				scene.off( "update/frame/play", onUpdateFramePlay );
-				scene.off( "update/music", onUpdateMusic );
+				engine.off( "update/frame/play", onUpdateFramePlay );
+				engine.off( "update/audioBuffer", onUpdateAudioBuffer );
 
 			};
 

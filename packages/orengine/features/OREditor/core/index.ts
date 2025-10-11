@@ -17,7 +17,6 @@ export class Editor extends MXP.Serializable {
 	private _engine: Engine;
 	private _keyBoard: Keyboard;
 	private _selectedEntityId: string | null;
-	private _audioBuffer: AudioBuffer | null;
 	private _frameLoop: EditorTimelineLoop;
 	private _resolutionScale: number;
 	private _viewType: "render" | "debug";
@@ -88,18 +87,6 @@ export class Editor extends MXP.Serializable {
 		} );
 
 		/*-------------------------------
-			Audio
-		-------------------------------*/
-
-		this._audioBuffer = null;
-
-		this._engine.on( "update/music", ( buffer: AudioBuffer ) => {
-
-			this._audioBuffer = buffer;
-
-		} );
-
-		/*-------------------------------
 			Loop
 		-------------------------------*/
 
@@ -108,32 +95,6 @@ export class Editor extends MXP.Serializable {
 			start: 0,
 			end: 0,
 		};
-
-		/*-------------------------------
-			BLidge
-		-------------------------------*/
-
-		this._engine.on( "update/blidge/frame", ( e: MXP.BLidgeFrame ) => {
-
-			this._engine.seek( e.current );
-
-			if ( e.playing && ! this._engine.frame.playing ) {
-
-				this._engine.play();
-
-			} else if ( ! e.playing && this._engine.frame.playing ) {
-
-				this._engine.stop();
-
-			}
-
-		} );
-
-		this._engine.on( "update/blidge/scene", () => {
-
-			this.emit( "loadedProject" );
-
-		} );
 
 		/*-------------------------------
 			Fields
@@ -176,6 +137,7 @@ export class Editor extends MXP.Serializable {
 
 		} );
 
+
 		/*-------------------------------
 			Animate
 		-------------------------------*/
@@ -196,7 +158,7 @@ export class Editor extends MXP.Serializable {
 
 	public get audioBuffer() {
 
-		return this._audioBuffer;
+		return this._engine.audioBuffer;
 
 	}
 

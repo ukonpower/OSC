@@ -1,10 +1,11 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
+import { Engine } from 'orengine';
 
 import musicFrag from './shaders/music.fs';
 import musicVert from './shaders/music.vs';
 
-import { power } from '~/globals';
+import { gl, power } from '~/globals';
 
 const BPM = 100;
 const MUSIC_DURATION = 60 * ( ( 8 * ( 28 + 1 ) ) / BPM );
@@ -146,17 +147,26 @@ export class Music extends MXP.Component {
 		this.gainNode = this.audioContext.createGain();
 		this.gainNode.gain.value = 1.3;
 
+		// DEV環境でEngineに登録（Editorがリッスン）
+		if ( import.meta.env.DEV ) {
+
+			const engine = Engine.getInstance( gl );
+
+			engine.registerMusic( this );
+
+		}
+
 	}
 
 	private render() {
 
 		this.progress = [ 0, 0 ];
 
-		if ( this.currentRender ) [
+		if ( this.currentRender ) {
 
-			this.currentRender.stop()
+			this.currentRender.stop();
 
-		];
+		}
 
 		this.stop();
 
@@ -329,7 +339,7 @@ export class Music extends MXP.Component {
 
 			if ( this.entity ) {
 
-				this.entity.noticeEventParent( 'update/music', [ this.audioBuffer, this.progress ] );
+				this.emit( 'update/music', [ this.audioBuffer, this.progress ] );
 
 			}
 
