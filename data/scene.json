@@ -35,6 +35,40 @@
 					"name": "Music"
 				}
 			]
+		},
+		{
+			"path": "/root/blidgeRoot/Camera",
+			"components": [
+				{
+					"name": "ShakeViewer",
+					"props": {
+						"power": 0.15,
+						"speed": 1
+					}
+				},
+				{
+					"name": "PostProcessPipeline",
+					"props": {
+						"postprocess": [
+							true,
+							true,
+							true,
+							true
+						]
+					}
+				},
+				{
+					"name": "MainCamera"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/Cube",
+			"components": [
+				{
+					"name": "Yashima"
+				}
+			]
 		}
 	],
 	"timeline/duration": 4170,

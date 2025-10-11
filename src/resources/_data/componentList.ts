@@ -12,6 +12,7 @@ import { ShakeViewer } from '../Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from '../Components/ObjectControls/LookAt/index.ts';
 import { ObjectRotate } from '../Components/ObjectControls/ObjectRotate/index.ts';
 import { OrbitControls } from '../Components/ObjectControls/OrbitControls/index.ts';
+import { Yashima } from '../Components/Samples/Yashima/index.ts';
 import { TextureGenerator } from '../Components/Texture/TextureGenerator/index.ts';
 import { BLidgeClient } from '../Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from '../Components/Utilities/UniformsControls/index.ts';
@@ -28,6 +29,9 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		LookAt,
 		ObjectRotate,
 		OrbitControls,
+	},
+	Samples: {
+		Yashima,
 	},
 	Texture: {
 		TextureGenerator,
