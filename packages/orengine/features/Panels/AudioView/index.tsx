@@ -3,7 +3,7 @@ import { FramePlay } from 'orengine';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 import { OREngineProjectFrame } from '../../../ts/Engine/ProjectSerializer';
-import { useOREditor } from '../../../hooks/useOREditor';
+import { useOREditor } from '../../OREditor/Hooks/useOREditor';
 
 import { AudioViewRenderer } from './AudioViewRenderer';
 import style from './index.module.scss';

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
-import { useOREditor } from "../../../../../hooks/useOREditor";
+import { useOREditor } from "../../../../OREditor/Hooks/useOREditor";
 import { FramePlay } from "../../../../ts/Engine";
 
 export const useTimelineContext = () => {

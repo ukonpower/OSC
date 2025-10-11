@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { useOREngine } from '../../../hooks/useOREngine';
+import { useOREngine } from '../../OREngine/Hooks/useOREngine';
 
 import style from './index.module.scss';
 

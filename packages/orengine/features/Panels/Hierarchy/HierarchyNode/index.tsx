@@ -1,7 +1,7 @@
 import * as MXP from 'maxpower';
 import { MouseEvent, useCallback, useState } from 'react';
 
-import { useOREditor } from '../../../../hooks/useOREditor';
+import { useOREditor } from '../../../OREditor/Hooks/useOREditor';
 import { useSerializableField } from '../../../../hooks/useSerializableProps';
 import { ArrowIcon } from '../../../../components/primitives/Icons/ArrowIcon';
 import { InputGroup } from '../../../../components/composites/InputGroup';

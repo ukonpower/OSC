@@ -1,5 +1,5 @@
 import { useSerializableField } from '../../../hooks/useSerializableProps';
-import { useOREditor } from '../../../hooks/useOREditor';
+import { useOREditor } from '../../OREditor/Hooks/useOREditor';
 import { Block } from '../../../components/composites/Block';
 import { Button } from '../../../components/primitives/Button';
 import { ArrowIcon } from '../../../components/primitives/Icons/ArrowIcon';

@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 
-import { useOREditor } from "../../../hooks/useOREditor";
+import { useOREditor } from "../../../features/OREditor/Hooks/useOREditor";
 
 import style from './index.module.scss';
 
