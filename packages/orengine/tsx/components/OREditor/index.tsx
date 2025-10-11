@@ -51,8 +51,8 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 	}, [ props.editorData, editorContext.editor ] );
 
 
-       const layout = useLayout();
-       const mouseMenuContext = useMouseMenuContext();
+	const layout = useLayout();
+	const mouseMenuContext = useMouseMenuContext();
 
 	let editorElm = null;
 

@@ -2,20 +2,20 @@ import * as MXP from 'maxpower';
 import { useCallback } from 'react';
 
 import { useSerializableField } from '../../../../hooks/useSerializableProps';
+import { useTimeline } from '../../../../hooks/useTimeline';
+import { Button } from '../../../Button';
+import { PauseIcon } from '../../../Icons/PauseIcon';
+import { PlayIcon } from '../../../Icons/PlayIcon';
 import { Label } from '../../../Label';
 import { Panel } from '../../../Panel';
 import { Value } from '../../../Value';
-import { Button } from '../../../Button';
-import { PlayIcon } from '../../../Icons/PlayIcon';
-import { StopIcon } from '../../../Icons/StopIcon';
-import { useTimeline } from '../../../../hooks/useTimeline';
 
 import style from './index.module.scss';
 
 
 export const TimelineSetting = () => {
 
-  const { framePlay, glEditor } = useTimeline();
+	const { framePlay, glEditor } = useTimeline();
 
 	const onChange = useCallback( ( value: MXP.SerializeFieldValue, setter: ( ( value: any ) => void ) | undefined ) => {
 
@@ -32,16 +32,15 @@ export const TimelineSetting = () => {
 	const [ duration, setDuration ] = useSerializableField<number>( glEditor?.engine, "timeline/duration" );
 	const [ fps, setFps ] = useSerializableField<number>( glEditor?.engine, "timeline/fps" );
 
-	// 再生制御: 再生中なら停止してフレーム0に戻る、停止中なら再生開始
+	// 再生制御: 再生中なら一時停止、停止中なら再生開始
 	const handlePlayStop = useCallback( () => {
 
 		if ( glEditor?.engine ) {
 
 			if ( framePlay.playing ) {
 
-				// 再生中の場合は停止してフレーム0に戻る
+				// 再生中の場合は一時停止（再生位置は維持）
 				glEditor.engine.stop();
-				glEditor.engine.seek( 0 );
 
 			} else {
 
@@ -58,7 +57,7 @@ export const TimelineSetting = () => {
 		<Panel>
 			<div className={style.playControls}>
 				<Button onClick={handlePlayStop}>
-					{framePlay.playing ? <StopIcon /> : <PlayIcon />}
+					{framePlay.playing ? <PauseIcon /> : <PlayIcon />}
 				</Button>
 			</div>
 			<Label title='current'>

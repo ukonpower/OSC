@@ -334,11 +334,15 @@ export class Engine extends MXP.Entity {
 
 		this._time.current = new Date().getTime();
 
+		this.emit( "update/frame/play", [ this._frame ] );
+
 	}
 
 	public stop() {
 
 		this._frame.playing = false;
+
+		this.emit( "update/frame/play", [ this._frame ] );
 
 	}
 

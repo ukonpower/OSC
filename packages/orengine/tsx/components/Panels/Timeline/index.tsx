@@ -11,7 +11,7 @@ import { TimelineSetting } from './TimelineSetting';
 
 export const Timeline = () => {
 
-  const timelineContext = useTimelineContext();
+	const timelineContext = useTimelineContext();
 
 	return <TimelineContext.Provider value={timelineContext}>
 		<div className={style.timeline}>
