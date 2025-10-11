@@ -1,9 +1,11 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
+import { Engine } from 'orengine';
 
 import { ShakeViewer } from '../../ObjectControls/CameraShake';
 import { LookAt } from '../../ObjectControls/LookAt';
 import { OrbitControls } from '../../ObjectControls/OrbitControls';
+import { BLidgeClient } from '../../Utilities/BLidgeClient';
 
 import { Bloom } from './PostProcess/Bloom';
 import { ColorGrading } from './PostProcess/ColorGrading';
@@ -143,14 +145,21 @@ export class MainCamera extends MXP.Component {
 
 		};
 
-		this.entity.on( 'sceneCreated', onSceneCreated );
+		// Engine.rootからBLidgeClientを探してイベントをリッスン
+		const engine = Engine.getInstance( gl );
+		const blidgeClient = engine.root.getComponent( BLidgeClient );
 
-		this.once( "dispose", () => {
+		if ( blidgeClient ) {
 
-			this.entity.off( 'sceneCreated', onSceneCreated );
+			blidgeClient.on( 'sceneCreated', onSceneCreated );
 
-		} );
+			this.once( "dispose", () => {
 
+				blidgeClient.off( 'sceneCreated', onSceneCreated );
+
+			} );
+
+		}
 
 		/*-------------------------------
 			DEV: OrbitControls

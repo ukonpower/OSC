@@ -254,8 +254,8 @@ export class BLidgeClient extends MXP.Component {
 		// イベント通知
 		if ( this.entity && this.blidgeRoot ) {
 
-			// シーン作成イベントを子に通知（MainCameraなどが使用）
-			this.entity.noticeEventChilds( "sceneCreated", [ this.blidgeRoot ] );
+			// シーン作成イベントを発火（MainCameraなどが使用）
+			this.emit( "sceneCreated", [ this.blidgeRoot ] );
 
 			// プロジェクトデータのoverridesを適用
 			const engine = Engine.getInstance( gl );
