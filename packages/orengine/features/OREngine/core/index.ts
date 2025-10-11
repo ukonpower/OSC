@@ -124,15 +124,27 @@ export class Engine extends MXP.Entity {
 
 		this.field( "name", () => this.name, ( v ) => this.name = v );
 
-		this.field( "scene", () => ProjectSerializer.serializeEntity( this._root ), ( v ) => {
+		this.field( "scene", () => {
 
-			ProjectSerializer.deserializeEntity( v, this._root );
+			const data = ProjectSerializer.serializeEntity( this._root );
+
+			return data as unknown as MXP.SerializeFieldPrimitive;
+
+		}, ( v ) => {
+
+			ProjectSerializer.deserializeEntity( v as any, this._root );
 
 		} );
 
-		this.field( "overrides", () => ProjectSerializer.serializeEntityOverride( this._root ), ( v ) => {
+		this.field( "overrides", () => {
 
-			ProjectSerializer.deserializeOverride( v, this._root, this._root );
+			const data = ProjectSerializer.serializeEntityOverride( this._root );
+
+			return data as unknown as MXP.SerializeFieldPrimitive;
+
+		}, ( v ) => {
+
+			ProjectSerializer.deserializeOverride( v as any, this._root, this._root );
 
 		} );
 
@@ -245,7 +257,7 @@ export class Engine extends MXP.Entity {
 
 		this.init();
 
-		this.deserialize( project );
+		this.deserialize( project as any );
 
 		this._projectCache = project || null;
 

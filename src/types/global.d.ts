@@ -22,3 +22,5 @@ declare global {
 }
 
 type HooksContext<T> = Partial<ReturnType<T>>
+
+export {}
