@@ -46,12 +46,12 @@
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "src/types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.d.ts",
     "plugins/**/*",
     "vite.config.ts",
     "vite-player.config.ts",
