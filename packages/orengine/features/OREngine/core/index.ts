@@ -81,16 +81,6 @@ export class Engine extends MXP.Entity {
 
 		this._projectCache = null;
 
-		this.on( "update/blidge/scene", ( blidgeRoot: MXP.Entity ) => {
-
-			if ( this._projectCache ) {
-
-				ProjectSerializer.deserializeOverride( this._projectCache.overrides, this._root, blidgeRoot );
-
-			}
-
-		} );
-
 		// time
 
 		this._time = {
@@ -230,6 +220,12 @@ export class Engine extends MXP.Entity {
 
 	}
 
+	public get projectCache() {
+
+		return this._projectCache;
+
+	}
+
 	/*-------------------------------
 		Init Engine
 	-------------------------------*/
@@ -263,6 +259,29 @@ export class Engine extends MXP.Entity {
 
 		this.emit( "update/graph" );
 		this.emit( "loaded" );
+
+	}
+
+	/*-------------------------------
+		Apply Project Overrides
+	-------------------------------*/
+
+	/**
+	 * プロジェクトデータのoverridesをターゲットエンティティに適用
+	 * BLidgeで作成されたシーンにプロジェクト固有のコンポーネントを追加する際に使用
+	 * @param targetRoot overridesを適用するターゲットエンティティ（通常はBLidgeで作成されたルート）
+	 */
+	public applyProjectOverrides( targetRoot: MXP.Entity ): void {
+
+		if ( this._projectCache ) {
+
+			ProjectSerializer.deserializeOverride(
+				this._projectCache.overrides,
+				this._root,
+				targetRoot
+			);
+
+		}
 
 	}
 

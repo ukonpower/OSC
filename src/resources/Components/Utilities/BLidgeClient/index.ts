@@ -1,4 +1,5 @@
 import * as MXP from 'maxpower';
+import { Engine } from 'orengine';
 
 import { gl } from '~/globals';
 import SceneData from '~/resources/scene.json';
@@ -251,12 +252,14 @@ export class BLidgeClient extends MXP.Component {
 		} );
 
 		// イベント通知
-		if ( this.entity ) {
+		if ( this.entity && this.blidgeRoot ) {
 
-			// シーン作成イベントを子に通知
+			// シーン作成イベントを子に通知（MainCameraなどが使用）
 			this.entity.noticeEventChilds( "sceneCreated", [ this.blidgeRoot ] );
-			// シーン更新イベントを親に通知
-			this.entity.noticeEventParent( "update/blidge/scene", [ this.blidgeRoot ] );
+
+			// プロジェクトデータのoverridesを適用
+			const engine = Engine.getInstance( gl );
+			engine.applyProjectOverrides( this.blidgeRoot );
 
 		}
 
