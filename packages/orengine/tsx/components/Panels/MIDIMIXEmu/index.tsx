@@ -6,7 +6,7 @@ import { InputNumber } from '../../Input/InputNumber';
 
 import style from './index.module.scss';
 
-import { MIDIMIX } from '~/Resources/Components/_Samples/MIDI/MIDIMIX';
+import { MIDIMIX } from '~/resources/Components/_Samples/MIDI/MIDIMIX';
 
 const MIDIButton: React.FC<{id: number, value: number}> = ( props ) => {
 

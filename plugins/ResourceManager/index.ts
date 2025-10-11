@@ -6,8 +6,8 @@ import { Plugin } from 'vite';
 
 let watcher: chokidar.FSWatcher | null = null;
 
-const componentsDir = "./src/Resources/Components/";
-const componentListFile = "./src/Resources/_data/componentList.ts";
+const componentsDir = "./src/resources/Components/";
+const componentListFile = "./src/resources/_data/componentList.ts";
 
 const updateComponentList = ( ) => {
 

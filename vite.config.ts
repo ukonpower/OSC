@@ -13,6 +13,7 @@ const basePath = process.env.BASE_PATH ?? "";
 // https://vitejs.dev/config/
 export default defineConfig( {
 	root: 'src',
+	publicDir: 'assets',
 	base: basePath,
 	server: {
 		port: 3000,
@@ -23,6 +24,9 @@ export default defineConfig( {
 	},
 	build: {
 		outDir: '../dist/',
+		rollupOptions: {
+			input: './src/index.html'
+		}
 	},
 	resolve: {
 		alias: {

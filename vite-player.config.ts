@@ -13,6 +13,7 @@ const basePath = process.env.BASE_PATH ?? "";
 // player.jsonからreservedに追加するプロパティ名を抽出
 export default defineConfig( {
 	root: 'src',
+	publicDir: 'assets',
 	base: basePath,
 	server: {
 		port: 3000,
@@ -23,7 +24,7 @@ export default defineConfig( {
 		minify: 'terser',
 		rollupOptions: {
 			input: {
-				"main": "./src/Player/index.ts"
+				"main": "./src/app/player/index.ts"
 			},
 			output: {
 				entryFileNames: 'index.js'
