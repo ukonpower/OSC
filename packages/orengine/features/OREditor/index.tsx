@@ -9,14 +9,13 @@ import { MouseMenuContext } from '../../components/composites/MouseMenu/Context/
 import { useMouseMenuContext } from '../../components/composites/MouseMenu/Hooks/useMouseMenuContext';
 import { Panel } from '../../components/composites/Panel';
 import { PanelContainer } from '../../components/composites/PanelContainer';
-import { useLayout } from '../../hooks/useLayout';
 import { EntityProperty } from '../../components/panels/EntityProperty';
 import { Timer } from '../../components/panels/GPUTimer';
 import { Hierarchy } from '../../components/panels/Hierarchy';
-import { MIDIMIXEmu } from '../../components/panels/MIDIMIXEmu';
 import { ProjectControl } from '../../components/panels/ProjectControl';
 import { Screen } from '../../components/panels/Screen';
 import { Timeline } from '../../components/panels/Timeline';
+import { useLayout } from '../../hooks/useLayout';
 
 import { OREditorContext } from './Context/OREditorContext';
 import { useOREditorContext } from './Hooks/useOREditorContext';
@@ -97,9 +96,6 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 							<Panel title='Timeline' noPadding>
 								<Timeline />
 							</Panel>
-							<Panel title='MIDIMIXEmu'>
-								<MIDIMIXEmu />
-							</Panel>
 						</PanelContainer>
 					</div>
 				</div>
@@ -149,9 +145,6 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 								<ErrorBoundary fallback={<div>エラーだよ</div>}>
 									<Timeline />
 								</ErrorBoundary>
-							</Panel>
-							<Panel title='MIDIMIXEmu'>
-								<MIDIMIXEmu />
 							</Panel>
 						</PanelContainer>
 					</div>

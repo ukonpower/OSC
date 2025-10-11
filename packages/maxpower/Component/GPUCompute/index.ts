@@ -14,7 +14,7 @@ export class GPUCompute extends PostProcess {
 
 	constructor( params: {passes: GPUComputePass[]} ) {
 
-		super( { ...params, pipeline: new PostProcessPipeline( { entity: new Entity() } ) } );
+		super( { ...params } );
 
 		this._passes = params.passes;
 

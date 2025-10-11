@@ -1,22 +1,23 @@
+import { SerializeFieldPrimitive } from "maxpower";
 import { useEffect, useRef, useState } from "react";
 
-import { Block } from "../Block";
 import { Button } from "../../primitives/Button";
-import { ValueType, Value } from "../Value";
+import { Block } from "../Block";
+import { Value } from "../Value";
 
 import style from './index.module.scss';
 
 export type InputGroupProps = {
 	title?: string,
-	initialValues: {[key: string]:ValueType}
-	onSubmit?: ( values: {[key: string]:ValueType} ) => void
+	initialValues: {[key: string]:SerializeFieldPrimitive}
+	onSubmit?: ( values: {[key: string]:SerializeFieldPrimitive} ) => void
 }
 
 export const InputGroup = ( props: InputGroupProps ) => {
 
 	const initialValuees = props.initialValues;
 	const propElms: JSX.Element[] = [];
-	const [ values, setValues ] = useState<{[key: string]:ValueType}>( initialValuees );
+	const [ values, setValues ] = useState<{[key: string]:SerializeFieldPrimitive}>( initialValuees );
 
 	useEffect( () => {
 

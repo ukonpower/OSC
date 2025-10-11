@@ -66,7 +66,7 @@ export const InputNumber = ( props: Props ) => {
 
 	}, [ onPointerMoveNumber ] );
 
-	const v = Number( ( props.value || 0 ).toFixed( props.precision ?? 3 ) );
+	const v = Number( ( props.value || 0 ).toFixed( props.step ?? 3 ) );
 
 	return <div className={style.inputNumber}>
 		<input className={style.input} type="number" value={v} disabled={props.disabled} readOnly={props.readOnly} data-lo={props.readOnly }

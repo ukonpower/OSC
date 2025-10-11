@@ -191,7 +191,7 @@ export class BLidger extends Component {
 			this._lightComponent.deserialize( {
 				...lightParam,
 				lightType: lightParam.type,
-				color: new GLP.Vector().copy( lightParam.color ),
+				color: new GLP.Vector().copy( lightParam.color ).getElm( "vec3" ),
 				castShadow: lightParam.shadowMap,
 			} );
 
