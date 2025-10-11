@@ -4,7 +4,7 @@ import { Value } from '../../../components/composites/Value';
 import { Button } from '../../../components/primitives/Button';
 import { Canvas } from '../../../components/primitives/Canvas';
 import { Label } from '../../../components/primitives/Label';
-import { useOREditor } from '../../OREditor/Hooks/useOREditor';
+import { useOREditor } from '../../../features/OREditor/Hooks/useOREditor';
 import { useSerializableField } from '../../../hooks/useSerializableProps';
 import { AudioView } from '../AudioView';
 

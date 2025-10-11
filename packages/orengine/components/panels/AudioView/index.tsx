@@ -2,8 +2,8 @@ import * as MXP from 'maxpower';
 import { FramePlay } from 'orengine';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
-import { OREngineProjectFrame } from '../../OREngine/core/ProjectSerializer';
-import { useOREditor } from '../../OREditor/Hooks/useOREditor';
+import { OREngineProjectFrame } from '../../../features/OREngine/core/ProjectSerializer';
+import { useOREditor } from '../../../features/OREditor/Hooks/useOREditor';
 
 import { AudioViewRenderer } from './AudioViewRenderer';
 import style from './index.module.scss';

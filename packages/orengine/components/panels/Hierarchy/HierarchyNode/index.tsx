@@ -6,7 +6,7 @@ import { Picker } from '../../../../components/composites/Picker';
 import { ArrowIcon } from '../../../../components/primitives/Icons/ArrowIcon';
 import { useMouseMenu } from '../../../../hooks/useMouseMenu';
 import { useSerializableField } from '../../../../hooks/useSerializableProps';
-import { useOREditor } from '../../../OREditor/Hooks/useOREditor';
+import { useOREditor } from '../../../../features/OREditor/Hooks/useOREditor';
 
 import style from './index.module.scss';
 

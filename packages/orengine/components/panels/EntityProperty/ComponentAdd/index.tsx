@@ -3,7 +3,7 @@ import * as MXP from 'maxpower';
 import { ComponentGroup, ResouceComponentItem } from 'packages/orengine/features/OREngine/core/Resources';
 import React, { MouseEvent, ReactNode, useCallback, useState } from 'react';
 
-import { Engine } from '../../../OREngine/core';
+import { Engine } from '../../../../features/OREngine/core';
 import { useMouseMenu } from '../../../../hooks/useMouseMenu';
 import { useMouseMenuItem } from '../../../../hooks/useMouseMenuItem';
 import { Button } from '../../../../components/primitives/Button';
