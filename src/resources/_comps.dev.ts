@@ -11,11 +11,11 @@ import { Music } from './Components/Demo4/Music/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
 import { ObjectRotate } from './Components/ObjectControls/ObjectRotate/index.ts';
-import { RaymarchCube } from './Components/Samples/RaymarchCube/index.ts';
 import { TextureGenerator } from './Components/Texture/TextureGenerator/index.ts';
 import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
 import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
+import { RaymarchCube } from './Components/_Samples/RaymarchCube/index.ts';
 
 export const COMPONENTLIST: {[key: string]: any} = {
 	Camera: {
@@ -29,9 +29,6 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		LookAt,
 		ObjectRotate,
 	},
-	Samples: {
-		RaymarchCube,
-	},
 	Texture: {
 		TextureGenerator,
 	},
@@ -41,5 +38,8 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	_DevOnly: {
 		OrbitControls,
+	},
+	_Samples: {
+		RaymarchCube,
 	},
 };

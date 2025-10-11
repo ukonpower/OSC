@@ -17,37 +17,43 @@ export type ComponentGroup = {
 
 export class Resources extends GLP.EventEmitter {
 
-        private _componentList: ( ResouceComponentItem )[];
-        private _componentGroups: ComponentGroup[];
+	private _componentList: ( ResouceComponentItem )[];
+	private _componentGroups: ComponentGroup[];
 
-        private _textures: Map<string, GLP.GLPowerTexture>;
+	private _textures: Map<string, GLP.GLPowerTexture>;
 
-        constructor() {
+	constructor() {
 
 		super();
-                this._componentList = [];
-                this._textures = new Map();
-                this._componentGroups = [];
+		this._componentList = [];
+		this._textures = new Map();
+		this._componentGroups = [];
 
-        }
+	}
 
-        public get componentList() {
-                return this._componentList;
-        }
+	public get componentList() {
 
-        public get componentGroups() {
-                return this._componentGroups;
-        }
+		return this._componentList;
 
-        public get textures() {
-                return this._textures;
-        }
+	}
+
+	public get componentGroups() {
+
+		return this._componentGroups;
+
+	}
+
+	public get textures() {
+
+		return this._textures;
+
+	}
 
 	public clear() {
 
-                this._componentList = [];
-                this._componentGroups = [];
-                this._textures.clear();
+		this._componentList = [];
+		this._componentGroups = [];
+		this._textures.clear();
 
 	}
 
@@ -57,7 +63,7 @@ export class Resources extends GLP.EventEmitter {
 
 	public getComponent( name: string ) {
 
-                return this._componentList.find( c =>{
+		return this._componentList.find( c =>{
 
 			return c.name == name;
 
@@ -67,7 +73,7 @@ export class Resources extends GLP.EventEmitter {
 
 	public addComponentGroup( groupName: string ) {
 
-                let group = this._componentGroups.find( g => g.name == groupName );
+		let group = this._componentGroups.find( g => g.name == groupName );
 
 		if ( group ) return group;
 
@@ -84,7 +90,7 @@ export class Resources extends GLP.EventEmitter {
 					const item = { name, component };
 
 					child.push( item );
-                                        this._componentList.push( item );
+					this._componentList.push( item );
 
 				},
 				createGroup: ( name: string ) => {
@@ -103,7 +109,7 @@ export class Resources extends GLP.EventEmitter {
 
 		group = createGroup( groupName );
 
-                this._componentGroups.push( group );
+		this._componentGroups.push( group );
 
 		return group;
 
@@ -115,7 +121,7 @@ export class Resources extends GLP.EventEmitter {
 
 	public addTexture<T extends GLP.GLPowerTexture>( name: string, texture: T ) {
 
-                this._textures.set( name, texture );
+		this._textures.set( name, texture );
 
 		return texture;
 
@@ -123,7 +129,7 @@ export class Resources extends GLP.EventEmitter {
 
 	public getTexture( name: string ) {
 
-                return this._textures.get( name );
+		return this._textures.get( name );
 
 	}
 
