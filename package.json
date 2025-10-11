@@ -10,7 +10,6 @@
     "build:dev": "NODE_ENV=development SKIP_SHADER_MINIFIER=true vite build --mode production",
     "build:storybook": "storybook build",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "test": "vitest run",
     "storybook": "storybook dev -p 6006"
   },
   "workspaces": [],
@@ -53,8 +52,7 @@
     "storybook": "^9.0.4",
     "terser": "^5.36.0",
     "typescript": "^5.6.3",
-    "vite": "^5.4.10",
-    "vitest": "^0.34.6"
+    "vite": "^5.4.10"
   },
   "volta": {
     "node": "23.3.0"
