@@ -48,6 +48,17 @@
     "**/*.ts",
     "**/*.tsx"
   ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.d.ts",
+    "plugins/**/*",
+    "vite.config.ts",
+    "vite-player.config.ts",
+    "packages/glpower/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

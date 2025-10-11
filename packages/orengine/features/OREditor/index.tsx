@@ -10,13 +10,13 @@ import { useMouseMenuContext } from '../../components/composites/MouseMenu/Hooks
 import { Panel } from '../../components/composites/Panel';
 import { PanelContainer } from '../../components/composites/PanelContainer';
 import { useLayout } from '../../hooks/useLayout';
-import { EntityProperty } from '../Panels/EntityProperty';
-import { Timer } from '../Panels/GPUTimer';
-import { Hierarchy } from '../Panels/Hierarchy';
-import { MIDIMIXEmu } from '../Panels/MIDIMIXEmu';
-import { ProjectControl } from '../Panels/ProjectControl';
-import { Screen } from '../Panels/Screen';
-import { Timeline } from '../Panels/Timeline';
+import { EntityProperty } from '../../components/panels/EntityProperty';
+import { Timer } from '../../components/panels/GPUTimer';
+import { Hierarchy } from '../../components/panels/Hierarchy';
+import { MIDIMIXEmu } from '../../components/panels/MIDIMIXEmu';
+import { ProjectControl } from '../../components/panels/ProjectControl';
+import { Screen } from '../../components/panels/Screen';
+import { Timeline } from '../../components/panels/Timeline';
 
 import { OREditorContext } from './Context/OREditorContext';
 import { useOREditorContext } from './Hooks/useOREditorContext';

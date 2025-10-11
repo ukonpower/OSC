@@ -1,12 +1,12 @@
 import * as MXP from 'maxpower';
 import { MouseEvent, useCallback, useState } from 'react';
 
-import { useOREditor } from '../../../OREditor/Hooks/useOREditor';
-import { useSerializableField } from '../../../../hooks/useSerializableProps';
-import { ArrowIcon } from '../../../../components/primitives/Icons/ArrowIcon';
 import { InputGroup } from '../../../../components/composites/InputGroup';
-import { useMouseMenu } from '../../../../hooks/useMouseMenu';
 import { Picker } from '../../../../components/composites/Picker';
+import { ArrowIcon } from '../../../../components/primitives/Icons/ArrowIcon';
+import { useMouseMenu } from '../../../../hooks/useMouseMenu';
+import { useSerializableField } from '../../../../hooks/useSerializableProps';
+import { useOREditor } from '../../../OREditor/Hooks/useOREditor';
 
 import style from './index.module.scss';
 
@@ -54,9 +54,9 @@ export const HierarchyNode = ( props: HierarchyNodeProps ) => {
 
 	}, [ editor, props.entity ] );
 
-       // right click node
+	// right click node
 
-       const { pushContent, closeAll } = useMouseMenu();
+	const { pushContent, closeAll } = useMouseMenu();
 
 	const onRightClickNode = useCallback( ( e: MouseEvent ) => {
 

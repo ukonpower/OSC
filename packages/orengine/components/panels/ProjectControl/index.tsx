@@ -1,10 +1,10 @@
-import { useSerializableField } from '../../../hooks/useSerializableProps';
-import { useOREditor } from '../../OREditor/Hooks/useOREditor';
 import { Block } from '../../../components/composites/Block';
 import { Button } from '../../../components/primitives/Button';
 import { ArrowIcon } from '../../../components/primitives/Icons/ArrowIcon';
 import { InputText } from '../../../components/primitives/Input/InputText';
 import { Label } from '../../../components/primitives/Label';
+import { useSerializableField } from '../../../hooks/useSerializableProps';
+import { useOREditor } from '../../OREditor/Hooks/useOREditor';
 
 import style from './index.module.scss';
 
