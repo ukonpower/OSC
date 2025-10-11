@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { InputNumber } from '../tsx/components/Input/InputNumber';
+import { InputNumber } from '../components/primitives/Input/InputNumber';
 
 export const Basic = () => {
   const [value, setValue] = useState(0);

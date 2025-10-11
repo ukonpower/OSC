@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../tsx/components/Button';
+import { Button } from '../components/primitives/Button';
 
 export const Basic = () => <Button>Button</Button>;
 

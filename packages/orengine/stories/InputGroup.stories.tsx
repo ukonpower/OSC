@@ -1,5 +1,5 @@
 import React from 'react';
-import { InputGroup } from '../tsx/components/InputGroup';
+import { InputGroup } from '../components/composites/InputGroup';
 
 export const Basic = () => (
   <InputGroup

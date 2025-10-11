@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { InputBoolean } from '../tsx/components/Input/InputCheckBox';
+import { InputBoolean } from '../components/primitives/Input/InputCheckBox';
 
 export const Basic = () => {
   const [checked, setChecked] = useState(true);

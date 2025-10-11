@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { InputSelect } from '../tsx/components/Input/InputSelect';
+import { InputSelect } from '../components/primitives/Input/InputSelect';
 
 export const Basic = () => {
   const [value, setValue] = useState('A');

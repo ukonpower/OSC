@@ -1,5 +1,5 @@
 import React from 'react';
-import { Block } from '../tsx/components/Block';
+import { Block } from '../components/composites/Block';
 
 export const Basic = () => (
   <Block label="Example Block">
