@@ -26,12 +26,13 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 	const pointerDownButtonRef = useRef<number | null>( null );
 	const pointerDownPosRef = useRef<[number, number] | null>( null );
 	const pointerDownCenterFrameRef = useRef<number | null>( null );
+	const isTwoFingerTouchRef = useRef<boolean>( false );
 
 	const onPointerMove = useCallback( ( e: PointerEvent ) => {
 
 		const elmWidth = elmRef.current && elmRef.current.clientWidth || 1;
 
-		if ( pointerDownButtonRef.current == 0 ) {
+		if ( pointerDownButtonRef.current == 0 && ! isTwoFingerTouchRef.current ) {
 
 			if ( setFrame && getFrameViewPort && elmBoundingRectRef.current ) {
 
@@ -71,7 +72,7 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 
 		const pointerX = ( e.clientX - elmBoundingRectRef.current.left ) / e.currentTarget.clientWidth;
 
-		if ( pointerDownButtonRef.current == 0 && setFrame && getFrameViewPort ) {
+		if ( pointerDownButtonRef.current == 0 && setFrame && getFrameViewPort && ! isTwoFingerTouchRef.current ) {
 
 			setFrame( getFrameViewPort( pointerX ) );
 
@@ -140,6 +141,9 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 
 		if ( e.touches.length === 2 ) {
 
+			// 2本指タッチ中フラグを立てる
+			isTwoFingerTouchRef.current = true;
+
 			// 2本指の距離と中心点を計算
 			const touch1 = e.touches[ 0 ];
 			const touch2 = e.touches[ 1 ];
@@ -205,6 +209,9 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 	}, [ zoom, scroll ] );
 
 	const onTouchEnd = useCallback( () => {
+
+		// 2本指タッチ中フラグをリセット
+		isTwoFingerTouchRef.current = false;
 
 		pinchDistanceRef.current = null;
 		pinchCenterRef.current = null;
