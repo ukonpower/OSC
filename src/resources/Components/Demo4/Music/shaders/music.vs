@@ -406,7 +406,10 @@ vec2 music( float t ) {
 
 		tenkan += arpeggio( mt, t, -12.0 );
 
-		tenkan *= step( beat8.x, 4.0 - 0.75 );
+		float mute = step( beat8.x, 2.0 - 0.0 );
+		tenkan *= mute;
+
+		o += snare2( mt, t ) * 0.8 * (1.0 - mute );
 
 		o += tenkan;
 
@@ -414,7 +417,7 @@ vec2 music( float t ) {
 
 	// メイン - オフセット調整（転換セクション短縮に対応）
 
-	mt -= 38.0;
+	mt -= 36.0;
 	
 	beat4 = beat( mt, 4.0 );
 	beat8 = beat( mt, 8.0 );
