@@ -25,7 +25,8 @@ export const ShaderMinifierLoader = (): Plugin => {
 
 	const filter = createFilter( options.include, options.exclude );
 
-	const skip = process.env.SKIP_SHADER_MINIFIER === 'true';
+	// Mac環境ではShaderMinifierをスキップ（monoの依存関係を避けるため）
+	const skip = process.env.SKIP_SHADER_MINIFIER === 'true' || process.platform === 'darwin';
 
 	return {
 		name: 'shaderMinifier',
@@ -111,16 +112,15 @@ export const ShaderMinifierLoader = (): Plugin => {
 
 			}
 
-			// through
+			// skip minifier if requested or on Mac
+			if ( skip ) {
 
-			// if ( skip || false ) {
+				return {
+					code: `export default ${JSON.stringify( code )};`,
+					map: { mappings: '' }
+				};
 
-			// 	return {
-			// 		code: `export default ${JSON.stringify( code )};`,
-			// 		map: { mappings: '' }
-			// 	};
-
-			// }
+			}
 
 			// MINIFIER!!
 			try {
