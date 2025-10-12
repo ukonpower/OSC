@@ -131,20 +131,24 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 
 	}, [ zoom, scroll ] );
 
-	// pinch zoom (for mobile)
+	// pinch zoom and scroll (for mobile)
 
 	const pinchDistanceRef = useRef<number | null>( null );
+	const pinchCenterRef = useRef<number | null>( null );
 
 	const onTouchStart = useCallback( ( e: TouchEvent ) => {
 
 		if ( e.touches.length === 2 ) {
 
-			// 2本指の距離を計算
+			// 2本指の距離と中心点を計算
 			const touch1 = e.touches[ 0 ];
 			const touch2 = e.touches[ 1 ];
 			const dx = touch2.clientX - touch1.clientX;
 			const dy = touch2.clientY - touch1.clientY;
 			pinchDistanceRef.current = Math.sqrt( dx * dx + dy * dy );
+
+			// 2本指の中心点（X座標）を記録
+			pinchCenterRef.current = ( touch1.clientX + touch2.clientX ) / 2;
 
 		}
 
@@ -152,31 +156,58 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 
 	const onTouchMove = useCallback( ( e: TouchEvent ) => {
 
-		if ( e.touches.length === 2 && pinchDistanceRef.current !== null && zoom ) {
+		if ( e.touches.length === 2 && pinchDistanceRef.current !== null && pinchCenterRef.current !== null ) {
 
 			e.preventDefault();
 
-			// 現在の2本指の距離を計算
+			// 現在の2本指の距離と中心点を計算
 			const touch1 = e.touches[ 0 ];
 			const touch2 = e.touches[ 1 ];
 			const dx = touch2.clientX - touch1.clientX;
 			const dy = touch2.clientY - touch1.clientY;
 			const currentDistance = Math.sqrt( dx * dx + dy * dy );
+			const currentCenter = ( touch1.clientX + touch2.clientX ) / 2;
 
-			// 距離の変化率を計算してズーム
-			const scale = currentDistance / pinchDistanceRef.current;
-			zoom( 2.0 - scale ); // 逆数的な感覚にするため2.0 - scale
+			// 距離の変化量と中心点の移動量を計算
+			const distanceChange = Math.abs( currentDistance - pinchDistanceRef.current );
+			const centerMovement = Math.abs( currentCenter - pinchCenterRef.current );
 
-			// 次の計算のために距離を更新
+			// 距離の変化が大きい場合はズーム、中心点の移動が大きい場合はスクロール
+			if ( distanceChange > centerMovement ) {
+
+				// ズーム処理（距離の変化）
+				if ( zoom ) {
+
+					const scale = currentDistance / pinchDistanceRef.current;
+					zoom( 2.0 - scale ); // 逆数的な感覚にするため2.0 - scale
+
+				}
+
+			} else {
+
+				// スクロール処理（中心点の移動）
+				if ( scroll ) {
+
+					const width = elmRef.current?.clientWidth || 1;
+					const scrollDelta = -( currentCenter - pinchCenterRef.current ) / width * 0.5;
+					scroll( scrollDelta );
+
+				}
+
+			}
+
+			// 次の計算のために距離と中心点を更新
 			pinchDistanceRef.current = currentDistance;
+			pinchCenterRef.current = currentCenter;
 
 		}
 
-	}, [ zoom ] );
+	}, [ zoom, scroll ] );
 
 	const onTouchEnd = useCallback( () => {
 
 		pinchDistanceRef.current = null;
+		pinchCenterRef.current = null;
 
 	}, [] );
 
