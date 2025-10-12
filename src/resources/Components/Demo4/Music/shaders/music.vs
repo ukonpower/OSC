@@ -279,6 +279,39 @@ vec2 arpeggio_trill( float mt, float ft, float pitch ) {
 
 }
 
+// アルペジオバリエーション3: 転換用の下降パターン
+vec2 arpeggio_transition( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+
+	// 印象的な下降パターン: 高音から一気に下降
+	int notes[] = int[]( 19, 15, 12, 7, 4, 0, -5, -12 );
+	int noteIndex = int( mod( floor( mt * 4.0 ), 8.0 ) );
+
+	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float note = scale + float( notes[noteIndex] ) + pitch;
+
+	float envTime = fract( mt * 4.0 );
+	float env = exp( -envTime * 6.0 );
+	env *= smoothstep( 0.0, 0.002, envTime );
+
+	// 明るくキラキラした音色
+	for( int i = 0; i < 2; i++ ) {
+		float detune = float(i) * 0.002;
+		o += ssin( ft * s2f( note ) * ( 1.0 + detune ) ) * env;
+	}
+
+	// ステレオで広がりを持たせる
+	float pan = float(noteIndex) / 8.0;
+	o.x *= 1.0 + pan * 0.5;
+	o.y *= 1.5 - pan * 0.5;
+
+	return o * 0.15;
+
+}
+
 /*-------------------------------
 	Pad - 温かいパッドサウンド
 -------------------------------*/
@@ -363,21 +396,25 @@ vec2 music( float t ) {
 
 	}
 
-	// 転換 - 半小節に短縮（8小節目の後半）
+	// 転換 - 1小節（8小節目）
 
 	if( isin( beat4.y, 8.0, 9.0 ) ) {
 
 		t = getFrec( t - 16.0, 0.0, beat8 );
 
-		// メインアルペジオ
-		// o += arpeggio( mt, t, 0.0 ) * step( beat8.x, 4.0 - 0.75 );
+		vec2 tenkan = vec2(0.0);
 
+		tenkan += arpeggio( mt, t, -12.0 );
+
+		tenkan *= step( beat8.x, 4.0 - 0.75 );
+
+		o += tenkan;
 
 	}
 
 	// メイン - オフセット調整（転換セクション短縮に対応）
 
-	mt -= 36.0;
+	mt -= 38.0;
 	
 	beat4 = beat( mt, 4.0 );
 	beat8 = beat( mt, 8.0 );
@@ -402,14 +439,16 @@ vec2 music( float t ) {
 		float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
 
 		// 8分音符のベースパターン
-		float bassEnvTime = fract( mt * 2.0 );
-		float bassEnv = exp( -bassEnvTime * 8.0 ) * smoothstep( 0.0, 0.005, bassEnvTime );
+		float bassEnvTime = fract( mt * 0.25 );
+		float bassEnv = 0.2;//exp( -bassEnvTime * 8.0 ) * smoothstep( 0.0, 0.005, bassEnvTime );
 
 		// 2オクターブ下のベース音
 		o += ssin( t * s2f( scale - 24.0 ) ) * bassEnv * 0.25;
 
 		// 少し歪んだ倍音を足して力強さを追加
 		o += tanh( ssin( t * s2f( scale - 24.0 ) ) * 2.0 ) * bassEnv * 0.15;
+
+		o += pad( mt, t, 0.0 ) * 0.6;
 
 		// 高音域のアクセントで華やかさを追加（2小節目から）
 		if( beat16.y >= 1.0 ) {
