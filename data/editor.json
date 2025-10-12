@@ -1,5 +1,5 @@
 {
-	"enableRender": true,
+	"enableRender": false,
 	"resolutionScale": 0.5,
 	"viewType": "render",
 	"frameLoop/enabled": false,
