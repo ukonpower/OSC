@@ -425,40 +425,23 @@ vec2 music( float t ) {
 
 	if( isin( beat16.y, 0.0, 4.0 ) ) {
 
-		// フェーズ１: 元気の良いキック中心のセクション
 		t = getFrec( t, 0.0, beat8 );
-
-		// 強力なキックドラム（4拍子）
 		o += kick1( mt, t ) * 1.2;
-
-		// タイトなスネア（2拍目と4拍目）
 		o += snare2( mt, t ) * 0.8;
+		// o += arpeggio_fast( mt, t, 0.0 ) * 1.0;
 
-		// 速いアルペジオで疾走感を演出
-		o += arpeggio_fast( mt, t, 0.0 ) * 1.0;
-
-		// ベースラインで低音を支える
 		vec4 b32 = beat( mt, 32.0 );
 		float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
-
-		// 8分音符のベースパターン
 		float bassEnvTime = fract( mt * 0.25 );
 		float bassEnv = 0.2;//exp( -bassEnvTime * 8.0 ) * smoothstep( 0.0, 0.005, bassEnvTime );
-
-		// 2オクターブ下のベース音
-		o += ssin( t * s2f( scale - 24.0 ) ) * bassEnv * 0.25;
-
-		// 少し歪んだ倍音を足して力強さを追加
-		o += tanh( ssin( t * s2f( scale - 24.0 ) ) * 2.0 ) * bassEnv * 0.15;
-
+		// o += ssin( t * s2f( scale - 24.0 ) ) * bassEnv * 0.25;
+		// o += tanh( ssin( t * s2f( scale - 24.0 ) ) * 2.0 ) * bassEnv * 0.15;
 		o += pad( mt, t, 0.0 ) * 0.6;
-
-		// 高音域のアクセントで華やかさを追加（2小節目から）
+		
 		if( beat16.y >= 1.0 ) {
 			o += arpeggio( mt, t, 12.0 ) * 0.5;
 		}
-
-		// 3小節目以降でパッドを追加して厚みを出す
+		
 		if( beat16.y >= 2.0 ) {
 			o += pad( mt, t, 0.0 ) * 0.4;
 		}
