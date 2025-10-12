@@ -428,14 +428,6 @@ vec2 music( float t ) {
 		t = getFrec( t, 0.0, beat8 );
 		o += kick1( mt, t ) * 1.2;
 		o += snare2( mt, t ) * 0.8;
-		// o += arpeggio_fast( mt, t, 0.0 ) * 1.0;
-
-		vec4 b32 = beat( mt, 32.0 );
-		float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
-		float bassEnvTime = fract( mt * 0.25 );
-		float bassEnv = 0.2;//exp( -bassEnvTime * 8.0 ) * smoothstep( 0.0, 0.005, bassEnvTime );
-		// o += ssin( t * s2f( scale - 24.0 ) ) * bassEnv * 0.25;
-		// o += tanh( ssin( t * s2f( scale - 24.0 ) ) * 2.0 ) * bassEnv * 0.15;
 		o += pad( mt, t, 0.0 ) * 0.6;
 		
 		if( beat16.y >= 1.0 ) {
