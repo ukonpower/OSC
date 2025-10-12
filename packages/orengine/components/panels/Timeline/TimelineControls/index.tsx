@@ -131,6 +131,55 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 
 	}, [ zoom, scroll ] );
 
+	// pinch zoom (for mobile)
+
+	const pinchDistanceRef = useRef<number | null>( null );
+
+	const onTouchStart = useCallback( ( e: TouchEvent ) => {
+
+		if ( e.touches.length === 2 ) {
+
+			// 2本指の距離を計算
+			const touch1 = e.touches[ 0 ];
+			const touch2 = e.touches[ 1 ];
+			const dx = touch2.clientX - touch1.clientX;
+			const dy = touch2.clientY - touch1.clientY;
+			pinchDistanceRef.current = Math.sqrt( dx * dx + dy * dy );
+
+		}
+
+	}, [] );
+
+	const onTouchMove = useCallback( ( e: TouchEvent ) => {
+
+		if ( e.touches.length === 2 && pinchDistanceRef.current !== null && zoom ) {
+
+			e.preventDefault();
+
+			// 現在の2本指の距離を計算
+			const touch1 = e.touches[ 0 ];
+			const touch2 = e.touches[ 1 ];
+			const dx = touch2.clientX - touch1.clientX;
+			const dy = touch2.clientY - touch1.clientY;
+			const currentDistance = Math.sqrt( dx * dx + dy * dy );
+
+			// 距離の変化率を計算してズーム
+			const scale = currentDistance / pinchDistanceRef.current;
+			zoom( 2.0 - scale ); // 逆数的な感覚にするため2.0 - scale
+
+			// 次の計算のために距離を更新
+			pinchDistanceRef.current = currentDistance;
+
+		}
+
+	}, [ zoom ] );
+
+	const onTouchEnd = useCallback( () => {
+
+		pinchDistanceRef.current = null;
+
+	}, [] );
+
 	useEffect( () => {
 
 		const elm = elmRef.current;
@@ -138,6 +187,9 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 		if ( elm ) {
 
 			elm.addEventListener( "wheel", onWheel, { passive: false } );
+			elm.addEventListener( "touchstart", onTouchStart, { passive: false } );
+			elm.addEventListener( "touchmove", onTouchMove, { passive: false } );
+			elm.addEventListener( "touchend", onTouchEnd );
 
 		}
 
@@ -146,12 +198,15 @@ export const TimelineControls: React.FC<{children?: React.ReactNode}> = ( props 
 			if ( elm ) {
 
 				elm.removeEventListener( "wheel", onWheel );
+				elm.removeEventListener( "touchstart", onTouchStart );
+				elm.removeEventListener( "touchmove", onTouchMove );
+				elm.removeEventListener( "touchend", onTouchEnd );
 
 			}
 
 		};
 
-	}, [ onWheel ] );
+	}, [ onWheel, onTouchStart, onTouchMove, onTouchEnd ] );
 
 	if ( ! viewPort ) return null;
 
