@@ -504,6 +504,65 @@ vec2 dada( float time, float loop ) {
 }
 
 /*-------------------------------
+	Lead Synth - 印象的なメロディライン
+-------------------------------*/
+
+// リードシンセのメロディパターン: クライマックスのメロディライン
+vec2 leadSynth( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+	vec4 b4 = beat( mt, 4.0 );
+
+	// メロディパターン: 32分音符ベースの「てけてけ」メロディ
+	vec4 b2 = beat( mt, 2.0 );
+
+	// 32分音符のパターン: 連続的に音階を上下させる
+	// 8音のパターンを繰り返す「てけてけ」フレーズ
+	int pattern[8] = int[]( 0, 4, 7, 4, 0, -5, 0, 4 );
+
+	// コード進行に合わせてベース音を取得
+	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+
+	// 32分音符のインデックス（1小節で8音）
+	int noteIndex = int(mod(b2.w * 8.0, 8.0));
+
+	// パターンからオフセットを取得してメロディを構成
+	float note = scale + float( pattern[noteIndex] ) + pitch + 12.0;
+
+	// エンベロープ: 32分音符ごとの素早いアタック/リリース
+	float envTime = fract( b2.w * 8.0 );
+	float env = exp( -envTime * 16.0 ); // 非常に速い減衰で「てけてけ」感
+	env *= smoothstep( 0.0, 0.002, envTime ); // 極めて速いアタック
+
+	// リッチな音色: 複数のオシレーターとディチューン
+	for( int i = 0; i < 3; i++ ) {
+		float detune = (float(i) - 1.0) * 0.003;
+		float harmonic = 1.0 + float(i) * 0.5;
+
+		// サイン波とノコギリ波のブレンド
+		float phase = float(i) * 0.1;
+		float sine = ssin( ft * s2f( note ) * (1.0 + detune) + phase );
+		float sawWave = saw( ft * s2f( note ) * (1.0 + detune) );
+
+		o += vec2( mix( sine, sawWave * 0.5, 0.3 ) * env / harmonic );
+	}
+
+	// ビブラート効果（揺らぎ）
+	float vibrato = sin( ft * 5.0 ) * 0.002;
+	o *= 1.0 + vibrato;
+
+	// ステレオエフェクト: ノートごとに左右に配置
+	float pan = float(noteIndex) / 4.0;
+	o.x *= 1.0 + pan * 0.4;
+	o.y *= 1.0 - pan * 0.4;
+
+	return o * 0.12;
+
+}
+
+/*-------------------------------
 	Main Composition
 -------------------------------*/
 
@@ -649,6 +708,10 @@ vec2 music( float t ) {
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 		// sum += pad( mt, t, 0.0 ) * 0.4;
+
+		// クライマックスのメロディライン追加
+		sum += leadSynth( mt, t, pitch );
+
 		o += sum;
 
 	}
@@ -662,6 +725,10 @@ vec2 music( float t ) {
 		sum += bass( mt, t, 0.0 );
 		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
 		sum += pad( mt, t, 0.0 ) * 0.4;
+
+		// アウトロにも控えめなメロディライン
+		sum += leadSynth( mt, t, 0.0 ) * 0.4;
+
 		o += sum;
 
 	}
