@@ -12,6 +12,8 @@ uniform float uTimeOffset;
 
 uniform float uBPM;
 
+// MARK: Utils
+
 /*-------------------------------
 	Utils
 -------------------------------*/
@@ -90,6 +92,8 @@ vec4 beat( float time, float beat ) {
 
 }
 
+// MARK: Base
+
 /*-------------------------------
 	Base
 -------------------------------*/
@@ -99,6 +103,8 @@ const float baseLine[] = float[](
 	10.0, 6.0, 8.0, 6.0, 10.0, 6.0, 8.0, 3.0
 );
 
+
+// MARK: Snare
 
 /*-------------------------------
 	Snare
@@ -179,6 +185,8 @@ vec2 snare3( float mt, float ft ) {
 
 }
 
+// MARK: Hihat
+
 /*-------------------------------
 	Hihat
 -------------------------------*/
@@ -203,6 +211,8 @@ vec2 hihat1( float mt ) {
 	return o * 0.02;
 
 }
+
+// MARK: Kick
 
 /*-------------------------------
 	Kick
@@ -346,6 +356,8 @@ float getFrec( float t, float m, vec4 b8 ) {
 
 }
 
+// MARK: Arpeggio
+
 /*-------------------------------
 	Arpeggio - キラキラしたアルペジオ
 -------------------------------*/
@@ -468,6 +480,8 @@ vec2 arpeggio_transition( float mt, float ft, float pitch ) {
 
 }
 
+// MARK: Pad
+
 /*-------------------------------
 	Pad - 温かいパッドサウンド
 -------------------------------*/
@@ -516,6 +530,8 @@ vec2 pad( float mt, float ft, float pitch ) {
 	return o * 0.03;
 
 }
+
+// MARK: Stab
 
 /*-------------------------------
 	Stab - 激しいシンセスタブ（Climax用）
@@ -582,6 +598,8 @@ vec2 stab( float mt, float ft, float pitch ) {
 
 }
 
+// MARK: Bass
+
 /*-------------------------------
 	Bass - ベースライン
 -------------------------------*/
@@ -617,6 +635,8 @@ vec2 bass( float mt, float ft, float pitch ) {
 	return o * 0.05;
 
 }
+
+// MARK: Dada
 
 /*-------------------------------
 	dada
@@ -655,6 +675,8 @@ vec2 dada( float time, float loop ) {
 	return o;
 
 }
+
+// MARK: Lead Synth
 
 /*-------------------------------
 	Lead Synth - 印象的なメロディライン
@@ -714,6 +736,8 @@ vec2 leadSynth( float mt, float ft, float pitch ) {
 	return o * 0.12;
 
 }
+
+// MARK: Byaka Synth
 
 /*-------------------------------
 	Byaka Synth - ビャカビャカ攻撃的なシンセ
@@ -781,6 +805,8 @@ vec2 byakaSynth( float mt, float ft, float pitch ) {
 	return o * 0.2;
 
 }
+
+// MARK: Main Composition
 
 /*-------------------------------
 	Main Composition
