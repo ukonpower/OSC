@@ -883,8 +883,8 @@ vec2 music( float t ) {
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 
-		// o += pad( mt, t, 0.0 ) * 0.6;
-
+		// シンセスタブで激しさを追加（8分音符で鋭く刺さる）
+		sum += stab( mt, t, pitch + 0.0 ) * 0.5;
 
 		// クライマックスのメロディライン追加（コード進行倍速）
 		sum += leadSynth( mt, t, pitch );
