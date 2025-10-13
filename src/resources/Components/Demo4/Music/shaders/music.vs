@@ -542,55 +542,75 @@ vec2 stab( float mt, float ft, float pitch ) {
 	vec4 b32 = beat( mt, 32.0 );
 	vec4 b8 = beat( mt, 8.0 );
 
-	// コード進行に合わせる
+	// 16分音符で細かく刻む「てけてけとことこ」パターン
+	float envTime = fract( mt * 4.0 ); // 16分音符
+
+	// 非常に速いアタック、素早いリリース
+	float env = exp( -envTime * 30.0 );
+	env *= smoothstep( 0.0, 0.001, envTime );
+
+	// ピッチベンド: 上がって下がる効果
+	float pitchBend = 0.0;
+	if( envTime < 0.08 ) {
+		// 最初で急上昇
+		pitchBend = 7.0 * ( envTime / 0.08 );
+	} else {
+		// その後すぐに元に戻る
+		pitchBend = 7.0 * exp( -( envTime - 0.08 ) * 20.0 );
+	}
+
+	// 16分音符ごとにコード進行パターンを細かく変える
+	int noteIndex = int( mod( floor( mt * 4.0 ), 8.0 ) );
+
+	// 「てけてけとことこ」メロディパターン: 上下に動く
+	int pattern[8] = int[]( 0, 4, 7, 4, 0, -3, 0, 4 );
+
+	// ベースとなるコード進行
 	int chordIndex = int( b32.x / 4.0 ) % 8;
 	float scale = baseLine[ chordIndex ];
 
-	// 8分音符で鋭くスタブ音を鳴らす
-	float envTime = fract( mt * 2.0 );
-	// 非常に速いアタック、素早いリリース
-	float env = exp( -envTime * 20.0 );
-	env *= smoothstep( 0.0, 0.001, envTime );
+	// パターンからオフセットを取得
+	float note = scale + float( pattern[noteIndex] ) + pitch + pitchBend;
 
-	// コード進行に合わせたボイシング
-	int chord[4];
+	// コード進行に合わせたボイシング（簡略化）
+	int chord[3];
 	if( chordIndex == 0 || chordIndex == 4 ) {
-		// マイナーコード（より攻撃的な配置）
-		chord[0] = 0; chord[1] = 3; chord[2] = 7; chord[3] = 10;
+		// マイナーコード
+		chord[0] = 0; chord[1] = 3; chord[2] = 7;
 	} else {
 		// メジャーコード
-		chord[0] = 0; chord[1] = 4; chord[2] = 7; chord[3] = 11;
+		chord[0] = 0; chord[1] = 4; chord[2] = 7;
 	}
 
-	// 複数の音を重ねて太い音を作る
-	for( int i = 0; i < 4; i++ ) {
-		float note = scale + float( chord[i] ) + pitch;
+	// コードトーンを重ねる
+	for( int i = 0; i < 3; i++ ) {
+		float chordNote = note + float( chord[i] );
 
-		// ノコギリ波とスクエア波をブレンド
-		for( int j = 0; j < 3; j++ ) {
-			float detune = ( float(j) - 1.0 ) * 0.006;
-			float phase = float(j) * 0.15;
+		// 複数のオシレーターで厚み
+		for( int j = 0; j < 2; j++ ) {
+			float detune = float(j) * 0.004;
+			float phase = float(j) * 0.1;
 
 			// サイン波とノコギリ波を混ぜる
-			float sine = ssin( ft * s2f( note ) * ( 1.0 + detune ) + phase );
-			float sawWave = saw( ft * s2f( note ) * ( 1.0 + detune ) );
+			float sine = ssin( ft * s2f( chordNote ) * ( 1.0 + detune ) + phase );
+			float sawWave = saw( ft * s2f( chordNote ) * ( 1.0 + detune ) );
 
 			// ハードクリッピングで歪みを追加
-			float wave = mix( sine, sawWave, 0.5 );
-			wave = clamp( wave * 1.8, -0.8, 0.8 );
+			float wave = mix( sine, sawWave, 0.4 );
+			wave = clamp( wave * 1.5, -0.7, 0.7 );
 
-			o += vec2( wave ) * env;
+			o += vec2( wave ) * env / float(i + 1);
 		}
 	}
 
 	// PWM（パルス幅変調）的な効果を追加
-	float pwmMod = sin( ft * 2.0 ) * 0.5 + 0.5;
+	float pwmMod = sin( ft * 3.0 ) * 0.5 + 0.5;
 	o *= 0.8 + pwmMod * 0.2;
 
-	// ステレオで左右に激しく振る
-	float pan = sin( mt * 4.0 * TPI ) * 0.8;
-	o.x *= 1.0 + pan * 0.5;
-	o.y *= 1.0 - pan * 0.5;
+	// ステレオで左右に細かく振る
+	float pan = float(noteIndex) / 4.0 - 1.0;
+	o.x *= 1.0 + pan * 0.6;
+	o.y *= 1.0 - pan * 0.6;
 
 	return o * 0.08;
 
@@ -631,6 +651,50 @@ vec2 bass( float mt, float ft, float pitch ) {
 	o.y *= 1.0 - pan * 0.3;
 
 	return o * 0.05;
+
+}
+
+// Climax用: 「だっだっだっ」リズミカルベース
+vec2 rhythmicBass( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+
+	// コード進行に合わせたベース音階
+	float scale = baseLine[ int( mod( b32.x / 4.0 * g_chordSpeed, 8.0 ) ) ];
+
+	// 16分音符で「だっだっだっ」と刻む
+	float envTime = fract( mt * 4.0 );
+
+	// 鋭いアタック、速い減衰で「だっ」感を出す
+	float env = exp( -envTime * 2.0 );
+	env *= smoothstep( 0.0, 0.003, envTime );
+
+	// 16分音符ごとのパターン: 4つで1セット
+	int noteIndex = int( mod( floor( mt * 4.0 ), 4.0 ) );
+	int pattern[4] = int[]( 0, 0, 0, 7 ); // ルート3回 + 5度上1回
+
+	float note = scale + float( pattern[noteIndex] ) + pitch - 12.0 * 3.0;
+
+	// 太くてパンチのあるベース音
+	for( int i = 0; i < 4; i++ ) {
+		float harmonic = float(i + 1);
+		// サイン波とノコギリ波をブレンドして太く
+		float sine = ssin( ft * s2f( note - 12.0 ) * harmonic
+		 );
+		float sawWave = tri( ft * s2f( note ) * harmonic );
+		float wave = mix( sine, sawWave, 0.5 );
+
+		o += vec2( wave ) * env / (harmonic * 0.8);
+	}
+
+	// ステレオで左右に細かく振る
+	float pan = float(noteIndex) / 4.0 - 0.5;
+	o.x *= 1.0 + pan * 0.3;
+	o.y *= 1.0 - pan * 0.3;
+
+	return o * 0.2;
 
 }
 
@@ -878,10 +942,12 @@ vec2 music( float t ) {
 		sum += snare3( mt, t ); // 「っちゃ」部分のsnare3
 		sum += hihat1( mt ); // ハイハットも強調
 		sum += dada( mt, beat4.w );
-		sum += bass( mt, t, pitch );
+		sum += bass( mt, t, pitch ); // climaxでリズミカルに
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
+		sum += rhythmicBass( mt, t, pitch ); // climaxでリズミカルに
+
 
 		// シンセスタブで激しさを追加（8分音符で鋭く刺さる）
 		sum += stab( mt, t, pitch + 0.0 ) * 0.5;
