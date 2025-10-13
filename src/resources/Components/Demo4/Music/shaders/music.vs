@@ -71,17 +71,23 @@ bool isin( float time, float start, float end ) {
 	
 }
 
+// ビート情報を計算する関数
+// 戻り値:
+//   x: 現在のビート内での経過時間（0.0 〜 beat）
+//   y: 現在のビート番号（整数、0から始まる）
+//   z: 現在のビート内での進行度（0.0 〜 1.0）
+//   w: 開始からの総ビート数（小数、連続的に増加）
 vec4 beat( float time, float beat ) {
 
 	float b = mod( time, beat );
 
-	return vec4( 
-		b, 
-		floor( time / beat ),
-		b / beat,
-		time / beat
+	return vec4(
+		b,                   // x: ビート内経過時間
+		floor( time / beat ), // y: ビート番号
+		b / beat,            // z: ビート内進行度（正規化）
+		time / beat          // w: 総ビート数
 	);
-	
+
 }
 
 /*-------------------------------
@@ -362,6 +368,44 @@ vec2 pad( float mt, float ft, float pitch ) {
 }
 
 /*-------------------------------
+	dada
+-------------------------------*/
+
+vec2 dada( float time, float loop ) {
+
+	int index = int( loop );
+	float envTime = fract( loop );
+	float w = mod( envTime * 8.0, 2.0 );
+
+	vec2 o = vec2( 0.0 );
+
+	for( int i = 0; i < 6; i++ ) {
+
+		float fi = float( i ) / 6.0;
+		float frec = s2f( 4.0 + float(i) * 12.0 ) * pow( 0.5, 4.0 );
+
+		float v = saw( time * frec + ssin( w * 20.0 ) + TPI * fi ) * abs( pow( sin( w * TPI ), 3.0 ) );
+
+		o.x += v * ( sin( fi * TPI ) * 0.5 + 0.5 );
+		o.y += v * ( cos( fi * TPI ) * 0.5 + 0.5 );
+
+		frec = s2f( 4.0 + float(i) * 12.0 ) * pow( 0.5, 10.0 );
+		v = tri( time * frec + ssin( w * 21.0 ) + TPI * fi ) * abs( pow( sin( w * TPI ), 1.0 ) ) * 0.8;
+
+		o.x += v * ( sin( PI / 2.0 + fi * TPI ) * 0.5 + 0.5 );
+		o.y += v * ( cos( PI / 2.0 + fi * TPI ) * 0.5 + 0.5 );
+
+	}
+
+	o *= isin( w, 1.0, 2.0 ) && isin( loop, 1.75, 2.0 ) ? 1.0 : 0.0;
+
+	o *= 0.05;
+
+	return o;
+
+}
+
+/*-------------------------------
 	Music
 -------------------------------*/
 
@@ -429,11 +473,12 @@ vec2 music( float t ) {
 		o += kick1( mt, t ) * 1.2;
 		o += snare2( mt, t ) * 0.8;
 		o += pad( mt, t, 0.0 ) * 0.6;
-		
+		o += dada( mt, beat4.w );
+
 		if( beat16.y >= 1.0 ) {
 			o += arpeggio( mt, t, 12.0 ) * 0.5;
 		}
-		
+
 		if( beat16.y >= 2.0 ) {
 			o += pad( mt, t, 0.0 ) * 0.4;
 		}
