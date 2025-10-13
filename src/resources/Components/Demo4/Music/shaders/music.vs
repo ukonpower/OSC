@@ -569,34 +569,44 @@ vec2 music( float t ) {
 	if( isin( beat16.y, 0.0, 4.0 ) ) {
 
 		t = getFrec( t, 0.0, beat8 );
-		o += kick2( mt, t ) * 1.2;
-		o += snare2( mt, t ) * 0.8;
-		o += hihat1( mt );
-		o += pad( mt, t, 0.0 ) * 0.6;
-		o += dada( mt, beat4.w );
-		o += gaga( mt, t, 0.0 ); // ガーガー音を追加
-		o += arpeggio( mt, t, 0.0 );
+
+		vec2 sum = vec2(0.0);
+		sum += kick2( mt, t ) * 1.2;
+		sum += snare2( mt, t ) * 0.8;
+		sum += hihat1( mt );
+		sum += pad( mt, t, 0.0 ) * 0.6;
+		sum += dada( mt, beat4.w );
+		sum += gaga( mt, t, 0.0 ); // ガーガー音を追加
+		sum += arpeggio( mt, t, 0.0 );
 
 
 		if( beat16.y >= 1.0 ) {
-			o += arpeggio( mt, t, 12.0 ) * 0.5;
+			sum += arpeggio( mt, t, 12.0 ) * 0.5;
 		}
 
 		if( beat16.y >= 2.0 ) {
-			o += pad( mt, t, 0.0 ) * 0.4;
+			sum += pad( mt, t, 0.0 ) * 0.4;
 		}
+
+		o += sum * smoothstep( 4.0, 3.98, beat16.w );
 
 	}
 
 	// メイン - オフセット調整（転換セクション短縮に対応）
 
-	mt -= 16.0;
-	
+	mt -= 70.0;
 	beat4 = beat( mt, 4.0 );
 	beat8 = beat( mt, 8.0 );
 	beat16 = beat( mt, 16.0 );
+	
+	if( isin( beat16.y, 0.0, 1.0 ) ) {
 
-	if( isin( beat16.y, 4.0, 6.0 ) ) {
+		t = getFrec( t, 6.0, beat8 );
+		o += pad( mt, t, 0.0 ) * 0.6;
+
+	}
+	
+	if( isin( beat16.y, 1.0, 3.0 ) ) {
 
 		t = getFrec( t, 6.0, beat8 );
 		o += arpeggio( mt, t, -12.0 ) * 0.8;
@@ -604,6 +614,31 @@ vec2 music( float t ) {
 		o += arpeggio( mt, t, 12.0 ) * 0.6;
 		o += snare2( mt, t ) * 0.5;
 		o += hihat1( mt ) * 0.8;
+		o += pad( mt, t, 0.0 ) * 0.6;
+
+	}
+
+	mt -= 52.0;
+	beat4 = beat( mt, 4.0 );
+	beat8 = beat( mt, 8.0 );
+	beat16 = beat( mt, 16.0 );
+
+	if( isin( beat16.y, 0.0, 4.0 ) ) {
+
+		t = getFrec( t, 0.0, beat8 );
+
+		vec2 sum = vec2(0.0);
+		sum += kick2( mt, t ) * 1.2;
+		sum += snare2( mt, t ) * 0.8;
+		sum += hihat1( mt );
+		sum += pad( mt, t, 0.0 ) * 0.6;
+		sum += dada( mt, beat4.w );
+		sum += gaga( mt, t, 0.0 ); // ガーガー音を追加
+		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
+		o += arpeggio( mt, t, 12.0 ) * 0.6;
+		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
+		// sum += pad( mt, t, 0.0 ) * 0.4;
+		o += sum;
 
 	}
 
