@@ -504,7 +504,7 @@ vec2 dada( float time, float loop ) {
 }
 
 /*-------------------------------
-	Music
+	Main Composition
 -------------------------------*/
 
 vec2 music( float t ) {
@@ -518,7 +518,7 @@ vec2 music( float t ) {
 	vec4 beat8 = beat( mt, 8.0 );
 	vec4 beat16 = beat( mt, 16.0 );
 
-	// intro - 1小節に短縮
+	// Section A: Intro - シンプルなアルペジオとパッド (1小節)
 	if( isin( beat16.y, 0.0, 1.0 ) ) {
 
 		t = getFrec( t, 0.0, beat8 );
@@ -526,7 +526,7 @@ vec2 music( float t ) {
 		o += pad( mt, t, 0.0 ) * 0.3;
 	}
 
-	// intro up - 1小節に短縮
+	// Section B: Intro Buildup - キックとハイハット導入 (1小節)
 
 	if( isin( beat16.y, 1.0, 2.0 ) ) {
 
@@ -539,7 +539,7 @@ vec2 music( float t ) {
 
 	}
 
-	// 転換 - 1小節（8小節目）
+	// Section C: Transition - 転換セクション、スネアロールとミュート効果 (1小節)
 
 	if( isin( beat4.y, 8.0, 9.0 ) ) {
 
@@ -558,10 +558,10 @@ vec2 music( float t ) {
 
 	}
 
-	// メイン - オフセット調整（転換セクション短縮に対応）
+	// Section D: Main Drop 1 - フルアレンジメント登場、徐々にレイヤー追加 (4小節)
 
 	mt -= 36.0;
-	
+
 	beat4 = beat( mt, 4.0 );
 	beat8 = beat( mt, 8.0 );
 	beat16 = beat( mt, 16.0 );
@@ -592,20 +592,22 @@ vec2 music( float t ) {
 
 	}
 
-	// メイン - オフセット調整（転換セクション短縮に対応）
+	// Section E: Bridge - ブレイクダウンとビルドアップ (3小節)
 
 	mt -= 70.0;
 	beat4 = beat( mt, 4.0 );
 	beat8 = beat( mt, 8.0 );
 	beat16 = beat( mt, 16.0 );
-	
+
+	// Section E-1: Breakdown - パッドのみ、静寂の瞬間 (1小節)
 	if( isin( beat16.y, 0.0, 1.0 ) ) {
 
 		t = getFrec( t, 6.0, beat8 );
 		o += pad( mt, t, 0.0 ) * 0.6;
 
 	}
-	
+
+	// Section E-2: Buildup - 速いアルペジオで緊張感を高める (2小節)
 	if( isin( beat16.y, 1.0, 3.0 ) ) {
 
 		vec2 sum = vec2(0.0);
@@ -622,11 +624,14 @@ vec2 music( float t ) {
 
 	}
 
+	// Section F: Main Drop 2 - 最高潮、速いアルペジオとガーガー音 (6小節)
+
 	mt -= 48.0;
 	beat4 = beat( mt, 4.0 );
 	beat8 = beat( mt, 8.0 );
 	beat16 = beat( mt, 16.0 );
 
+	// Section F-1: Climax - フルパワー、全要素が揃う (4小節)
 	if( isin( beat16.y, 0.0, 4.0 ) ) {
 
 		t = getFrec( t, 0.0, beat8 );
@@ -648,6 +653,7 @@ vec2 music( float t ) {
 
 	}
 
+	// Section F-2: Outro - 静かに終わる (2小節)
 	if( isin( beat16.y, 4.0, 6.0 ) ) {
 
 		t = getFrec( t, 0.0, beat8 );
