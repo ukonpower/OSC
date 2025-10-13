@@ -96,7 +96,7 @@ vec4 beat( float time, float beat ) {
 
 // コード進行: Am - F - C - G
 const float baseLine[] = float[](
-	10.0, 6.0, 3.0, 8.0, 10.0, 6.0, 3.0, 8.0
+	10.0, 6.0, 8.0, 6.0, 10.0, 6.0, 8.0, 3.0
 );
 
 
@@ -608,17 +608,21 @@ vec2 music( float t ) {
 	
 	if( isin( beat16.y, 1.0, 3.0 ) ) {
 
+		vec2 sum = vec2(0.0);
+
 		t = getFrec( t, 6.0, beat8 );
-		o += arpeggio( mt, t, -12.0 ) * 0.8;
-		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
-		o += arpeggio( mt, t, 12.0 ) * 0.6;
-		o += snare2( mt, t ) * 0.5;
-		o += hihat1( mt ) * 0.8;
-		o += pad( mt, t, 0.0 ) * 0.6;
+		sum += arpeggio( mt, t, -12.0 ) * 0.8;
+		sum += arpeggio_fast( mt, t, 0.0 ) * 1.2;
+		sum += arpeggio( mt, t, 12.0 ) * 0.6;
+		sum += snare2( mt, t ) * 0.5;
+		sum += hihat1( mt ) * 0.8;
+		sum += pad( mt, t, 0.0 ) * 0.6;
+
+		o += sum * smoothstep( 2.75, 2.740, beat16.w);
 
 	}
 
-	mt -= 52.0;
+	mt -= 48.0;
 	beat4 = beat( mt, 4.0 );
 	beat8 = beat( mt, 8.0 );
 	beat16 = beat( mt, 16.0 );
@@ -638,6 +642,18 @@ vec2 music( float t ) {
 		o += arpeggio( mt, t, 12.0 ) * 0.6;
 		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
 		// sum += pad( mt, t, 0.0 ) * 0.4;
+		o += sum;
+
+	}
+
+	if( isin( beat16.y, 4.0, 6.0 ) ) {
+
+		t = getFrec( t, 0.0, beat8 );
+
+		vec2 sum = vec2(0.0);
+		sum += gaga( mt, t, 0.0 ); // ガーガー音を追加
+		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
+		sum += pad( mt, t, 0.0 ) * 0.4;
 		o += sum;
 
 	}

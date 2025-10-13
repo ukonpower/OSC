@@ -8,7 +8,7 @@ import musicVert from './shaders/music.vs';
 import { gl, power } from '~/globals';
 
 const BPM = 100;
-const MUSIC_DURATION = 60 * ( ( 8 * ( 28 + 1 ) ) / BPM );
+const MUSIC_DURATION = 60 * ( ( 8 * ( 32 + 1 ) ) / BPM );
 
 // console.log( MUSIC_DURATION * 60 );
 
