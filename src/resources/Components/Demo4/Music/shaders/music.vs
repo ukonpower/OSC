@@ -518,6 +518,71 @@ vec2 pad( float mt, float ft, float pitch ) {
 }
 
 /*-------------------------------
+	Stab - 激しいシンセスタブ（Climax用）
+-------------------------------*/
+
+vec2 stab( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+	vec4 b8 = beat( mt, 8.0 );
+
+	// コード進行に合わせる
+	int chordIndex = int( b32.x / 4.0 ) % 8;
+	float scale = baseLine[ chordIndex ];
+
+	// 8分音符で鋭くスタブ音を鳴らす
+	float envTime = fract( mt * 2.0 );
+	// 非常に速いアタック、素早いリリース
+	float env = exp( -envTime * 20.0 );
+	env *= smoothstep( 0.0, 0.001, envTime );
+
+	// コード進行に合わせたボイシング
+	int chord[4];
+	if( chordIndex == 0 || chordIndex == 4 ) {
+		// マイナーコード（より攻撃的な配置）
+		chord[0] = 0; chord[1] = 3; chord[2] = 7; chord[3] = 10;
+	} else {
+		// メジャーコード
+		chord[0] = 0; chord[1] = 4; chord[2] = 7; chord[3] = 11;
+	}
+
+	// 複数の音を重ねて太い音を作る
+	for( int i = 0; i < 4; i++ ) {
+		float note = scale + float( chord[i] ) + pitch;
+
+		// ノコギリ波とスクエア波をブレンド
+		for( int j = 0; j < 3; j++ ) {
+			float detune = ( float(j) - 1.0 ) * 0.006;
+			float phase = float(j) * 0.15;
+
+			// サイン波とノコギリ波を混ぜる
+			float sine = ssin( ft * s2f( note ) * ( 1.0 + detune ) + phase );
+			float sawWave = saw( ft * s2f( note ) * ( 1.0 + detune ) );
+
+			// ハードクリッピングで歪みを追加
+			float wave = mix( sine, sawWave, 0.5 );
+			wave = clamp( wave * 1.8, -0.8, 0.8 );
+
+			o += vec2( wave ) * env;
+		}
+	}
+
+	// PWM（パルス幅変調）的な効果を追加
+	float pwmMod = sin( ft * 2.0 ) * 0.5 + 0.5;
+	o *= 0.8 + pwmMod * 0.2;
+
+	// ステレオで左右に激しく振る
+	float pan = sin( mt * 4.0 * TPI ) * 0.8;
+	o.x *= 1.0 + pan * 0.5;
+	o.y *= 1.0 - pan * 0.5;
+
+	return o * 0.08;
+
+}
+
+/*-------------------------------
 	Bass - ベースライン
 -------------------------------*/
 
@@ -854,13 +919,13 @@ vec2 music( float t ) {
 		sum += kick3( mt, t ) * 1.0; // だだだだっちゃだだだだのkick3
 		// sum += snare3( mt, t ); // 「っちゃ」部分のsnare3
 		sum += hihat1( mt ); // ハイハットも強調
-		sum += pad( mt, t, pitch ) * 0.6;
+		sum += stab( mt, t, pitch ) * 0.8;
 		sum += dada( mt, beat4.w );
 		sum += bass( mt, t, pitch );
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
-		sum += pad( mt, t, 0.0 ) * 0.4;
+		sum += stab( mt, t, 0.0 ) * 0.6;
 
 		// クライマックスのメロディライン追加
 		sum += leadSynth( mt, t, pitch );
