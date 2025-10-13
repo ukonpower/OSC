@@ -111,25 +111,27 @@ float snare( float et, float ft, float etw ) {
 	et = fract( et );
 
 	float t = ft;
-	
-	o += ( fbm( t * 3200.0 ) - 0.5 ) * exp( -200.0 * et * etw );
 
-	o *= 0.7;
-	
+	// より激しいスネアサウンド：減衰を速く、音量を大きく
+	o += ( fbm( t * 3200.0 ) - 0.5 ) * exp( -250.0 * et * etw );
+	o += ( fbm( t * 4800.0 ) - 0.5 ) * exp( -300.0 * et * etw ) * 0.5; // 高域のノイズを追加
+
+	o *= 1.0; // 音量を上げる
+
 	return o;
 
 }
 
 
-vec2 snare1( float mt, float ft ) { 
+vec2 snare1( float mt, float ft ) {
 
 	vec2 o = vec2( 0.0 );
 
 	vec4 bt = beat( mt, 8.0 );
 
 	o += snare( bt.z - (1.0 - 0.125), fract( ft ), 1.0 );
-	
-	return o * 0.8;
+
+	return o * 1.0; // より激しく
 
 }
 
@@ -141,7 +143,39 @@ vec2 snare2( float mt, float ft ) {
 
 	o += snare( bt.z - (0.5), fract( ft ), 0.25 );
 
-	return o * 0.8;
+	return o * 1.0; // より激しく
+
+}
+
+// ランダムなスネアパターン
+vec2 snare3( float mt, float ft ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b2 = beat( mt, 2.0 );
+	vec4 b4 = beat( mt, 4.0 );
+
+	// 16分音符でランダムに刻む
+	for(int i = 0; i < 16; i++){
+
+		float l = b2.z - float(i) / 16.0;
+
+		// ランダムに鳴らす
+		float rand = whiteNoise( b2.y * 200.0 + float(i) );
+		float threshold = 0.5; // 50%の確率で鳴らす
+
+		// 基本のバックビート（2拍目と4拍目）は必ず鳴らす
+		bool isBackbeat = (i == 8); // 裏拍
+		bool shouldPlay = isBackbeat || (rand > threshold);
+
+		if( shouldPlay ) {
+			float volume = isBackbeat ? 1.2 : (0.5 + rand * 0.5); // ランダムな音量
+			o += snare( l, fract( ft ), isBackbeat ? 1.0 : 1.5 ) * volume;
+		}
+
+	}
+
+	return o * 0.9;
 
 }
 
@@ -166,7 +200,7 @@ vec2 hihat1( float mt ) {
 	o += hihat( b16.z ) * ( step( 0.4, whiteNoise( b16.y ) ) * 0.5 + 0.5 );
 	o += hihat( b16.z - 0.5 ) * step( 0.5, whiteNoise( b16.y * 10.0 + 0.1 ) );
 
-	return o * 0.0;
+	return o * 0.02;
 
 }
 
@@ -205,6 +239,27 @@ float lightKick( float et, float ft ) {
 
 }
 
+// より激しく重いキック - deepとlightの両方の特性を持つ - だだだだ専用
+float hardKick( float et, float ft ) {
+
+	float envTime = fract( et );
+
+	float t = ft;
+	// 適度なピッチベンド
+	t -= 0.06 * exp( -100.0 * envTime );
+
+	// 低音と中音の両方を混ぜる
+	float o = sin( t * s2f( 5.0 ) ) * exp( - 30.0 * envTime ); // 重低音
+	o += sin( t * s2f( 8.0 ) ) * exp( - 45.0 * envTime ) * 0.5; // パンチ感のある中音
+	o += sin( t * s2f( 12.0 ) ) * exp( - 60.0 * envTime ) * 0.25; // アタック音
+
+	o *= smoothstep( 0.0, 0.008, envTime);
+	o *= 0.25; // 音量控えめに
+
+	return o;
+
+}
+
 vec2 kick1( float mt, float ft ) {
 
 	vec2 o = vec2( 0.0 );
@@ -213,7 +268,7 @@ vec2 kick1( float mt, float ft ) {
 	vec4 b8 = beat( mt, 8.0 );
 
 	for(int i = 0; i < 3; i++){
-		
+
 		float l = b4.z - float(i) / ( 16.0 / 3.0 );
 
 		if( i != 2 || b8.z > 0.5 ) {
@@ -221,10 +276,10 @@ vec2 kick1( float mt, float ft ) {
 			o += deepKick( l, ft );
 
 		}
-		
+
 	}
 
-	return o;
+	return o * 1.15; // より激しく
 
 }
 
@@ -237,7 +292,7 @@ vec2 kick2( float mt, float ft ) {
 	vec4 b8 = beat( mt, 8.0 );
 
 	for(int i = 0; i < 6; i++){
-		
+
 		float l = b4.z - float(i) / ( 16.0 / 3.0 );
 
 		if( i != 2 || b8.z > 0.5 ) {
@@ -245,10 +300,43 @@ vec2 kick2( float mt, float ft ) {
 			o += lightKick( l, ft );
 
 		}
-		
+
 	}
 
-	return o;
+	return o * 1.15; // より激しく
+
+}
+
+// より激しいhardKickを使用したkick3 - ランダムなパターン
+vec2 kick3( float mt, float ft ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b4 = beat( mt, 4.0 );
+	vec4 b8 = beat( mt, 8.0 );
+	vec4 b2 = beat( mt, 2.0 );
+
+	// ランダムなキックパターン - 16分音符ベース
+	for(int i = 0; i < 16; i++){
+
+		float l = b2.z - float(i) / 16.0;
+
+		// ランダムに鳴らす：whiteNoiseを使って確率的に発音
+		float rand = whiteNoise( b2.y * 100.0 + float(i) );
+		float threshold = 0.35; // 35%の確率で鳴らす
+
+		// 特定の位置では必ず鳴らす（基本ビート）
+		bool isBasicBeat = (i % 4 == 0);
+		bool shouldPlay = isBasicBeat || (rand > threshold);
+
+		if( shouldPlay ) {
+			float volume = isBasicBeat ? 1.0 : (0.6 + rand * 0.4); // ランダムな音量
+			o += hardKick( l, ft ) * volume;
+		}
+
+	}
+
+	return o * 0.85; // 音量調整
 
 }
 
@@ -660,7 +748,6 @@ vec2 music( float t ) {
 		o += arpeggio( mt, t, 0.0 );
 		o += arpeggio( mt, t, 12.0 ) * 0.5;
 		o += kick1( mt, t );
-		o += hihat1( mt ) * 0.6;
 		o += pad( mt, t, 0.0 ) * 0.6;
 
 	}
@@ -699,7 +786,6 @@ vec2 music( float t ) {
 		vec2 sum = vec2(0.0);
 		sum += kick2( mt, t ) * 1.2;
 		sum += snare2( mt, t ) * 0.8;
-		sum += hihat1( mt );
 		sum += pad( mt, t, 0.0 ) * 0.6;
 		sum += dada( mt, beat4.w );
 		sum += bass( mt, t, 0.0 ); // ベースライン
@@ -765,16 +851,16 @@ vec2 music( float t ) {
 		float pitch = 0.0;
 
 		vec2 sum = vec2(0.0);
-		sum += kick2( mt, t ) * 1.2;
-		sum += snare2( mt, t ) * 0.8;
-		sum += hihat1( mt );
-		// sum += pad( mt, t, pitch ) * 0.6;
+		sum += kick3( mt, t ) * 1.0; // だだだだっちゃだだだだのkick3
+		// sum += snare3( mt, t ); // 「っちゃ」部分のsnare3
+		sum += hihat1( mt ); // ハイハットも強調
+		sum += pad( mt, t, pitch ) * 0.6;
 		sum += dada( mt, beat4.w );
 		sum += bass( mt, t, pitch );
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
-		// sum += pad( mt, t, 0.0 ) * 0.4;
+		sum += pad( mt, t, 0.0 ) * 0.4;
 
 		// クライマックスのメロディライン追加
 		sum += leadSynth( mt, t, pitch );
