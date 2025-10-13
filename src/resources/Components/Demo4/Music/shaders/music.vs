@@ -103,6 +103,9 @@ const float baseLine[] = float[](
 	10.0, 6.0, 8.0, 6.0, 10.0, 6.0, 8.0, 3.0
 );
 
+// グローバルなコード進行速度（climaxで変更される）
+float g_chordSpeed = 1.0;
+
 
 // MARK: Snare
 
@@ -372,7 +375,7 @@ vec2 arpeggio( float mt, float ft, float pitch ) {
 	int notes[] = int[]( 0, 4, 7, 12, 7, 4 );
 	int noteIndex = int( mod( floor( mt * 4.0 ), 6.0 ) );
 
-	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float scale = baseLine[ int( mod( b32.x / 4.0 * g_chordSpeed, 8.0 ) ) ];
 	float note = scale + float( notes[noteIndex] ) + pitch;
 
 	float envTime = fract( mt * 4.0 );
@@ -400,7 +403,7 @@ vec2 arpeggio_fast( float mt, float ft, float pitch ) {
 	int notes[] = int[]( 0, 4, 7, 12 );
 	int noteIndex = int( mod( floor( mt * 8.0 ), 4.0 ) );
 
-	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float scale = baseLine[ int( mod( b32.x / 4.0 * g_chordSpeed, 8.0 ) ) ];
 	float note = scale + float( notes[noteIndex] ) + pitch;
 
 	float envTime = fract( mt * 8.0 );
@@ -612,7 +615,7 @@ vec2 bass( float mt, float ft, float pitch ) {
 	vec4 b32 = beat( mt, 32.0 );
 
 	// コード進行に合わせたベース音階
-	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float scale = baseLine[ int( mod( b32.x / 4.0 * g_chordSpeed, 8.0 ) ) ];
 	float note = scale + pitch - 12.0 * 3.0; // 3オクターブ下
 
 	float envTime = fract( mt * 0.25 );
@@ -698,7 +701,7 @@ vec2 leadSynth( float mt, float ft, float pitch ) {
 	int pattern[8] = int[]( 0, 4, 7, 4, 0, -5, 0, 4 );
 
 	// コード進行に合わせてベース音を取得
-	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float scale = baseLine[ int( mod( b32.x / 4.0 * g_chordSpeed, 8.0 ) ) ];
 
 	// 32分音符のインデックス（1小節で8音）
 	int noteIndex = int(mod(b2.w * 8.0, 8.0));
@@ -743,7 +746,7 @@ vec2 leadSynth( float mt, float ft, float pitch ) {
 	Byaka Synth - ビャカビャカ攻撃的なシンセ
 -------------------------------*/
 
-// 攻撃的でハードなノコギリ波ベースのシンセサウンド - デュラデュラ
+// 攻撃的でハードなシンセサウンド - ビャカビャカ（階段状に上昇）
 vec2 byakaSynth( float mt, float ft, float pitch ) {
 
 	vec2 o = vec2( 0.0 );
@@ -751,58 +754,52 @@ vec2 byakaSynth( float mt, float ft, float pitch ) {
 	vec4 b32 = beat( mt, 32.0 );
 	vec4 b2 = beat( mt, 2.0 );
 
-	// 32分音符の連続パターン: デュラデュラと連続的に刻む
-	// 2拍を32分割（16音×2）して連続的に鳴らす
-	int rhythmIndex = int(mod(b2.w * 16.0, 16.0));
-
 	// コード進行に合わせたベース音
-	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float scale = baseLine[ int( mod( b32.x / 4.0 * g_chordSpeed, 8.0 ) ) ];
 
-	// 階段状に上昇するパターン: 8音で1オクターブ上昇して繰り返す
-	// 2音ずつペアで上がっていく「デュラデュラ」感
-	int stairPattern[16] = int[](
-		0, 0,   // デュラ（低）
-		2, 2,   // デュラ（少し上）
-		4, 4,   // デュラ（中）
-		7, 7,   // デュラ（やや高）
-		9, 9,   // デュラ（高）
-		11, 11, // デュラ（さらに高）
-		12, 12, // デュラ（1オクターブ上）
-		14, 14  // デュラ（最高音）
+	// 16分音符で刻む（2拍で8音）
+	int noteIndex = int(mod(b2.w * 8.0, 8.0));
+
+	// 階段状に上昇するパターン
+	int stairPattern[8] = int[](
+		0,  // ビャ
+		2,  // カ
+		4,  // ビャ
+		5,  // カ
+		7,  // ビャ
+		9,  // カ
+		11, // ビャ
+		12  // カ（1オクターブ上）
 	);
 
-	int noteOffset = stairPattern[rhythmIndex];
-	float note = scale + float(noteOffset) + pitch - 24.0;
+	// 音程を取得（低音域で刻む）
+	float note = scale + float(stairPattern[noteIndex]) + pitch - 24.0;
 
-	// 連続的なエンベロープ: 少し長めに伸ばしてデュラデュラ感
-	float envTime = fract( b2.w * 16.0 );
-	float env = exp( -envTime * 4.0 ); // 程よい減衰で連続感
-	env *= smoothstep( 0.0, 0.1, envTime ); // スムーズなアタック
+	// 16分音符のエンベロープ
+	float envTime = fract( b2.w * 8.0 );
+	float env = exp( -envTime * 5.0 );
+	env *= smoothstep( 0.0, 0.001, envTime );
 
-	// 重厚な音色: 複数のノコギリ波とスクエア波をミックス
+	// ハードなノコギリ波ベース
 	for( int i = 0; i < 4; i++ ) {
-		float detune = (float(i) - 2.0) * 0.008; // デチューン
-		float sawWave = saw( ft * s2f( note ) * (1.0 + detune) );
+		float detune = float(i) * 0.005;
+		float f = ft * s2f( note ) * (1.0 + detune);
 
-		// スクエア波も混ぜて重厚さを出す
-		float sqWave = sin( ft * s2f( note ) * (1.0 + detune) );
+		// ノコギリ波
+		float wave = fract(-f) * 2.0 - 1.0;
 
-		// ハードクリップで歪みを追加
-		float wave = mix( sawWave, sqWave, 0.3 );
-		wave = clamp( wave * 2.2, -0.75, 0.75 );
+		// ハードクリッピング
+		wave = clamp( wave * 1.5, -0.6, 0.6 );
 
-		o += vec2( wave ) * env / float(i + 1);
+		o += vec2( wave ) * env;
 	}
 
-	// 低音域なので削らずに太さを保つ
-	o *= 0.6;
-
-	// 左右に軽く振って広がりを出す（連続感を保つため控えめに）
-	float pan = sin( b2.w * 8.0 * TPI ) * 0.9;
+	// ステレオで左右に振る
+	float pan = float(noteIndex) / 8.0;
 	o.x *= 1.0 + pan * 0.4;
 	o.y *= 1.0 - pan * 0.4;
 
-	return o * 0.2;
+	return o * 0.12;
 
 }
 
@@ -937,26 +934,27 @@ vec2 music( float t ) {
 	// Section F-1: Climax - フルパワー、全要素が揃う (4小節)
 	if( isin( beat16.y, 0.0, 4.0 ) ) {
 
+		// Climaxではコード進行を倍速に
+		g_chordSpeed = 2.0;
+
 		t = getFrec( t, 0.0, beat8 );
 
 		float pitch = 0.0;
 
 		vec2 sum = vec2(0.0);
 		sum += kick3( mt, t ) * 1.0; // だだだだっちゃだだだだのkick3
-		// sum += snare3( mt, t ); // 「っちゃ」部分のsnare3
+		sum += snare3( mt, t ); // 「っちゃ」部分のsnare3
 		sum += hihat1( mt ); // ハイハットも強調
-		sum += stab( mt, t, pitch ) * 0.8;
 		sum += dada( mt, beat4.w );
 		sum += bass( mt, t, pitch );
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
-		sum += stab( mt, t, 0.0 ) * 0.6;
 
-		// クライマックスのメロディライン追加
+		// クライマックスのメロディライン追加（コード進行倍速）
 		sum += leadSynth( mt, t, pitch );
 
-		// ビャカビャカ攻撃的なシンセ追加
+		// ビャカビャカ攻撃的なシンセ追加（コード進行倍速）
 		sum += byakaSynth( mt, t, pitch );
 
 		o += sum;
@@ -965,6 +963,9 @@ vec2 music( float t ) {
 
 	// Section F-2: Outro - 静かに終わる (2小節)
 	if( isin( beat16.y, 4.0, 6.0 ) ) {
+
+		// 通常速度に戻す
+		g_chordSpeed = 1.0;
 
 		t = getFrec( t, 0.0, beat8 );
 
