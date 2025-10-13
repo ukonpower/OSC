@@ -100,7 +100,7 @@ vec4 beat( float time, float beat ) {
 
 // コード進行: Am - F - C - G
 const float baseLine[] = float[](
-	10.0, 6.0, 8.0, 6.0, 10.0, 6.0, 8.0, 3.0
+	10.0, 6.0, 8.0, 3.0, 10.0, 6.0, 8.0, 3.0
 );
 
 // グローバルなコード進行速度（climaxで変更される）
@@ -259,7 +259,7 @@ float hardKick( float et, float ft ) {
 
 	float t = ft;
 	// 適度なピッチベンド
-	t -= 0.06 * exp( -100.0 * envTime );
+	t -= 0.08 * exp( -100.0 * envTime );
 
 	// 低音と中音の両方を混ぜる
 	float o = sin( t * s2f( 5.0 ) ) * exp( - 30.0 * envTime ); // 重低音
@@ -324,28 +324,14 @@ vec2 kick2( float mt, float ft ) {
 vec2 kick3( float mt, float ft ) {
 
 	vec2 o = vec2( 0.0 );
-
-	vec4 b4 = beat( mt, 4.0 );
-	vec4 b8 = beat( mt, 8.0 );
-	vec4 b2 = beat( mt, 2.0 );
+	vec4 b2 = beat( mt, 4.0 );
 
 	// ランダムなキックパターン - 16分音符ベース
 	for(int i = 0; i < 16; i++){
 
 		float l = b2.z - float(i) / 16.0;
 
-		// ランダムに鳴らす：whiteNoiseを使って確率的に発音
-		float rand = whiteNoise( b2.y * 100.0 + float(i) );
-		float threshold = 0.35; // 35%の確率で鳴らす
-
-		// 特定の位置では必ず鳴らす（基本ビート）
-		bool isBasicBeat = (i % 4 == 0);
-		bool shouldPlay = isBasicBeat || (rand > threshold);
-
-		if( shouldPlay ) {
-			float volume = isBasicBeat ? 1.0 : (0.6 + rand * 0.4); // ランダムな音量
-			o += hardKick( l, ft ) * volume;
-		}
+		o += hardKick( l, ft ) * mix( 1.5, 1.0, mod(float(i), 2.0 ) );
 
 	}
 
@@ -495,8 +481,8 @@ vec2 pad( float mt, float ft, float pitch ) {
 
 	vec4 b32 = beat( mt, 32.0 );
 
-	// arpeggio_fastと同じタイミングでコード進行を取得
-	int chordIndex = int( b32.x / 4.0 ) % 8;
+	// g_chordSpeedを反映したコード進行を取得
+	int chordIndex = int( mod( b32.x / 4.0 * g_chordSpeed, 8.0 ) );
 	float scale = baseLine[ chordIndex ];
 
 	float envTime = fract( b32.z / 4.0 );
@@ -740,69 +726,6 @@ vec2 leadSynth( float mt, float ft, float pitch ) {
 
 }
 
-// MARK: Byaka Synth
-
-/*-------------------------------
-	Byaka Synth - ビャカビャカ攻撃的なシンセ
--------------------------------*/
-
-// 攻撃的でハードなシンセサウンド - ビャカビャカ（階段状に上昇）
-vec2 byakaSynth( float mt, float ft, float pitch ) {
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 b32 = beat( mt, 32.0 );
-	vec4 b2 = beat( mt, 2.0 );
-
-	// コード進行に合わせたベース音
-	float scale = baseLine[ int( mod( b32.x / 4.0 * g_chordSpeed, 8.0 ) ) ];
-
-	// 16分音符で刻む（2拍で8音）
-	int noteIndex = int(mod(b2.w * 8.0, 8.0));
-
-	// 階段状に上昇するパターン
-	int stairPattern[8] = int[](
-		0,  // ビャ
-		2,  // カ
-		4,  // ビャ
-		5,  // カ
-		7,  // ビャ
-		9,  // カ
-		11, // ビャ
-		12  // カ（1オクターブ上）
-	);
-
-	// 音程を取得（低音域で刻む）
-	float note = scale + float(stairPattern[noteIndex]) + pitch - 24.0;
-
-	// 16分音符のエンベロープ
-	float envTime = fract( b2.w * 8.0 );
-	float env = exp( -envTime * 5.0 );
-	env *= smoothstep( 0.0, 0.001, envTime );
-
-	// ハードなノコギリ波ベース
-	for( int i = 0; i < 4; i++ ) {
-		float detune = float(i) * 0.005;
-		float f = ft * s2f( note ) * (1.0 + detune);
-
-		// ノコギリ波
-		float wave = fract(-f) * 2.0 - 1.0;
-
-		// ハードクリッピング
-		wave = clamp( wave * 1.5, -0.6, 0.6 );
-
-		o += vec2( wave ) * env;
-	}
-
-	// ステレオで左右に振る
-	float pan = float(noteIndex) / 8.0;
-	o.x *= 1.0 + pan * 0.4;
-	o.y *= 1.0 - pan * 0.4;
-
-	return o * 0.12;
-
-}
-
 // MARK: Main Composition
 
 /*-------------------------------
@@ -935,7 +858,7 @@ vec2 music( float t ) {
 	if( isin( beat16.y, 0.0, 4.0 ) ) {
 
 		// Climaxではコード進行を倍速に
-		g_chordSpeed = 2.0;
+		g_chordSpeed = 1.0;
 
 		t = getFrec( t, 0.0, beat8 );
 
@@ -951,11 +874,11 @@ vec2 music( float t ) {
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 
+		// o += pad( mt, t, 0.0 ) * 0.6;
+
+
 		// クライマックスのメロディライン追加（コード進行倍速）
 		sum += leadSynth( mt, t, pitch );
-
-		// ビャカビャカ攻撃的なシンセ追加（コード進行倍速）
-		sum += byakaSynth( mt, t, pitch );
 
 		o += sum;
 
