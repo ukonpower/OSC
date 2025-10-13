@@ -563,6 +563,73 @@ vec2 leadSynth( float mt, float ft, float pitch ) {
 }
 
 /*-------------------------------
+	Byaka Synth - ビャカビャカ攻撃的なシンセ
+-------------------------------*/
+
+// 攻撃的でハードなノコギリ波ベースのシンセサウンド - デュラデュラ
+vec2 byakaSynth( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+	vec4 b2 = beat( mt, 2.0 );
+
+	// 32分音符の連続パターン: デュラデュラと連続的に刻む
+	// 2拍を32分割（16音×2）して連続的に鳴らす
+	int rhythmIndex = int(mod(b2.w * 16.0, 16.0));
+
+	// コード進行に合わせたベース音
+	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+
+	// 階段状に上昇するパターン: 8音で1オクターブ上昇して繰り返す
+	// 2音ずつペアで上がっていく「デュラデュラ」感
+	int stairPattern[16] = int[](
+		0, 0,   // デュラ（低）
+		2, 2,   // デュラ（少し上）
+		4, 4,   // デュラ（中）
+		7, 7,   // デュラ（やや高）
+		9, 9,   // デュラ（高）
+		11, 11, // デュラ（さらに高）
+		12, 12, // デュラ（1オクターブ上）
+		14, 14  // デュラ（最高音）
+	);
+
+	int noteOffset = stairPattern[rhythmIndex];
+	float note = scale + float(noteOffset) + pitch - 24.0;
+
+	// 連続的なエンベロープ: 少し長めに伸ばしてデュラデュラ感
+	float envTime = fract( b2.w * 16.0 );
+	float env = exp( -envTime * 4.0 ); // 程よい減衰で連続感
+	env *= smoothstep( 0.0, 0.1, envTime ); // スムーズなアタック
+
+	// 重厚な音色: 複数のノコギリ波とスクエア波をミックス
+	for( int i = 0; i < 4; i++ ) {
+		float detune = (float(i) - 2.0) * 0.008; // デチューン
+		float sawWave = saw( ft * s2f( note ) * (1.0 + detune) );
+
+		// スクエア波も混ぜて重厚さを出す
+		float sqWave = sin( ft * s2f( note ) * (1.0 + detune) );
+
+		// ハードクリップで歪みを追加
+		float wave = mix( sawWave, sqWave, 0.3 );
+		wave = clamp( wave * 2.2, -0.75, 0.75 );
+
+		o += vec2( wave ) * env / float(i + 1);
+	}
+
+	// 低音域なので削らずに太さを保つ
+	o *= 0.6;
+
+	// 左右に軽く振って広がりを出す（連続感を保つため控えめに）
+	float pan = sin( b2.w * 8.0 * TPI ) * 0.9;
+	o.x *= 1.0 + pan * 0.4;
+	o.y *= 1.0 - pan * 0.4;
+
+	return o * 0.2;
+
+}
+
+/*-------------------------------
 	Main Composition
 -------------------------------*/
 
@@ -711,6 +778,9 @@ vec2 music( float t ) {
 
 		// クライマックスのメロディライン追加
 		sum += leadSynth( mt, t, pitch );
+
+		// ビャカビャカ攻撃的なシンセ追加
+		sum += byakaSynth( mt, t, pitch );
 
 		o += sum;
 
