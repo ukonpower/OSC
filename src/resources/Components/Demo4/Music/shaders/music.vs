@@ -324,14 +324,23 @@ vec2 kick2( float mt, float ft ) {
 vec2 kick3( float mt, float ft ) {
 
 	vec2 o = vec2( 0.0 );
-	vec4 b2 = beat( mt, 4.0 );
+	vec4 b2 = beat( mt, 2.0 );
 
 	// ランダムなキックパターン - 16分音符ベース
 	for(int i = 0; i < 16; i++){
 
 		float l = b2.z - float(i) / 16.0;
+		float rand = whiteNoise( b2.y * 100.0 + float(i) );
+		float threshold = 0.35; // 35%の確率で鳴らす
 
-		o += hardKick( l, ft ) * mix( 1.5, 1.0, mod(float(i), 2.0 ) );
+		// 特定の位置では必ず鳴らす（基本ビート）
+		bool isBasicBeat = (i % 4 == 0);
+		bool shouldPlay = isBasicBeat || (rand > threshold);
+
+		if( shouldPlay ) {
+			float volume = isBasicBeat ? 1.0 : (0.6 + rand * 0.4); // ランダムな音量
+			o += hardKick( l, ft ) * volume;
+		}
 
 	}
 
