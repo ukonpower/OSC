@@ -368,6 +368,51 @@ vec2 pad( float mt, float ft, float pitch ) {
 }
 
 /*-------------------------------
+	Distortion - ガーガー音
+-------------------------------*/
+
+// ガーガーっという攻撃的なディストーションサウンド
+vec2 gaga( float mt, float ft, float pitch ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b32 = beat( mt, 32.0 );
+
+	// ベースとなる音階
+	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
+	float note = scale + pitch - 12.0 * 3.0; 
+
+	float envTime = fract( mt * 0.25 );
+	float env = exp( -envTime * 3.0 );
+	env *= smoothstep( 0.0, 0.01, envTime );
+
+	// 複数のsaw波を重ねてハードな音色を作る
+	for( int i = 0; i < 8; i++ ) {
+		float detune = float(i) * 0.01; // デチューンで厚みを出す
+		float harmonic = float(i + 1); // 倍音を追加
+
+		// saw波形でガツガツした音
+		float wave = tri( ft * s2f( note ) );
+
+		// ハードクリッピング（ディストーション効果）
+		// wave = clamp( wave * 3.0, -1.0, 1.0 );
+
+		// ビットクラッシュ効果でさらにガーガー感を追加
+		// wave = floor( wave * 8.0 ) / 8.0;
+
+		o += wave * env / harmonic;
+	}
+
+	// ステレオで左右に振る
+	float pan = sin( mt * 8.0 );
+	o.x *= 1.0 + pan * 0.3;
+	o.y *= 1.0 - pan * 0.3;
+
+	return o * 0.05;
+
+}
+
+/*-------------------------------
 	dada
 -------------------------------*/
 
@@ -474,6 +519,9 @@ vec2 music( float t ) {
 		o += snare2( mt, t ) * 0.8;
 		o += pad( mt, t, 0.0 ) * 0.6;
 		o += dada( mt, beat4.w );
+		o += gaga( mt, t, 0.0 ); // ガーガー音を追加
+		o += arpeggio( mt, t, 0.0 );
+
 
 		if( beat16.y >= 1.0 ) {
 			o += arpeggio( mt, t, 12.0 ) * 0.5;
