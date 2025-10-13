@@ -112,7 +112,7 @@ float snare( float et, float ft, float etw ) {
 
 	float t = ft;
 	
-	o += ( fbm( t * 3200.0 ) - 0.5 ) * exp( -150.0 * et * etw );
+	o += ( fbm( t * 3200.0 ) - 0.5 ) * exp( -200.0 * et * etw );
 
 	o *= 0.7;
 	
@@ -146,10 +146,36 @@ vec2 snare2( float mt, float ft ) {
 }
 
 /*-------------------------------
+	Hihat
+-------------------------------*/
+
+float hihat( float et ) {
+
+	et = fract( et );
+	return noiseValue( vec3( et * 22000.0 ) ) * max( 0.0, 1.0 - min( 0.85, et * 4.25 ) - ( et - 0.25 ) * 0.3 );
+
+}
+
+vec2 hihat1( float mt ) {
+
+	vec2 o = vec2( 0.0 );
+
+	vec4 b16 = beat( mt * 16.0 , 4.0 );
+
+	// 16分音符でランダムに鳴らす
+	o += hihat( b16.z ) * ( step( 0.4, whiteNoise( b16.y ) ) * 0.5 + 0.5 );
+	o += hihat( b16.z - 0.5 ) * step( 0.5, whiteNoise( b16.y * 10.0 + 0.1 ) );
+
+	return o * 0.0;
+
+}
+
+/*-------------------------------
 	Kick
 -------------------------------*/
 
-float lightKick( float et, float ft ) {
+
+float deepKick( float et, float ft ) {
 
 	float envTime = fract( et );
 
@@ -157,6 +183,21 @@ float lightKick( float et, float ft ) {
 	t -= 0.05 * exp( -100.0 * envTime );
 
 	float o = sin( t * s2f( 5.0 ) ) * exp( - 20.0 * envTime );
+	o *= smoothstep( 0.0, 0.0005, envTime);
+	o *= 0.3;
+
+    return o;
+
+}
+
+float lightKick( float et, float ft ) {
+
+	float envTime = fract( et );
+
+	float t = ft;
+	t -= 0.06 * exp( -100.0 * envTime );
+
+	float o = sin( t * s2f( 2.0 ) ) * exp( - 50.0 * envTime );
 	o *= smoothstep( 0.0, 0.0005, envTime);
 	o *= 0.3;
 
@@ -177,7 +218,7 @@ vec2 kick1( float mt, float ft ) {
 
 		if( i != 2 || b8.z > 0.5 ) {
 
-			o += lightKick( l, ft );
+			o += deepKick( l, ft );
 
 		}
 		
@@ -188,7 +229,28 @@ vec2 kick1( float mt, float ft ) {
 }
 
 
+vec2 kick2( float mt, float ft ) {
 
+	vec2 o = vec2( 0.0 );
+
+	vec4 b4 = beat( mt, 4.0 );
+	vec4 b8 = beat( mt, 8.0 );
+
+	for(int i = 0; i < 6; i++){
+		
+		float l = b4.z - float(i) / ( 16.0 / 3.0 );
+
+		if( i != 2 || b8.z > 0.5 ) {
+
+			o += lightKick( l, ft );
+
+		}
+		
+	}
+
+	return o;
+
+}
 
 float getFrec( float t, float m, vec4 b8 ) {
 
@@ -387,19 +449,10 @@ vec2 gaga( float mt, float ft, float pitch ) {
 	env *= smoothstep( 0.0, 0.01, envTime );
 
 	// 複数のsaw波を重ねてハードな音色を作る
-	for( int i = 0; i < 8; i++ ) {
+	for( int i = 0; i < 4; i++ ) {
 		float detune = float(i) * 0.01; // デチューンで厚みを出す
 		float harmonic = float(i + 1); // 倍音を追加
-
-		// saw波形でガツガツした音
-		float wave = tri( ft * s2f( note ) );
-
-		// ハードクリッピング（ディストーション効果）
-		// wave = clamp( wave * 3.0, -1.0, 1.0 );
-
-		// ビットクラッシュ効果でさらにガーガー感を追加
-		// wave = floor( wave * 8.0 ) / 8.0;
-
+		float wave = ssin( ft * s2f( note ) );
 		o += wave * env / harmonic;
 	}
 
@@ -481,6 +534,7 @@ vec2 music( float t ) {
 		o += arpeggio( mt, t, 0.0 );
 		o += arpeggio( mt, t, 12.0 ) * 0.5;
 		o += kick1( mt, t );
+		o += hihat1( mt ) * 0.6;
 		o += pad( mt, t, 0.0 ) * 0.6;
 
 	}
@@ -515,8 +569,9 @@ vec2 music( float t ) {
 	if( isin( beat16.y, 0.0, 4.0 ) ) {
 
 		t = getFrec( t, 0.0, beat8 );
-		o += kick1( mt, t ) * 1.2;
+		o += kick2( mt, t ) * 1.2;
 		o += snare2( mt, t ) * 0.8;
+		o += hihat1( mt );
 		o += pad( mt, t, 0.0 ) * 0.6;
 		o += dada( mt, beat4.w );
 		o += gaga( mt, t, 0.0 ); // ガーガー音を追加
@@ -533,6 +588,14 @@ vec2 music( float t ) {
 
 	}
 
+	// メイン - オフセット調整（転換セクション短縮に対応）
+
+	mt -= 16.0;
+	
+	beat4 = beat( mt, 4.0 );
+	beat8 = beat( mt, 8.0 );
+	beat16 = beat( mt, 16.0 );
+
 	if( isin( beat16.y, 4.0, 6.0 ) ) {
 
 		t = getFrec( t, 6.0, beat8 );
@@ -540,6 +603,7 @@ vec2 music( float t ) {
 		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
 		o += arpeggio( mt, t, 12.0 ) * 0.6;
 		o += snare2( mt, t ) * 0.5;
+		o += hihat1( mt ) * 0.8;
 
 	}
 

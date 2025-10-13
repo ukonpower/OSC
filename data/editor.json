@@ -3,7 +3,7 @@
 	"resolutionScale": 0.0625,
 	"viewType": "render",
 	"frameLoop/enabled": true,
-	"frameLoop/start": 719.2615390525632,
-	"frameLoop/end": 1006.5071046177451,
+	"frameLoop/start": 625.5,
+	"frameLoop/end": 1862.46192435,
 	"selectedEntityId": "68"
 }
