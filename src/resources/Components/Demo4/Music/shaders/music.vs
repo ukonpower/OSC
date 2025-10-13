@@ -631,16 +631,18 @@ vec2 music( float t ) {
 
 		t = getFrec( t, 0.0, beat8 );
 
+		float pitch = 0.0;
+
 		vec2 sum = vec2(0.0);
 		sum += kick2( mt, t ) * 1.2;
 		sum += snare2( mt, t ) * 0.8;
 		sum += hihat1( mt );
-		sum += pad( mt, t, 0.0 ) * 0.6;
+		// sum += pad( mt, t, pitch ) * 0.6;
 		sum += dada( mt, beat4.w );
-		sum += gaga( mt, t, 0.0 ); // ガーガー音を追加
-		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
-		o += arpeggio( mt, t, 12.0 ) * 0.6;
-		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
+		sum += gaga( mt, t, pitch );
+		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
+		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
+		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 		// sum += pad( mt, t, 0.0 ) * 0.4;
 		o += sum;
 
@@ -651,14 +653,12 @@ vec2 music( float t ) {
 		t = getFrec( t, 0.0, beat8 );
 
 		vec2 sum = vec2(0.0);
-		sum += gaga( mt, t, 0.0 ); // ガーガー音を追加
+		sum += gaga( mt, t, 0.0 );
 		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
 		sum += pad( mt, t, 0.0 ) * 0.4;
 		o += sum;
 
 	}
-
-
 	
 	return o;
 
