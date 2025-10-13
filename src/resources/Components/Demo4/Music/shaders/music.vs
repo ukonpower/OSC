@@ -430,25 +430,25 @@ vec2 pad( float mt, float ft, float pitch ) {
 }
 
 /*-------------------------------
-	Distortion - ガーガー音
+	Bass - ベースライン
 -------------------------------*/
 
-// ガーガーっという攻撃的なディストーションサウンド
-vec2 gaga( float mt, float ft, float pitch ) {
+// 低音で厚みのあるベースサウンド
+vec2 bass( float mt, float ft, float pitch ) {
 
 	vec2 o = vec2( 0.0 );
 
 	vec4 b32 = beat( mt, 32.0 );
 
-	// ベースとなる音階
+	// コード進行に合わせたベース音階
 	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
-	float note = scale + pitch - 12.0 * 3.0; 
+	float note = scale + pitch - 12.0 * 3.0; // 3オクターブ下
 
 	float envTime = fract( mt * 0.25 );
 	float env = exp( -envTime * 3.0 );
 	env *= smoothstep( 0.0, 0.01, envTime );
 
-	// 複数のsaw波を重ねてハードな音色を作る
+	// 複数のオシレーターで厚みのあるベースサウンド
 	for( int i = 0; i < 4; i++ ) {
 		float detune = float(i) * 0.01; // デチューンで厚みを出す
 		float harmonic = float(i + 1); // 倍音を追加
@@ -456,7 +456,7 @@ vec2 gaga( float mt, float ft, float pitch ) {
 		o += wave * env / harmonic;
 	}
 
-	// ステレオで左右に振る
+	// ステレオで左右にゆっくり振る
 	float pan = sin( mt * 8.0 );
 	o.x *= 1.0 + pan * 0.3;
 	o.y *= 1.0 - pan * 0.3;
@@ -576,7 +576,7 @@ vec2 music( float t ) {
 		sum += hihat1( mt );
 		sum += pad( mt, t, 0.0 ) * 0.6;
 		sum += dada( mt, beat4.w );
-		sum += gaga( mt, t, 0.0 ); // ガーガー音を追加
+		sum += bass( mt, t, 0.0 ); // ベースライン
 		sum += arpeggio( mt, t, 0.0 );
 
 
@@ -644,7 +644,7 @@ vec2 music( float t ) {
 		sum += hihat1( mt );
 		// sum += pad( mt, t, pitch ) * 0.6;
 		sum += dada( mt, beat4.w );
-		sum += gaga( mt, t, pitch );
+		sum += bass( mt, t, pitch );
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
@@ -659,7 +659,7 @@ vec2 music( float t ) {
 		t = getFrec( t, 0.0, beat8 );
 
 		vec2 sum = vec2(0.0);
-		sum += gaga( mt, t, 0.0 );
+		sum += bass( mt, t, 0.0 );
 		o += arpeggio_fast( mt, t, 0.0 ) * 1.2;
 		sum += pad( mt, t, 0.0 ) * 0.4;
 		o += sum;
