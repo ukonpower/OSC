@@ -65,7 +65,7 @@ void main( void ) {
 
     vec3 col = texture( uBackBuffer0, vUv ).xyz;
 
-    col = ACESFitted( col );
+    col = ACESFitted( col ) * 1.3;
 
 	outColor = vec4( col, 1.0 );
 

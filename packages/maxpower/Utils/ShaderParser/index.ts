@@ -96,9 +96,6 @@ export const shaderInclude = ( shader: string ) => {
 
 const shaderInsertLights = ( shader: string, lights?: CollectedLights ) => {
 
-	console.log( lights );
-
-
 	shader = shader.replaceAll( 'NUM_LIGHT_DIR', lights ? lights.directional.length.toString() : "0" );
 	shader = shader.replaceAll( 'NUM_SHADOWMAP_DIR', lights ? Math.min( 2, lights.directional.filter( ( light ) => light.component.castShadow ).length ).toString() : "0" );
 

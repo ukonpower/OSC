@@ -61,6 +61,25 @@
 					"name": "MainCamera"
 				}
 			]
+		},
+		{
+			"path": "/root/blidgeRoot/SkyBox",
+			"components": [
+				{
+					"name": "SkyBox"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/Sun",
+			"components": [
+				{
+					"name": "Light",
+					"props": {
+						"type": "directional"
+					}
+				}
+			]
 		}
 	],
 	"timeline/duration": 4650,

@@ -50,7 +50,7 @@ export class Bloom extends MXP.PostProcess {
 					type: '1i'
 				},
 				uThreshold: {
-					value: 1.8,
+					value: 1.0,
 					type: '1f'
 				},
 				uBrightness: {
