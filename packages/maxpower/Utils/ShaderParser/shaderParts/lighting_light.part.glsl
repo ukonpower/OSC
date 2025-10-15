@@ -7,7 +7,7 @@ float shadow;
 Light light;
 LightCamera lightCamera;
 
-#if NUM_LIGHT_DIR > 0 
+#if NUM_LIGHT_DIR > 0
 
 	DirectionalLight dLight;
 
@@ -31,7 +31,7 @@ LightCamera lightCamera;
 		
 		// lighting
 
-		outColor.xyz += RE( geo, mat, light ) * shadow;
+		outColor.xyz += RE( geo, mat, light );// * shadow;
 
 	#pragma loop_end
 

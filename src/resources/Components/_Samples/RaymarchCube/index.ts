@@ -12,9 +12,6 @@ export class RaymarchCube extends MXP.Component {
 
 		super( param );
 
-		console.log( "init" );
-
-
 		// geometry
 
 		const geo = new MXP.SphereGeometry( {

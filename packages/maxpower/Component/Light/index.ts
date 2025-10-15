@@ -7,7 +7,7 @@ export type LightType = 'directional' | 'spot'
 
 export class Light extends ShadowMapCamera {
 
-	public lightType: LightType;
+	private _lightType: LightType;
 
 	// common
 
@@ -15,7 +15,7 @@ export class Light extends ShadowMapCamera {
 	public intensity: number;
 
 	public castShadow: boolean;
-	private shadowMapSize: GLP.Vector;
+	private _shadowMapSize: GLP.Vector;
 
 	// spot
 
@@ -30,7 +30,7 @@ export class Light extends ShadowMapCamera {
 
 		super( params );
 
-		this.lightType = 'spot';
+		this._lightType = 'spot';
 		this.cameraType = "perspective";
 
 		this.color = new GLP.Vector( 1.0, 1.0, 1.0, 0.0 );
@@ -39,7 +39,7 @@ export class Light extends ShadowMapCamera {
 		// shadow
 
 		this.castShadow = true;
-		this.shadowMapSize = new GLP.Vector( 1024, 1024 );
+		this._shadowMapSize = new GLP.Vector( 1024, 1024 );
 
 		// directional
 
@@ -56,6 +56,26 @@ export class Light extends ShadowMapCamera {
 		// field
 
 		this.field(
+			"type",
+			() => this._lightType,
+			( value: LightType ) => {
+
+				this._lightType = value;
+				this.updateProjectionMatrix();
+
+			},
+			{
+				format: {
+					type: "select",
+					list: [
+						{ label: "Directional", value: "directional" },
+						{ label: "Spot", value: "spot" }
+					]
+				}
+			}
+		);
+
+		this.field(
 			"intensity",
 			() => this.intensity,
 			( value: number ) => this.intensity = value,
@@ -65,6 +85,12 @@ export class Light extends ShadowMapCamera {
 		);
 
 		this.updateProjectionMatrix();
+
+	}
+
+	public get lightType() {
+
+		return this._lightType;
 
 	}
 
@@ -79,17 +105,17 @@ export class Light extends ShadowMapCamera {
 	public setShadowMap( renderTarget: GLP.GLPowerFrameBuffer ) {
 
 		this.renderTarget = renderTarget;
-		this.renderTarget.setSize( this.shadowMapSize );
+		this.renderTarget.setSize( this._shadowMapSize );
 
 	}
 
 	public setShadowMapSize( size: GLP.Vector ) {
 
-		this.shadowMapSize.copy( size );
+		this._shadowMapSize.copy( size );
 
 		if ( this.renderTarget ) {
 
-			this.renderTarget.setSize( this.shadowMapSize );
+			this.renderTarget.setSize( this._shadowMapSize );
 
 		}
 
