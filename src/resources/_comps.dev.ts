@@ -8,7 +8,6 @@ import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/Overlay
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
-import { RaymarchMesh } from './Components/Demo4/RaymarchMesh/index.ts';
 import { SkyBox } from './Components/Demo4/SkyBox/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
@@ -18,6 +17,7 @@ import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
 import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
 import { RaymarchCube } from './Components/_Samples/RaymarchCube/index.ts';
+import { RaymarchMesh } from './Components/_Templates/RaymarchMesh/index.ts';
 
 export const COMPONENTLIST: {[key: string]: any} = {
 	Camera: {
@@ -25,7 +25,6 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	Demo4: {
 		Music,
-		RaymarchMesh,
 		SkyBox,
 	},
 	ObjectControls: {
@@ -45,5 +44,8 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	_Samples: {
 		RaymarchCube,
+	},
+	_Templates: {
+		RaymarchMesh,
 	},
 };
