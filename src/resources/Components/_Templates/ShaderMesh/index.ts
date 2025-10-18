@@ -1,0 +1,67 @@
+import * as MXP from 'maxpower';
+
+import basicVert from './shaders/basic.vs';
+import basicFrag from './shaders/basic.fs';
+
+import { globalUniforms } from '~/globals';
+
+/**
+ * ShaderMesh - 任意のシェーダーを描画するためのPlaneメッシュコンポーネント
+ * テンプレートとして使用し、シェーダーファイルを自由に編集可能
+ */
+export class ShaderMesh extends MXP.Component {
+
+	constructor( params: MXP.ComponentParams ) {
+
+		super( params );
+
+		// Meshコンポーネントを追加
+		const mesh = this._entity.addComponent( MXP.Mesh );
+
+		// PlaneGeometryを作成
+		mesh.geometry = new MXP.PlaneGeometry( { width: 1.0, height: 1.0 } );
+
+		// マテリアルを作成
+		mesh.material = new MXP.Material( {
+			phase: [ "deferred", "forward" ], // deferredとforwardの両方で描画
+			vert: MXP.hotGet( "basicVert", basicVert ),
+			frag: MXP.hotGet( "basicFrag", basicFrag ),
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+		} );
+
+		// ホットリロード対応（開発時のみ）
+		if ( import.meta.hot ) {
+
+			import.meta.hot.accept( './shaders/basic.vs', ( module ) => {
+
+				if ( module ) {
+
+					mesh.material.vert = MXP.hotUpdate( 'basicVert', module.default );
+					mesh.material.requestUpdate();
+
+				}
+
+			} );
+
+			import.meta.hot.accept( './shaders/basic.fs', ( module ) => {
+
+				if ( module ) {
+
+					mesh.material.frag = MXP.hotUpdate( 'basicFrag', module.default );
+					mesh.material.requestUpdate();
+
+				}
+
+			} );
+
+		}
+
+	}
+
+	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+
+		// カスタムユニフォームの更新などをここに記述可能
+
+	}
+
+}

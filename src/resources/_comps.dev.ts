@@ -18,6 +18,7 @@ import { UniformControls } from './Components/Utilities/UniformsControls/index.t
 import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
 import { RaymarchCube } from './Components/_Samples/RaymarchCube/index.ts';
 import { RaymarchMesh } from './Components/_Templates/RaymarchMesh/index.ts';
+import { ShaderMesh } from './Components/_Templates/ShaderMesh/index.ts';
 
 export const COMPONENTLIST: {[key: string]: any} = {
 	Camera: {
@@ -47,5 +48,6 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	_Templates: {
 		RaymarchMesh,
+		ShaderMesh,
 	},
 };

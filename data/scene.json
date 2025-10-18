@@ -63,10 +63,10 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro",
+			"path": "/root/blidgeRoot/Dummy/Cube",
 			"components": [
 				{
-					"name": "RaymarchMesh"
+					"name": "ShaderMesh"
 				}
 			]
 		},
