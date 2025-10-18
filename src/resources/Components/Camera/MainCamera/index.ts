@@ -2,9 +2,9 @@ import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 import { Engine } from 'orengine';
 
+import { OrbitControls } from '../../_DevOnly/OrbitControls';
 import { ShakeViewer } from '../../ObjectControls/CameraShake';
 import { LookAt } from '../../ObjectControls/LookAt';
-import { OrbitControls } from '../../_DevOnly/OrbitControls';
 import { BLidgeClient } from '../../Utilities/BLidgeClient';
 
 import { Bloom } from './PostProcess/Bloom';
@@ -303,6 +303,26 @@ export class MainCamera extends MXP.Component {
 		this.renderCamera.near = 0.5;
 		this.renderCamera.far = 3000;
 		this.renderCamera.needsUpdateProjectionMatrix = true;
+
+		// BLidgeアニメーションからカメラパラメータを制御
+		const blidger = this.entity.getComponent( MXP.BLidger );
+
+		if ( blidger ) {
+
+
+			const cameraState = blidger.animations.get( "state" );
+
+			if ( cameraState ) {
+
+				// fov
+				this.renderCamera.fov = 2 * Math.atan( 12 / ( 2 * cameraState.value.x ) ) / Math.PI * 180;
+
+				// lookat
+				this._lookAt.enabled = cameraState.value.y > 0.5;
+
+			}
+
+		}
 
 	}
 

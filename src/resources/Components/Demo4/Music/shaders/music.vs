@@ -890,7 +890,7 @@ vec2 music( float t ) {
 
 	// Section E: Bridge - ブレイクダウンとビルドアップ (3小節)
 
-	mt -= 70.0;
+	mt -= 65.0;
 	beat4 = beat( mt, 4.0 );
 	beat8 = beat( mt, 8.0 );
 	beat16 = beat( mt, 16.0 );
