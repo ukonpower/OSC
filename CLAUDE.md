@@ -519,6 +519,132 @@ export class TextureGenerator extends MXP.Component {
 - `this.enabled`を使ってコンポーネントの有効/無効を切り替え可能
 - イベントシステム: `this.emit()`と`this.on()`でカスタムイベント送受信可能
 
+## シェーダーのincludeシステム
+
+このプロジェクトでは、GLSLシェーダーファイル内で`#include <name>`ディレクティブを使用して共通コードを再利用できます。
+
+### 仕組み
+
+シェーダーは`packages/maxpower/Utils/ShaderParser/index.ts`の`shaderParse()`関数によってパースされ、`#include`ディレクティブが対応するGLSLコードに置換されます。
+
+**処理フロー:**
+1. `shaderInsertDefines()` - #defineディレクティブを挿入
+2. バージョンディレクティブとprecisionを自動追加（`#version 300 es` + `precision highp float;`）
+3. `shaderInclude()` - #includeディレクティブを置換
+4. `shaderInsertLights()` - ライト数の定数を置換
+5. `shaderUnrollLoop()` - ループ展開用プラグマを処理
+
+### 利用可能なインクルード
+
+インクルードファイルは2種類あります：
+
+#### 1. shaderModules（共通ユーティリティ）
+`packages/maxpower/Utils/ShaderParser/shaderModules/`に配置されている汎用関数群：
+
+| インクルード名 | ファイル | 内容 |
+|--------------|---------|------|
+| `common` | `common.module.glsl` | 数学定数（PI等）、構造体（Geometry、Material）、基本関数 |
+| `sdf` | `sdf.module.glsl` | SDF（符号付き距離関数）のプリミティブ（球体、ボックス、ピラミッド等） |
+| `rotate` | `rotate.module.glsl` | 回転行列生成関数 |
+| `random` | `random.module.glsl` | ランダム数生成関数 |
+| `noise_simplex` | `noiseSimplex.module.glsl` | Simplexノイズ |
+| `noise_cyclic` | `noiseCyclic.module.glsl` | 周期的なノイズ |
+| `noise_value` | `noiseValue.module.glsl` | Valueノイズ |
+| `light` | `light.module.glsl` | ライティング計算関数 |
+| `pmrem` | `pmrem.module.glsl` | PMREM（Pre-filtered Mipmap Radiance Environment Map）関連 |
+| `rm_normal` | `raymarch_normal.module.glsl` | レイマーチング法線計算 |
+
+#### 2. shaderParts（レンダリングパイプライン部品）
+`packages/maxpower/Utils/ShaderParser/shaderParts/`に配置されているレンダリングパイプライン用の定型コード：
+
+| インクルード名 | ファイル | 内容 |
+|--------------|---------|------|
+| `vert_h` | `vert_h.part.glsl` | 頂点シェーダーヘッダー（ユニフォーム等） |
+| `vert_in` | `vert_in.part.glsl` | 頂点シェーダー入力（attribute変数） |
+| `vert_out` | `vert_out.part.glsl` | 頂点シェーダー出力（varying変数） |
+| `frag_h` | `frag_h.part.glsl` | フラグメントシェーダーヘッダー（ユニフォーム、varying入力） |
+| `frag_in` | `frag_in.part.glsl` | フラグメントシェーダー入力 |
+| `frag_out` | `frag_out.part.glsl` | フラグメントシェーダー出力 |
+| `rm_h` | `raymarch_h.part.glsl` | レイマーチングヘッダー |
+| `rm_ray_obj` | `raymarch_ray_object.part.glsl` | レイマーチングレイ生成（オブジェクト空間） |
+| `rm_ray_world` | `raymarch_ray_world.part.glsl` | レイマーチングレイ生成（ワールド空間） |
+| `rm_out_obj` | `raymarch_out_obj.part.glsl` | レイマーチング出力（オブジェクト空間） |
+| `uni_time` | `uniform_time.part.glsl` | 時間ユニフォーム |
+| `lighting_light` | `lighting_light.part.glsl` | ライトユニフォーム |
+| `lighting_env` | `lighting_env.part.glsl` | 環境マップライティング |
+| `lighting_forwardIn` | `lighting_forwardIn.part.glsl` | フォワードレンダリング入力 |
+
+### 使用例
+
+```glsl
+// raymarch.fs
+#include <common>      // 数学定数と構造体
+#include <packing>     // パッキングユーティリティ（外部ライブラリ）
+#include <frag_h>      // フラグメントシェーダーヘッダー
+#include <sdf>         // SDF関数群
+
+#include <rm_h>        // レイマーチングヘッダー
+
+// カスタムSDF定義
+SDFResult D( vec3 p ) {
+    p = mod( p, 10.0 ) - 5.0;
+    float d = sdSphere( p, 1.0 );  // sdfからインクルードされた関数
+    return SDFResult( d, p, 0.0 );
+}
+
+void main() {
+    // シェーダーロジック
+}
+```
+
+### 新しいインクルードファイルの追加方法
+
+1. **ファイル作成**:
+   - 共通ユーティリティ: `packages/maxpower/Utils/ShaderParser/shaderModules/yourmodule.module.glsl`
+   - パイプライン部品: `packages/maxpower/Utils/ShaderParser/shaderParts/yourpart.part.glsl`
+
+2. **ShaderParser/index.tsに登録**:
+```typescript
+// インポート
+import yourmodule from './shaderModules/yourmodule.module.glsl';
+
+// shaderInclude関数内のMapに追加
+const dict = new Map<string, string>( [
+    // ... 既存のエントリ
+    [ "yourmodule", yourmodule ],
+] );
+```
+
+3. **使用**:
+```glsl
+#include <yourmodule>
+```
+
+### 追加機能
+
+#### ループ展開プラグマ
+動的なループ展開が必要な場合に使用：
+
+```glsl
+#pragma loop_start 5
+    // LOOP_INDEXは0〜4に置換される
+    uniform sampler2D texture_LOOP_INDEX;
+#pragma loop_end
+```
+
+#### ライト数の動的置換
+シェーダー内で`NUM_LIGHT_DIR`、`NUM_SHADOWMAP_DIR`等の定数が自動的にシーンのライト数に置換されます。
+
+#### 外部ライブラリ
+一部のシェーダーでは`#include <packing>`など、ビルド時に外部（glslifyなど）から提供されるインクルードも使用可能です。
+
+### ベストプラクティス
+
+1. **共通処理は積極的にインクルード化**: 64KB制約があるため、重複コードは共通モジュールに移動
+2. **インクルード順序に注意**: 依存関係のあるインクルードは依存先を先に記述
+3. **モジュールは小さく保つ**: 必要な関数だけをインクルードできるよう、機能ごとに分割
+4. **コメントを記述**: インクルードファイル内のコメントは自動削除されるので積極的に記述
+
 ## 音楽シェーダーシステム
 
 このプロジェクトではGLSLシェーダーで音楽を生成する独自システムを実装しています。詳細は [`MUSIC.md`](./MUSIC.md) を参照してください。

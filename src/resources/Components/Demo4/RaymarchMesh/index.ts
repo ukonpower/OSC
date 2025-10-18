@@ -26,11 +26,8 @@ export class RaymarchMesh extends MXP.Component {
 			phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
 			vert: MXP.hotGet( "raymarchVert", raymarchVert ),
 			frag: MXP.hotGet( "raymarchFrag", raymarchFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time ) // グローバルタイムユニフォームを使用
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
 		} );
-
-		console.log( "aaa" );
-
 
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {

@@ -9,7 +9,9 @@ in vec2 vVelocity;
 uniform mat4 uModelMatrix;
 uniform mat4 uModelMatrixInverse;
 uniform mat4 uViewMatrix;
+uniform mat4 uViewMatrixInverse;
 uniform mat4 uProjectionMatrix;
+uniform mat4 uProjectionMatrixInverse;
 uniform vec3 uCameraPosition;
 uniform vec2 uResolution;
 
