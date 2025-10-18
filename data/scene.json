@@ -63,6 +63,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneMaguro",
+			"components": [
+				{
+					"name": "RaymarchMesh"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SkyBox",
 			"components": [
 				{

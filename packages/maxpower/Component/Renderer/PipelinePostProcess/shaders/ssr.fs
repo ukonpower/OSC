@@ -24,7 +24,7 @@ in vec2 vUv;
 
 layout (location = 0) out vec4 outColor;
 #define MARCH 16.0
-#define LENGTH 16 .0
+#define LENGTH 16.0
 #define OBJDEPTH 0.5
 
 void main( void ) {
