@@ -2,6 +2,7 @@
 import { CollectedLights } from 'packages/maxpower/Component/Renderer';
 
 import common from './shaderModules/common.module.glsl';
+import hash from './shaderModules/hash.module.glsl';
 import light from './shaderModules/light.module.glsl';
 import noiseCyclic from './shaderModules/noiseCyclic.module.glsl';
 import noiseSimplex from './shaderModules/noiseSimplex.module.glsl';
@@ -52,6 +53,7 @@ export const shaderInclude = ( shader: string ) => {
 
 	const dict = new Map<string, string>( [
 		[ "common", common ],
+		[ "hash", hash ],
 		[ "sdf", sdf ],
 		[ "rotate", rotate ],
 		[ "random", random ],
