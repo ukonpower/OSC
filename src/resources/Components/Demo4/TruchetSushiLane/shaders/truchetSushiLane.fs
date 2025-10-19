@@ -42,7 +42,10 @@ float p3( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3 ) {
 	
 }
 
-float gridSize = 1.0;
+float gridSize = 3.0;
+
+// Grid Traversal (DDA)
+// 参考: https://kinakomoti321.hatenablog.com/entry/2024/12/10/023309
 
 // SDF（Signed Distance Function）
 SDFResult D( vec3 p ) {
@@ -70,7 +73,7 @@ SDFResult D( vec3 p ) {
 
 	for( int i = 0; i < 4; i++ ) {
 
-		if( hash12( gridCenter + dir[i] * 0.5 ) < 0.5 ) {
+		if( hash12( gridCenter + dir[i] * 0.5 * gridSize ) < 0.5 ) {
 
 			quv[qCount++] = dir[i];
 			
@@ -80,33 +83,35 @@ SDFResult D( vec3 p ) {
 
 	float s = 0.0;
 
-	float dist2D = 9999.0;
+	float dist2D;
+		dist2D = length( p.xz ) - 0.4;
 
 	if( qCount == 0 ) {
+
 
 	}
 
 	if( qCount == 1 ) {
 
-		dist2D = p1( p / gridSize, quv[0] );
+		dist2D = min( dist2D, p1( p / gridSize, quv[0] ) );
 
 	}
 
 	if( qCount == 2 ) {
 
-		dist2D = p2( p / gridSize, quv[0], quv[1] );
+		dist2D = min( dist2D, p2( p / gridSize, quv[0], quv[1] ) );
 		
 	}
 
 	if( qCount == 3 ) {
 		
-		dist2D = p3( p / gridSize, quv[0], quv[1], quv[2] );
+		dist2D = min( dist2D, p3( p / gridSize, quv[0], quv[1], quv[2] ) );
 
 	}
 
 	if( qCount == 4 ) {
 
-		dist2D = p3( p / gridSize, quv[1], quv[2], quv[3] );
+		dist2D = min( dist2D, p3( p / gridSize, quv[1], quv[2], quv[3] ) );
 		
 	}
 
@@ -134,21 +139,44 @@ void main( void ) {
 	// カメラ位置からワールド空間でレイを初期化
 	#include <rm_ray_world>
 
+	// DDA初期化
+	ivec3 mapPos = ivec3( floor( rayPos / gridSize ) );
+	vec3 deltaDist = abs( gridSize / rayDir );
+	ivec3 rayStep = ivec3( sign( rayDir ) );
+	vec3 sideDist = ( sign( rayDir ) * ( vec3( mapPos ) - rayPos / gridSize ) + ( sign( rayDir ) * 0.5 ) + 0.5 ) * deltaDist;
+
 	SDFResult dist;
 	bool hit = false;
+	float t = 0.0;
 
-	// レイマーチング
-	for( int i = 0; i < 128; i++ ) {
+	// Grid Traversal
+	for( int i = 0; i < 64; i++ ) {
 
-		dist = D( rayPos );
-		rayPos += dist.d * rayDir;
+		float tMax = min( min( sideDist.x, sideDist.y ), sideDist.z );
 
-		if( dist.d < 0.001 ) {
+		// 現在のグリッドセル内でレイマーチング
+		for( int j = 0; j < 32; j++ ) {
 
-			hit = true;
-			break;
+			dist = D( rayPos );
+
+			if( dist.d < 0.001 ) {
+				hit = true;
+				break;
+			}
+
+			t += dist.d;
+			rayPos += rayDir * dist.d;
+
+			if( t >= tMax ) break;
 
 		}
+
+		if( hit ) break;
+
+		// 次のグリッドセルへ
+		bvec3 mask = lessThanEqual( sideDist.xyz, min( sideDist.yzx, sideDist.zxy ) );
+		sideDist += vec3( mask ) * deltaDist;
+		mapPos += ivec3( vec3( mask ) ) * rayStep;
 
 	}
 
