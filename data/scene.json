@@ -71,6 +71,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneHome/Lane",
+			"components": [
+				{
+					"name": "TruchetSushiLane"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneMaguro/Plane",
 			"components": [
 				{
