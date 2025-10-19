@@ -175,7 +175,7 @@ export class BLidgeClient extends MXP.Component {
 		 * @param node BLidgeノード
 		 * @returns 作成/更新されたエンティティ
 		 */
-		const _ = ( node: MXP.BLidgeNode ): MXP.Entity => {
+		const createEntityFromNode = ( node: MXP.BLidgeNode ): MXP.Entity => {
 
 			// 既存のエンティティがあれば取得、なければ新規作成
 			const entity: MXP.Entity = ( this.entities.get( node.name ) || new MXP.Entity() );
@@ -195,7 +195,7 @@ export class BLidgeClient extends MXP.Component {
 			// 子ノードを再帰的に処理
 			node.children.forEach( c => {
 
-				const child = _( c );
+				const child = createEntityFromNode( c );
 
 				entity.add( child );
 
@@ -210,7 +210,7 @@ export class BLidgeClient extends MXP.Component {
 		};
 
 		// ルートノードからエンティティツリーを作成
-		const newBLidgeRoot = blidge.root && _( blidge.root );
+		const newBLidgeRoot = blidge.root && createEntityFromNode( blidge.root );
 
 		if ( newBLidgeRoot ) {
 
@@ -259,12 +259,10 @@ export class BLidgeClient extends MXP.Component {
 		// イベント通知
 		if ( this.entity && this.blidgeRoot ) {
 
-			// シーン作成イベントを発火（MainCameraなどが使用）
-			this.emit( "sceneCreated", [ this.blidgeRoot ] );
-
-			// プロジェクトデータのoverridesを適用
 			const engine = Engine.getInstance( gl );
 			engine.applyProjectOverrides( this.blidgeRoot );
+
+			this.emit( "sceneCreated", [ this.blidgeRoot ] );
 
 		}
 
