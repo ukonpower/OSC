@@ -42,7 +42,7 @@ float p3( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3 ) {
 	
 }
 
-float gridSize = 9.0;
+float gridSize = 1.0;
 
 // SDF（Signed Distance Function）
 SDFResult D( vec3 p ) {
