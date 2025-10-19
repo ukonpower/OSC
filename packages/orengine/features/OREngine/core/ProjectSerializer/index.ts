@@ -153,14 +153,8 @@ export class ProjectSerializer {
 
 					if ( compItem ) {
 
-						let component = entity.getComponent( compItem.component );
-
-						if ( ! component ) {
-
-							component = entity.addComponent( compItem.component );
-							component.initiator = "user";
-
-						}
+						const component = entity.addComponent( compItem.component );
+						component.initiator = "user";
 
 						if ( c.props ) {
 
