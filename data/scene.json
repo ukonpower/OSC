@@ -71,6 +71,17 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneMaguro/Plane",
+			"components": [
+				{
+					"name": "ShaderMotionGraphics",
+					"props": {
+						"shaderName": "gradient"
+					}
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SkyBox",
 			"components": [
 				{

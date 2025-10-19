@@ -8,6 +8,7 @@ import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/Overlay
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
+import { ShaderMotionGraphics } from './Components/Demo4/ShaderMotionGraphics/index.ts';
 import { SkyBox } from './Components/Demo4/SkyBox/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
@@ -26,6 +27,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	Demo4: {
 		Music,
+		ShaderMotionGraphics,
 		SkyBox,
 	},
 	ObjectControls: {
