@@ -36,6 +36,9 @@ export class BLidgeClient extends MXP.Component {
 	/** GLTFファイルのパス */
 	private gltfPath: string;
 
+	/** reload処理のデバウンス用タイマーID */
+	private reloadTimerId: number | null;
+
 	/**
 	 * コンストラクタ
 	 * @param params コンポーネントのパラメータ
@@ -53,6 +56,7 @@ export class BLidgeClient extends MXP.Component {
 		};
 		this.useGLTF = false;
 		this.gltfPath = BASE_PATH + "/scene.glb";
+		this.reloadTimerId = null;
 
 		/*-------------------------------
 			BLidge初期化
@@ -93,10 +97,10 @@ export class BLidgeClient extends MXP.Component {
 		-------------------------------*/
 
 		/**
-		 * 再読み込み処理
+		 * 再読み込み処理（即座実行）
 		 * 選択されたタイプに基づいてシーンを読み込み直す
 		 */
-		const reload = async () => {
+		const reloadImmediate = async () => {
 
 			if ( this.type == "json" ) {
 
@@ -111,6 +115,30 @@ export class BLidgeClient extends MXP.Component {
 				this.blidge.connect( this.connection.url, this.useGLTF ? this.gltfPath : undefined );
 
 			}
+
+		};
+
+		/**
+		 * 再読み込み処理（デバウンス付き）
+		 * フィールド更新時に呼ばれ、短時間に複数回更新があった場合でも
+		 * 最後の更新から一定時間（500ms）後に一度だけreloadが実行される
+		 */
+		const reload = () => {
+
+			// 既存のタイマーをキャンセル
+			if ( this.reloadTimerId !== null ) {
+
+				clearTimeout( this.reloadTimerId );
+
+			}
+
+			// 500ms後にreloadを実行
+			this.reloadTimerId = window.setTimeout( () => {
+
+				this.reloadTimerId = null;
+				reloadImmediate();
+
+			}, 500 );
 
 		};
 
@@ -148,8 +176,8 @@ export class BLidgeClient extends MXP.Component {
 
 		// WebSocket設定用ディレクトリ（WebSocketモード時のみ表示）
 		const ws = this.fieldDir( "websocket", { hidden: () => this.type != "websocket" } );
-		// 再接続ボタン
-		ws.field( "reconnect", () => () => reload(), undefined, {
+		// 再接続ボタン（即座に実行）
+		ws.field( "reconnect", () => () => reloadImmediate(), undefined, {
 			label: "Reconnect",
 		} );
 		// WebSocket URL設定
@@ -275,6 +303,14 @@ export class BLidgeClient extends MXP.Component {
 	public dispose(): void {
 
 		super.dispose();
+
+		// デバウンスタイマーをクリア
+		if ( this.reloadTimerId !== null ) {
+
+			clearTimeout( this.reloadTimerId );
+			this.reloadTimerId = null;
+
+		}
 
 		// BLidgeルートエンティティがある場合は破棄
 		if ( this.blidgeRoot ) {
