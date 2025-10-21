@@ -1,5 +1,8 @@
 // https://iquilezles.org/articles/distfunctions/
 
+// 3D SDF
+
+
 float sdSphere( vec3 p, float s )
 {
   return length(p)-s;
@@ -74,6 +77,18 @@ float sdTorus( vec3 p, vec2 t )
 {
   vec2 q = vec2(length(p.xz)-t.x,p.y);
   return length(q)-t.y;
+}
+
+// 2D
+
+float sdRing( in vec2 p, in vec2 n, in float r, in float th )
+{
+    p.x = abs(p.x);
+    
+    p = mat2(n.x,n.y,-n.y,n.x)*p;
+
+    return max( abs(length(p)-r)-th*0.5,
+                length(vec2(p.x,max(0.0,abs(r-p.y)-th*0.5)))*sign(p.x) );
 }
 
 // operators
