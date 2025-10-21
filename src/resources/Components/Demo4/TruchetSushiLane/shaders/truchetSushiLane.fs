@@ -69,18 +69,28 @@ float p4( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3, vec2 dir4 ) {
 }
 
 
-float gridSize = 3.0;
+float gridSize = 2.0;
+vec2 gridCenter;
 
-// Grid Traversal (DDA)
-// 参考: https://kinakomoti321.hatenablog.com/entry/2024/12/10/023309
+float gridTraversal( vec2 ro, vec2 rd) {
+
+   gridCenter = (floor( ( ro + rd * 1E-3 ) / gridSize) + 0.5) * gridSize;
+   
+   vec2 src = -( ro - gridCenter ) / rd;
+   vec2 dst = abs( ( 0.5  * gridSize ) / rd );
+   vec2 bv = src + dst;
+
+   return  min( bv.x, bv.y );
+   
+} 
 
 // SDF（Signed Distance Function）
 SDFResult D( vec3 p ) {
 
 	vec3 op = p;
 
-	vec2 gridCenter = floor( p.xz / gridSize ) * gridSize + gridSize * 0.5;
-    p.xz = mod( p.xz, gridSize ) - gridSize * 0.5;
+	// vec2 gridCenter = floor( p.xz / gridSize ) * gridSize + gridSize * 0.5;
+	p.xz -= gridCenter;
 
 	// TruchetTiling
 	// thanks to renard
@@ -103,9 +113,9 @@ SDFResult D( vec3 p ) {
 		if( hash12( gridCenter + dir[i] * 0.5 * gridSize ) < 0.5 ) {
 
 			quv[qCount++] = dir[i];
-			
+
 		}
-		
+
 	}
 
 	float s = 0.0;
@@ -129,11 +139,11 @@ SDFResult D( vec3 p ) {
 	if( qCount == 2 ) {
 
 		dist2D = min( dist2D, p2( p / gridSize, quv[0], quv[1] ) );
-		
+
 	}
 
 	if( qCount == 3 ) {
-		
+
 		dist2D = min( dist2D, p3( p / gridSize, quv[0], quv[1], quv[2] ) );
 
 	}
@@ -141,7 +151,7 @@ SDFResult D( vec3 p ) {
 	if( qCount == 4 ) {
 
 		dist2D = min( dist2D, p4( p / gridSize, quv[0], quv[1], quv[2], quv[3] ) );
-		
+
 	}
 
 	float h = 0.01;
@@ -165,44 +175,24 @@ void main( void ) {
 	// カメラ位置からワールド空間でレイを初期化
 	#include <rm_ray_world>
 
-	// DDA初期化
-	ivec3 mapPos = ivec3( floor( rayPos / gridSize ) );
-	vec3 deltaDist = abs( gridSize / rayDir );
-	ivec3 rayStep = ivec3( sign( rayDir ) );
-	vec3 sideDist = ( sign( rayDir ) * ( vec3( mapPos ) - rayPos / gridSize ) + ( sign( rayDir ) * 0.5 ) + 0.5 ) * deltaDist;
-
 	SDFResult dist;
 	bool hit = false;
 	float t = 0.0;
 
-	// Grid Traversal
-	for( int i = 0; i < 64; i++ ) {
+	// 通常のレイマーチング
+	for( int i = 0; i < 128; i++ ) {
 
-		float tMax = min( min( sideDist.x, sideDist.y ), sideDist.z );
+		dist = D( rayPos );
 
-		// 現在のグリッドセル内でレイマーチング
-		for( int j = 0; j < 32; j++ ) {
-
-			dist = D( rayPos );
-
-			if( dist.d < 0.001 ) {
-				hit = true;
-				break;
-			}
-
-			t += dist.d;
-			rayPos += rayDir * dist.d;
-
-			if( t >= tMax ) break;
-
+		if( dist.d < 0.001 ) {
+			hit = true;
+			break;
 		}
 
-		if( hit ) break;
-
-		// 次のグリッドセルへ
-		bvec3 mask = lessThanEqual( sideDist.xyz, min( sideDist.yzx, sideDist.zxy ) );
-		sideDist += vec3( mask ) * deltaDist;
-		mapPos += ivec3( vec3( mask ) ) * rayStep;
+        float limitD = gridTraversal(rayPos.xz, rayDir.xz);
+		float d = min( dist.d, limitD );
+		t += d;
+		rayPos += rayDir * d;
 
 	}
 
