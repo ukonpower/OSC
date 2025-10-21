@@ -17,6 +17,10 @@ float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
 
 float strokeWidth = 0.1;
 
+float ring( vec2 center ) {
+	return sdRing( center, vec2( -1.0, 0.0 ), 0.5, strokeWidth );
+}
+
 float p1( vec3 p, vec2 dir1 ) {
 
 	float d = sdOrientedBox( p.xz, vec2( 0.0 ), dir1, strokeWidth );
@@ -31,8 +35,8 @@ float p2( vec3 p, vec2 dir1, vec2 dir2 ) {
 		return sdOrientedBox( p.xz, dir1, dir2, strokeWidth );
 
 	}
-		
-	return sdRing( p.xz - ( dir1 + dir2 ) * 0.5, vec2( -1.0, 0.0 ), 0.5, 0.1 );
+
+	return ring( p.xz - ( dir1 + dir2 ) * 0.5 );
 
 }
 
@@ -58,8 +62,8 @@ float p3( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3 ) {
 
 float p4( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3, vec2 dir4 ) {
 
-	float d = sdRing( p.xz - 0.5, vec2( -1.0, 0.0 ), 0.5, 0.1 );
-	d = min( d, sdRing( p.xz + 0.5, vec2( -1.0, 0.0 ), 0.5, 0.1 ) );
+	float d = ring( p.xz - 0.5 );
+	d = min( d, ring( p.xz + 0.5 ) );
 	return d;
 
 }
@@ -108,7 +112,13 @@ SDFResult D( vec3 p ) {
 
 	float dist2D;
 
-	dist2D = length( p.xz ) - 0.5;
+	dist2D = 999.0;
+
+	if( qCount == 1 ) {
+
+		dist2D = 999.0;
+
+	}
 
 	if( qCount == 1 ) {
 
