@@ -79,6 +79,12 @@ float sdTorus( vec3 p, vec2 t )
   return length(q)-t.y;
 }
 
+float sdTriPrism( vec3 p, vec2 h )
+{
+  vec3 q = abs(p);
+  return max(q.z-h.y,max(q.x*0.866025+p.y*0.5,-p.y)-h.x*0.5);
+}
+
 // 2D
 
 float sdRing( in vec2 p, in vec2 n, in float r, in float th )

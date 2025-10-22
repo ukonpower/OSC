@@ -14,7 +14,11 @@ export class Maguro extends MXP.Component {
 
 		// geometry
 
-		const geo = new MXP.CubeGeometry();
+		const geo = new MXP.CubeGeometry( {
+			width: 1.5,
+			height: 1,
+			depth: 1
+		} );
 
 		// material
 
@@ -22,6 +26,9 @@ export class Maguro extends MXP.Component {
 			frag: MXP.hotGet( 'maguroFrag', maguroFrag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
 		} );
+
+		console.log( globalUniforms.time.uTimeE );
+
 
 		this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: mat
