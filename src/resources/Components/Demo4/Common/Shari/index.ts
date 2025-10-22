@@ -14,8 +14,10 @@ export class Shari extends MXP.Component {
 
 		// geometry
 
-		const geo = new MXP.SphereGeometry( {
-			radius: 1
+		const geo = new MXP.CubeGeometry( {
+			width: 0.5,
+			height: 0.5,
+			depth: 1
 		} );
 
 		// material

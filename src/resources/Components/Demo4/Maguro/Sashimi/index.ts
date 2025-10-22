@@ -14,15 +14,21 @@ export class Sashimi extends MXP.Component {
 
 		// geometry
 
-		const geo = new MXP.SphereGeometry( {
-			radius: 1
+		const geo = new MXP.CubeGeometry( {
+			depth: 1.7,
+			width: 0.7,
+			height: 1.0
 		} );
 
 		// material
 
 		const mat = new MXP.Material( {
 			frag: MXP.hotGet( 'sashimiFrag', sashimiFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+			uniforms: MXP.UniformsUtils.merge(
+				globalUniforms.resolution,
+				globalUniforms.time,
+				globalUniforms.tex
+			)
 		} );
 
 		this.entity.addComponent( MXP.Mesh, {

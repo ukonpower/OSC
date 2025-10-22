@@ -15,8 +15,8 @@ SDFResult D( vec3 p ) {
 	vec3 pp = p;
 
 	// 丸っこい四角形（横に長い形状）
-	vec3 size = vec3( 1.0, 0.3, 0.5 ) * 0.45;
-	float roundness = 0.3;
+	float roundness = 0.15;
+	vec3 size = vec3( 0.25, 0.25, 0.45 ) - roundness;
 	float d = sdBox( pp, size ) - roundness;
 
 	return SDFResult(
