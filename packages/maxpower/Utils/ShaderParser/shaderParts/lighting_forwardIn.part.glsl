@@ -14,7 +14,8 @@ Material mat = Material(
 	outEmission,
 	mix( outColor.xyz, vec3( 0.0, 0.0, 0.0 ), outMetalic ),
 	mix( vec3( 1.0, 1.0, 1.0 ), outColor.xyz, outMetalic ),
-	outEnv
+	outEnv,
+	0.0
 );
 
 outColor.xyz *= 0.0;
