@@ -1,7 +1,7 @@
 import * as MXP from 'maxpower';
 
-import raymarchVert from './shaders/truchetSushiLane.vs';
 import raymarchFrag from './shaders/truchetSushiLane.fs';
+import raymarchVert from './shaders/truchetSushiLane.vs';
 
 import { globalUniforms } from '~/globals';
 

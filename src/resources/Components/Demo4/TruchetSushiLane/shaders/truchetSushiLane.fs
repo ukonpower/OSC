@@ -17,7 +17,7 @@ float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
 }
 
 vec2 gridCenter;
-float gridSize = 3.0;
+float gridSize = 5.0;
 float strokeWidth = 0.35;
 float laneHeight = 0.1;
 
@@ -108,7 +108,9 @@ vec2 tci(vec2 uv)
 SDFResult D( vec3 p ) {
 
 	vec3 op = p;
+	op.y = mod( op.y, 20.0 ) - 10.0;
 	p.xz -= gridCenter;
+
 
 	// TruchetTiling
 	// thanks to renard
@@ -217,9 +219,9 @@ void main( void ) {
 	#include <rm_out_obj>
 
 	// 赤い色を設定
-	outColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+	outColor = vec4( vec3( 0.9 ), 1.0 );
 	outEmission = vec3( 0.0 );
-	outRoughness = 0.5;
+	outRoughness = 0.1;
 
 	#include <frag_out>
 
