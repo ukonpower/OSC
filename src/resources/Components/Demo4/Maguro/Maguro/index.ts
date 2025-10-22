@@ -27,9 +27,6 @@ export class Maguro extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, globalUniforms.tex )
 		} );
 
-		console.log( globalUniforms.time.uTimeE );
-
-
 		this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: mat
 		} );

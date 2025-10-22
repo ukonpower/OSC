@@ -40,7 +40,6 @@ export const useTimelineContext = () => {
 
 		if ( duration !== undefined ) {
 
-			console.log( "Timeline duration updated:", duration );
 			setViewPort( [ 0, 0, duration, 0 ] );
 
 		}

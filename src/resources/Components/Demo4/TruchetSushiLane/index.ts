@@ -30,9 +30,6 @@ export class TruchetSushiLane extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution, globalUniforms.tex )
 		} );
 
-		console.log( globalUniforms.tex );
-
-
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {
 
