@@ -134,7 +134,7 @@ export class Engine extends MXP.Entity {
 			( window as any ).__glpowerShaderClearHandler = ( shaderKey: string, shaderType: string ) => {
 
 				console.log( `[Engine] Shader clear handler called: key=${shaderKey}, type=${shaderType}` );
-				Engine.shaderErrorManager.clearErrorsByShaderKey( shaderKey );
+				Engine.shaderErrorManager.clearOldestError();
 
 			};
 
