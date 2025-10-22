@@ -7,6 +7,8 @@ import { Glitch } from './Components/Camera/MainCamera/PostProcess/Glitch/index.
 import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/OverlayMixer/index.ts';
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
+import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
+import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/ShaderMotionGraphics/index.ts';
 import { SkyBox } from './Components/Demo4/SkyBox/index.ts';
@@ -27,6 +29,10 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		MainCamera,
 	},
 	Demo4: {
+		Maguro: {
+			Maguro,
+			Sashimi,
+		},
 		Music,
 		ShaderMotionGraphics,
 		SkyBox,
