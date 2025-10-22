@@ -101,6 +101,30 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneMaguro/MizuBall",
+			"components": [
+				{
+					"name": "MizuBall"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/MizuBall.001",
+			"components": [
+				{
+					"name": "MizuBall"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/MizuBall.002",
+			"components": [
+				{
+					"name": "MizuBall"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneMaguro/Sashimi",
 			"components": [
 				{

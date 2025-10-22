@@ -81,9 +81,8 @@
 	flex: 1;
 	font-size: 0.9em;
 	color: $fontCol2;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 .expandIcon {
