@@ -24,11 +24,14 @@ export class TruchetSushiLane extends MXP.Component {
 
 		// マテリアルを作成
 		mesh.material = new MXP.Material( {
-			phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
+			phase: [ "deferred", "shadowMap" ], // Deferredレンダリングパイプラインを使用
 			vert: MXP.hotGet( "truchetSushiLaneVert", raymarchVert ),
 			frag: MXP.hotGet( "truchetSushiLaneFrag", raymarchFrag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution, globalUniforms.tex )
 		} );
+
+		console.log( globalUniforms.tex );
+
 
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {

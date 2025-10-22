@@ -57,8 +57,8 @@ export class TextureGenerator extends MXP.Component {
 			uniforms: Engine.getInstance( gl ).uniforms,
 			resolution: new GLP.Vector( 512, 512 ),
 		} );
+		noiseCyclicAnimeTex.setting( { wrapS: gl.REPEAT, wrapT: gl.REPEAT } );
 		Engine.resources.addTexture( "noiseCyclic_anime", noiseCyclicAnimeTex );
-		globalUniforms.tex.uNoiseCyclicAnimeTex = { type: "1i", value: noiseCyclicAnimeTex };
 		this.updateTextures.push( noiseCyclicAnimeTex );
 
 
@@ -76,7 +76,7 @@ export class TextureGenerator extends MXP.Component {
 
 	}
 
-	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+	protected updateImpl(): void {
 
 		for ( let i = 0; i < this.updateTextures.length; i ++ ) {
 
