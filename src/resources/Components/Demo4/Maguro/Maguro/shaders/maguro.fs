@@ -130,9 +130,8 @@ void main( void ) {
 	vec3 c = vec3( 1.0 );
 	float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
 	c.xyz = mix(c, vec3( 0.0 ), kuro );
-	outEmission += random( gl_FragCoord.xy * 0.01 ) * kuro * 0.2;
 	outColor.xyz = c;
-
+	outFlatness = kuro;
 	outMetalic = 0.2;
 
 
