@@ -127,7 +127,6 @@ void main( void ) {
 	outRoughness = smoothstep( 0.2, 1.0, n1.r );
 	outNormal = normalize( outNormal + n3.xyz * 0.3 );
 
-	
 	vec3 c = vec3( 1.0 );
 	float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
 	c.xyz = mix(c, vec3( 0.0 ), kuro );

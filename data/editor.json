@@ -1,6 +1,6 @@
 {
 	"enableRender": true,
-	"resolutionScale": 1,
+	"resolutionScale": 0.5,
 	"viewType": "render",
 	"frameLoop/enabled": false,
 	"frameLoop/start": 2558.011007808154,

@@ -5,8 +5,8 @@
 #include <rotate>
 
 uniform float uTimeE;
-
 uniform float uAspectRatio;
+uniform sampler2D uNoiseTex;
 
 void main( void ) {
 
@@ -19,7 +19,8 @@ void main( void ) {
 
 	#ifdef IS_FORWARD
 
-		outColor = vec4( outEmission * 0.8, 1.0 );
+		vec4 n = texture( uNoiseTex, vUv * 0.2 );
+		outColor = vec4( outEmission * 1.0 * smoothstep( 0.2, 0.5, n.x ) , 1.0 );
 	
 	#endif
 
