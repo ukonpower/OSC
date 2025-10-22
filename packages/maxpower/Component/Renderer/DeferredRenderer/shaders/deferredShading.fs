@@ -2,6 +2,7 @@
 #include <packing>
 #include <light>
 #include <pmrem>
+#include <random>
 
 // uniforms
 
@@ -76,6 +77,7 @@ void main( void ) {
 	// lighting
 
 	#include <lighting_light>
+	
 
 	// env
 
@@ -89,10 +91,18 @@ void main( void ) {
 
 	outColor.xyz += mat.emission;
 
-	
 	// light shaft
 	
 	outColor.xyz += texture( uLightShaftTexture, vUv ).xyz;
+
+
+	// DEMO4 CUSTOM ----------
+
+	// outColor.xyz += random( vUv ) * mat.flatness * 0.3;
+
+	// outColor.xyz = mix( outColor.xyz, vec3( 1.0, 0.0, 1.0 ),  mat.flatness );
+
+	// -----------------------
 
 	glFragOut0 = glFragOut1 = vec4( max( vec3( 0.0 ), outColor.xyz ), 1.0 );
 

@@ -2,7 +2,7 @@ import * as MXP from 'maxpower';
 
 import finalizeFrag from './shaders/finalize.fs';
 
-import { gl } from '~/globals';
+import { gl, globalUniforms } from '~/globals';
 
 export class Finalize extends MXP.PostProcess {
 
@@ -13,6 +13,7 @@ export class Finalize extends MXP.PostProcess {
 			passes: [
 				new MXP.PostProcessPass( gl, {
 					frag: finalizeFrag,
+					uniforms: globalUniforms.time,
 				} )
 			]
 		} );
