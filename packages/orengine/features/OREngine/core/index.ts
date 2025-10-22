@@ -125,16 +125,14 @@ export class Engine extends MXP.Entity {
 			// エラー発生時のハンドラー
 			( window as any ).__glpowerShaderErrorHandler = ( error: any ) => {
 
-				console.log( `[Engine] Shader error handler called:`, error );
 				Engine.shaderErrorManager.addError( error );
 
 			};
 
-			// コンパイル成功時のハンドラー（そのシェーダーの古いエラーをクリア）
-			( window as any ).__glpowerShaderClearHandler = ( shaderKey: string, shaderType: string ) => {
+			// コンパイル成功時のハンドラー（そのシェーダーキーのエラーをクリア）
+			( window as any ).__glpowerShaderClearHandler = ( shaderKey: string ) => {
 
-				console.log( `[Engine] Shader clear handler called: key=${shaderKey}, type=${shaderType}` );
-				Engine.shaderErrorManager.clearOldestError();
+				Engine.shaderErrorManager.clearErrorsByShaderKey( shaderKey );
 
 			};
 

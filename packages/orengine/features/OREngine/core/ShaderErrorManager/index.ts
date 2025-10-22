@@ -73,39 +73,34 @@ export class ShaderErrorManager {
 	}
 
 	/**
-	 * シェーダーコンパイル成功時に呼ばれる（最も古いエラーをクリア）
-	 * ソースが変わるとshaderKeyも変わるため、代わりにタイムスタンプベースで
-	 * 古いエラーを削除する戦略を取る
+	 * 特定のシェーダーキーに関連するエラーをクリア
+	 * シェーダーコンパイル成功時に呼ばれる
 	 */
-	public clearOldestError(): void {
+	public clearErrorsByShaderKey( shaderKey: string ): void {
 
 		if ( this.errors.size === 0 ) {
 
-			console.log( `[ShaderErrorManager] No errors to clear` );
 			return;
 
 		}
 
-		// 最も古いエラーを見つける
-		let oldestId: string | null = null;
-		let oldestTimestamp = Infinity;
+		// 該当するshaderKeyを持つエラーをすべて削除
+		let clearedCount = 0;
 
 		this.errors.forEach( ( error, id ) => {
 
-			if ( error.timestamp < oldestTimestamp ) {
+			if ( error.shaderKey === shaderKey ) {
 
-				oldestTimestamp = error.timestamp;
-				oldestId = id;
+				this.errors.delete( id );
+				clearedCount ++;
 
 			}
 
 		} );
 
-		if ( oldestId ) {
+		if ( clearedCount > 0 ) {
 
-			const error = this.errors.get( oldestId );
-			console.log( `[ShaderErrorManager] Clearing oldest error (${error?.type}):`, oldestId );
-			this.errors.delete( oldestId );
+			console.log( `[ShaderErrorManager] Cleared ${clearedCount} error(s) for shaderKey: ${shaderKey}` );
 			this.notifyListeners();
 
 		}
