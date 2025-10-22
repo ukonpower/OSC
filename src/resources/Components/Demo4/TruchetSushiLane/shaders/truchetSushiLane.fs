@@ -4,6 +4,7 @@
 #include <sdf>
 #include <hash>
 #include <rm_h>
+#include <rotate>
 
 float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
 {
@@ -15,6 +16,8 @@ float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
     return length(max(q,0.0)) + min(max(q.x,q.y),0.0);    
 }
 
+vec2 gridCenter;
+float gridSize = 3.0;
 float strokeWidth = 0.35;
 float laneHeight = 0.1;
 
@@ -25,6 +28,8 @@ float ring( vec2 center ) {
 float p1( vec3 p, vec2 dir1 ) {
 
 	float d = sdOrientedBox( p.xz, vec2( 0.0 ), dir1, strokeWidth );
+	d = min( d, length( p.xz ) - strokeWidth / 2.0 );
+
 	return d;
 
 }
@@ -43,19 +48,31 @@ float p2( vec3 p, vec2 dir1, vec2 dir2 ) {
 
 float p3( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3 ) {
 
-	vec2 dir1Pair = dir2;
+	vec2 line1 = dir1;
+	vec2 line2 = dir2;
 	vec2 aloneDir = dir3;
 
-	if( dot( dir1, dir1Pair ) < 0.0  ) {
+	if( dot( line1, line2 ) > -0.5  ) {
 
-		dir1Pair = dir3;
+		line2 = dir3;
 		aloneDir = dir2;
 
 	}
 
-	float d = sdOrientedBox( p.xz, dir1, dir1Pair, strokeWidth );
+	if( dot( line1, line2 ) > -0.5 ) {
 
+		line1 = dir2;
+		line2 = dir3;
+		aloneDir = dir1;
+
+	} 
+
+	float d = sdOrientedBox( p.xz, line1, line2, strokeWidth);
 	d = min( d, length( p.xz - aloneDir * 0.5 ) - strokeWidth / 2.0 );
+
+	vec2 dirAmari = mix( line1, line2, step( hash12( gridCenter ), 0.5 ) );
+
+	d = min( d, ring( p.xz - ( aloneDir + dirAmari ) * 0.5 ) );
 
 	return d;
 	
@@ -63,6 +80,7 @@ float p3( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3 ) {
 
 float p4( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3, vec2 dir4 ) {
 
+	p.xz *= rotate( HPI * step(hash12( gridCenter ), 0.5) );
 	float d = ring( p.xz - 0.5 );
 	d = min( d, ring( p.xz + 0.5 ) );
 	return d;
@@ -71,8 +89,6 @@ float p4( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3, vec2 dir4 ) {
 
 
 // https://kinakomoti321.hatenablog.com/entry/2024/12/10/023309
-float gridSize = 2.0;
-vec2 gridCenter;
 float gridTraversal( vec2 ro, vec2 rd) {
 
    gridCenter = (floor( ( ro + rd * 1E-3 ) / gridSize) + 0.5)*gridSize;
@@ -82,6 +98,11 @@ float gridTraversal( vec2 ro, vec2 rd) {
 
    return  min( bv.x, bv.y );
 } 
+
+vec2 tci(vec2 uv)
+{
+  return round(uv*2.)*.5;
+}
 
 // SDF（Signed Distance Function）
 SDFResult D( vec3 p ) {
@@ -106,7 +127,9 @@ SDFResult D( vec3 p ) {
 
 	for( int i = 0; i < 4; i++ ) {
 
-		if( hash12( gridCenter + dir[i] * 0.5 * gridSize ) < 0.5 ) {
+		vec2 id = tci(gridCenter + dir[i] * 0.5 * gridSize);
+
+		if( hash12( id  ) < 0.8 ) {
 
 			quv[qCount++] = dir[i];
 

@@ -113,7 +113,7 @@ export const ShaderMinifierLoader = (): Plugin => {
 			}
 
 			// skip minifier if requested or on Mac
-			if ( skip ) {
+			if ( skip || true ) {
 
 				return {
 					code: `export default ${JSON.stringify( code )};`,
