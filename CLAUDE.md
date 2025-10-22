@@ -362,6 +362,75 @@ export class YourComponent extends MXP.Component {
 }
 ```
 
+#### 5. グローバルユニフォームの使用
+
+グローバルユニフォームは`src/globals/index.ts`で定義されており、複数のコンポーネント間で共有される共通のユニフォーム値です。
+
+**利用可能なグローバルユニフォームカテゴリ:**
+- `globalUniforms.time`: 時間関連（`uTime`, `uTimeF`, `uTimeE`, `uTimeEF`）
+- `globalUniforms.resolution`: 解像度関連（`uResolution`, `uAspectRatio`）
+- `globalUniforms.camera`: カメラ行列（`projectionMatrix`, `viewMatrix`）
+- `globalUniforms.gBuffer`: Gバッファテクスチャ（`uGBufferPos`, `uGBufferNormal`）
+- `globalUniforms.tex`: 共有テクスチャ（動的に追加される）
+- `globalUniforms.music`: 音楽関連（`uMusicFreqTex`, `uMusicDomainTex`）
+
+**グローバルユニフォームの使用例:**
+```typescript
+import { globalUniforms } from '~/globals';
+
+export class YourComponent extends MXP.Component {
+    constructor( params: MXP.ComponentParams ) {
+        super( params );
+
+        const mat = new MXP.Material( {
+            frag: shaderFrag,
+            // 必要なグローバルユニフォームをマージ
+            uniforms: MXP.UniformsUtils.merge(
+                globalUniforms.resolution,
+                globalUniforms.time,
+                globalUniforms.tex,  // テクスチャが必要な場合
+                {
+                    // カスタムユニフォームも追加可能
+                    uCustomValue: { type: "1f", value: 0 }
+                }
+            )
+        } );
+    }
+}
+```
+
+**シェーダー側での使用:**
+```glsl
+// グローバルユニフォームは自動的に利用可能
+uniform float uTimeE;           // globalUniforms.time から
+uniform vec2 uResolution;        // globalUniforms.resolution から
+uniform sampler2D uNoiseTex;    // globalUniforms.tex から（登録されている場合）
+
+void main() {
+    // グローバルユニフォームを使用
+    vec2 uv = gl_FragCoord.xy / uResolution;
+    float time = uTimeE;
+    vec4 noise = texture(uNoiseTex, uv);
+    // ...
+}
+```
+
+**テクスチャのグローバルユニフォームへの登録:**
+
+テクスチャを`globalUniforms.tex`に登録することで、全コンポーネントから共有アクセス可能になります：
+
+```typescript
+import { globalUniforms } from '~/globals';
+
+// テクスチャをグローバルユニフォームに追加
+globalUniforms.tex.uNoiseTex = {
+    value: noiseTexture,
+    type: "1i"
+};
+```
+
+通常、テクスチャの登録はTextureGeneratorなどの専用コンポーネントで行われます。
+
 ### 実装例
 
 #### 例1: シンプルな回転コンポーネント

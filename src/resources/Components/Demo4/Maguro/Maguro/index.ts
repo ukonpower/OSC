@@ -24,7 +24,7 @@ export class Maguro extends MXP.Component {
 
 		const mat = new MXP.Material( {
 			frag: MXP.hotGet( 'maguroFrag', maguroFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, globalUniforms.tex )
 		} );
 
 		console.log( globalUniforms.time.uTimeE );

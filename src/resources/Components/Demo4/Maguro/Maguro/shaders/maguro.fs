@@ -4,12 +4,13 @@
 #include <pmrem>
 #include <sdf>
 #include <rotate>
+#include <random>
 #include <noise_cyclic>
 #include <noise_value>
-
 #include <rm_h>
 
 uniform float uTimeE;
+uniform sampler2D uNoiseTex;
 
 
 SDFResult D( vec3 p ) {
@@ -117,10 +118,24 @@ void main( void ) {
 
 	#include <rm_out_obj>
 
-	outColor.xyz = vec3( 1.0 );
-	outRoughness = 0.5;
+	// ノイズテクスチャを取得
+	vec2 noiseUV = rayPos.xy * 0.5 + 0.5;
+	vec4 n1 = texture(uNoiseTex, noiseUV);
+	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0 );
+	vec4 n3 = texture(uNoiseTex, noiseUV * 1.0 + n1.xy);
 
-	outColor.xyz *= smoothstep( 1.5, 0.4,  length( rayPos ) );
+	outRoughness = smoothstep( 0.2, 1.0, n1.r );
+	outNormal = normalize( outNormal + n3.xyz * 0.3 );
+
+	
+	vec3 c = vec3( 1.0 );
+	float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
+	c.xyz = mix(c, vec3( 0.0 ), kuro );
+	outEmission += random( gl_FragCoord.xy * 0.01 ) * kuro * 0.2;
+	outColor.xyz = c;
+
+	outMetalic = 0.2;
+
 
 	#include <frag_out>
 
