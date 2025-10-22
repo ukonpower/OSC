@@ -15,7 +15,8 @@ float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
     return length(max(q,0.0)) + min(max(q.x,q.y),0.0);    
 }
 
-float strokeWidth = 0.1;
+float strokeWidth = 0.35;
+float laneHeight = 0.1;
 
 float ring( vec2 center ) {
 	return sdRing( center, vec2( -1.0, 0.0 ), 0.5, strokeWidth );
@@ -45,7 +46,7 @@ float p3( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3 ) {
 	vec2 dir1Pair = dir2;
 	vec2 aloneDir = dir3;
 
-	if( dot( dir1, dir1Pair ) > -0.5  ) {
+	if( dot( dir1, dir1Pair ) < 0.0  ) {
 
 		dir1Pair = dir3;
 		aloneDir = dir2;
@@ -54,7 +55,7 @@ float p3( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3 ) {
 
 	float d = sdOrientedBox( p.xz, dir1, dir1Pair, strokeWidth );
 
-	d = min( d, length( p.xz - aloneDir * 0.5 ) - 0.05 );
+	d = min( d, length( p.xz - aloneDir * 0.5 ) - strokeWidth / 2.0 );
 
 	return d;
 	
@@ -69,34 +70,29 @@ float p4( vec3 p, vec2 dir1, vec2 dir2, vec2 dir3, vec2 dir4 ) {
 }
 
 
+// https://kinakomoti321.hatenablog.com/entry/2024/12/10/023309
 float gridSize = 2.0;
 vec2 gridCenter;
-
 float gridTraversal( vec2 ro, vec2 rd) {
 
-   gridCenter = (floor( ( ro + rd * 1E-3 ) / gridSize) + 0.5) * gridSize;
-   
+   gridCenter = (floor( ( ro + rd * 1E-3 ) / gridSize) + 0.5)*gridSize;
    vec2 src = -( ro - gridCenter ) / rd;
-   vec2 dst = abs( ( 0.5  * gridSize ) / rd );
+   vec2 dst = abs( 0.5 * gridSize / rd );
    vec2 bv = src + dst;
 
    return  min( bv.x, bv.y );
-   
 } 
 
 // SDF（Signed Distance Function）
 SDFResult D( vec3 p ) {
 
 	vec3 op = p;
-
-	// vec2 gridCenter = floor( p.xz / gridSize ) * gridSize + gridSize * 0.5;
 	p.xz -= gridCenter;
 
 	// TruchetTiling
 	// thanks to renard
 	// https://renard.hateblo.jp/entry/2023/08/11/230202
 	// https://gist.github.com/Forenard/eb96f682c46aeb3b10cacd6812f29ba0
-
 
 	vec2[4] quv;
 	vec2[4] dir = vec2[4](
@@ -122,13 +118,7 @@ SDFResult D( vec3 p ) {
 
 	float dist2D;
 
-	dist2D = 999.0;
-
-	if( qCount == 1 ) {
-
-		dist2D = 999.0;
-
-	}
+	dist2D = gridSize / 3.0;
 
 	if( qCount == 1 ) {
 
@@ -154,8 +144,7 @@ SDFResult D( vec3 p ) {
 
 	}
 
-	float h = 0.01;
-    vec2 w = vec2( dist2D, abs(op.y) - h );
+    vec2 w = vec2( dist2D, abs(op.y) - laneHeight );
     float d =  min(max(w.x,w.y),0.0) + length(max(w,0.0));
 
 	return SDFResult(

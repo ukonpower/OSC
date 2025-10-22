@@ -1,7 +1,6 @@
 
 import * as MXP from 'maxpower';
-import { OREngineProjectData } from 'packages/orengine/features/OREngine/core/ProjectSerializer';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { MouseMenu } from '../../components/composites/MouseMenu';
@@ -14,8 +13,10 @@ import { Timer } from '../../components/panels/GPUTimer';
 import { Hierarchy } from '../../components/panels/Hierarchy';
 import { ProjectControl } from '../../components/panels/ProjectControl';
 import { Screen } from '../../components/panels/Screen';
+import { ShaderErrors } from '../../components/panels/ShaderErrors';
 import { Timeline } from '../../components/panels/Timeline';
 import { useLayout } from '../../hooks/useLayout';
+import { Engine, OREngineProjectData } from '../OREngine/core';
 
 import { OREditorContext } from './Context/OREditorContext';
 import { useOREditorContext } from './Hooks/useOREditorContext';
@@ -26,6 +27,7 @@ import style from './index.module.scss';
 export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP.SerializeField }> = ( props ) => {
 
 	const editorContext = useOREditorContext( );
+	const [ hasShaderErrors, setHasShaderErrors ] = useState( false );
 
 	useEffect( () => {
 
@@ -49,6 +51,29 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 
 	}, [ props.editorData, editorContext.editor ] );
 
+	// シェーダーエラーの監視（DEV環境のみ）
+	useEffect( () => {
+
+		if ( ! import.meta.env.DEV ) return;
+
+		const onErrorsChanged = ( errors: any[] ) => {
+
+			setHasShaderErrors( errors.length > 0 );
+
+		};
+
+		Engine.shaderErrorManager.addListener( onErrorsChanged );
+
+		// 初期状態を設定
+		setHasShaderErrors( Engine.shaderErrorManager.getErrors().length > 0 );
+
+		return () => {
+
+			Engine.shaderErrorManager.removeListener( onErrorsChanged );
+
+		};
+
+	}, [] );
 
 	const layout = useLayout();
 	const mouseMenuContext = useMouseMenuContext();
@@ -83,12 +108,23 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 						<div className={`${style.flex}`}>
 							<Screen />
 						</div>
-						<div style={{ width: '300px' }}>
-							<PanelContainer>
-								<Panel title='Property'>
-									<EntityProperty />
-								</Panel>
-							</PanelContainer>
+						<div className={style.vert} style={{ width: '300px' }}>
+							<div className={style.flex} style={hasShaderErrors ? { flex: '1 1 50%' } : undefined}>
+								<PanelContainer>
+									<Panel title='Property'>
+										<EntityProperty />
+									</Panel>
+								</PanelContainer>
+							</div>
+							{import.meta.env.DEV && hasShaderErrors && (
+								<div className={style.flex} style={{ flex: '1 1 50%' }}>
+									<PanelContainer>
+										<Panel title='Shader Errors'>
+											<ShaderErrors />
+										</Panel>
+									</PanelContainer>
+								</div>
+							)}
 						</div>
 					</div>
 					<div style={{ height: '160px' }}>
@@ -131,12 +167,23 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 								</PanelContainer>
 							</div>
 						</div>
-						<div className={`${style.flex}`}>
-							<PanelContainer>
-								<Panel title='Property'>
-									<EntityProperty />
-								</Panel>
-							</PanelContainer>
+						<div className={`${style.flex} ${style.vert}`}>
+							<div className={style.flex} style={hasShaderErrors ? { flex: '1 1 50%' } : undefined}>
+								<PanelContainer>
+									<Panel title='Property'>
+										<EntityProperty />
+									</Panel>
+								</PanelContainer>
+							</div>
+							{import.meta.env.DEV && hasShaderErrors && (
+								<div className={style.flex} style={{ flex: '1 1 50%' }}>
+									<PanelContainer>
+										<Panel title='Shader Errors'>
+											<ShaderErrors />
+										</Panel>
+									</PanelContainer>
+								</div>
+							)}
 						</div>
 					</div>
 					<div style={{ height: '30vh' }}>

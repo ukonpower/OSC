@@ -1,0 +1,121 @@
+@use '~/styles/common' as *;
+
+.container {
+	background-color: $bgCol0;
+	padding: $padding;
+	color: $fontCol2;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.noErrors {
+	color: $fontCol3;
+	font-size: 0.9em;
+	padding: 1em;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: 0.5em;
+	border-bottom: 1px solid $borderCol1;
+	margin-bottom: 0.5em;
+}
+
+.errorCount {
+	color: #ff6b6b;
+	font-weight: bold;
+}
+
+.clearButton {
+	background-color: $bgCol2;
+	color: $fontCol2;
+	border: 1px solid $borderCol1;
+	padding: 0.3em 0.8em;
+	cursor: pointer;
+	font-size: 0.85em;
+	border-radius: 3px;
+
+	&:hover {
+		background-color: $bgCol3;
+	}
+}
+
+.errorList {
+	flex: 1;
+	overflow-y: auto;
+}
+
+.errorItem {
+	margin-bottom: 0.5em;
+	border: 1px solid #ff6b6b;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.errorHeader {
+	display: flex;
+	align-items: center;
+	padding: 0.5em;
+	background-color: rgba(255, 107, 107, 0.1);
+	cursor: pointer;
+	user-select: none;
+
+	&:hover {
+		background-color: rgba(255, 107, 107, 0.2);
+	}
+}
+
+.errorType {
+	color: #ff6b6b;
+	font-weight: bold;
+	margin-right: 0.5em;
+	font-size: 0.85em;
+}
+
+.errorMessage {
+	flex: 1;
+	font-size: 0.9em;
+	color: $fontCol2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.expandIcon {
+	color: $fontCol3;
+	font-size: 0.8em;
+	margin-left: 0.5em;
+}
+
+.errorDetails {
+	padding: 0.5em;
+	background-color: $bgCol1;
+	border-top: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.errorLine {
+	color: #ffa94d;
+	font-size: 0.85em;
+	margin-bottom: 0.5em;
+	font-weight: bold;
+}
+
+.sourceContext {
+	background-color: $bgCol0;
+	padding: 0.5em;
+	border-radius: 3px;
+	font-size: 0.85em;
+	line-height: 1.4;
+	color: $fontCol2;
+	overflow-x: auto;
+	margin: 0;
+
+	// エラー行をハイライト
+	white-space: pre;
+	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}

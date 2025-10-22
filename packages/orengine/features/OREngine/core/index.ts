@@ -3,6 +3,7 @@ import * as MXP from 'maxpower';
 
 import { OREngineProjectData, OREngineProjectFrame, ProjectSerializer } from './ProjectSerializer';
 import { Resources } from './Resources';
+import { ShaderErrorManager } from './ShaderErrorManager';
 
 import { BLidgeClient } from '~/resources/Components/Utilities/BLidgeClient';
 
@@ -10,6 +11,8 @@ import { BLidgeClient } from '~/resources/Components/Utilities/BLidgeClient';
 export type { OREngineProjectData, OREngineProjectFrame } from './ProjectSerializer';
 export { ProjectSerializer } from './ProjectSerializer';
 export { Resources } from './Resources';
+export type { ShaderError } from './ShaderErrorManager';
+export { ShaderErrorManager, hashString } from './ShaderErrorManager';
 
 export interface SceneTime {
 	current: number;
@@ -27,6 +30,7 @@ export class Engine extends MXP.Entity {
 
 	public static resources: Resources;
 	public static instances: Map<WebGL2RenderingContext, Engine>;
+	public static shaderErrorManager: ShaderErrorManager;
 	public enableRender: boolean;
 
 	// DEV環境でのみ使用するプロパティ
@@ -113,6 +117,28 @@ export class Engine extends MXP.Entity {
 		// audio (DEV only)
 
 		this._audioBuffer = null;
+
+		// shader error handler (DEV only)
+
+		if ( import.meta.env.DEV ) {
+
+			// エラー発生時のハンドラー
+			( window as any ).__glpowerShaderErrorHandler = ( error: any ) => {
+
+				console.log( `[Engine] Shader error handler called:`, error );
+				Engine.shaderErrorManager.addError( error );
+
+			};
+
+			// コンパイル成功時のハンドラー（そのシェーダーの古いエラーをクリア）
+			( window as any ).__glpowerShaderClearHandler = ( shaderKey: string, shaderType: string ) => {
+
+				console.log( `[Engine] Shader clear handler called: key=${shaderKey}, type=${shaderType}` );
+				Engine.shaderErrorManager.clearErrorsByShaderKey( shaderKey );
+
+			};
+
+		}
 
 		// root
 
@@ -488,3 +514,4 @@ export class Engine extends MXP.Entity {
 // 初期化演算子を使うとterserに消されるのでこっちで初期化
 Engine.resources = new Resources();
 Engine.instances = new Map();
+Engine.shaderErrorManager = new ShaderErrorManager();
