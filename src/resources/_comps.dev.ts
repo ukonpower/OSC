@@ -9,6 +9,7 @@ import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
+import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
@@ -33,6 +34,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		Common: {
 			MizuBall,
 			ShaderMotionGraphics,
+			Shari,
 			SkyBox,
 		},
 		Maguro: {

@@ -136,6 +136,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneMaguro/Shari1",
+			"components": [
+				{
+					"name": "Shari"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SkyBox",
 			"components": [
 				{

@@ -89,7 +89,7 @@ void main( void ) {
 		outColor.xyz /= 16.0;
 
 		// 水の色味を加える（青緑系）
-		outColor.xyz *= vec3( 0.9, 0.9, 1.0 ) * 1.1;
+		outColor.xyz *= vec3( 0.95, 0.95, 1.0 );
 		outColor.w = 1.0;
 
 		// フレネル効果でハイライト追加
