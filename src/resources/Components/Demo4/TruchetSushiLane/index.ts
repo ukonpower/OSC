@@ -27,7 +27,7 @@ export class TruchetSushiLane extends MXP.Component {
 			phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
 			vert: MXP.hotGet( "truchetSushiLaneVert", raymarchVert ),
 			frag: MXP.hotGet( "truchetSushiLaneFrag", raymarchFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution, globalUniforms.tex )
 		} );
 
 		// ホットリロード対応（開発時のみ）
