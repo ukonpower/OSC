@@ -5,6 +5,8 @@ import { Engine } from '../../OREngine/core';
 import { FrameDebugger } from '../../OREngine/core/FrameDebugger';
 import { Keyboard, PressedKeys } from '../../OREngine/core/Keyboard';
 
+import { BASE_RESOLUTION } from '~/globals';
+
 
 export type EditorTimelineLoop = {
 	enabled: boolean,
@@ -338,7 +340,7 @@ export class Editor extends MXP.Serializable {
 
 	private _resize() {
 
-		const resolution = new GLP.Vector( 1920, 1080 ).multiply( this._resolutionScale );
+		const resolution = BASE_RESOLUTION.clone().multiply( this._resolutionScale );
 
 		this.engine.setSize( resolution );
 
