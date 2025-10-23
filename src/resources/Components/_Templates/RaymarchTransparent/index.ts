@@ -11,6 +11,8 @@ import { globalUniforms } from '~/globals';
  */
 export class RaymarchTransparent extends MXP.Component {
 
+	private mesh: MXP.Mesh;
+
 	constructor( param: MXP.ComponentParams ) {
 
 		super( param );
@@ -29,7 +31,7 @@ export class RaymarchTransparent extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
 		} );
 
-		this.entity.addComponent( MXP.Mesh, {
+		this.mesh = this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: mat
 		} );
 
@@ -50,6 +52,13 @@ export class RaymarchTransparent extends MXP.Component {
 			} );
 
 		}
+
+	}
+
+	protected disposeImpl(): void {
+
+		// Meshコンポーネントを削除
+		this._entity.removeComponent( MXP.Mesh );
 
 	}
 

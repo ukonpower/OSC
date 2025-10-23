@@ -12,12 +12,14 @@ import { globalUniforms } from '~/globals';
  */
 export class InstancedMesh extends MXP.Component {
 
+	private mesh: MXP.Mesh;
+
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
 
 		// Meshコンポーネントを追加
-		const mesh = this._entity.addComponent( MXP.Mesh );
+		this.mesh = this._entity.addComponent( MXP.Mesh );
 
 		// ジオメトリを作成（例：キューブジオメトリ）
 		// インスタンス数の設定
@@ -39,10 +41,10 @@ export class InstancedMesh extends MXP.Component {
 		// instanceDivisor: 1 でインスタンスごとに異なる値を設定
 		geo.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
 
-		mesh.geometry = geo;
+		this.mesh.geometry = geo;
 
 		// マテリアルを作成
-		mesh.material = new MXP.Material( {
+		this.mesh.material = new MXP.Material( {
 			phase: [ "deferred", "shadowMap" ], // deferred + shadowMapで描画
 			vert: MXP.hotGet( "instancedVert", instancedVert ),
 			frag: MXP.hotGet( "instancedFrag", instancedFrag ),
@@ -59,8 +61,8 @@ export class InstancedMesh extends MXP.Component {
 
 				if ( module ) {
 
-					mesh.material.vert = MXP.hotUpdate( 'instancedVert', module.default );
-					mesh.material.requestUpdate();
+					this.mesh.material.vert = MXP.hotUpdate( 'instancedVert', module.default );
+					this.mesh.material.requestUpdate();
 
 				}
 
@@ -70,8 +72,8 @@ export class InstancedMesh extends MXP.Component {
 
 				if ( module ) {
 
-					mesh.material.frag = MXP.hotUpdate( 'instancedFrag', module.default );
-					mesh.material.requestUpdate();
+					this.mesh.material.frag = MXP.hotUpdate( 'instancedFrag', module.default );
+					this.mesh.material.requestUpdate();
 
 				}
 
@@ -85,6 +87,13 @@ export class InstancedMesh extends MXP.Component {
 
 		// カスタムユニフォームの更新などをここに記述可能
 		// 例: アニメーション用のパラメータ更新など
+
+	}
+
+	protected disposeImpl(): void {
+
+		// Meshコンポーネントを削除
+		this._entity.removeComponent( MXP.Mesh );
 
 	}
 

@@ -11,18 +11,20 @@ import { globalUniforms } from '~/globals';
  */
 export class ShaderMesh extends MXP.Component {
 
+	private mesh: MXP.Mesh;
+
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
 
 		// Meshコンポーネントを追加
-		const mesh = this._entity.addComponent( MXP.Mesh );
+		this.mesh = this._entity.addComponent( MXP.Mesh );
 
 		// PlaneGeometryを作成
-		mesh.geometry = new MXP.PlaneGeometry( { width: 1.0, height: 1.0 } );
+		this.mesh.geometry = new MXP.PlaneGeometry( { width: 1.0, height: 1.0 } );
 
 		// マテリアルを作成
-		mesh.material = new MXP.Material( {
+		this.mesh.material = new MXP.Material( {
 			phase: [ "deferred", "forward" ], // deferredとforwardの両方で描画
 			vert: MXP.hotGet( "basicVert", basicVert ),
 			frag: MXP.hotGet( "basicFrag", basicFrag ),
@@ -36,8 +38,8 @@ export class ShaderMesh extends MXP.Component {
 
 				if ( module ) {
 
-					mesh.material.vert = MXP.hotUpdate( 'basicVert', module.default );
-					mesh.material.requestUpdate();
+					this.mesh.material.vert = MXP.hotUpdate( 'basicVert', module.default );
+					this.mesh.material.requestUpdate();
 
 				}
 
@@ -47,8 +49,8 @@ export class ShaderMesh extends MXP.Component {
 
 				if ( module ) {
 
-					mesh.material.frag = MXP.hotUpdate( 'basicFrag', module.default );
-					mesh.material.requestUpdate();
+					this.mesh.material.frag = MXP.hotUpdate( 'basicFrag', module.default );
+					this.mesh.material.requestUpdate();
 
 				}
 
@@ -61,6 +63,13 @@ export class ShaderMesh extends MXP.Component {
 	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
 
 		// カスタムユニフォームの更新などをここに記述可能
+
+	}
+
+	protected disposeImpl(): void {
+
+		// Meshコンポーネントを削除
+		this._entity.removeComponent( MXP.Mesh );
 
 	}
 

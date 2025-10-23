@@ -11,18 +11,20 @@ import { globalUniforms } from '~/globals';
  */
 export class RaymarchScreen extends MXP.Component {
 
+	private mesh: MXP.Mesh;
+
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
 
 		// Meshコンポーネントを追加
-		const mesh = this._entity.addComponent( MXP.Mesh );
+		this.mesh = this._entity.addComponent( MXP.Mesh );
 
 		// Planeジオメトリを作成（XY平面）
-		mesh.geometry = new MXP.CubeGeometry( { width: 2, height: 2 } );
+		this.mesh.geometry = new MXP.CubeGeometry( { width: 2, height: 2 } );
 
 		// マテリアルを作成
-		mesh.material = new MXP.Material( {
+		this.mesh.material = new MXP.Material( {
 			phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
 			vert: MXP.hotGet( "raymarchVert", raymarchVert ),
 			frag: MXP.hotGet( "raymarchFrag", raymarchFrag ),
@@ -36,8 +38,8 @@ export class RaymarchScreen extends MXP.Component {
 
 				if ( module ) {
 
-					mesh.material.vert = MXP.hotUpdate( 'raymarchVert', module.default );
-					mesh.material.requestUpdate();
+					this.mesh.material.vert = MXP.hotUpdate( 'raymarchVert', module.default );
+					this.mesh.material.requestUpdate();
 
 				}
 
@@ -47,14 +49,21 @@ export class RaymarchScreen extends MXP.Component {
 
 				if ( module ) {
 
-					mesh.material.frag = MXP.hotUpdate( 'raymarchFrag', module.default );
-					mesh.material.requestUpdate();
+					this.mesh.material.frag = MXP.hotUpdate( 'raymarchFrag', module.default );
+					this.mesh.material.requestUpdate();
 
 				}
 
 			} );
 
 		}
+
+	}
+
+	protected disposeImpl(): void {
+
+		// Meshコンポーネントを削除
+		this._entity.removeComponent( MXP.Mesh );
 
 	}
 
