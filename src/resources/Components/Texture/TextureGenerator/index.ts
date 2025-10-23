@@ -5,6 +5,7 @@ import { Engine, TexProcedural } from 'orengine';
 import hashFrag from './shaders/hash.fs';
 import noiseFrag from './shaders/noise.fs';
 import noiseCyclicFrag from './shaders/noiseCyclic.fs';
+import noiseValueFrag from './shaders/noiseValue.fs';
 
 import { gl, globalUniforms } from '~/globals';
 
@@ -60,6 +61,16 @@ export class TextureGenerator extends MXP.Component {
 		noiseCyclicAnimeTex.setting( { wrapS: gl.REPEAT, wrapT: gl.REPEAT } );
 		Engine.resources.addTexture( "noiseCyclic_anime", noiseCyclicAnimeTex );
 		this.updateTextures.push( noiseCyclicAnimeTex );
+
+		const noiseValueAnimeTex = new TexProcedural( renderer, {
+			frag: noiseValueFrag,
+			uniforms: Engine.getInstance( gl ).uniforms,
+			resolution: new GLP.Vector( 512, 512 ),
+		} );
+		noiseValueAnimeTex.setting( { wrapS: gl.REPEAT, wrapT: gl.REPEAT } );
+		Engine.resources.addTexture( "noiseValue_anime", noiseValueAnimeTex );
+		globalUniforms.tex.uNoiseValueTex = { type: "1i", value: noiseValueAnimeTex };
+		this.updateTextures.push( noiseValueAnimeTex );
 
 
 		this.once( "dispose", () => {
