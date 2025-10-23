@@ -152,6 +152,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneMaguro/WaterPillar",
+			"components": [
+				{
+					"name": "WaterPillar"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SkyBox",
 			"components": [
 				{

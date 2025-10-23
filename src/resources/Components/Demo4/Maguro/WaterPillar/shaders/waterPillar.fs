@@ -14,8 +14,8 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	// 円柱形状（高さ2.0、半径0.5）
-	float d = sdCylinder( pp, vec2( 0.5, 2.0 ) );
+	// 円柱形状（半径0.5、高さ2.0）
+	float d = sdCappedCylinder( pp, 0.5, 2.0 );
 
 	return SDFResult(
 		d,
