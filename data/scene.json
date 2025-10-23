@@ -144,6 +144,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneMaguro/Shari.001",
+			"components": [
+				{
+					"name": "InstancedMesh"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SkyBox",
 			"components": [
 				{

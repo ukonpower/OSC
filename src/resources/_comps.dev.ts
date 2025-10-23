@@ -22,8 +22,9 @@ import { TextureGenerator } from './Components/Texture/TextureGenerator/index.ts
 import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
 import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
-import { RaymarchCube } from './Components/_Samples/RaymarchCube/index.ts';
-import { RaymarchMesh } from './Components/_Templates/RaymarchMesh/index.ts';
+import { InstancedMesh } from './Components/_Templates/InstancedMesh/index.ts';
+import { RaymarchCube } from './Components/_Templates/RaymarchCube/index.ts';
+import { RaymarchScreen } from './Components/_Templates/RaymarchScreen/index.ts';
 import { ShaderMesh } from './Components/_Templates/ShaderMesh/index.ts';
 
 export const COMPONENTLIST: {[key: string]: any} = {
@@ -59,11 +60,10 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	_DevOnly: {
 		OrbitControls,
 	},
-	_Samples: {
-		RaymarchCube,
-	},
 	_Templates: {
-		RaymarchMesh,
+		InstancedMesh,
+		RaymarchCube,
+		RaymarchScreen,
 		ShaderMesh,
 	},
 };

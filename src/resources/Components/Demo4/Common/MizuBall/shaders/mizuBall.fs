@@ -15,7 +15,7 @@ SDFResult D( vec3 p ) {
 	vec3 pp = p;
 
 	// 球体の基本形状
-	float d = sdSphere( pp, 1.0 );
+	float d = sdSphere( pp, 0.5 );
 
 	return SDFResult(
 		d,

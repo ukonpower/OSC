@@ -6,10 +6,10 @@ import raymarchVert from './shaders/raymarch.vs';
 import { globalUniforms } from '~/globals';
 
 /**
- * RaymarchMesh - レイマーチング用のメッシュコンポーネント
+ * RaymarchScreen - レイマーチング用のスクリーンコンポーネント
  * とりあえず赤いPlaneを表示する
  */
-export class RaymarchMesh extends MXP.Component {
+export class RaymarchScreen extends MXP.Component {
 
 	constructor( params: MXP.ComponentParams ) {
 
