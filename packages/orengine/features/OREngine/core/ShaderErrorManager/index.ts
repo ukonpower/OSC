@@ -16,6 +16,8 @@ export interface ShaderError {
 	sourceContext?: string;
 	/** 完全なシェーダーソース */
 	fullSource?: string;
+	/** シェーダーファイルパス（開発環境のみ） */
+	filePath?: string;
 	/** タイムスタンプ */
 	timestamp: number;
 }
@@ -41,9 +43,26 @@ export class ShaderErrorManager {
 	public addError( error: Omit<ShaderError, 'id' | 'timestamp'> ): void {
 
 		const id = `${error.type}_${Date.now()}_${Math.random()}`;
+
+		// ファイルパス情報を抽出（開発環境で埋め込まれた// @shader-file:コメントから）
+		let filePath: string | undefined;
+
+		if ( error.fullSource ) {
+
+			const match = error.fullSource.match( /^\/\/ @shader-file: (.+)$/m );
+
+			if ( match ) {
+
+				filePath = match[ 1 ];
+
+			}
+
+		}
+
 		const shaderError: ShaderError = {
 			...error,
 			id,
+			filePath,
 			timestamp: Date.now(),
 		};
 

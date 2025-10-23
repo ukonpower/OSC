@@ -101,6 +101,12 @@ export const ShaderErrors = () => {
 		const typeLabel = error.type === 'vertex' ? '頂点シェーダー' : 'フラグメントシェーダー';
 		let text = `[${typeLabel}] ${error.message}\n`;
 
+		if ( error.filePath ) {
+
+			text += `ファイル: ${error.filePath}\n`;
+
+		}
+
 		if ( error.line ) {
 
 			text += `行: ${error.line}\n`;
@@ -134,6 +140,12 @@ export const ShaderErrors = () => {
 
 			const typeLabel = error.type === 'vertex' ? '頂点シェーダー' : 'フラグメントシェーダー';
 			let errorText = `[${typeLabel}] ${error.message}\n`;
+
+			if ( error.filePath ) {
+
+				errorText += `ファイル: ${error.filePath}\n`;
+
+			}
 
 			if ( error.line ) {
 
@@ -201,20 +213,27 @@ export const ShaderErrors = () => {
 					{expandedErrors.has( error.id ) && (
 						<div className={style.errorDetails}>
 							<div className={style.errorDetailsHeader}>
-								{error.line && (
-									<div className={style.errorLine}>行 {error.line}</div>
+								{error.filePath && (
+									<div className={style.errorFilePath}>
+										📄 {error.filePath}
+									</div>
 								)}
-								<button
-									className={style.copyErrorButton}
-									onClick={( e ) => {
+								<div className={style.errorMetaRow}>
+									{error.line && (
+										<div className={style.errorLine}>行 {error.line}</div>
+									)}
+									<button
+										className={style.copyErrorButton}
+										onClick={( e ) => {
 
-										e.stopPropagation();
-										copyErrorToClipboard( error );
+											e.stopPropagation();
+											copyErrorToClipboard( error );
 
-									}}
-								>
-									コピー
-								</button>
+										}}
+									>
+										コピー
+									</button>
+								</div>
 							</div>
 							{error.sourceContext && (
 								<pre className={style.sourceContext}>{error.sourceContext}</pre>

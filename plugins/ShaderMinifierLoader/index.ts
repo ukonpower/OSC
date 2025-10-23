@@ -115,8 +115,12 @@ export const ShaderMinifierLoader = (): Plugin => {
 			// skip minifier if requested or on Mac
 			if ( skip || true ) {
 
+				// 開発環境でファイルパス情報をシェーダーソースの先頭にコメントとして埋め込む
+				const relativeId = id.replace( process.cwd(), '' ).replace( /^\//, '' );
+				const codeWithPath = `// @shader-file: ${relativeId}\n${code}`;
+
 				return {
-					code: `export default ${JSON.stringify( code )};`,
+					code: `export default ${JSON.stringify( codeWithPath )};`,
 					map: { mappings: '' }
 				};
 

@@ -119,9 +119,22 @@
 
 .errorDetailsHeader {
 	display: flex;
+	flex-direction: column;
+	gap: 0.3em;
+	margin-bottom: 0.5em;
+}
+
+.errorFilePath {
+	color: #74c0fc;
+	font-size: 0.85em;
+	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+	word-break: break-all;
+}
+
+.errorMetaRow {
+	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 0.5em;
 }
 
 .errorLine {
