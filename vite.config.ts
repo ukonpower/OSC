@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 import { OREngineFileSystemPlugin } from './plugins/OREngineFileSystem';
 import { ResourceManager } from './plugins/ResourceManager';
-import { ShaderMinifierLoader } from "./plugins/ShaderMinifierLoader";
+import { ShaderLoader } from "./plugins/ShaderLoader";
 
 
 const basePath = process.env.BASE_PATH ?? "";
@@ -46,7 +46,7 @@ export default defineConfig( {
 	plugins: [
 		react(),
 		OREngineFileSystemPlugin(),
-		ShaderMinifierLoader(),
+		ShaderLoader(),
 		ResourceManager(),
 	],
 	define: {

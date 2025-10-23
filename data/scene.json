@@ -16,12 +16,7 @@
 		1
 	],
 	"scene": {
-		"name": "root",
-		"scale": [
-			0.7000000000000001,
-			1,
-			1
-		]
+		"name": "root"
 	},
 	"overrides": [
 		{
@@ -30,7 +25,7 @@
 				{
 					"name": "BLidgeClient",
 					"props": {
-						"mode": "json",
+						"mode": "websocket",
 						"gltf": false,
 						"gltfPath": "/scene.glb",
 						"websocket/url": "ws://localhost:3100"
