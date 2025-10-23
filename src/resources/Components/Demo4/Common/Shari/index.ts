@@ -1,47 +1,75 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
+import shariVert from './shaders/shari.vs';
 import shariFrag from './shaders/shari.fs';
 
 import { globalUniforms } from '~/globals';
 
-
+/**
+ * Shari - インスタンシング描画によるシャリコンポーネント
+ */
 export class Shari extends MXP.Component {
 
-	constructor( param: MXP.ComponentParams ) {
+	constructor( params: MXP.ComponentParams ) {
 
-		super( param );
+		super( params );
 
-		// geometry
+		// Meshコンポーネントを追加
+		const mesh = this._entity.addComponent( MXP.Mesh );
 
+		// ジオメトリを作成（シャリ形状用のキューブ）
+		const instanceCount = 32;
 		const geo = new MXP.CubeGeometry( {
 			width: 0.5,
 			height: 0.5,
 			depth: 1
 		} );
 
-		// material
+		// インスタンスごとのID属性を追加
+		const random = GLP.MathUtils.randomSeed( 1 );
+		const idArray = [];
 
-		const mat = new MXP.Material( {
-			frag: MXP.hotGet( 'shariFrag', shariFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+		for ( let i = 0; i < instanceCount; i ++ ) {
+
+			// x: 正規化されたインデックス, y,z,w: ランダム値
+			idArray.push( i / instanceCount, random(), random(), random() );
+
+		}
+
+		// instanceDivisor: 1 でインスタンスごとに異なる値を設定
+		geo.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
+
+		mesh.geometry = geo;
+
+		// マテリアルを作成
+		mesh.material = new MXP.Material( {
+			phase: [ "deferred", "shadowMap" ], // deferred + shadowMapで描画
+			vert: MXP.hotGet( "shariVert", shariVert ),
+			frag: MXP.hotGet( "shariFrag", shariFrag ),
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
 		} );
 
-		this.entity.addComponent( MXP.Mesh, {
-			geometry: geo, material: mat
-		} );
-
-		// HMR
-
+		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {
+
+			import.meta.hot.accept( './shaders/shari.vs', ( module ) => {
+
+				if ( module ) {
+
+					mesh.material.vert = MXP.hotUpdate( 'shariVert', module.default );
+					mesh.material.requestUpdate();
+
+				}
+
+			} );
 
 			import.meta.hot.accept( './shaders/shari.fs', ( module ) => {
 
 				if ( module ) {
 
-					mat.frag = MXP.hotUpdate( 'shariFrag', module.default );
-
-					mat.requestUpdate();
+					mesh.material.frag = MXP.hotUpdate( 'shariFrag', module.default );
+					mesh.material.requestUpdate();
 
 				}
 

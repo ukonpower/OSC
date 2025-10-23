@@ -10,9 +10,11 @@ import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
+import { ShariRaymarch } from './Components/Demo4/Common/ShariRaymarch/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
+import { WaterPillar } from './Components/Demo4/Maguro/WaterPillar/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
@@ -25,6 +27,7 @@ import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
 import { InstancedMesh } from './Components/_Templates/InstancedMesh/index.ts';
 import { RaymarchCube } from './Components/_Templates/RaymarchCube/index.ts';
 import { RaymarchScreen } from './Components/_Templates/RaymarchScreen/index.ts';
+import { RaymarchTransparent } from './Components/_Templates/RaymarchTransparent/index.ts';
 import { ShaderMesh } from './Components/_Templates/ShaderMesh/index.ts';
 
 export const COMPONENTLIST: {[key: string]: any} = {
@@ -36,11 +39,13 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			MizuBall,
 			ShaderMotionGraphics,
 			Shari,
+			ShariRaymarch,
 			SkyBox,
 		},
 		Maguro: {
 			Maguro,
 			Sashimi,
+			WaterPillar,
 		},
 		Music,
 		TruchetSushiLane,
@@ -64,6 +69,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		InstancedMesh,
 		RaymarchCube,
 		RaymarchScreen,
+		RaymarchTransparent,
 		ShaderMesh,
 	},
 };

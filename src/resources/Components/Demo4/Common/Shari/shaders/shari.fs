@@ -1,75 +1,26 @@
 #include <common>
+#include <packing>
 #include <frag_h>
-#include <light>
-#include <pmrem>
-#include <sdf>
-#include <rotate>
-#include <noise_cyclic>
-#include <noise_value>
 
-#include <rm_h>
-
-// シャリ（寿司のご飯）のSDF定義
-SDFResult D( vec3 p ) {
-
-	vec3 pp = p;
-
-	// 丸っこい四角形（横に長い形状）
-	float roundness = 0.15;
-	vec3 size = vec3( 0.25, 0.25, 0.45 ) - roundness;
-	float d = sdBox( pp, size ) - roundness;
-
-	return SDFResult(
-		d,
-		p,
-		0.0
-	);
-
-}
-
-#include <rm_normal>
+// 頂点シェーダーから受け取るインスタンスID
+in vec4 vId;
 
 void main( void ) {
 
+	// 基本的なフラグメント処理
 	#include <frag_in>
-	#include <rm_ray_obj>
 
-	SDFResult dist;
+	// シャリらしい見た目を設定
+	// 白っぽいベースカラーにインスタンスごとの微妙なバリエーション
+	outColor.xyz = vec3(1.0, 0.95, 0.9) * (0.9 + vId.y * 0.1);
 
-	bool hit = false;
+	// ラフネス調整（少し光沢を持たせる）
+	outRoughness = 0.3 + vId.z * 0.2;
 
-	// レイマーチングループ
-	for( int i = 0; i < 64; i++ ) {
-
-		dist = D( rayPos );
-		rayPos += dist.d * rayDir * 0.8;
-
-		if( dist.d < 0.01 ) {
-
-			hit = true;
-			break;
-
-		}
-
-	}
-
-	if( !hit ) discard;
-
-	// 法線計算
-	outNormal = N( rayPos, 0.01 );
-
-	#include <rm_out_obj>
-
-	// シャリの色（白米の色）
-	outColor.xyz = vec3( 0.98, 0.96, 0.92 );
-
-	// 少しラフネスを追加（マット感）
-	outRoughness = 0.7;
+	// メタリック値（非金属）
 	outMetalic = 0.0;
 
-	// 距離に応じた減衰（オプション）
-	outColor.xyz *= smoothstep( 2.0, 0.5, length( rayPos ) );
-
+	// 標準的なフラグメント出力処理
 	#include <frag_out>
 
 }
