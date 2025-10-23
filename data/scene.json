@@ -85,21 +85,21 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/E1",
-			"components": [
-				{
-					"name": "ShaderMotionGraphics",
-					"props": {
-						"shaderName": "gradient"
-					}
-				}
-			]
-		},
-		{
 			"path": "/root/blidgeRoot/SceneMaguro/Maguro",
 			"components": [
 				{
 					"name": "Maguro"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/MBG",
+			"components": [
+				{
+					"name": "ShaderMotionGraphics",
+					"props": {
+						"shaderName": "maguroBGScreen"
+					}
 				}
 			]
 		},

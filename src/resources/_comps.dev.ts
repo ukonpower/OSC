@@ -7,6 +7,7 @@ import { Glitch } from './Components/Camera/MainCamera/PostProcess/Glitch/index.
 import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/OverlayMixer/index.ts';
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
+import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
@@ -36,6 +37,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	Demo4: {
 		Common: {
+			DebaBouChou,
 			MizuBall,
 			ShaderMotionGraphics,
 			Shari,
