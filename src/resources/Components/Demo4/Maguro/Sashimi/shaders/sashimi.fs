@@ -93,11 +93,13 @@ void main( void ) {
 
 	#include <rm_out_obj>
 
+	float dnv = dot( rayDir, -outNormal.xyz );
+
 	// 刺身のカラー（マグロの赤身）
 	vec3 sashimiColor = vec3( 0.9, 0.15, 0.1 );
 	outColor.xyz = sashimiColor;
 	outColor.xyz = mix( outColor.xyz, vec3( 1.0 ), smoothstep( 0.8, 1.0, fract(length( rayPos.xz + 0.5 + n.xy * 0.3 ) * 5.0 ) ) * n.y * 0.8 );
-	outEmission.xyz += vec3( 0.9, 0.1, 0.2 ) * sss * 0.5;
+	outEmission.xyz += vec3( 0.9, 0.1, 0.2 ) * sss * 0.9 * smoothstep( 1.5, 0.0, dnv );
 	outRoughness = 0.4;
 
 	// グラデーション効果
