@@ -1,9 +1,9 @@
 {
 	"enableRender": true,
-	"resolutionScale": 1,
+	"resolutionScale": 0.25,
 	"viewType": "render",
 	"frameLoop/enabled": false,
 	"frameLoop/start": 2558.011007808154,
 	"frameLoop/end": 4019.2214883177085,
-	"selectedEntityId": "32e"
+	"selectedEntityId": "2e"
 }

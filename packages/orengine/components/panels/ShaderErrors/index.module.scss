@@ -31,6 +31,25 @@
 	font-weight: bold;
 }
 
+.headerButtons {
+	display: flex;
+	gap: 0.5em;
+}
+
+.copyButton {
+	background-color: $bgCol2;
+	color: $fontCol2;
+	border: 1px solid $borderCol1;
+	padding: 0.3em 0.8em;
+	cursor: pointer;
+	font-size: 0.85em;
+	border-radius: 3px;
+
+	&:hover {
+		background-color: $bgCol3;
+	}
+}
+
 .clearButton {
 	background-color: $bgCol2;
 	color: $fontCol2;
@@ -98,11 +117,31 @@
 	border-top: 1px solid rgba(255, 107, 107, 0.3);
 }
 
+.errorDetailsHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.5em;
+}
+
 .errorLine {
 	color: #ffa94d;
 	font-size: 0.85em;
-	margin-bottom: 0.5em;
 	font-weight: bold;
+}
+
+.copyErrorButton {
+	background-color: $bgCol2;
+	color: $fontCol2;
+	border: 1px solid $borderCol1;
+	padding: 0.25em 0.6em;
+	cursor: pointer;
+	font-size: 0.8em;
+	border-radius: 3px;
+
+	&:hover {
+		background-color: $bgCol3;
+	}
 }
 
 .sourceContext {
