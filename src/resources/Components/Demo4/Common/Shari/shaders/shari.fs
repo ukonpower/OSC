@@ -17,8 +17,11 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	// ボックス形状でシャリを表現（少し角を丸める）
-	vec2 d = vec2( sdBox( pp, vec3( 0.45, 0.2, 0.25) ) - 0.02, 0.0 );
+	vec3 scale = vec3(0.25, 0.5, 0.22) * 1.5; // x:幅、y:長さ、z:厚み
+	vec3 scaled = pp / scale;
+	float sphere = sdSphere(scaled, 1.0) * min(min(scale.x, scale.y), scale.z);
+
+	vec2 d = vec2(sphere, 0.0);
 
 	return SDFResult(
 		d.x,

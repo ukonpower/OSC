@@ -19,7 +19,7 @@ export class Shari extends MXP.Component {
 		const mesh = this._entity.addComponent( MXP.Mesh );
 
 		// ジオメトリを作成（シャリ形状用のキューブ）
-		const instanceCount = 64;
+		const instanceCount = 128;
 		const geo = new MXP.CubeGeometry( {
 		} );
 

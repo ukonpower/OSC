@@ -3,8 +3,8 @@ import * as GLP from 'glpower';
 import { Component, ComponentParams } from '..';
 import { CubeGeometry } from '../../Geometry/CubeGeometry';
 import { Material } from '../../Material';
-import { Mesh } from '../Mesh';
 import { hotGet, hotUpdate } from '../../Utils/Hot';
+import { Mesh } from '../Mesh';
 
 import raymarchInstancedFrag from './shaders/raymarchInstanced.fs';
 import raymarchInstancedVert from './shaders/raymarchInstanced.vs';
