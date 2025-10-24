@@ -1,8 +1,8 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import shariVert from './shaders/shari.vs';
 import shariFrag from './shaders/shari.fs';
+import shariVert from './shaders/shari.vs';
 
 import { globalUniforms } from '~/globals';
 
@@ -19,26 +19,28 @@ export class Shari extends MXP.Component {
 		const mesh = this._entity.addComponent( MXP.Mesh );
 
 		// ジオメトリを作成（シャリ形状用のキューブ）
-		const instanceCount = 32;
+		const instanceCount = 64;
 		const geo = new MXP.CubeGeometry( {
-			width: 0.5,
-			height: 0.5,
-			depth: 1
 		} );
 
 		// インスタンスごとのID属性を追加
 		const random = GLP.MathUtils.randomSeed( 1 );
 		const idArray = [];
+		const id2Array = [];
 
 		for ( let i = 0; i < instanceCount; i ++ ) {
 
 			// x: 正規化されたインデックス, y,z,w: ランダム値
 			idArray.push( i / instanceCount, random(), random(), random() );
 
+			// id2: 全てランダム値
+			id2Array.push( random(), random(), random(), random() );
+
 		}
 
 		// instanceDivisor: 1 でインスタンスごとに異なる値を設定
 		geo.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
+		geo.setAttribute( 'id2', new Float32Array( id2Array ), 4, { instanceDivisor: 1 } );
 
 		mesh.geometry = geo;
 

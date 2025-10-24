@@ -19,9 +19,9 @@ void main( void ) {
 	float t = uTime * 0.3;
 
 	// ノイズによる海中のような揺らぎ
-	float noise1 = snoise( vec3( p * 2.0, t ) ) * 0.5 + 0.5;
-	float noise2 = snoise( vec3( p * 4.0, t * 0.7 ) ) * 0.5 + 0.5;
-	float noise3 = snoise( vec3( p * 8.0, t * 0.5 ) ) * 0.5 + 0.5;
+	float noise1 = noiseSimplex( vec3( p * 2.0, t ) ) * 0.5 + 0.5;
+	float noise2 = noiseSimplex( vec3( p * 4.0, t * 0.7 ) ) * 0.5 + 0.5;
+	float noise3 = noiseSimplex( vec3( p * 8.0, t * 0.5 ) ) * 0.5 + 0.5;
 
 	// 深海のグラデーション（上から下へ）
 	vec3 topColor = vec3( 0.0, 0.1, 0.3 );      // 深い青
@@ -35,7 +35,7 @@ void main( void ) {
 	color += vec3( 0.0, 0.02, 0.05 ) * noise3 * 0.3;
 
 	// 光の筋（コースティクス風）
-	float caustics = snoise( vec3( p * 6.0 + vec2( t * 0.5, 0.0 ), t * 0.3 ) );
+	float caustics = noiseSimplex( vec3( p * 6.0 + vec2( t * 0.5, 0.0 ), t * 0.3 ) );
 	caustics = pow( max( caustics, 0.0 ), 3.0 ) * 0.15;
 	color += vec3( 0.1, 0.2, 0.3 ) * caustics;
 

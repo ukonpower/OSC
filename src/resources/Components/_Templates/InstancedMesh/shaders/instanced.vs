@@ -36,7 +36,7 @@ void main( void ) {
 	// 時間に基づく回転アニメーション
 	float rotationSpeed = id.w * 0.5 + 0.5;
 	float rotation = uTime * rotationSpeed;
-	rotate(rotation, instancePos.xy, outNormal.xy);
+	rotate(instancePos.xy, outNormal.xy, rotation);
 
 	// 最終的な位置を設定
 	outPos = instancePos;
