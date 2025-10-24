@@ -15,7 +15,10 @@ SDFResult D( vec3 p ) {
 	vec3 pp = p;
 
 	// 円柱形状（半径0.5、高さ2.0）
-	float d = sdCappedCylinder( pp, 0.5, 2.0 );
+	pp.zx *= rotate( p.y );
+	
+	float d = sdCappedCylinder( pp + vec3( 0.5, 0.0, 0.0 ), 0.1, 3.0 );
+	d = min( d, sdCappedCylinder( pp + vec3( -0.5, 0.0, 0.0 ), 0.1, 3.0 ) );
 
 	return SDFResult(
 		d,

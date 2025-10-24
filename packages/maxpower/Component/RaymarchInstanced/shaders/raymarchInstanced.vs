@@ -6,15 +6,12 @@ layout(location = 4) in vec4 id;
 layout(location = 5) in vec4 id2;
 
 // ユーティリティ関数のインクルード
-#include <rotate>
 #include <matrix>
 
 // グローバルユニフォーム
 uniform float uTime;
 
-// フラグメントシェーダーに渡す変数
-out vec4 vId;
-out vec4 vId2;
+// フラグメントシェーダーに渡す変換マトリックス
 out mat4 vTransformMatrix;
 
 void main( void ) {
@@ -22,10 +19,11 @@ void main( void ) {
 	// 基本的な頂点処理
 	#include <vert_in>
 
+	// インスタンスごとの位置を計算（id2からランダムな位置を生成）
 	vec3 instancePos = id2.xyz - 0.5;
 	instancePos.xyz *= vec3( 1.0, 0.7, 2.7 );
 
-	// 回転角度を計算
+	// 回転角度を計算（id.y, id.zからランダムな回転を生成）
 	float angleXY = id.y * TPI;
 	float angleYZ = id.z * TPI;
 
@@ -47,9 +45,5 @@ void main( void ) {
 
 	// 標準的な頂点出力処理
 	#include <vert_out>
-
-	// インスタンスIDをフラグメントシェーダーに渡す
-	vId = id;
-	vId2 = id2;
 
 }

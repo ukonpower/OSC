@@ -18,11 +18,10 @@ export class WaterPillar extends MXP.Component {
 		// geometry - 円柱形状に合わせてバウンディングボックスを調整
 
 		const geo = new MXP.CubeGeometry( {
-			width: 2,
+			width: 1,
 			height: 4,
-			depth: 2
+			depth: 1
 		} );
-
 		// material
 
 		const mat = new MXP.Material( {

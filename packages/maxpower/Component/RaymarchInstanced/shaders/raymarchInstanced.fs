@@ -3,21 +3,19 @@
 #include <light>
 #include <pmrem>
 #include <sdf>
-#include <rotate>
 
 #include <rm_h>
 
-// 頂点シェーダーから受け取るインスタンスID
-in vec4 vId;
-in vec4 vId2;
+// 頂点シェーダーから受け取る変換マトリックス
 in mat4 vTransformMatrix;
 
-// SDF関数：シャリの形状を定義
+// SDF関数：レイマーチングで描画する形状を定義
+// この関数をカスタマイズして好きな形状を作成してください
 SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	// ボックス形状でシャリを表現（少し角を丸める）
+	// ボックス形状の例（サイズと角の丸み具合を調整可能）
 	vec2 d = vec2( sdBox( pp, vec3( 0.45, 0.2, 0.25) ) - 0.02, 0.0 );
 
 	return SDFResult(
@@ -43,7 +41,7 @@ void main( void ) {
 	SDFResult dist;
 	bool hit = false;
 
-	// レイマーチングループ
+	// レイマーチングループ（最大64ステップ）
 	for( int i = 0; i < 64; i++ ) {
 
 		dist = D( localRayPos );
@@ -58,6 +56,7 @@ void main( void ) {
 
 	}
 
+	// ヒットしなかった場合はピクセルを破棄
 	if( !hit ) discard;
 
 	// 法線計算（ローカル空間）
@@ -71,15 +70,11 @@ void main( void ) {
 
 	#include <rm_out_obj>
 
-	// シャリらしい見た目を設定
-	// 白っぽいベースカラーにインスタンスごとの微妙なバリエーション
-	outColor.xyz = vec3(1.0, 0.95, 0.9) * (0.9 + vId.y * 0.1);
-
-	// ラフネス調整（少し光沢を持たせる）
-	outRoughness = 0.3 + vId.z * 0.2;
-
-	// メタリック値（非金属）
-	outMetalic = 0.0;
+	// マテリアルプロパティの設定
+	// ここをカスタマイズしてマテリアルの見た目を変更できます
+	outColor.xyz = vec3(0.8);  // ベースカラー（白っぽい灰色）
+	outRoughness = 0.3;        // ラフネス（0.0=鏡面, 1.0=完全拡散）
+	outMetalic = 0.0;          // メタリック（0.0=非金属, 1.0=金属）
 
 	#include <frag_out>
 

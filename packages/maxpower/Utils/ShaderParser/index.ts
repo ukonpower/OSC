@@ -4,6 +4,7 @@ import { CollectedLights } from 'packages/maxpower/Component/Renderer';
 import common from './shaderModules/common.module.glsl';
 import hash from './shaderModules/hash.module.glsl';
 import light from './shaderModules/light.module.glsl';
+import matrix from './shaderModules/matrix.module.glsl';
 import noiseCyclic from './shaderModules/noiseCyclic.module.glsl';
 import noiseSimplex from './shaderModules/noiseSimplex.module.glsl';
 import noiseValue from './shaderModules/noiseValue.module.glsl';
@@ -56,6 +57,7 @@ export const shaderInclude = ( shader: string ) => {
 		[ "hash", hash ],
 		[ "sdf", sdf ],
 		[ "rotate", rotate ],
+		[ "matrix", matrix ],
 		[ "random", random ],
 		[ "noise_simplex", noiseSimplex ],
 		[ "noise_cyclic", noiseCyclic ],

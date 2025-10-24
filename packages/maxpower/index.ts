@@ -12,6 +12,7 @@ export * from './Component/Camera/ShadowMapCamera';
 export * from './Component/Light';
 export * from './Component/MaterialOverride';
 export * from './Component/PostProcessPipeline';
+export * from './Component/RaymarchInstanced';
 export * from './Component/Renderer';
 export * from "./Component/Renderer/DeferredRenderer";
 export * from './Component/Renderer/ProgramManager';
