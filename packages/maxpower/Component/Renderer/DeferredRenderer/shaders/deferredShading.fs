@@ -2,13 +2,14 @@
 #include <packing>
 #include <light>
 #include <pmrem>
+#include <random>
 
 // uniforms
 
 uniform sampler2D sampler0; // position.xyz, emission.x
 uniform sampler2D sampler1; // normal.xyz, emission.y
-uniform sampler2D sampler2; // albedo, 
-uniform sampler2D sampler3; // roughness, metalic, normalSelect, envSelect, 
+uniform sampler2D sampler2; // albedo.xyz, flatness
+uniform sampler2D sampler3; // roughness, metalic, normalSelect, envSelect,
 uniform sampler2D sampler4; // velocity.xy, 0.0, emission.z
 
 uniform sampler2D uSSAOTexture;
@@ -45,6 +46,7 @@ void main( void ) {
 
 	vec3 normal = tex1.xyz;
 	vec3 color = tex2.xyz;
+	float flatness = tex2.w;
 	float roughness = tex3.x;
 	float metalic = tex3.y;
 	vec3 emission = vec3( tex0.w, tex1.w, tex4.w );
@@ -58,7 +60,7 @@ void main( void ) {
 		vec3( 0.0 ),
 		occlusion
 	);
-	
+
 	Material mat = Material(
 		color,
 		roughness,
@@ -66,7 +68,8 @@ void main( void ) {
 		emission,
 		mix( color, vec3( 0.0, 0.0, 0.0 ), metalic ),
 		mix( vec3( 1.0, 1.0, 1.0 ), color, metalic ),
-		envMapIntensity
+		envMapIntensity,
+		flatness
 	);
 	vec3 outColor = vec3( 0.0 );
 	//]
@@ -74,6 +77,7 @@ void main( void ) {
 	// lighting
 
 	#include <lighting_light>
+	
 
 	// env
 
@@ -87,10 +91,18 @@ void main( void ) {
 
 	outColor.xyz += mat.emission;
 
-	
 	// light shaft
 	
 	outColor.xyz += texture( uLightShaftTexture, vUv ).xyz;
+
+
+	// DEMO4 CUSTOM ----------
+
+	// outColor.xyz += random( vUv ) * mat.flatness * 0.3;
+
+	// outColor.xyz = mix( outColor.xyz, vec3( 1.0, 0.0, 1.0 ),  mat.flatness );
+
+	// -----------------------
 
 	glFragOut0 = glFragOut1 = vec4( max( vec3( 0.0 ), outColor.xyz ), 1.0 );
 

@@ -5,8 +5,9 @@ import { Engine, TexProcedural } from 'orengine';
 import hashFrag from './shaders/hash.fs';
 import noiseFrag from './shaders/noise.fs';
 import noiseCyclicFrag from './shaders/noiseCyclic.fs';
+import noiseValueFrag from './shaders/noiseValue.fs';
 
-import { gl } from '~/globals';
+import { gl, globalUniforms } from '~/globals';
 
 export class TextureGenerator extends MXP.Component {
 
@@ -22,15 +23,20 @@ export class TextureGenerator extends MXP.Component {
 
 		const renderer = engine.renderer;
 
-		Engine.resources.addTexture( "noise", new TexProcedural( renderer, {
+		// 静的テクスチャを生成してグローバルユニフォームに登録
+		const noiseTex = new TexProcedural( renderer, {
 			frag: noiseFrag,
 			resolution: new GLP.Vector( 1024, 1024 )
-		} ) );
+		} );
+		Engine.resources.addTexture( "noise", noiseTex );
+		globalUniforms.tex.uNoiseTex = { type: "1i", value: noiseTex };
 
-		Engine.resources.addTexture( "noiseCyclic", new TexProcedural( renderer, {
+		const noiseCyclicTex = new TexProcedural( renderer, {
 			frag: noiseCyclicFrag,
 			resolution: new GLP.Vector( 1024, 1024 )
-		} ) );
+		} );
+		Engine.resources.addTexture( "noiseCyclic", noiseCyclicTex );
+		globalUniforms.tex.uNoiseCyclicTex = { type: "1i", value: noiseCyclicTex };
 
 		const hashTex = new TexProcedural( renderer, {
 			frag: hashFrag,
@@ -45,14 +51,26 @@ export class TextureGenerator extends MXP.Component {
 		hashTex.render();
 
 		Engine.resources.addTexture( "hash", hashTex );
+		globalUniforms.tex.uHashTex = { type: "1i", value: hashTex };
 
-		this.updateTextures.push(
-			Engine.resources.addTexture( "noiseCyclic_anime", new TexProcedural( renderer, {
-				frag: noiseCyclicFrag,
-				uniforms: Engine.getInstance( gl ).uniforms,
-				resolution: new GLP.Vector( 512, 512 ),
-			} ) )
-		);
+		const noiseCyclicAnimeTex = new TexProcedural( renderer, {
+			frag: noiseCyclicFrag,
+			uniforms: Engine.getInstance( gl ).uniforms,
+			resolution: new GLP.Vector( 512, 512 ),
+		} );
+		noiseCyclicAnimeTex.setting( { wrapS: gl.REPEAT, wrapT: gl.REPEAT } );
+		Engine.resources.addTexture( "noiseCyclic_anime", noiseCyclicAnimeTex );
+		this.updateTextures.push( noiseCyclicAnimeTex );
+
+		const noiseValueAnimeTex = new TexProcedural( renderer, {
+			frag: noiseValueFrag,
+			uniforms: Engine.getInstance( gl ).uniforms,
+			resolution: new GLP.Vector( 512, 512 ),
+		} );
+		noiseValueAnimeTex.setting( { wrapS: gl.REPEAT, wrapT: gl.REPEAT } );
+		Engine.resources.addTexture( "noiseValue_anime", noiseValueAnimeTex );
+		globalUniforms.tex.uNoiseValueTex = { type: "1i", value: noiseValueAnimeTex };
+		this.updateTextures.push( noiseValueAnimeTex );
 
 
 		this.once( "dispose", () => {
@@ -69,7 +87,7 @@ export class TextureGenerator extends MXP.Component {
 
 	}
 
-	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+	protected updateImpl(): void {
 
 		for ( let i = 0; i < this.updateTextures.length; i ++ ) {
 

@@ -5,8 +5,12 @@ import raymarchCubeFrag from './shaders/raymarchCube.fs';
 
 import { globalUniforms } from '~/globals';
 
-
+/**
+ * RaymarchCube - レイマーチング用のキューブコンポーネント（テンプレート）
+ */
 export class RaymarchCube extends MXP.Component {
+
+	private mesh: MXP.Mesh;
 
 	constructor( param: MXP.ComponentParams ) {
 
@@ -25,7 +29,7 @@ export class RaymarchCube extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
 		} );
 
-		this.entity.addComponent( MXP.Mesh, {
+		this.mesh = this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: mat
 		} );
 
@@ -46,6 +50,13 @@ export class RaymarchCube extends MXP.Component {
 			} );
 
 		}
+
+	}
+
+	protected disposeImpl(): void {
+
+		// Meshコンポーネントを削除
+		this._entity.removeComponent( MXP.Mesh );
 
 	}
 

@@ -33,6 +33,12 @@
 				},
 				{
 					"name": "Music"
+				},
+				{
+					"name": "TextureGenerator"
+				},
+				{
+					"name": "UniformControls"
 				}
 			]
 		},
@@ -79,13 +85,77 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/Plane",
+			"path": "/root/blidgeRoot/SceneMaguro/Maguro",
+			"components": [
+				{
+					"name": "Maguro"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/MBG",
 			"components": [
 				{
 					"name": "ShaderMotionGraphics",
 					"props": {
-						"shaderName": "gradient"
+						"shaderName": "maguroBGScreen"
 					}
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/MizuBall",
+			"components": [
+				{
+					"name": "MizuBall"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/MizuBall.001",
+			"components": [
+				{
+					"name": "MizuBall"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/MizuBall.002",
+			"components": [
+				{
+					"name": "MizuBall"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/Sashimi",
+			"components": [
+				{
+					"name": "Sashimi"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/Shari",
+			"components": [
+				{
+					"name": "Shari"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/Shari.001",
+			"components": [
+				{
+					"name": "InstancedMesh"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/WaterPillar",
+			"components": [
+				{
+					"name": "WaterPillar"
 				}
 			]
 		},

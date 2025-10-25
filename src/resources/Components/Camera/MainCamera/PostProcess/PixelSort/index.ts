@@ -6,7 +6,7 @@ import pixelSortFrag from './shaders/pixelSort.fs';
 import pixelSortMaskFrag from './shaders/pixelSortMask.fs';
 import pixelSortRangeFrag from './shaders/pixelSortRange.fs';
 
-import { globalUniforms, gl } from "~/globals";
+import { BASE_RESOLUTION, globalUniforms, gl } from "~/globals";
 
 export class PixelSort extends MXP.PostProcess {
 

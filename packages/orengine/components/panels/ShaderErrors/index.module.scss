@@ -31,6 +31,25 @@
 	font-weight: bold;
 }
 
+.headerButtons {
+	display: flex;
+	gap: 0.5em;
+}
+
+.copyButton {
+	background-color: $bgCol2;
+	color: $fontCol2;
+	border: 1px solid $borderCol1;
+	padding: 0.3em 0.8em;
+	cursor: pointer;
+	font-size: 0.85em;
+	border-radius: 3px;
+
+	&:hover {
+		background-color: $bgCol3;
+	}
+}
+
 .clearButton {
 	background-color: $bgCol2;
 	color: $fontCol2;
@@ -59,7 +78,8 @@
 
 .errorHeader {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	align-items: flex-start;
 	padding: 0.5em;
 	background-color: rgba(255, 107, 107, 0.1);
 	cursor: pointer;
@@ -81,9 +101,8 @@
 	flex: 1;
 	font-size: 0.9em;
 	color: $fontCol2;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 .expandIcon {
@@ -98,11 +117,44 @@
 	border-top: 1px solid rgba(255, 107, 107, 0.3);
 }
 
+.errorDetailsHeader {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3em;
+	margin-bottom: 0.5em;
+}
+
+.errorFilePath {
+	color: #74c0fc;
+	font-size: 0.85em;
+	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+	word-break: break-all;
+}
+
+.errorMetaRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .errorLine {
 	color: #ffa94d;
 	font-size: 0.85em;
-	margin-bottom: 0.5em;
 	font-weight: bold;
+}
+
+.copyErrorButton {
+	background-color: $bgCol2;
+	color: $fontCol2;
+	border: 1px solid $borderCol1;
+	padding: 0.25em 0.6em;
+	cursor: pointer;
+	font-size: 0.8em;
+	border-radius: 3px;
+
+	&:hover {
+		background-color: $bgCol3;
+	}
 }
 
 .sourceContext {

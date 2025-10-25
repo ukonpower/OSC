@@ -7,9 +7,16 @@ import { Glitch } from './Components/Camera/MainCamera/PostProcess/Glitch/index.
 import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/OverlayMixer/index.ts';
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
+import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
+import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
+import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
+import { Shari } from './Components/Demo4/Common/Shari/index.ts';
+import { ShariRaymarch } from './Components/Demo4/Common/ShariRaymarch/index.ts';
+import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
+import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
+import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
+import { WaterPillar } from './Components/Demo4/Maguro/WaterPillar/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
-import { ShaderMotionGraphics } from './Components/Demo4/ShaderMotionGraphics/index.ts';
-import { SkyBox } from './Components/Demo4/SkyBox/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
@@ -18,8 +25,10 @@ import { TextureGenerator } from './Components/Texture/TextureGenerator/index.ts
 import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
 import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
-import { RaymarchCube } from './Components/_Samples/RaymarchCube/index.ts';
-import { RaymarchMesh } from './Components/_Templates/RaymarchMesh/index.ts';
+import { InstancedMesh } from './Components/_Templates/InstancedMesh/index.ts';
+import { RaymarchCube } from './Components/_Templates/RaymarchCube/index.ts';
+import { RaymarchScreen } from './Components/_Templates/RaymarchScreen/index.ts';
+import { RaymarchTransparent } from './Components/_Templates/RaymarchTransparent/index.ts';
 import { ShaderMesh } from './Components/_Templates/ShaderMesh/index.ts';
 
 export const COMPONENTLIST: {[key: string]: any} = {
@@ -27,9 +36,20 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		MainCamera,
 	},
 	Demo4: {
+		Common: {
+			DebaBouChou,
+			MizuBall,
+			ShaderMotionGraphics,
+			Shari,
+			ShariRaymarch,
+			SkyBox,
+		},
+		Maguro: {
+			Maguro,
+			Sashimi,
+			WaterPillar,
+		},
 		Music,
-		ShaderMotionGraphics,
-		SkyBox,
 		TruchetSushiLane,
 	},
 	ObjectControls: {
@@ -47,11 +67,11 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	_DevOnly: {
 		OrbitControls,
 	},
-	_Samples: {
-		RaymarchCube,
-	},
 	_Templates: {
-		RaymarchMesh,
+		InstancedMesh,
+		RaymarchCube,
+		RaymarchScreen,
+		RaymarchTransparent,
 		ShaderMesh,
 	},
 };

@@ -20,6 +20,7 @@ struct Material {
 	vec3 diffuseColor;
 	vec3 specularColor;
 	float envMapIntensity;
+	float flatness;
 };
 
 float sinn( float x ) {

@@ -4,10 +4,10 @@ import { OREngineProjectData } from "packages/orengine/features/OREngine/core/Pr
 import { useEffect, useState } from "react";
 import ReactDOM from 'react-dom/client';
 
-import { FileSystem } from "~/utils/FileSystem";
 import ProjectData from "~/../data/scene.json";
 import { gl } from "~/globals";
 import { initResouces } from "~/resources";
+import { FileSystem } from "~/utils/FileSystem";
 
 import '~/styles/style.scss';
 

@@ -1,7 +1,7 @@
 import * as MXP from 'maxpower';
 
-import raymarchVert from './shaders/truchetSushiLane.vs';
 import raymarchFrag from './shaders/truchetSushiLane.fs';
+import raymarchVert from './shaders/truchetSushiLane.vs';
 
 import { globalUniforms } from '~/globals';
 
@@ -24,10 +24,10 @@ export class TruchetSushiLane extends MXP.Component {
 
 		// マテリアルを作成
 		mesh.material = new MXP.Material( {
-			phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
+			phase: [ "deferred", "shadowMap" ], // Deferredレンダリングパイプラインを使用
 			vert: MXP.hotGet( "truchetSushiLaneVert", raymarchVert ),
 			frag: MXP.hotGet( "truchetSushiLaneFrag", raymarchFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution, globalUniforms.tex )
 		} );
 
 		// ホットリロード対応（開発時のみ）

@@ -16,7 +16,7 @@ export class SkyBox extends MXP.Component {
 			phase: [ "deferred", "envMap" ],
 			frag: MXP.hotGet( "skybox", skyboxFrag ),
 			cullFace: false,
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.music )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.tex )
 		} );
 
 		if ( import.meta.hot ) {

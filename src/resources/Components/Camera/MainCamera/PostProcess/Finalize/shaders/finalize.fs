@@ -2,6 +2,7 @@
 #include <random>
 #include <noise_simplex>
 
+uniform float uTimeEF;
 uniform sampler2D uBackBuffer0;
 
 in vec2 vUv;
@@ -31,6 +32,9 @@ void main( void ) {
 
 	float len = length(cuv);
 	col *= smoothstep( 1.2, 0.3, len );
+
+	col.xyz += random( vUv + floor(uTimeEF * 18.0 ) * 0.5 ) * 0.05;
+
 	
 	outColor = vec4( col, 1.0 );
 

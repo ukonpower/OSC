@@ -2,10 +2,10 @@ mat2 rotate(float rad) {
   return mat2(cos(rad), sin(rad), -sin(rad), cos(rad));
 }
 
-void rotate( float rad, inout vec2 pos, inout vec2 normal ) {
-	
+void rotate( inout vec2 pos, inout vec2 normal, float rad ) {
+
 	mat2 rot = rotate( rad );
-	
+
 	pos *= rot;
 	normal *= rot;
 

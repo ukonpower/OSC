@@ -41,7 +41,8 @@ float sdPlane( vec3 p, vec3 n, float h )
   return dot(p,n) + h;
 }
 
-float sdCappedCylinder( vec3 p, float h, float r )
+// Vertical Capped Cylinder - exact (https://www.shadertoy.com/view/wdXGDr)
+float sdCappedCylinder( vec3 p, float r, float h )
 {
   vec2 d = abs(vec2(length(p.xz),p.y)) - vec2(r,h);
   return min(max(d.x,d.y),0.0) + length(max(d,0.0));
@@ -77,6 +78,12 @@ float sdTorus( vec3 p, vec2 t )
 {
   vec2 q = vec2(length(p.xz)-t.x,p.y);
   return length(q)-t.y;
+}
+
+float sdTriPrism( vec3 p, vec2 h )
+{
+  vec3 q = abs(p);
+  return max(q.z-h.y,max(q.x*0.866025+p.y*0.5,-p.y)-h.x*0.5);
 }
 
 // 2D

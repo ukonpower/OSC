@@ -7,7 +7,7 @@ import { Plugin } from 'vite';
 
 const exec = util.promisify( childProcess.exec );
 
-export const ShaderMinifierLoader = (): Plugin => {
+export const ShaderLoader = (): Plugin => {
 
 	const options = Object.assign(
 		{
@@ -29,7 +29,7 @@ export const ShaderMinifierLoader = (): Plugin => {
 	const skip = process.env.SKIP_SHADER_MINIFIER === 'true' || process.platform === 'darwin';
 
 	return {
-		name: 'shaderMinifier',
+		name: 'shaderLoader',
 		enforce: 'pre',
 		buildStart() {
 
@@ -115,8 +115,12 @@ export const ShaderMinifierLoader = (): Plugin => {
 			// skip minifier if requested or on Mac
 			if ( skip || true ) {
 
+				// 開発環境でファイルパス情報をシェーダーソースの先頭にコメントとして埋め込む
+				const relativeId = id.replace( process.cwd(), '' ).replace( /^\//, '' );
+				const codeWithPath = `// @shader-file: ${relativeId}\n${code}`;
+
 				return {
-					code: `export default ${JSON.stringify( code )};`,
+					code: `export default ${JSON.stringify( codeWithPath )};`,
 					map: { mappings: '' }
 				};
 
@@ -137,7 +141,7 @@ export const ShaderMinifierLoader = (): Plugin => {
 
 			} catch ( e ) {
 
-				this.error( `ShaderMinifierLoader: ${e.stdout}` );
+				this.error( `ShaderLoader: ${e.stdout}` );
 
 			}
 

@@ -6,6 +6,8 @@
 #include <rm_h>
 #include <rotate>
 
+uniform sampler2D uNoiseTex;
+
 float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
 {
     float l = length(b-a);
@@ -17,7 +19,7 @@ float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
 }
 
 vec2 gridCenter;
-float gridSize = 3.0;
+float gridSize = 5.0;
 float strokeWidth = 0.35;
 float laneHeight = 0.1;
 
@@ -104,10 +106,15 @@ vec2 tci(vec2 uv)
   return round(uv*2.)*.5;
 }
 
+const float loopY = 20.0;
+
 // SDF（Signed Distance Function）
 SDFResult D( vec3 p ) {
 
+
 	vec3 op = p;
+	float loopYId = floor(op.y / loopY);
+	op.y = mod( op.y, loopY ) - loopY / 2.0;
 	p.xz -= gridCenter;
 
 	// TruchetTiling
@@ -127,9 +134,9 @@ SDFResult D( vec3 p ) {
 
 	for( int i = 0; i < 4; i++ ) {
 
-		vec2 id = tci(gridCenter + dir[i] * 0.5 * gridSize);
+		vec2 id = tci(gridCenter + dir[i] * 0.5 * gridSize) + loopYId;
 
-		if( hash12( id  ) < 0.8 ) {
+		if( hash12( id ) < 0.8 ) {
 
 			quv[qCount++] = dir[i];
 
@@ -213,13 +220,12 @@ void main( void ) {
 	// 法線を計算
 	outNormal = N( rayPos, 0.01 );
 
-	// オブジェクト空間からワールド空間への変換、位置・法線・深度を出力
 	#include <rm_out_obj>
 
-	// 赤い色を設定
-	outColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+	outColor = vec4( vec3( 0.85 ), 1.0 );
 	outEmission = vec3( 0.0 );
-	outRoughness = 0.5;
+	outRoughness = texture( uNoiseTex, rayPos.xz * 0.05 ).r;
+	outColor *= 1.0 - outRoughness * 0.1;
 
 	#include <frag_out>
 

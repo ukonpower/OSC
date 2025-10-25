@@ -1,6 +1,7 @@
 import * as MXP from 'maxpower';
 
 import basicVert from './shaders/basic.vs';
+import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
 import shader0Frag from './shaders/shader0.fs';
 import shader1Frag from './shaders/shader1.fs';
 import shader2Frag from './shaders/shader2.fs';
@@ -26,6 +27,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 			[ "gradient", { vert: basicVert, frag: shader0Frag } ],
 			[ "pulse", { vert: basicVert, frag: shader1Frag } ],
 			[ "checker", { vert: basicVert, frag: shader2Frag } ],
+			[ "maguroBGScreen", { vert: basicVert, frag: maguroBGScreenFrag } ],
 		] );
 
 		this.shaderName = "gradient";
@@ -52,6 +54,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 					{ label: "Gradient", value: "gradient" },
 					{ label: "Pulse", value: "pulse" },
 					{ label: "Checker", value: "checker" },
+					{ label: "Maguro BG Screen", value: "maguroBGScreen" },
 				]
 			}
 		} );
@@ -107,6 +110,22 @@ export class ShaderMotionGraphics extends MXP.Component {
 
 			} );
 
+			import.meta.hot.accept( './shaders/maguroBGScreen.fs', ( module ) => {
+
+				if ( module ) {
+
+					const shader = this.shaders.get( "maguroBGScreen" );
+					if ( shader ) {
+
+						shader.frag = MXP.hotUpdate( 'maguroBGScreenFrag', module.default );
+						if ( this.shaderName === "maguroBGScreen" ) this.updateMaterial();
+
+					}
+
+				}
+
+			} );
+
 		}
 
 	}
@@ -120,7 +139,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 		if ( ! shader ) return;
 
 		this.mesh.material = new MXP.Material( {
-			phase: [ "deferred", "forward" ],
+			phase: [ "forward" ],
 			vert: MXP.hotGet( 'basicVert', shader.vert ),
 			frag: MXP.hotGet( `${this.shaderName}Frag`, shader.frag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
