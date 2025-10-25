@@ -6,7 +6,7 @@ import style from './index.module.scss';
 
 export const Canvas: React.FC = () => {
 
-	const { engine } = useOREditor();
+	const { engine, editor } = useOREditor();
 	const wrapperElmRef = useRef<HTMLDivElement | null>( null );
 
 	useEffect( () => {
@@ -25,6 +25,26 @@ export const Canvas: React.FC = () => {
 		// キャンバスの追加
 		wrapperElm.appendChild( canvas );
 
+		let clickHandler: ( ( event: MouseEvent ) => void ) | null = null;
+
+		if ( import.meta.env.DEV && editor && ( editor as any )._scenePointer ) {
+
+			clickHandler = ( event: MouseEvent ) => {
+
+				const scenePointer = ( editor as any )._scenePointer;
+
+				if ( scenePointer && scenePointer.handleClick ) {
+
+					scenePointer.handleClick( event.clientX, event.clientY, canvas );
+
+				}
+
+			};
+
+			canvas.addEventListener( 'click', clickHandler );
+
+		}
+
 		// クリーンアップ関数
 		return () => {
 
@@ -34,9 +54,15 @@ export const Canvas: React.FC = () => {
 
 			}
 
+			if ( clickHandler ) {
+
+				canvas.removeEventListener( 'click', clickHandler );
+
+			}
+
 		};
 
-	}, [ engine ] );
+	}, [ engine, editor ] );
 
 	return (
 		<div

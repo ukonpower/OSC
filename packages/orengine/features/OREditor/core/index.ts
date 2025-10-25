@@ -7,6 +7,14 @@ import { Keyboard, PressedKeys } from '../../OREngine/core/Keyboard';
 
 import { BASE_RESOLUTION } from '~/globals';
 
+let ScenePointer: any = null;
+
+if ( import.meta.env.DEV ) {
+
+	ScenePointer = await import( './ScenePointer' ).then( m => m.ScenePointer );
+
+}
+
 
 export type EditorTimelineLoop = {
 	enabled: boolean,
@@ -25,6 +33,7 @@ export class Editor extends MXP.Serializable {
 	private _frameDebugger: FrameDebugger;
 	private _externalWindow: Window | null;
 	private _externalCanvasBitmapContext: ImageBitmapRenderingContext | null;
+	private _scenePointer: any;
 
 	private _disposed: boolean;
 
@@ -87,6 +96,16 @@ export class Editor extends MXP.Serializable {
 			}
 
 		} );
+
+		/*-------------------------------
+			Scene Pointer
+		-------------------------------*/
+
+		if ( import.meta.env.DEV && ScenePointer ) {
+
+			this._scenePointer = new ScenePointer( engine, this );
+
+		}
 
 		/*-------------------------------
 			Loop
@@ -364,6 +383,12 @@ export class Editor extends MXP.Serializable {
 		this._disposed = true;
 		this._keyBoard.dispose();
 		this._frameDebugger.dispose();
+
+		if ( import.meta.env.DEV && this._scenePointer && this._scenePointer.dispose ) {
+
+			this._scenePointer.dispose();
+
+		}
 
 	}
 
