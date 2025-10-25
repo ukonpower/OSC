@@ -62,69 +62,28 @@ export class ShaderMotionGraphics extends MXP.Component {
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {
 
-			import.meta.hot.accept( './shaders/shader0.fs', ( module ) => {
+			// シェーダーホットリロードハンドラーを生成する関数
+			const createHotReloadHandler = ( shaderName: string, hotKey: string ) => ( module: any ) => {
 
 				if ( module ) {
 
-					const shader = this.shaders.get( "gradient" );
+					const shader = this.shaders.get( shaderName );
 					if ( shader ) {
 
-						shader.frag = MXP.hotUpdate( 'shader0Frag', module.default );
-						if ( this.shaderName === "gradient" ) this.updateMaterial();
+						shader.frag = MXP.hotUpdate( hotKey, module.default );
+						if ( this.shaderName === shaderName ) this.updateMaterial();
 
 					}
 
 				}
 
-			} );
+			};
 
-			import.meta.hot.accept( './shaders/shader1.fs', ( module ) => {
-
-				if ( module ) {
-
-					const shader = this.shaders.get( "pulse" );
-					if ( shader ) {
-
-						shader.frag = MXP.hotUpdate( 'shader1Frag', module.default );
-						if ( this.shaderName === "pulse" ) this.updateMaterial();
-
-					}
-
-				}
-
-			} );
-
-			import.meta.hot.accept( './shaders/shader2.fs', ( module ) => {
-
-				if ( module ) {
-
-					const shader = this.shaders.get( "checker" );
-					if ( shader ) {
-
-						shader.frag = MXP.hotUpdate( 'shader2Frag', module.default );
-						if ( this.shaderName === "checker" ) this.updateMaterial();
-
-					}
-
-				}
-
-			} );
-
-			import.meta.hot.accept( './shaders/maguroBGScreen.fs', ( module ) => {
-
-				if ( module ) {
-
-					const shader = this.shaders.get( "maguroBGScreen" );
-					if ( shader ) {
-
-						shader.frag = MXP.hotUpdate( 'maguroBGScreenFrag', module.default );
-						if ( this.shaderName === "maguroBGScreen" ) this.updateMaterial();
-
-					}
-
-				}
-
-			} );
+			// 各シェーダーファイルのホットリロードを登録
+			import.meta.hot.accept( './shaders/shader0.fs', createHotReloadHandler( 'gradient', 'shader0Frag' ) );
+			import.meta.hot.accept( './shaders/shader1.fs', createHotReloadHandler( 'pulse', 'shader1Frag' ) );
+			import.meta.hot.accept( './shaders/shader2.fs', createHotReloadHandler( 'checker', 'shader2Frag' ) );
+			import.meta.hot.accept( './shaders/maguroBGScreen.fs', createHotReloadHandler( 'maguroBGScreen', 'maguroBGScreenFrag' ) );
 
 		}
 
@@ -139,7 +98,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 		if ( ! shader ) return;
 
 		this.mesh.material = new MXP.Material( {
-			phase: [ "forward" ],
+			phase: [ "deferred" ],
 			vert: MXP.hotGet( 'basicVert', shader.vert ),
 			frag: MXP.hotGet( `${this.shaderName}Frag`, shader.frag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
