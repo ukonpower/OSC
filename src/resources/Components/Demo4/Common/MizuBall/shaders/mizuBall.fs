@@ -55,13 +55,13 @@ void main( void ) {
 
 	// 法線計算
 	vec3 normal = N( rayPos, 0.01 );
-	vec4 worldNormal = normalize( uModelMatrix * vec4( normal, 0.0 ) );
-	vec4 viewNormal = normalize( uViewMatrix * worldNormal );
-	outNormal = worldNormal.xyz;
+	outNormal = normal;
 
 	outRoughness = 0.1;
 	outMetalic = 0.0;
 	outColor.xyz = vec3( 0.0 );
+
+	#include <rm_out_obj>
 
 	#ifdef IS_FORWARD
 
@@ -100,7 +100,6 @@ void main( void ) {
 
 	#endif
 
-	#include <rm_out_pos>
 	#include <frag_out>
 
 }

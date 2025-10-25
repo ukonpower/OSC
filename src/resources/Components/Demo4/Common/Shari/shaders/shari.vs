@@ -23,14 +23,14 @@ void main( void ) {
 	#include <vert_in>
 
 	vec3 instancePos = id2.xyz - 0.5;
-	instancePos.xyz *= vec3( 1.0, 0.7, 2.7 );
+	instancePos.xyz *= vec3( 0.25, 0.2, 0.55 );
 
 	// 回転角度を計算
 	float angleXY = id.y * TPI;
 	float angleYZ = id.z * TPI;
 
 	// マトリックス生成関数を使用してマトリックスを構築
-	mat4 scaleMatrix = makeScale(0.5);
+	mat4 scaleMatrix = makeScale(0.1);
 	mat4 rotXY = makeRotationXY(angleXY);
 	mat4 rotYZ = makeRotationYZ(angleYZ);
 	mat4 translateMatrix = makeTranslation(instancePos);
