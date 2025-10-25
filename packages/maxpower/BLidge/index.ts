@@ -45,7 +45,9 @@ export type BLidgeNode = {
 // camera
 
 export type BLidgeCameraParam = {
-	fov: number
+	fov: number,
+	near: number,
+	far: number
 }
 
 // mesh
@@ -67,18 +69,17 @@ export type BLidgeMeshParam = {
 // light
 
 type BLidgeLightParamCommon = {
-	type: 'directional' | 'spot'
+	type: 'POINT' | 'SUN' | 'SPOT' | 'AREA'
 	color: GLP.IVector3,
 	intensity: number,
-	shadowMap: boolean,
 }
 
 export type BLidgeDirectionalLightParam = {
-	type: 'directional'
+	type: 'SUN'
 } & BLidgeLightParamCommon
 
 export type BLidgeSpotLightParam = {
-	type: 'spot',
+	type: 'SPOT',
 	angle: number,
 	blend: number,
 } & BLidgeLightParamCommon
