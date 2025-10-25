@@ -130,9 +130,22 @@ export class Raycaster {
 	}
 
 	/**
-	 * Meshとレイの交差判定（バウンディングボックスベース）
+	 * Meshとレイの交差判定（三角形レベル）
 	 */
 	private _intersectMesh( entity: Entity, mesh: Mesh ): RaycastHit | null {
+
+		const geometry = mesh.geometry;
+		if ( ! geometry ) return null;
+
+		// 頂点座標を取得
+		const positionAttr = geometry.getAttribute( 'position' );
+		if ( ! positionAttr ) return null;
+
+		const positions = positionAttr.array;
+		const positionSize = positionAttr.size;
+
+		// インデックスを取得
+		const indexAttr = geometry.getAttribute( 'index' );
 
 		// エンティティのワールド行列の逆行列を計算
 		this._invMatrix.copy( entity.matrixWorld ).inverse();
@@ -140,22 +153,94 @@ export class Raycaster {
 		// レイをローカル空間に変換
 		const localOrigin = this._ray.origin.clone().applyMatrix4( this._invMatrix );
 		const localDirection = this._ray.direction.clone();
-		// 方向ベクトルは平行移動を無視するため、wを0にしてから変換
 		localDirection.w = 0;
 		localDirection.applyMatrix4( this._invMatrix );
+		localDirection.normalize();
 
-		// 簡易的なバウンディングボックス（-1〜1の立方体）
-		// 実際のジオメトリのサイズに応じて調整が必要
-		const min = new GLP.Vector( - 1, - 1, - 1 );
-		const max = new GLP.Vector( 1, 1, 1 );
+		let closestHit: { t: number, point: GLP.Vector } | null = null;
 
-		const t = this._intersectAABB( localOrigin, localDirection, min, max );
+		// 三角形ごとに交差判定
+		if ( indexAttr ) {
 
-		if ( t === null ) return null;
+			// インデックスありの場合
+			const indices = indexAttr.array;
+			const triangleCount = indices.length / 3;
+
+			for ( let i = 0; i < triangleCount; i ++ ) {
+
+				const i0 = indices[ i * 3 + 0 ];
+				const i1 = indices[ i * 3 + 1 ];
+				const i2 = indices[ i * 3 + 2 ];
+
+				const v0 = new GLP.Vector(
+					positions[ i0 * positionSize + 0 ],
+					positions[ i0 * positionSize + 1 ],
+					positions[ i0 * positionSize + 2 ]
+				);
+
+				const v1 = new GLP.Vector(
+					positions[ i1 * positionSize + 0 ],
+					positions[ i1 * positionSize + 1 ],
+					positions[ i1 * positionSize + 2 ]
+				);
+
+				const v2 = new GLP.Vector(
+					positions[ i2 * positionSize + 0 ],
+					positions[ i2 * positionSize + 1 ],
+					positions[ i2 * positionSize + 2 ]
+				);
+
+				const hit = this._intersectTriangle( localOrigin, localDirection, v0, v1, v2 );
+
+				if ( hit && ( ! closestHit || hit.t < closestHit.t ) ) {
+
+					closestHit = hit;
+
+				}
+
+			}
+
+		} else {
+
+			// インデックスなしの場合
+			const triangleCount = positions.length / positionSize / 3;
+
+			for ( let i = 0; i < triangleCount; i ++ ) {
+
+				const v0 = new GLP.Vector(
+					positions[ ( i * 3 + 0 ) * positionSize + 0 ],
+					positions[ ( i * 3 + 0 ) * positionSize + 1 ],
+					positions[ ( i * 3 + 0 ) * positionSize + 2 ]
+				);
+
+				const v1 = new GLP.Vector(
+					positions[ ( i * 3 + 1 ) * positionSize + 0 ],
+					positions[ ( i * 3 + 1 ) * positionSize + 1 ],
+					positions[ ( i * 3 + 1 ) * positionSize + 2 ]
+				);
+
+				const v2 = new GLP.Vector(
+					positions[ ( i * 3 + 2 ) * positionSize + 0 ],
+					positions[ ( i * 3 + 2 ) * positionSize + 1 ],
+					positions[ ( i * 3 + 2 ) * positionSize + 2 ]
+				);
+
+				const hit = this._intersectTriangle( localOrigin, localDirection, v0, v1, v2 );
+
+				if ( hit && ( ! closestHit || hit.t < closestHit.t ) ) {
+
+					closestHit = hit;
+
+				}
+
+			}
+
+		}
+
+		if ( ! closestHit ) return null;
 
 		// 交差点をワールド座標に戻す
-		const localPoint = localOrigin.clone().add( localDirection.clone().multiply( t ) );
-		const worldPoint = localPoint.applyMatrix4( entity.matrixWorld );
+		const worldPoint = closestHit.point.applyMatrix4( entity.matrixWorld );
 
 		// カメラからの距離を計算
 		const distance = worldPoint.clone().sub( this._ray.origin ).length();
@@ -169,61 +254,66 @@ export class Raycaster {
 	}
 
 	/**
-	 * AABB（軸平行境界ボックス）とレイの交差判定
-	 * スラブ法（Slab method）を使用
+	 * 三角形とレイの交差判定（Möller–Trumboreアルゴリズム）
 	 */
-	private _intersectAABB( origin: GLP.Vector, direction: GLP.Vector, min: GLP.Vector, max: GLP.Vector ): number | null {
+	private _intersectTriangle(
+		origin: GLP.Vector,
+		direction: GLP.Vector,
+		v0: GLP.Vector,
+		v1: GLP.Vector,
+		v2: GLP.Vector
+	): { t: number, point: GLP.Vector } | null {
 
-		let tmin = - Infinity;
-		let tmax = Infinity;
+		const EPSILON = 0.0000001;
 
-		// X軸
-		if ( Math.abs( direction.x ) > 0.0001 ) {
+		// エッジベクトル
+		const edge1 = v1.clone().sub( v0 );
+		const edge2 = v2.clone().sub( v0 );
 
-			const tx1 = ( min.x - origin.x ) / direction.x;
-			const tx2 = ( max.x - origin.x ) / direction.x;
-			tmin = Math.max( tmin, Math.min( tx1, tx2 ) );
-			tmax = Math.min( tmax, Math.max( tx1, tx2 ) );
+		// 決定因子の計算
+		const h = direction.clone().cross( edge2 );
+		const a = edge1.dot( h );
 
-		} else if ( origin.x < min.x || origin.x > max.x ) {
-
-			return null;
-
-		}
-
-		// Y軸
-		if ( Math.abs( direction.y ) > 0.0001 ) {
-
-			const ty1 = ( min.y - origin.y ) / direction.y;
-			const ty2 = ( max.y - origin.y ) / direction.y;
-			tmin = Math.max( tmin, Math.min( ty1, ty2 ) );
-			tmax = Math.min( tmax, Math.max( ty1, ty2 ) );
-
-		} else if ( origin.y < min.y || origin.y > max.y ) {
+		// レイが三角形の平面と平行な場合
+		if ( a > - EPSILON && a < EPSILON ) {
 
 			return null;
 
 		}
 
-		// Z軸
-		if ( Math.abs( direction.z ) > 0.0001 ) {
+		const f = 1.0 / a;
+		const s = origin.clone().sub( v0 );
+		const u = f * s.dot( h );
 
-			const tz1 = ( min.z - origin.z ) / direction.z;
-			const tz2 = ( max.z - origin.z ) / direction.z;
-			tmin = Math.max( tmin, Math.min( tz1, tz2 ) );
-			tmax = Math.min( tmax, Math.max( tz1, tz2 ) );
-
-		} else if ( origin.z < min.z || origin.z > max.z ) {
+		// u座標のチェック
+		if ( u < 0.0 || u > 1.0 ) {
 
 			return null;
 
 		}
 
-		// 交差判定
-		if ( tmax < tmin || tmax < 0 ) return null;
+		const q = s.clone().cross( edge1 );
+		const v = f * direction.dot( q );
 
-		// レイの前方にある最初の交差点を返す
-		return tmin > 0 ? tmin : tmax;
+		// v座標のチェック
+		if ( v < 0.0 || u + v > 1.0 ) {
+
+			return null;
+
+		}
+
+		// 交差点までの距離
+		const t = f * edge2.dot( q );
+
+		if ( t > EPSILON ) {
+
+			// 交差点の計算
+			const point = origin.clone().add( direction.clone().multiply( t ) );
+			return { t, point };
+
+		}
+
+		return null;
 
 	}
 
