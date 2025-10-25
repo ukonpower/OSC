@@ -43,12 +43,7 @@ export class ScenePointer {
 		// レンダリングカメラを取得
 		const camera = this._findMainCamera();
 
-		if ( ! camera ) {
-
-			console.warn( 'Main camera not found for raycasting' );
-			return;
-
-		}
+		if ( ! camera ) return;
 
 		// レイキャストを実行
 		const hit = this._raycaster.raycast( ndcX, ndcY, camera, this._engine.root );
@@ -57,12 +52,6 @@ export class ScenePointer {
 
 			// ヒットしたエンティティを選択
 			this._editor.selectEntity( hit.entity );
-
-			if ( import.meta.env.DEV ) {
-
-				console.log( 'Selected entity:', hit.entity.name, 'distance:', hit.distance );
-
-			}
 
 		} else {
 
@@ -83,8 +72,7 @@ export class ScenePointer {
 
 		this._traverseForCamera( this._engine.root, cameras );
 
-		// 最初に見つかったカメラを返す（通常は1つのみ）
-		// より洗練された実装では、displayOut=trueのカメラを優先するなど
+		// displayOut=trueのカメラを優先
 		for ( let i = 0; i < cameras.length; i ++ ) {
 
 			const camera = cameras[ i ];
@@ -106,7 +94,14 @@ export class ScenePointer {
 	 */
 	private _traverseForCamera( entity: MXP.Entity, cameras: MXP.Camera[] ): void {
 
-		const camera = entity.getComponent( MXP.Camera );
+		// CameraまたはRenderCameraコンポーネントを探す
+		let camera = entity.getComponent( MXP.Camera );
+
+		if ( ! camera ) {
+
+			camera = entity.getComponent( MXP.RenderCamera );
+
+		}
 
 		if ( camera ) {
 
