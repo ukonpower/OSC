@@ -3,6 +3,9 @@
 #include <frag_h>
 #include <noise_simplex>
 
+// 頂点シェーダーから渡されるレイヤー値（0.0〜1.0）
+in float vLayer;
+
 // MaguroBGScreen: マグロ背景用のシェーダー
 uniform float uTime;
 

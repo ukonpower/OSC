@@ -2,6 +2,9 @@
 #include <packing>
 #include <frag_h>
 
+// 頂点シェーダーから渡されるレイヤー値（0.0〜1.0）
+in float vLayer;
+
 // Shader 1: 時間でアニメーションする円
 void main( void ) {
 

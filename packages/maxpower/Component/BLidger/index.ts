@@ -58,19 +58,19 @@ export class BLidger extends Component {
 
 		// uniforms
 
-		const uniformCurveKeys = Object.keys( this.node.material.uniforms );
+		const uniformCurveKeys = Object.keys( this.node.uniforms );
 
 		for ( let i = 0; i < uniformCurveKeys.length; i ++ ) {
 
-			const name = uniformCurveKeys[ i ];
-			const accessor = this.node.material.uniforms[ name ];
-			const curve = this._blidge.curveGroups[ accessor ];
+			const accessor = uniformCurveKeys[ i ];
+			const curveIndex = this.node.uniforms[ accessor ];
+			const curve = this._blidge.curveGroups[ curveIndex ];
 
 			if ( curve ) {
 
-				this.uniformCurves.set( name, curve );
+				this.uniformCurves.set( accessor, curve );
 
-				this.uniforms[ name ] = {
+				this.uniforms[ accessor ] = {
 					type: '4fv',
 					value: curve.value
 				};

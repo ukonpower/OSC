@@ -2,6 +2,9 @@
 #include <packing>
 #include <frag_h>
 
+// 頂点シェーダーから渡されるレイヤー値（0.0〜1.0）
+in float vLayer;
+
 // Shader 0: シンプルなグラデーション
 void main( void ) {
 
