@@ -37,6 +37,7 @@ export class Engine extends MXP.Entity {
 	private _audioBuffer: AudioBuffer | null;
 
 	private _renderer: MXP.Renderer;
+	private _camera: MXP.RenderCamera | null;
 	private _gl: WebGL2RenderingContext;
 	private _canvas: HTMLCanvasElement | OffscreenCanvas;
 	private _projectCache: OREngineProjectData | null;
@@ -56,6 +57,7 @@ export class Engine extends MXP.Entity {
 		this._gl = gl;
 		this.name = "OREngine";
 		this._disposed = false;
+		this._camera = null;
 
 		this._uniforms = {
 			uTime: {
@@ -247,6 +249,15 @@ export class Engine extends MXP.Entity {
 
 	}
 
+	/**
+	 * レンダリング用カメラを設定
+	 */
+	public setCamera( camera: MXP.RenderCamera | null ): void {
+
+		this._camera = camera;
+
+	}
+
 	public get disposed() {
 
 		return this._disposed;
@@ -271,9 +282,7 @@ export class Engine extends MXP.Entity {
 
 	public init() {
 
-		this._root.remove( this._renderer );
 		this._root.disposeRecursive();
-		this._root.add( this._renderer );
 
 		this._root.position.set( 0, 0, 0 );
 		this._root.euler.set( 0, 0, 0 );
@@ -395,9 +404,9 @@ export class Engine extends MXP.Entity {
 
 		this._root.update( event );
 
-		if ( this.enableRender ) {
+		if ( this.enableRender && this._camera ) {
 
-			this._renderer.render( this._root, event );
+			this._renderer.render( this._root, this._camera, event );
 
 		}
 
@@ -489,7 +498,13 @@ export class Engine extends MXP.Entity {
 
 		const event = this.createEntityUpdateEvent( { forceDraw: true } );
 
-		return this.renderer.compileShaders( this._root, event, onProgress );
+		if ( ! this._camera ) {
+
+			return Promise.resolve();
+
+		}
+
+		return this.renderer.compileShaders( this._root, this._camera, event, onProgress );
 
 	}
 
@@ -502,7 +517,6 @@ export class Engine extends MXP.Entity {
 		super.dispose();
 
 		this._disposed = true;
-		this._root.remove( this._renderer );
 		this._root.disposeRecursive();
 
 	}
