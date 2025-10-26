@@ -3,7 +3,6 @@ import * as MXP from 'maxpower';
 import finalizeFrag from './shaders/finalize.fs';
 
 import { gl, globalUniforms } from '~/globals';
-import { bindBlidgeUniform } from '~/shortcuts';
 
 export class Finalize extends MXP.PostProcess {
 
@@ -12,15 +11,24 @@ export class Finalize extends MXP.PostProcess {
 		const { pipeline } = params;
 		const blidger = pipeline.entity.getComponent( MXP.BLidger );
 
+		const uniforms = MXP.UniformsUtils.merge( globalUniforms.time );
+
+		// BLidgerのuniformsをバインド
+		if ( blidger ) {
+
+			blidger.bindUniforms( uniforms );
+
+		}
+
+		console.log( blidger );
+
+
 		super( {
 			name: "Finalize",
 			passes: [
 				new MXP.PostProcessPass( gl, {
 					frag: finalizeFrag,
-					uniforms: MXP.UniformsUtils.merge(
-						globalUniforms.time,
-						blidger && blidger.uniforms || {}
-					),
+					uniforms: uniforms,
 				} )
 			]
 		} );

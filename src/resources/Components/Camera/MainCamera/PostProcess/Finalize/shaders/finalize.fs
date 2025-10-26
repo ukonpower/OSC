@@ -4,6 +4,7 @@
 
 uniform float uTimeEF;
 uniform sampler2D uBackBuffer0;
+uniform vec4 uPP;
 
 in vec2 vUv;
 
@@ -35,6 +36,7 @@ void main( void ) {
 
 	col.xyz += random( vUv + floor(uTimeEF * 18.0 ) * 0.5 ) * 0.05;
 
+	col.xyz *= uPP.x;
 	
 	outColor = vec4( col, 1.0 );
 
