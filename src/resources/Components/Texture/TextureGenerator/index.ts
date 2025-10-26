@@ -5,7 +5,7 @@ import { Engine, TexProcedural } from 'orengine';
 import hashFrag from './shaders/hash.fs';
 import noiseFrag from './shaders/noise.fs';
 import noiseCyclicFrag from './shaders/noiseCyclic.fs';
-import noiseValueFrag from './shaders/noiseValue.fs';
+import noiseSimpleFrag from './shaders/noiseSimple.fs';
 
 import { gl, globalUniforms } from '~/globals';
 
@@ -62,15 +62,15 @@ export class TextureGenerator extends MXP.Component {
 		Engine.resources.addTexture( "noiseCyclic_anime", noiseCyclicAnimeTex );
 		this.updateTextures.push( noiseCyclicAnimeTex );
 
-		const noiseValueAnimeTex = new TexProcedural( renderer, {
-			frag: noiseValueFrag,
+		const noiseSimpleAnimeTex = new TexProcedural( renderer, {
+			frag: noiseSimpleFrag,
 			uniforms: Engine.getInstance( gl ).uniforms,
 			resolution: new GLP.Vector( 512, 512 ),
 		} );
-		noiseValueAnimeTex.setting( { wrapS: gl.REPEAT, wrapT: gl.REPEAT } );
-		Engine.resources.addTexture( "noiseValue_anime", noiseValueAnimeTex );
-		globalUniforms.tex.uNoiseValueTex = { type: "1i", value: noiseValueAnimeTex };
-		this.updateTextures.push( noiseValueAnimeTex );
+		noiseSimpleAnimeTex.setting( { wrapS: gl.REPEAT, wrapT: gl.REPEAT } );
+		Engine.resources.addTexture( "noiseSimple_anime", noiseSimpleAnimeTex );
+		globalUniforms.tex.uNoiseSimpleTex = { type: "1i", value: noiseSimpleAnimeTex };
+		this.updateTextures.push( noiseSimpleAnimeTex );
 
 		// DeferredRendererのshadingパスにテクスチャを設定
 		const deferredRenderer = renderer.deferredRenderer;

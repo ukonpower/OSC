@@ -15,6 +15,7 @@ uniform sampler2D sampler4; // velocity.xy, 0.0, emission.z
 uniform sampler2D uSSAOTexture;
 uniform sampler2D uLightShaftTexture;
 uniform sampler2D uEnvMap;
+uniform sampler2D uNoiseSimpleTex;
 
 uniform vec3 uColor;
 uniform mat4 uViewMatrix;
@@ -98,7 +99,15 @@ void main( void ) {
 
 	// DEMO4 CUSTOM ----------
 
-	// outColor.xyz += random( vUv ) * mat.flatness * 0.3;
+	float rnd = random( vUv );
+
+	vec3 noise = texture( uNoiseSimpleTex, vUv * 0.3 ).xyz;
+
+	vec3 hsv = rgb2hsv( outColor.xyz );
+	hsv.x += noise.x * 0.1 * mix( 0.5, 1.0, rnd );
+
+
+	outColor.xyz = mix( outColor.xyz, hsv2rgb( hsv ), mat.flatness );
 
 	// outColor.xyz = mix( outColor.xyz, vec3( 1.0, 0.0, 1.0 ),  mat.flatness );
 

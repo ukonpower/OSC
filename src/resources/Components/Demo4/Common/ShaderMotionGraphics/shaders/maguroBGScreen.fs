@@ -44,7 +44,7 @@ void main( void ) {
 
 	// シンプルなマグロの赤身カラー - 正規化値で明るさを調整
 	vec3 color;
-	color = mix( vec3( 0.0, 0.6, 1.0 ), vec3(  0.0, 0.3, 1.0 ), vLayerIndex.y);
+	color = mix( vec3( 0.0, 0.7, 1.0 ), vec3(  0.0, 0.3, 1.0 ), vLayerIndex.y);
 	outColor = vec4( color, 1.0 );
 	outRoughness = 0.4;
 	outMetalic = 0.3;
