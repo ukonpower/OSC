@@ -62,14 +62,14 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 
 		};
 
-		Engine.shaderErrorManager.addListener( onErrorsChanged );
+		Engine.shaderErrorManager?.addListener( onErrorsChanged );
 
 		// 初期状態を設定
-		setHasShaderErrors( Engine.shaderErrorManager.getErrors().length > 0 );
+		setHasShaderErrors( ( Engine.shaderErrorManager?.getErrors().length ?? 0 ) > 0 );
 
 		return () => {
 
-			Engine.shaderErrorManager.removeListener( onErrorsChanged );
+			Engine.shaderErrorManager?.removeListener( onErrorsChanged );
 
 		};
 

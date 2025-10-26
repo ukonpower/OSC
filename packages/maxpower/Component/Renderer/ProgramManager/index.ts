@@ -66,6 +66,27 @@ export class ProgramManager {
 		// 開発環境でのみエラーハンドリングを実行
 		if ( import.meta.env.DEV ) {
 
+			// エラー通知・クリア用のヘルパー関数（DEV環境でのみ定義される）
+			const notifyError = ( error: any ) => {
+
+				if ( typeof window !== 'undefined' && ( window as any ).__glpowerShaderErrorHandler ) {
+
+					( window as any ).__glpowerShaderErrorHandler( error );
+
+				}
+
+			};
+
+			const clearError = ( shaderKey: string ) => {
+
+				if ( typeof window !== 'undefined' && ( window as any ).__glpowerShaderClearHandler ) {
+
+					( window as any ).__glpowerShaderClearHandler( shaderKey );
+
+				}
+
+			};
+
 			const vertexShaderKey = hashString( vertexShader );
 			const fragmentShaderKey = hashString( fragmentShader );
 
@@ -76,23 +97,23 @@ export class ProgramManager {
 			// エラーがあればハンドラーに通知
 			if ( ! vsCompileResult.success && vsCompileResult.error ) {
 
-				this.notifyShaderError( vsCompileResult.error );
+				notifyError( vsCompileResult.error );
 
 			} else {
 
 				// 成功したらエラーをクリア
-				this.clearShaderError( vertexShaderKey );
+				clearError( vertexShaderKey );
 
 			}
 
 			if ( ! fsCompileResult.success && fsCompileResult.error ) {
 
-				this.notifyShaderError( fsCompileResult.error );
+				notifyError( fsCompileResult.error );
 
 			} else {
 
 				// 成功したらエラーをクリア
-				this.clearShaderError( fragmentShaderKey );
+				clearError( fragmentShaderKey );
 
 			}
 
@@ -180,30 +201,5 @@ export class ProgramManager {
 
 	}
 
-	/**
-	 * グローバルエラーハンドラーに通知
-	 */
-	private notifyShaderError( error: any ): void {
-
-		if ( typeof window !== 'undefined' && ( window as any ).__glpowerShaderErrorHandler ) {
-
-			( window as any ).__glpowerShaderErrorHandler( error );
-
-		}
-
-	}
-
-	/**
-	 * グローバルクリアハンドラーに通知
-	 */
-	private clearShaderError( shaderKey: string ): void {
-
-		if ( typeof window !== 'undefined' && ( window as any ).__glpowerShaderClearHandler ) {
-
-			( window as any ).__glpowerShaderClearHandler( shaderKey );
-
-		}
-
-	}
 
 }

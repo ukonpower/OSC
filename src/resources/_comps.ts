@@ -13,7 +13,9 @@ import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGrap
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { ShariRaymarch } from './Components/Demo4/Common/ShariRaymarch/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
+import { SushiMaguro } from './Components/Demo4/Common/sushi/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
+import { MaguroBlock } from './Components/Demo4/Maguro/MaguroBlock/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { WaterPillar } from './Components/Demo4/Maguro/WaterPillar/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
@@ -37,9 +39,11 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Shari,
 			ShariRaymarch,
 			SkyBox,
+			SushiMaguro,
 		},
 		Maguro: {
 			Maguro,
+			MaguroBlock,
 			Sashimi,
 			WaterPillar,
 		},

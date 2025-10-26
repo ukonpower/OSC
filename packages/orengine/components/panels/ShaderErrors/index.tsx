@@ -11,6 +11,8 @@ export const ShaderErrors = () => {
 
 	useEffect( () => {
 
+		if ( ! import.meta.env.DEV ) return;
+
 		// エラーリスナーを登録
 		const onErrorsChanged = ( newErrors: ShaderError[] ) => {
 
@@ -18,14 +20,14 @@ export const ShaderErrors = () => {
 
 		};
 
-		Engine.shaderErrorManager.addListener( onErrorsChanged );
+		Engine.shaderErrorManager?.addListener( onErrorsChanged );
 
 		// 初期エラーを取得
-		setErrors( Engine.shaderErrorManager.getErrors() );
+		setErrors( Engine.shaderErrorManager?.getErrors() ?? [] );
 
 		return () => {
 
-			Engine.shaderErrorManager.removeListener( onErrorsChanged );
+			Engine.shaderErrorManager?.removeListener( onErrorsChanged );
 
 		};
 
@@ -55,7 +57,7 @@ export const ShaderErrors = () => {
 
 	const clearAllErrors = () => {
 
-		Engine.shaderErrorManager.clearErrors();
+		Engine.shaderErrorManager?.clearErrors();
 
 	};
 

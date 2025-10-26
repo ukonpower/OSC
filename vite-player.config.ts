@@ -6,7 +6,7 @@ import { defineConfig } from 'vite';
 
 import playerJson from './data/scene.json';
 import { ResourceManager } from './plugins/ResourceManager';
-import { ShaderMinifierLoader } from './plugins/ShaderMinifierLoader';
+import { ShaderLoader } from './plugins/ShaderLoader';
 
 
 const basePath = process.env.BASE_PATH ?? "";
@@ -108,7 +108,7 @@ export default defineConfig( {
 	},
 	plugins: [
 		ResourceManager(),
-		ShaderMinifierLoader(),
+		ShaderLoader(),
 		visualizer( {
 			template: "treemap",
 			gzipSize: true,

@@ -30,7 +30,8 @@ export class Engine extends MXP.Entity {
 
 	public static resources: Resources;
 	public static instances: Map<WebGL2RenderingContext, Engine>;
-	public static shaderErrorManager: ShaderErrorManager;
+	// ShaderErrorManagerは開発環境のみで使用（本番ビルドではツリーシェイクされる）
+	public static shaderErrorManager: ShaderErrorManager | undefined;
 	public enableRender: boolean;
 
 	// DEV環境でのみ使用するプロパティ
@@ -127,14 +128,14 @@ export class Engine extends MXP.Entity {
 			// エラー発生時のハンドラー
 			( window as any ).__glpowerShaderErrorHandler = ( error: any ) => {
 
-				Engine.shaderErrorManager.addError( error );
+				Engine.shaderErrorManager?.addError( error );
 
 			};
 
 			// コンパイル成功時のハンドラー（そのシェーダーキーのエラーをクリア）
 			( window as any ).__glpowerShaderClearHandler = ( shaderKey: string ) => {
 
-				Engine.shaderErrorManager.clearErrorsByShaderKey( shaderKey );
+				Engine.shaderErrorManager?.clearErrorsByShaderKey( shaderKey );
 
 			};
 
@@ -362,10 +363,27 @@ export class Engine extends MXP.Entity {
 	 */
 	public registerBLidgeClient( blidgeClient: BLidgeClient ) {
 
-		// BLidgeClientのイベントをリッスンしてEngineを制御
+		// シーン読み込み時にBLidgeのフレーム設定をOREngineに反映
+		blidgeClient.on( "sync/scene", ( blidge: any ) => {
+
+			if ( blidge.frame ) {
+
+				this.setField( "timeline/fps", blidge.frame.fps );
+				this.setField( "timeline/duration", blidge.frame.end - blidge.frame.start );
+
+			}
+
+		} );
+
+		// BLidgeClientのイベントをリッスンしてEngineを制御（WebSocketからのタイムライン更新用）
 		blidgeClient.on( "update/blidge/frame", ( e: any ) => {
 
-			this.seek( e.current );
+			// currentはWebSocketから送られてくる場合のみ使用
+			if ( e.current !== undefined ) {
+
+				this.seek( e.current );
+
+			}
 
 			if ( e.playing && ! this.frame.playing ) {
 
@@ -526,4 +544,10 @@ export class Engine extends MXP.Entity {
 // 初期化演算子を使うとterserに消されるのでこっちで初期化
 Engine.resources = new Resources();
 Engine.instances = new Map();
-Engine.shaderErrorManager = new ShaderErrorManager();
+
+// ShaderErrorManagerは開発環境のみで使用
+if ( import.meta.env.DEV ) {
+
+	Engine.shaderErrorManager = new ShaderErrorManager();
+
+}
