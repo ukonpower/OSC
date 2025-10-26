@@ -18,6 +18,15 @@ import { PipelinePostProcess } from './PipelinePostProcess';
 import { PMREMRender } from './PMREMRender';
 import { ProgramManager } from './ProgramManager';
 
+// ワイヤーフレーム専用マテリアル (開発環境のみ)
+let WireframeMaterial: any;
+if ( import.meta.env.DEV ) {
+
+	WireframeMaterial = await import( '../../Material/WireframeMaterial' ).then( m => m.WireframeMaterial );
+
+}
+
+
 // render stack
 
 export type RenderStack = {
@@ -147,6 +156,10 @@ export class Renderer extends GLP.EventEmitter {
 	private _tmpModelMatrixInverse: GLP.Matrix;
 	private _tmpProjectionMatrixInverse: GLP.Matrix;
 
+	// wireframe (dev only)
+
+	private _wireframeMaterial?: Material;
+
 	constructor( gl: WebGL2RenderingContext ) {
 
 		super();
@@ -247,6 +260,14 @@ export class Renderer extends GLP.EventEmitter {
 		this._tmpProjectionMatrixInverse = new GLP.Matrix();
 		this._tmpModelViewMatrix = new GLP.Matrix();
 		this._tmpNormalMatrix = new GLP.Matrix();
+
+		// wireframe material (dev only)
+
+		if ( import.meta.env.DEV && WireframeMaterial ) {
+
+			this._wireframeMaterial = new WireframeMaterial();
+
+		}
 
 		this.gl.blendFunc( this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA );
 
@@ -593,6 +614,55 @@ export class Renderer extends GLP.EventEmitter {
 		} );
 
 		this.gl.disable( this.gl.BLEND );
+
+		/*-------------------------------
+			Wireframe Rendering (Dev Only)
+		-------------------------------*/
+
+		// 開発環境では常にワイヤーフレーム描画を実行
+		if ( import.meta.env.DEV && this._wireframeMaterial ) {
+
+			// ワイヤーフレーム描画対象: deferredとforwardのメッシュ
+			const wireframeEntities = [ ...stack.deferred, ...stack.forward ];
+
+			// ポリゴンオフセットでワイヤーフレームを手前に表示
+			this.gl.enable( this.gl.POLYGON_OFFSET_FILL );
+			this.gl.polygonOffset( - 1, - 1 );
+
+			// 各メッシュをワイヤーフレームマテリアルで描画
+			for ( let i = 0; i < wireframeEntities.length; i ++ ) {
+
+				const entity = wireframeEntities[ i ];
+				const mesh = entity.getComponent( Mesh );
+
+				if ( ! mesh || ! mesh.geometry ) continue;
+
+				// 元のマテリアルがTRIANGLESの場合のみワイヤーフレーム描画
+				if ( mesh.material.drawType !== 'TRIANGLES' ) continue;
+
+				// ワイヤーフレームマテリアルで描画
+				this.draw(
+					entity.uuid + '_wireframe',
+					'forward',
+					mesh.geometry,
+					this._wireframeMaterial,
+					{
+						viewMatrix: camera.viewMatrix,
+						projectionMatrix: camera.projectionMatrix,
+						cameraMatrixWorld: cameraEntity.matrixWorld,
+						modelMatrixWorld: entity.matrixWorld,
+						cameraNear: camera.near,
+						cameraFar: camera.far,
+						label: 'wireframe'
+					}
+				);
+
+			}
+
+			// ポリゴンオフセットを無効化
+			this.gl.disable( this.gl.POLYGON_OFFSET_FILL );
+
+		}
 
 		if ( camera.displayOut ) {
 
