@@ -128,7 +128,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 	private updateGeometry() {
 
 		// PlaneGeometryを作成
-		const geo = new MXP.PlaneGeometry( { width: 1.0, height: 1.0 } );
+		const geo = new MXP.PlaneGeometry( { width: 1.0, height: 1.0, widthSegments: 8, heightSegments: 8 } );
 
 		// レイヤー数が1より大きい場合、インスタンス属性を追加
 		if ( this.layers > 1 ) {
@@ -164,6 +164,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge(
 				globalUniforms.time,
 				globalUniforms.resolution,
+				globalUniforms.tex, // ノイズテクスチャを含むグローバルテクスチャユニフォームを追加
 				{
 					uLayers: { value: this.layers, type: '1i' },
 					uLayerSpacing: { value: this.layerSpacing, type: '1f' }

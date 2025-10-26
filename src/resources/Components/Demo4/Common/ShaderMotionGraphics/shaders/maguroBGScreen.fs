@@ -6,6 +6,8 @@
 in vec2 vLayerIndex;
 uniform float uTime;
 
+uniform sampler2D uNoiseTex;
+
 void main( void ) {
 
 	#include <frag_in>
@@ -19,8 +21,8 @@ void main( void ) {
 
 	// ノイズのフェッチ - レイヤーごとに異なるノイズパターン (整数値を使用)
 	float noise1 = noiseSimplex( vec3( p * 2.0, vLayerIndex.x * 10.0 + t ) ) * 0.5 + 0.5;
-	float noise2 = noiseSimplex( vec3( p * 4.0, vLayerIndex.x * 10.0 + t * 0.7 ) ) * 0.5 + 0.5;
-	float noise3 = noiseSimplex( vec3( p * 8.0, vLayerIndex.x * 10.0 + t * 0.5 ) ) * 0.5 + 0.5;
+
+	vec4 noiseTex = texture( uNoiseTex, vUv );
 
 	float hole = length( uv - 0.5 );
 
@@ -33,14 +35,17 @@ void main( void ) {
 	}
 
 	// シンプルなマグロの赤身カラー - 正規化値で明るさを調整
-	vec3 color = vec3( 0.9, 0.15, 0.1 );
-	color *= vLayerIndex.y;
+	vec3 color = vec3( 1.0, 0.1, 0.1 );
+
+	color = mix( color, vec3( 1.0, 0.2, 0.0 ), vLayerIndex.y);
+
 
 	outColor = vec4( color, 1.0 );
 	outRoughness = 0.4;
 	outMetalic = 0.3;
-	outEmission = vec3( 1.0, 0.1, 0.0  );
+	outEmission = color;
 	outEnv = 0.0;
+	outFlatness = 1.0;
 
 	#include <frag_out>
 
