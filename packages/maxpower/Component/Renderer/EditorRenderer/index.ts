@@ -20,6 +20,7 @@ if ( import.meta.env.DEV ) {
 export class EditorRenderer extends Renderer {
 
 	private _wireframeMaterial?: Material;
+	public showWireframe: boolean = true;
 
 	constructor( gl: WebGL2RenderingContext ) {
 
@@ -57,7 +58,7 @@ export class EditorRenderer extends Renderer {
 	 */
 	private renderWireframes( context: RenderHookContext ): void {
 
-		if ( ! this._wireframeMaterial ) return;
+		if ( ! this._wireframeMaterial || ! this.showWireframe ) return;
 
 		const { stack, cameraEntity, camera } = context;
 

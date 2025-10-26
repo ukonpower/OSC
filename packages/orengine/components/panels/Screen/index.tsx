@@ -17,6 +17,7 @@ export const Screen = () => {
 	const [ render, setRender ] = useSerializableField<boolean>( editor, "enableRender" );
 	const [ viewType, setViewType ] = useSerializableField<string>( editor, "viewType" );
 	const [ resolutionScale, setResolutionScale ] = useSerializableField<number>( editor, "resolutionScale" );
+	const [ showWireframe, setShowWireframe ] = useSerializableField<boolean>( editor, "showWireframe" );
 
 	return <div className={style.screen}>
 		<div className={style.header}>
@@ -73,6 +74,19 @@ export const Screen = () => {
 								}
 
 							}}/>
+					</Label>
+				</div>
+				<div className={style.header_item}>
+					<Label title='Wireframe'>
+						<Value value={showWireframe} onChange={( value ) => {
+
+							if ( setShowWireframe ) {
+
+								setShowWireframe( value );
+
+							}
+
+						}}/>
 					</Label>
 				</div>
 				<div className={style.externalBtn}>
