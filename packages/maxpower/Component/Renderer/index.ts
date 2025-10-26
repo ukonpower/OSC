@@ -318,7 +318,7 @@ export class Renderer extends GLP.EventEmitter {
 
 	}
 
-	public render( root: Entity, camera: RenderCamera, event: EntityUpdateEvent ) {
+	public render( root: Entity, cameraEntity: Entity, event: EntityUpdateEvent ) {
 
 		root.onBeforeRender( event );
 
@@ -453,11 +453,11 @@ export class Renderer extends GLP.EventEmitter {
 
 		for ( let i = 0; i < this._envMapCameras.length; i ++ ) {
 
-			const { entity: cameraEntity } = this._envMapCameras[ i ];
+			const { entity: envMapCameraEntity } = this._envMapCameras[ i ];
 
 			this._envMapRenderTarget.face( i );
 
-			this.renderCamera( "envMap", cameraEntity, stack.envMap, this._envMapRenderTarget, this.resolution );
+			this.renderCamera( "envMap", envMapCameraEntity, stack.envMap, this._envMapRenderTarget, this.resolution );
 
 		}
 
@@ -466,8 +466,8 @@ export class Renderer extends GLP.EventEmitter {
 		this._pmremRender.swap();
 
 		// 渡されたカメラでレンダリング
-		const cameraEntity = camera.entity;
-		if ( ! cameraEntity ) {
+		const camera = cameraEntity.getComponent( RenderCamera );
+		if ( ! camera ) {
 
 			root.onAfterRender( event );
 			return;
@@ -1237,7 +1237,7 @@ export class Renderer extends GLP.EventEmitter {
 
 	}
 
-	public async compileShaders( root: Entity, camera: RenderCamera, event: EntityUpdateEvent, cb?: ( label: string, loaded: number, total: number ) => void ) {
+	public async compileShaders( root: Entity, cameraEntity: Entity, event: EntityUpdateEvent, cb?: ( label: string, loaded: number, total: number ) => void ) {
 
 		/*-------------------------------
 			Correct Compiles
@@ -1246,7 +1246,7 @@ export class Renderer extends GLP.EventEmitter {
 
 		this.compileDrawParams = [];
 
-		this.render( root, camera, event );
+		this.render( root, cameraEntity, event );
 
 		this._isCorrentCompiles = false;
 
