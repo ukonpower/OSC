@@ -5,6 +5,7 @@
 
 in vec2 vLayerIndex;
 uniform float uTime;
+uniform vec4 uState;
 
 uniform sampler2D uNoiseTex;
 
@@ -14,21 +15,22 @@ void main( void ) {
 
 	// UV座標を正規化
 	vec2 uv = vUv;
+	vec2 cuv = uv - 0.5;
 	vec2 p = uv * 2.0 - 1.0;
 
 	// 時間ベースのアニメーション
-	float t = uTime * 0.3;
+	float t = uTime * 0.2;
 
 	// ノイズのフェッチ - レイヤーごとに異なるノイズパターン (整数値を使用)
-	float noise1 = noiseSimplex( vec3( p * 2.0, vLayerIndex.x * 10.0 + t ) ) * 0.5 + 0.5;
+	float noise1 = noiseSimplex( vec3( p * 2.0, vLayerIndex.x * 10.0 + t  ) ) * 0.5 + 0.5;
 
 	vec4 noiseTex = texture( uNoiseTex, vUv );
 
-	float hole = length( (uv.x + uv.y) - 0.5 );
+	float hole = length( (cuv.x * 0.5 + cuv.y)  );
 
 	hole += noise1 * 0.1;
 
-	if( hole < 0.2 ) {
+	if( hole < 0.15 + (1.0 - vLayerIndex.y) * 0.05 - uState.x ) {
 
 		discard;
 
