@@ -24,7 +24,7 @@ void main( void ) {
 
 	vec4 noiseTex = texture( uNoiseTex, vUv );
 
-	float hole = length( uv - 0.5 );
+	float hole = length( (uv.x + uv.y) - 0.5 );
 
 	hole += noise1 * 0.1;
 

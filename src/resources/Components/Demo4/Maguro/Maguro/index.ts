@@ -16,7 +16,7 @@ export class Maguro extends MXP.Component {
 
 		const geo = new MXP.CubeGeometry( {
 			width: 1.5,
-			height: 1,
+			height: 0.8,
 			depth: 1
 		} );
 

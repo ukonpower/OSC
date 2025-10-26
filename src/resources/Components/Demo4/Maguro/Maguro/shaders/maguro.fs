@@ -16,6 +16,7 @@ uniform sampler2D uNoiseTex;
 SDFResult D( vec3 p ) {
 
 	vec3 maguroP = p;
+	maguroP *= 0.8;
 	maguroP.xz *= rotate( sin( -p.x - 0.3 + uTimeE * 1.0 ) * 0.5 * smoothstep( -1.0, 1.0, p.x )  );
 
 	// ボデー

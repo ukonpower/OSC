@@ -140,6 +140,7 @@ export class MainCamera extends MXP.Component {
 			}
 
 			const lookAtTarget = root.findEntityByName( "CamLook" ) || null;
+
 			this._lookAt.setTarget( lookAtTarget );
 			this._dofTarget = root.findEntityByName( 'CamDof' ) || null;
 
@@ -314,6 +315,7 @@ export class MainCamera extends MXP.Component {
 
 
 			const cameraState = blidger.animations.get( "state" );
+
 
 			if ( cameraState ) {
 
