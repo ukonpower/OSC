@@ -91,7 +91,7 @@ export class MainCamera extends MXP.Component {
 
 		// bloom
 
-		const bloom = this.postProcessPipeline.add( Bloom );
+		const bloom = this.postProcessPipeline.add( Bloom, { srcTexture: this.renderCamera.renderTarget.shadingBuffer.textures[ 0 ] } );
 		bloom.threshold = 1.0;
 		bloom.brightness = 1;
 

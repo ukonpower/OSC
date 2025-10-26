@@ -6,7 +6,7 @@ import { gl } from '~/globals';
 
 export class ColorGrading extends MXP.PostProcess {
 
-	constructor( pipeline: MXP.PostProcessPipeline ) {
+	constructor( params: MXP.PostProcessParams<void> ) {
 
 		super( {
 			name: "ColorGrading",

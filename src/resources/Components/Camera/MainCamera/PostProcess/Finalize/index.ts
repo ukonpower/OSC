@@ -7,8 +7,9 @@ import { bindBlidgeUniform } from '~/shortcuts';
 
 export class Finalize extends MXP.PostProcess {
 
-	constructor( pipeline: MXP.PostProcessPipeline ) {
+	constructor( params: MXP.PostProcessParams<void> ) {
 
+		const { pipeline } = params;
 		const blidger = pipeline.entity.getComponent( MXP.BLidger );
 
 		super( {

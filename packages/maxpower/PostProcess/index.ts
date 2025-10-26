@@ -1,10 +1,15 @@
 import * as GLP from 'glpower';
 
 import { Serializable } from '../Serializable';
+import type { PostProcessPipeline } from '../Component/PostProcessPipeline';
 
 import { PostProcessPass } from './PostProcessPass';
 
-export type PostProcessParams = {
+export type PostProcessParams<TArgs = void> = TArgs extends void
+  ? { pipeline: PostProcessPipeline; args?: TArgs }
+  : { pipeline: PostProcessPipeline; args: TArgs };
+
+export type PostProcessBaseParams = {
 	name?: string,
 	passes?: PostProcessPass[]
 }
@@ -15,14 +20,16 @@ export class PostProcess extends Serializable {
 	public enabled: boolean;
 	protected _passes: PostProcessPass[];
 
-	constructor( params?: PostProcessParams ) {
+	constructor( params: PostProcessBaseParams | PostProcessParams<any> ) {
 
 		super();
 
-		const p = params || {};
+		// PostProcessBaseParams形式の場合とPostProcessParams形式の場合の両方に対応
+		const baseParams = 'pipeline' in params ? undefined : params;
+		const p = baseParams || {};
 		this.name = p.name || "";
 		this.enabled = true;
-		this._passes = params && params.passes || [];
+		this._passes = p.passes || [];
 
 	}
 

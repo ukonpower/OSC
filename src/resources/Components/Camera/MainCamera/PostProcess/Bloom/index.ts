@@ -11,15 +11,22 @@ import { gl } from '~/globals';
 
 export class Bloom extends MXP.PostProcess {
 
-	constructor( pipeline: MXP.PostProcessPipeline ) {
+	constructor( params: MXP.PostProcessParams<{ srcTexture?: GLP.GLPowerTexture } | void> ) {
 
-		// pipelineからentityを取得し、RenderCameraを取得してテクスチャを得る
-		const renderCamera = pipeline.entity.getComponent( MXP.RenderCamera );
-		const srcTexture = renderCamera && renderCamera.renderTarget.shadingBuffer.textures[ 0 ] || null;
+		const { pipeline, args } = params;
+		let srcTexture = args && args.srcTexture;
 
+		// srcTextureが渡されなかった場合、pipelineからentityを取得してRenderCameraからテクスチャを得る
 		if ( ! srcTexture ) {
 
-			throw new Error( 'Bloom requires RenderCamera component' );
+			const renderCamera = pipeline.entity.getComponent( MXP.RenderCamera );
+			srcTexture = renderCamera && renderCamera.renderTarget.shadingBuffer.textures[ 0 ] || undefined;
+
+			if ( ! srcTexture ) {
+
+				throw new Error( 'Bloom requires RenderCamera component or srcTexture argument' );
+
+			}
 
 		}
 
