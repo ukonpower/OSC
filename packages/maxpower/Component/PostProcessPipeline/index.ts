@@ -1,6 +1,7 @@
 import * as GLP from 'glpower';
 
 import { Component, ComponentParams } from '..';
+import { Entity } from '../../Entity';
 import { PostProcess } from '../../PostProcess';
 
 export class PostProcessPipeline extends Component {
@@ -57,7 +58,12 @@ export class PostProcessPipeline extends Component {
 
 	}
 
-	public add<T extends PostProcess>( newPostProcess: T ) {
+	public add<T extends PostProcess>( postProcessOrClass: T | ( new ( pipeline: PostProcessPipeline ) => T ) ): T {
+
+		// クラスが渡された場合はインスタンス化、インスタンスが渡された場合はそのまま使用
+		const newPostProcess = typeof postProcessOrClass === 'function'
+			? new postProcessOrClass( this )
+			: postProcessOrClass;
 
 		this.postProcesses.push( newPostProcess );
 

@@ -7,14 +7,19 @@ import { bindBlidgeUniform } from '~/shortcuts';
 
 export class Finalize extends MXP.PostProcess {
 
-	constructor() {
+	constructor( pipeline: MXP.PostProcessPipeline ) {
+
+		const blidger = pipeline.entity.getComponent( MXP.BLidger );
 
 		super( {
 			name: "Finalize",
 			passes: [
 				new MXP.PostProcessPass( gl, {
 					frag: finalizeFrag,
-					uniforms: globalUniforms.time,
+					uniforms: MXP.UniformsUtils.merge(
+						globalUniforms.time,
+						blidger && blidger.uniforms || {}
+					),
 				} )
 			]
 		} );

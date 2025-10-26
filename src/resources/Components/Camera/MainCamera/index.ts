@@ -87,21 +87,21 @@ export class MainCamera extends MXP.Component {
 
 		// fxaa
 
-		this.postProcessPipeline.add( new FXAA() );
+		this.postProcessPipeline.add( FXAA );
 
 		// bloom
 
-		const bloom = this.postProcessPipeline.add( new Bloom( this.renderCamera.renderTarget.shadingBuffer.textures[ 0 ] ) );
+		const bloom = this.postProcessPipeline.add( Bloom );
 		bloom.threshold = 1.0;
 		bloom.brightness = 1;
 
 		// colorGrading
 
-		this.postProcessPipeline.add( new ColorGrading() );
+		this.postProcessPipeline.add( ColorGrading );
 
 		// finalize
 
-		this.postProcessPipeline.add( new Finalize() );
+		this.postProcessPipeline.add( Finalize );
 
 		// dof
 

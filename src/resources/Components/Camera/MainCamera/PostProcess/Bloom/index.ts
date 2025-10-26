@@ -11,7 +11,17 @@ import { gl } from '~/globals';
 
 export class Bloom extends MXP.PostProcess {
 
-	constructor( srcTexture: GLP.GLPowerTexture ) {
+	constructor( pipeline: MXP.PostProcessPipeline ) {
+
+		// pipelineからentityを取得し、RenderCameraを取得してテクスチャを得る
+		const renderCamera = pipeline.entity.getComponent( MXP.RenderCamera );
+		const srcTexture = renderCamera && renderCamera.renderTarget.shadingBuffer.textures[ 0 ] || null;
+
+		if ( ! srcTexture ) {
+
+			throw new Error( 'Bloom requires RenderCamera component' );
+
+		}
 
 		const renderCount = 4;
 
