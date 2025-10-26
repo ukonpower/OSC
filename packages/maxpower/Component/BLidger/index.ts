@@ -1,7 +1,7 @@
 import * as GLP from 'glpower';
 
 import { Component, ComponentParams, ComponentUpdateEvent } from "..";
-import { BLidge, BLidgeNode, BLidgeLightParam, BLidgeCameraParam, BLidgeFrame } from "../../BLidge";
+import { BLidge, BLidgeNode, BLidgeLightParam, BLidgeCameraParam } from "../../BLidge";
 import { Geometry } from '../../Geometry';
 import { CubeGeometry } from '../../Geometry/CubeGeometry';
 import { CylinderGeometry } from '../../Geometry/CylinderGeometry';
@@ -231,34 +231,6 @@ export class BLidger extends Component {
 			} );
 
 		}
-
-		// アタッチ時に次のsync/timelineイベントでアニメーションを初期化
-		const onInitialSync = ( frame: BLidgeFrame ) => {
-
-			// 全てのアニメーションカーブを現在のフレームで更新
-			this.animations.forEach( ( anim ) => {
-				anim.setFrame( frame.current );
-			} );
-
-			// ユニフォームカーブも現在のフレームで更新
-			this.uniformCurves.forEach( ( curve ) => {
-				curve.setFrame( frame.current );
-			} );
-
-			// 一度だけ実行するのでイベントリスナーを削除
-			this._blidge.off( 'sync/timeline', onInitialSync );
-
-		};
-
-		// sync/timelineイベントを購読
-		this._blidge.on( 'sync/timeline', onInitialSync );
-
-		// コンポーネント破棄時にイベントリスナーをクリーンアップ
-		this.once( "dispose", () => {
-
-			this._blidge.off( 'sync/timeline', onInitialSync );
-
-		} );
 
 	}
 

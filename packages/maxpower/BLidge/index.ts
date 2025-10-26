@@ -295,7 +295,8 @@ export class BLidge extends GLP.EventEmitter {
 
 		this.frame.start = data.frame.start;
 		this.frame.end = data.frame.end;
-		this.frame.current = data.frame.current;
+		// currentはOREngine側で管理されるため、ここでは設定しない
+		// this.frame.current = data.frame.current;
 		this.frame.fps = data.frame.fps;
 
 		this.curveGroups = [];
@@ -397,7 +398,6 @@ export class BLidge extends GLP.EventEmitter {
 		// dispatch event
 
 		this.emit( 'sync/scene', [ this ] );
-		this.onSyncTimeline( this.frame );
 
 	}
 

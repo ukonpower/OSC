@@ -362,10 +362,27 @@ export class Engine extends MXP.Entity {
 	 */
 	public registerBLidgeClient( blidgeClient: BLidgeClient ) {
 
-		// BLidgeClientのイベントをリッスンしてEngineを制御
+		// シーン読み込み時にBLidgeのフレーム設定をOREngineに反映
+		blidgeClient.on( "sync/scene", ( blidge: any ) => {
+
+			if ( blidge.frame ) {
+
+				this.setField( "timeline/fps", blidge.frame.fps );
+				this.setField( "timeline/duration", blidge.frame.end - blidge.frame.start );
+
+			}
+
+		} );
+
+		// BLidgeClientのイベントをリッスンしてEngineを制御（WebSocketからのタイムライン更新用）
 		blidgeClient.on( "update/blidge/frame", ( e: any ) => {
 
-			this.seek( e.current );
+			// currentはWebSocketから送られてくる場合のみ使用
+			if ( e.current !== undefined ) {
+
+				this.seek( e.current );
+
+			}
 
 			if ( e.playing && ! this.frame.playing ) {
 
