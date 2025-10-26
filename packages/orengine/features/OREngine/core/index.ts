@@ -85,7 +85,10 @@ export class Engine extends MXP.Entity {
 			Renderer
 		-------------------------------*/
 
-		this._renderer = new MXP.Renderer( gl );
+		// 開発環境ではEditorRendererを使用、本番環境では通常のRendererを使用
+		this._renderer = import.meta.env.DEV
+			? new MXP.EditorRenderer( gl )
+			: new MXP.Renderer( gl );
 
 		/*-------------------------------
 			Project
