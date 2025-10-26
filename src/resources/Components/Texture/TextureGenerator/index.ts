@@ -72,6 +72,13 @@ export class TextureGenerator extends MXP.Component {
 		globalUniforms.tex.uNoiseValueTex = { type: "1i", value: noiseValueAnimeTex };
 		this.updateTextures.push( noiseValueAnimeTex );
 
+		// DeferredRendererのshadingパスにテクスチャを設定
+		const deferredRenderer = renderer.deferredRenderer;
+		if ( deferredRenderer ) {
+
+			MXP.UniformsUtils.assign( deferredRenderer.shading.uniforms, globalUniforms.tex );
+
+		}
 
 		this.once( "dispose", () => {
 

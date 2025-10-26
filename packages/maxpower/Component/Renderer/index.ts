@@ -1262,6 +1262,14 @@ export class Renderer extends GLP.EventEmitter {
 
 	}
 
+	// getter
+
+	public get deferredRenderer() {
+
+		return this._deferredRenderer;
+
+	}
+
 	public async compileShaders( root: Entity, cameraEntity: Entity, event: EntityUpdateEvent, cb?: ( label: string, loaded: number, total: number ) => void ) {
 
 		/*-------------------------------
