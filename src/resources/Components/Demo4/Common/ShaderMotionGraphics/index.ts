@@ -5,6 +5,7 @@ import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
 import sampleFrag from './shaders/sample.fs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 /**
  * ShaderMotionGraphics - 複数のシェーダーを切り替えて描画できるPlaneメッシュコンポーネント
@@ -173,7 +174,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 		} );
 
 		// BLidgerのuniformsをマテリアルにバインド
-		MXP.useBlidgeUniform( this );
+		bindBlidgeUniform( this.mesh );
 
 	}
 

@@ -3,6 +3,7 @@ import * as MXP from 'maxpower';
 import finalizeFrag from './shaders/finalize.fs';
 
 import { gl, globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 export class Finalize extends MXP.PostProcess {
 
