@@ -25,7 +25,7 @@
 				{
 					"name": "BLidgeClient",
 					"props": {
-						"mode": "websocket",
+						"mode": "json",
 						"gltf": false,
 						"gltfPath": "/scene.glb",
 						"websocket/url": "ws://localhost:3100"
@@ -98,7 +98,9 @@
 				{
 					"name": "ShaderMotionGraphics",
 					"props": {
-						"shaderName": "maguroBGScreen"
+						"shaderName": "maguroBGScreen",
+						"layers": 3,
+						"layerSpacing": -0.08999999999999662
 					}
 				}
 			]
@@ -128,30 +130,6 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/Sashimi",
-			"components": [
-				{
-					"name": "Sashimi"
-				}
-			]
-		},
-		{
-			"path": "/root/blidgeRoot/SceneMaguro/Shari",
-			"components": [
-				{
-					"name": "Shari"
-				}
-			]
-		},
-		{
-			"path": "/root/blidgeRoot/SceneMaguro/Shari.001",
-			"components": [
-				{
-					"name": "InstancedMesh"
-				}
-			]
-		},
-		{
 			"path": "/root/blidgeRoot/SceneMaguro/WaterPillar",
 			"components": [
 				{
@@ -164,6 +142,17 @@
 			"components": [
 				{
 					"name": "SkyBox"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/Spot",
+			"components": [
+				{
+					"name": "Light",
+					"props": {
+						"type": "spot"
+					}
 				}
 			]
 		},

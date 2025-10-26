@@ -19,16 +19,12 @@ export type BLidgeNodeParam = {
 	class: string,
 	type: BLidgeNodeType,
 	param?: BLidgeCameraParam | BLidgeMeshParamRaw | BLidgeLightParamCommon
-	parent: string,
 	children?: BLidgeNodeParam[],
 	animation?: BLidgeAnimationAccessor,
 	position?: number[],
 	rotation?: number[],
 	scale?: number[],
-	material?: {
-		name?: string,
-		uniforms?: BLidgeAnimationAccessor
-	},
+	uniforms?: BLidgeAnimationAccessor,
 	visible: boolean,
 }
 
@@ -37,20 +33,21 @@ export type BLidgeNode = {
 	class: string,
 	type: BLidgeNodeType,
 	param?: BLidgeCameraParam | BLidgeMeshParam | BLidgeLightParamCommon
-	parent: string,
 	children: BLidgeNode[],
 	animations: BLidgeAnimationAccessor,
 	position: number[],
 	rotation: number[],
 	scale: number[],
-	material: BLidgeMaterialParam
+	uniforms: BLidgeAnimationAccessor
 	visible: boolean,
 }
 
 // camera
 
 export type BLidgeCameraParam = {
-	fov: number
+	fov: number,
+	near: number,
+	far: number
 }
 
 // mesh
@@ -72,30 +69,22 @@ export type BLidgeMeshParam = {
 // light
 
 type BLidgeLightParamCommon = {
-	type: 'directional' | 'spot'
+	type: 'POINT' | 'SUN' | 'SPOT' | 'AREA'
 	color: GLP.IVector3,
 	intensity: number,
-	shadowMap: boolean,
 }
 
 export type BLidgeDirectionalLightParam = {
-	type: 'directional'
+	type: 'SUN'
 } & BLidgeLightParamCommon
 
 export type BLidgeSpotLightParam = {
-	type: 'spot',
+	type: 'SPOT',
 	angle: number,
 	blend: number,
 } & BLidgeLightParamCommon
 
 export type BLidgeLightParam = BLidgeDirectionalLightParam | BLidgeSpotLightParam;
-
-// material
-
-export type BLidgeMaterialParam = {
-	name: string,
-	uniforms: BLidgeAnimationAccessor
-}
 
 // animation
 
@@ -306,6 +295,7 @@ export class BLidge extends GLP.EventEmitter {
 
 		this.frame.start = data.frame.start;
 		this.frame.end = data.frame.end;
+		this.frame.current = data.frame.current;
 		this.frame.fps = data.frame.fps;
 
 		this.curveGroups = [];
@@ -356,25 +346,15 @@ export class BLidge extends GLP.EventEmitter {
 
 		const _ = ( nodeParam: BLidgeNodeParam ): BLidgeNode => {
 
-			const mat = { name: '', uniforms: {} };
-
-			if ( nodeParam.material ) {
-
-				mat.name = nodeParam.material.name || '';
-				mat.uniforms = nodeParam.material.uniforms || {};
-
-			}
-
 			const node: BLidgeNode = {
 				name: nodeParam.name,
 				class: nodeParam.class,
-				parent: nodeParam.parent,
 				children: [],
 				animations: nodeParam.animation || {},
 				position: nodeParam.position || [ 0, 0, 0 ],
 				rotation: nodeParam.rotation || [ 0, 0, 0 ],
 				scale: nodeParam.scale || [ 1, 1, 1 ],
-				material: mat,
+				uniforms: nodeParam.uniforms || {},
 				type: nodeParam.type,
 				visible: nodeParam.visible,
 			};

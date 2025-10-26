@@ -1,7 +1,7 @@
 import * as GLP from 'glpower';
 
 import { Component, ComponentParams, ComponentUpdateEvent } from "..";
-import { BLidge, BLidgeNode, BLidgeLightParam, BLidgeCameraParam } from "../../BLidge";
+import { BLidge, BLidgeNode, BLidgeLightParam, BLidgeCameraParam, BLidgeFrame } from "../../BLidge";
 import { Geometry } from '../../Geometry';
 import { CubeGeometry } from '../../Geometry/CubeGeometry';
 import { CylinderGeometry } from '../../Geometry/CylinderGeometry';
@@ -58,19 +58,19 @@ export class BLidger extends Component {
 
 		// uniforms
 
-		const uniformCurveKeys = Object.keys( this.node.material.uniforms );
+		const uniformCurveKeys = Object.keys( this.node.uniforms );
 
 		for ( let i = 0; i < uniformCurveKeys.length; i ++ ) {
 
-			const name = uniformCurveKeys[ i ];
-			const accessor = this.node.material.uniforms[ name ];
-			const curve = this._blidge.curveGroups[ accessor ];
+			const accessor = uniformCurveKeys[ i ];
+			const curveIndex = this.node.uniforms[ accessor ];
+			const curve = this._blidge.curveGroups[ curveIndex ];
 
 			if ( curve ) {
 
-				this.uniformCurves.set( name, curve );
+				this.uniformCurves.set( accessor, curve );
 
-				this.uniforms[ name ] = {
+				this.uniforms[ accessor ] = {
 					type: '4fv',
 					value: curve.value
 				};
@@ -192,7 +192,6 @@ export class BLidger extends Component {
 				...lightParam,
 				lightType: lightParam.type,
 				color: new GLP.Vector().copy( lightParam.color ).getElm( "vec3" ),
-				castShadow: lightParam.shadowMap,
 			} );
 
 		}
@@ -232,6 +231,34 @@ export class BLidger extends Component {
 			} );
 
 		}
+
+		// アタッチ時に次のsync/timelineイベントでアニメーションを初期化
+		const onInitialSync = ( frame: BLidgeFrame ) => {
+
+			// 全てのアニメーションカーブを現在のフレームで更新
+			this.animations.forEach( ( anim ) => {
+				anim.setFrame( frame.current );
+			} );
+
+			// ユニフォームカーブも現在のフレームで更新
+			this.uniformCurves.forEach( ( curve ) => {
+				curve.setFrame( frame.current );
+			} );
+
+			// 一度だけ実行するのでイベントリスナーを削除
+			this._blidge.off( 'sync/timeline', onInitialSync );
+
+		};
+
+		// sync/timelineイベントを購読
+		this._blidge.on( 'sync/timeline', onInitialSync );
+
+		// コンポーネント破棄時にイベントリスナーをクリーンアップ
+		this.once( "dispose", () => {
+
+			this._blidge.off( 'sync/timeline', onInitialSync );
+
+		} );
 
 	}
 

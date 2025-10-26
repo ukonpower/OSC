@@ -161,6 +161,9 @@ export class MainCamera extends MXP.Component {
 
 		}
 
+		// Engineにカメラエンティティを設定
+		engine.setCamera( this.entity );
+
 		/*-------------------------------
 			DEV: OrbitControls
 		-------------------------------*/

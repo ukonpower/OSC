@@ -2,20 +2,21 @@ import * as MXP from 'maxpower';
 
 import basicVert from './shaders/basic.vs';
 import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
-import shader0Frag from './shaders/shader0.fs';
-import shader1Frag from './shaders/shader1.fs';
-import shader2Frag from './shaders/shader2.fs';
+import sampleFrag from './shaders/sample.fs';
 
 import { globalUniforms } from '~/globals';
 
 /**
  * ShaderMotionGraphics - 複数のシェーダーを切り替えて描画できるPlaneメッシュコンポーネント
  * フィールドでシェーダー名を選択可能
+ * レイヤー数を指定すると、z方向に複数のメッシュを重ねて描画
  */
 export class ShaderMotionGraphics extends MXP.Component {
 
 	private mesh: MXP.Mesh;
 	private shaderName: string;
+	private layers: number; // レイヤー数（1以上、1の場合は通常のメッシュ）
+	private layerSpacing: number; // 各レイヤー間のz方向の間隔
 	private shaders: Map<string, { vert: string; frag: string }>;
 
 	constructor( params: MXP.ComponentParams ) {
@@ -24,24 +25,24 @@ export class ShaderMotionGraphics extends MXP.Component {
 
 		// シェーダーリストを定義（名前をキーにしたMap）
 		this.shaders = new Map( [
-			[ "gradient", { vert: basicVert, frag: shader0Frag } ],
-			[ "pulse", { vert: basicVert, frag: shader1Frag } ],
-			[ "checker", { vert: basicVert, frag: shader2Frag } ],
+			[ "sample", { vert: basicVert, frag: sampleFrag } ],
 			[ "maguroBGScreen", { vert: basicVert, frag: maguroBGScreenFrag } ],
 		] );
 
-		this.shaderName = "gradient";
+		this.shaderName = "sample";
+		this.layers = 1; // デフォルトは1レイヤー
+		this.layerSpacing = 0.01; // デフォルトの間隔
 
 		// Meshコンポーネントを追加
 		this.mesh = this._entity.addComponent( MXP.Mesh );
 
-		// PlaneGeometryを作成
-		this.mesh.geometry = new MXP.PlaneGeometry( { width: 1.0, height: 1.0 } );
+		// ジオメトリを作成
+		this.updateGeometry();
 
 		// 初期マテリアルを作成
 		this.updateMaterial();
 
-		// エディタフィールド定義
+		// エディタフィールド定義 - シェーダー名
 		this.field( "shaderName", () => this.shaderName, ( v ) => {
 
 			this.shaderName = v;
@@ -51,82 +52,100 @@ export class ShaderMotionGraphics extends MXP.Component {
 			format: {
 				type: "select",
 				list: [
-					{ label: "Gradient", value: "gradient" },
-					{ label: "Pulse", value: "pulse" },
-					{ label: "Checker", value: "checker" },
+					{ label: "Sample", value: "sample" },
 					{ label: "Maguro BG Screen", value: "maguroBGScreen" },
 				]
 			}
 		} );
 
+		// エディタフィールド定義 - レイヤー数
+		this.field( "layers", () => this.layers, ( v ) => {
+
+			this.layers = Math.max( 1, Math.floor( v ) ); // 1以上の整数に制限
+			this.updateGeometry();
+			this.updateMaterial();
+
+		} );
+
+		// エディタフィールド定義 - レイヤー間隔
+		this.field( "layerSpacing", () => this.layerSpacing, ( v ) => {
+
+			this.layerSpacing = v;
+			this.updateMaterial(); // ユニフォームを更新
+
+		} );
+
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {
 
-			import.meta.hot.accept( './shaders/shader0.fs', ( module ) => {
+			// 頂点シェーダーのホットリロード
+			import.meta.hot.accept( './shaders/basic.vs', ( module ) => {
 
 				if ( module ) {
 
-					const shader = this.shaders.get( "gradient" );
-					if ( shader ) {
+					// 全てのシェーダーの頂点シェーダーを更新
+					for ( const shader of this.shaders.values() ) {
 
-						shader.frag = MXP.hotUpdate( 'shader0Frag', module.default );
-						if ( this.shaderName === "gradient" ) this.updateMaterial();
+						shader.vert = MXP.hotUpdate( 'smgBasicVert', module.default );
 
 					}
+
+					// マテリアルを再構築
+					this.updateMaterial();
 
 				}
 
 			} );
 
-			import.meta.hot.accept( './shaders/shader1.fs', ( module ) => {
+			// シェーダーホットリロードハンドラーを生成する関数
+			const createHotReloadHandler = ( shaderName: string, hotKey: string ) => ( module: any ) => {
 
 				if ( module ) {
 
-					const shader = this.shaders.get( "pulse" );
+					const shader = this.shaders.get( shaderName );
 					if ( shader ) {
 
-						shader.frag = MXP.hotUpdate( 'shader1Frag', module.default );
-						if ( this.shaderName === "pulse" ) this.updateMaterial();
+						shader.frag = MXP.hotUpdate( hotKey, module.default );
+						if ( this.shaderName === shaderName ) this.updateMaterial();
 
 					}
 
 				}
 
-			} );
+			};
 
-			import.meta.hot.accept( './shaders/shader2.fs', ( module ) => {
-
-				if ( module ) {
-
-					const shader = this.shaders.get( "checker" );
-					if ( shader ) {
-
-						shader.frag = MXP.hotUpdate( 'shader2Frag', module.default );
-						if ( this.shaderName === "checker" ) this.updateMaterial();
-
-					}
-
-				}
-
-			} );
-
-			import.meta.hot.accept( './shaders/maguroBGScreen.fs', ( module ) => {
-
-				if ( module ) {
-
-					const shader = this.shaders.get( "maguroBGScreen" );
-					if ( shader ) {
-
-						shader.frag = MXP.hotUpdate( 'maguroBGScreenFrag', module.default );
-						if ( this.shaderName === "maguroBGScreen" ) this.updateMaterial();
-
-					}
-
-				}
-
-			} );
+			// 各シェーダーファイルのホットリロードを登録
+			import.meta.hot.accept( './shaders/sample.fs', createHotReloadHandler( 'sample', 'smgSampleFrag' ) );
+			import.meta.hot.accept( './shaders/maguroBGScreen.fs', createHotReloadHandler( 'maguroBGScreen', 'smgMaguroBGScreenFrag' ) );
 
 		}
+
+	}
+
+	/**
+	 * レイヤー数に応じてジオメトリを更新
+	 */
+	private updateGeometry() {
+
+		// PlaneGeometryを作成
+		const geo = new MXP.PlaneGeometry( { width: 1.0, height: 1.0 } );
+
+		// レイヤー数が1より大きい場合、インスタンス属性を追加
+		if ( this.layers > 1 ) {
+
+			const layerIndexArray = [];
+
+			for ( let i = 0; i < this.layers; i ++ ) {
+
+				layerIndexArray.push( i, i / ( this.layers - 1 ) );
+
+			}
+
+			geo.setAttribute( 'layerIndex', new Float32Array( layerIndexArray ), 2, { instanceDivisor: 1 } );
+
+		}
+
+		this.mesh.geometry = geo;
 
 	}
 
@@ -139,10 +158,17 @@ export class ShaderMotionGraphics extends MXP.Component {
 		if ( ! shader ) return;
 
 		this.mesh.material = new MXP.Material( {
-			phase: [ "forward" ],
-			vert: MXP.hotGet( 'basicVert', shader.vert ),
-			frag: MXP.hotGet( `${this.shaderName}Frag`, shader.frag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+			phase: [ "deferred" ],
+			vert: MXP.hotGet( 'smgBasicVert', shader.vert ),
+			frag: MXP.hotGet( `smg${this.shaderName.charAt( 0 ).toUpperCase() + this.shaderName.slice( 1 )}Frag`, shader.frag ),
+			uniforms: MXP.UniformsUtils.merge(
+				globalUniforms.time,
+				globalUniforms.resolution,
+				{
+					uLayers: { value: this.layers, type: '1i' },
+					uLayerSpacing: { value: this.layerSpacing, type: '1f' }
+				}
+			)
 		} );
 
 	}

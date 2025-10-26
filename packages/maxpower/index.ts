@@ -33,4 +33,5 @@ export * from './Utils/Hot';
 export * from './Utils/ShaderParser';
 export * from './Utils/Uniforms';
 export * from './Utils/Curve';
+export * from './Utils/Raycaster';
 
