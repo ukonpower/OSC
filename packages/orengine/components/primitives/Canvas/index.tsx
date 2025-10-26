@@ -25,23 +25,46 @@ export const Canvas: React.FC = () => {
 		// キャンバスの追加
 		wrapperElm.appendChild( canvas );
 
-		let clickHandler: ( ( event: MouseEvent ) => void ) | null = null;
+		let mousedownHandler: ( ( event: MouseEvent ) => void ) | null = null;
+		let mouseupHandler: ( ( event: MouseEvent ) => void ) | null = null;
 
 		if ( import.meta.env.DEV && editor && ( editor as any )._scenePointer ) {
 
-			clickHandler = ( event: MouseEvent ) => {
+			// ドラッグとクリックを区別するため、mousedownとmouseupの位置を記録
+			let mousedownX = 0;
+			let mousedownY = 0;
+			const DRAG_THRESHOLD = 5; // ピクセル単位でのドラッグ判定閾値
 
-				const scenePointer = ( editor as any )._scenePointer;
+			mousedownHandler = ( event: MouseEvent ) => {
 
-				if ( scenePointer && scenePointer.handleClick ) {
+				mousedownX = event.clientX;
+				mousedownY = event.clientY;
 
-					scenePointer.handleClick( event.clientX, event.clientY, canvas );
+			};
+
+			mouseupHandler = ( event: MouseEvent ) => {
+
+				// mousedownとmouseupの位置の差分を計算
+				const deltaX = Math.abs( event.clientX - mousedownX );
+				const deltaY = Math.abs( event.clientY - mousedownY );
+
+				// 閾値以下の移動量の場合のみクリックとして扱う
+				if ( deltaX <= DRAG_THRESHOLD && deltaY <= DRAG_THRESHOLD ) {
+
+					const scenePointer = ( editor as any )._scenePointer;
+
+					if ( scenePointer && scenePointer.handleClick ) {
+
+						scenePointer.handleClick( event.clientX, event.clientY, canvas );
+
+					}
 
 				}
 
 			};
 
-			canvas.addEventListener( 'click', clickHandler );
+			canvas.addEventListener( 'mousedown', mousedownHandler );
+			canvas.addEventListener( 'mouseup', mouseupHandler );
 
 		}
 
@@ -54,9 +77,15 @@ export const Canvas: React.FC = () => {
 
 			}
 
-			if ( clickHandler ) {
+			if ( mousedownHandler ) {
 
-				canvas.removeEventListener( 'click', clickHandler );
+				canvas.removeEventListener( 'mousedown', mousedownHandler );
+
+			}
+
+			if ( mouseupHandler ) {
+
+				canvas.removeEventListener( 'mouseup', mouseupHandler );
 
 			}
 

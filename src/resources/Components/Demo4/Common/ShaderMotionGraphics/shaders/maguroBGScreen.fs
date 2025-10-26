@@ -3,10 +3,7 @@
 #include <frag_h>
 #include <noise_simplex>
 
-// 頂点シェーダーから渡されるレイヤー値（0.0〜1.0）
-in float vLayer;
-
-// MaguroBGScreen: マグロ背景用のシェーダー
+in vec2 vLayerIndex;
 uniform float uTime;
 
 void main( void ) {
@@ -16,18 +13,28 @@ void main( void ) {
 	// UV座標を正規化
 	vec2 uv = vUv;
 	vec2 p = uv * 2.0 - 1.0;
-	p.x *= uResolution.x / uResolution.y;
 
 	// 時間ベースのアニメーション
 	float t = uTime * 0.3;
 
-	// ノイズのフェッチ（将来の使用のため）
-	float noise1 = noiseSimplex( vec3( p * 2.0, t ) ) * 0.5 + 0.5;
-	float noise2 = noiseSimplex( vec3( p * 4.0, t * 0.7 ) ) * 0.5 + 0.5;
-	float noise3 = noiseSimplex( vec3( p * 8.0, t * 0.5 ) ) * 0.5 + 0.5;
+	// ノイズのフェッチ - レイヤーごとに異なるノイズパターン (整数値を使用)
+	float noise1 = noiseSimplex( vec3( p * 2.0, vLayerIndex.x * 10.0 + t ) ) * 0.5 + 0.5;
+	float noise2 = noiseSimplex( vec3( p * 4.0, vLayerIndex.x * 10.0 + t * 0.7 ) ) * 0.5 + 0.5;
+	float noise3 = noiseSimplex( vec3( p * 8.0, vLayerIndex.x * 10.0 + t * 0.5 ) ) * 0.5 + 0.5;
 
-	// シンプルなマグロの赤身カラー
+	float hole = length( uv - 0.5 );
+
+	hole += noise1 * 0.1;
+
+	if( hole < 0.2 ) {
+
+		discard;
+
+	}
+
+	// シンプルなマグロの赤身カラー - 正規化値で明るさを調整
 	vec3 color = vec3( 0.9, 0.15, 0.1 );
+	color *= vLayerIndex.y;
 
 	outColor = vec4( color, 1.0 );
 	outRoughness = 0.4;

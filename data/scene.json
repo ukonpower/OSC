@@ -98,7 +98,9 @@
 				{
 					"name": "ShaderMotionGraphics",
 					"props": {
-						"shaderName": "maguroBGScreen"
+						"shaderName": "maguroBGScreen",
+						"layers": 3,
+						"layerSpacing": -0.08999999999999662
 					}
 				}
 			]

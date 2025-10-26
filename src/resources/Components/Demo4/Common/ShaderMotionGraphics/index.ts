@@ -2,9 +2,7 @@ import * as MXP from 'maxpower';
 
 import basicVert from './shaders/basic.vs';
 import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
-import shader0Frag from './shaders/shader0.fs';
-import shader1Frag from './shaders/shader1.fs';
-import shader2Frag from './shaders/shader2.fs';
+import sampleFrag from './shaders/sample.fs';
 
 import { globalUniforms } from '~/globals';
 
@@ -27,13 +25,11 @@ export class ShaderMotionGraphics extends MXP.Component {
 
 		// シェーダーリストを定義（名前をキーにしたMap）
 		this.shaders = new Map( [
-			[ "gradient", { vert: basicVert, frag: shader0Frag } ],
-			[ "pulse", { vert: basicVert, frag: shader1Frag } ],
-			[ "checker", { vert: basicVert, frag: shader2Frag } ],
+			[ "sample", { vert: basicVert, frag: sampleFrag } ],
 			[ "maguroBGScreen", { vert: basicVert, frag: maguroBGScreenFrag } ],
 		] );
 
-		this.shaderName = "gradient";
+		this.shaderName = "sample";
 		this.layers = 1; // デフォルトは1レイヤー
 		this.layerSpacing = 0.01; // デフォルトの間隔
 
@@ -56,9 +52,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 			format: {
 				type: "select",
 				list: [
-					{ label: "Gradient", value: "gradient" },
-					{ label: "Pulse", value: "pulse" },
-					{ label: "Checker", value: "checker" },
+					{ label: "Sample", value: "sample" },
 					{ label: "Maguro BG Screen", value: "maguroBGScreen" },
 				]
 			}
@@ -84,6 +78,25 @@ export class ShaderMotionGraphics extends MXP.Component {
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {
 
+			// 頂点シェーダーのホットリロード
+			import.meta.hot.accept( './shaders/basic.vs', ( module ) => {
+
+				if ( module ) {
+
+					// 全てのシェーダーの頂点シェーダーを更新
+					for ( const shader of this.shaders.values() ) {
+
+						shader.vert = MXP.hotUpdate( 'smgBasicVert', module.default );
+
+					}
+
+					// マテリアルを再構築
+					this.updateMaterial();
+
+				}
+
+			} );
+
 			// シェーダーホットリロードハンドラーを生成する関数
 			const createHotReloadHandler = ( shaderName: string, hotKey: string ) => ( module: any ) => {
 
@@ -102,10 +115,8 @@ export class ShaderMotionGraphics extends MXP.Component {
 			};
 
 			// 各シェーダーファイルのホットリロードを登録
-			import.meta.hot.accept( './shaders/shader0.fs', createHotReloadHandler( 'gradient', 'shader0Frag' ) );
-			import.meta.hot.accept( './shaders/shader1.fs', createHotReloadHandler( 'pulse', 'shader1Frag' ) );
-			import.meta.hot.accept( './shaders/shader2.fs', createHotReloadHandler( 'checker', 'shader2Frag' ) );
-			import.meta.hot.accept( './shaders/maguroBGScreen.fs', createHotReloadHandler( 'maguroBGScreen', 'maguroBGScreenFrag' ) );
+			import.meta.hot.accept( './shaders/sample.fs', createHotReloadHandler( 'sample', 'smgSampleFrag' ) );
+			import.meta.hot.accept( './shaders/maguroBGScreen.fs', createHotReloadHandler( 'maguroBGScreen', 'smgMaguroBGScreenFrag' ) );
 
 		}
 
@@ -126,13 +137,11 @@ export class ShaderMotionGraphics extends MXP.Component {
 
 			for ( let i = 0; i < this.layers; i ++ ) {
 
-				// レイヤーインデックス（0.0〜1.0の正規化された値）
-				layerIndexArray.push( i / ( this.layers - 1 ) );
+				layerIndexArray.push( i, i / ( this.layers - 1 ) );
 
 			}
 
-			// instanceDivisor: 1 でインスタンスごとに異なる値を設定
-			geo.setAttribute( 'layerIndex', new Float32Array( layerIndexArray ), 1, { instanceDivisor: 1 } );
+			geo.setAttribute( 'layerIndex', new Float32Array( layerIndexArray ), 2, { instanceDivisor: 1 } );
 
 		}
 
@@ -150,8 +159,8 @@ export class ShaderMotionGraphics extends MXP.Component {
 
 		this.mesh.material = new MXP.Material( {
 			phase: [ "deferred" ],
-			vert: MXP.hotGet( 'basicVert', shader.vert ),
-			frag: MXP.hotGet( `${this.shaderName}Frag`, shader.frag ),
+			vert: MXP.hotGet( 'smgBasicVert', shader.vert ),
+			frag: MXP.hotGet( `smg${this.shaderName.charAt( 0 ).toUpperCase() + this.shaderName.slice( 1 )}Frag`, shader.frag ),
 			uniforms: MXP.UniformsUtils.merge(
 				globalUniforms.time,
 				globalUniforms.resolution,

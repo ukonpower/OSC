@@ -295,6 +295,7 @@ export class BLidge extends GLP.EventEmitter {
 
 		this.frame.start = data.frame.start;
 		this.frame.end = data.frame.end;
+		this.frame.current = data.frame.current;
 		this.frame.fps = data.frame.fps;
 
 		this.curveGroups = [];
