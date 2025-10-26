@@ -28,20 +28,23 @@ void main( void ) {
 
 	float hole = length( (cuv.x * 0.5 + cuv.y)  );
 
-	hole += noise1 * 0.1;
+	float line = length( vec2( 1.0 - uv.x, uv.y ) );
 
-	if( hole < 0.15 + (1.0 - vLayerIndex.y) * 0.05 - uState.x ) {
+	float v = smoothstep(0.0, 1.0, - (vLayerIndex.y * 0.5 + line * 0.5 ) * 0.3 + (uState.x) * 1.3 );
+	v = easeBounce(v, 2.5);
+
+	hole += noise1 * 0.1;
+	hole -= (1.0 - v) * 0.3;
+
+	if( hole < 0.15 + (1.0 - vLayerIndex.y) * 0.05 ) {
 
 		discard;
 
 	}
 
 	// シンプルなマグロの赤身カラー - 正規化値で明るさを調整
-	vec3 color = vec3( 1.0, 0.1, 0.1 );
-
-	color = mix( color, vec3( 1.0, 0.2, 0.0 ), vLayerIndex.y);
-
-
+	vec3 color;
+	color = mix( vec3( 0.0, 0.6, 1.0 ), vec3(  0.0, 0.3, 1.0 ), vLayerIndex.y);
 	outColor = vec4( color, 1.0 );
 	outRoughness = 0.4;
 	outMetalic = 0.3;

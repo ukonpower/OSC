@@ -7,6 +7,7 @@ import { CubeGeometry } from '../../Geometry/CubeGeometry';
 import { CylinderGeometry } from '../../Geometry/CylinderGeometry';
 import { PlaneGeometry } from '../../Geometry/PlaneGeometry';
 import { SphereGeometry } from '../../Geometry/SphereGeometry';
+import { UniformsUtils } from '../../Utils/Uniforms';
 import { Camera } from '../Camera';
 import { Light } from '../Light';
 import { Mesh } from '../Mesh';
@@ -231,6 +232,21 @@ export class BLidger extends Component {
 			} );
 
 		}
+
+	}
+
+	/**
+	 * 渡されたuniformsとBLidgerのuniformsをマージして返す
+	 * @param uniformsList マージするuniformsのリスト
+	 * @returns マージされたuniforms（BLidgerのuniformsが最後にマージされる）
+	 */
+	/**
+	 * BLidgerのuniformsを指定されたuniformsオブジェクトにマージする
+	 * @param targetUniforms マージ先のuniforms
+	 */
+	public bindUniforms( targetUniforms: GLP.Uniforms ): void {
+
+		Object.assign( targetUniforms, this.uniforms );
 
 	}
 

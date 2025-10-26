@@ -164,7 +164,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge(
 				globalUniforms.time,
 				globalUniforms.resolution,
-				globalUniforms.tex, // ノイズテクスチャを含むグローバルテクスチャユニフォームを追加
+				globalUniforms.tex,
 				{
 					uLayers: { value: this.layers, type: '1i' },
 					uLayerSpacing: { value: this.layerSpacing, type: '1f' }
@@ -172,9 +172,12 @@ export class ShaderMotionGraphics extends MXP.Component {
 			)
 		} );
 
+		// BLidgerのuniformsをマテリアルにバインド
+		MXP.useBlidgeUniform( this );
+
 	}
 
-	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+	protected updateImpl( _event: MXP.ComponentUpdateEvent ): void {
 
 		// カスタムユニフォームの更新などをここに記述可能
 
