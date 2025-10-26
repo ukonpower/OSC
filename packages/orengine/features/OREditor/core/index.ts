@@ -173,6 +173,13 @@ export class Editor extends MXP.Serializable {
 
 			this._selectedEntityId = v;
 
+			// EditorRendererに選択情報を同期（開発環境のみ）
+			if ( import.meta.env.DEV && this._engine.renderer instanceof MXP.EditorRenderer ) {
+
+				this._engine.renderer.selectedEntityId = v;
+
+			}
+
 		} );
 
 		// ワイヤーフレーム表示の切り替え（開発環境のみ）

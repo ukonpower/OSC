@@ -5,7 +5,8 @@ import { Mesh } from '../../Mesh';
 import type { RenderHookContext } from '../';
 
 // WireframeMaterialは開発環境でのみインポート
-let WireframeMaterial: typeof Material | undefined;
+type WireframeMaterialConstructor = new ( color?: [number, number, number] ) => Material;
+let WireframeMaterial: WireframeMaterialConstructor | undefined;
 
 if ( import.meta.env.DEV ) {
 
@@ -20,7 +21,9 @@ if ( import.meta.env.DEV ) {
 export class EditorRenderer extends Renderer {
 
 	private _wireframeMaterial?: Material;
+	private _wireframeMaterialSelected?: Material;
 	public showWireframe: boolean = true;
+	public selectedEntityId: string | null = null;
 
 	constructor( gl: WebGL2RenderingContext ) {
 
@@ -29,7 +32,11 @@ export class EditorRenderer extends Renderer {
 		// ワイヤーフレームマテリアルの初期化（開発環境のみ）
 		if ( WireframeMaterial ) {
 
-			this._wireframeMaterial = new WireframeMaterial();
+			// 通常のワイヤーフレーム（黒色）
+			this._wireframeMaterial = new WireframeMaterial( [ 0.0, 0.0, 0.0 ] );
+
+			// 選択時のワイヤーフレーム（オレンジ色）
+			this._wireframeMaterialSelected = new WireframeMaterial( [ 1.0, 0.5, 0.0 ] );
 
 		}
 
@@ -55,10 +62,11 @@ export class EditorRenderer extends Renderer {
 
 	/**
 	 * ワイヤーフレーム描画
+	 * すべてのエンティティを描画し、選択されているものはオレンジ色、それ以外は黒色で描画
 	 */
 	private renderWireframes( context: RenderHookContext ): void {
 
-		if ( ! this._wireframeMaterial || ! this.showWireframe ) return;
+		if ( ! this._wireframeMaterial || ! this._wireframeMaterialSelected || ! this.showWireframe ) return;
 
 		const { stack, cameraEntity, camera } = context;
 
@@ -80,12 +88,16 @@ export class EditorRenderer extends Renderer {
 			// 元のマテリアルがTRIANGLESの場合のみワイヤーフレーム描画
 			if ( mesh.material.drawType !== 'TRIANGLES' ) continue;
 
+			// 選択されているエンティティはオレンジ色、それ以外は黒色
+			const isSelected = entity.uuid === this.selectedEntityId;
+			const material = isSelected ? this._wireframeMaterialSelected : this._wireframeMaterial;
+
 			// ワイヤーフレームマテリアルで描画
 			this.draw(
 				entity.uuid + '_wireframe',
 				'forward',
 				mesh.geometry,
-				this._wireframeMaterial,
+				material,
 				{
 					viewMatrix: camera.viewMatrix,
 					projectionMatrix: camera.projectionMatrix,
