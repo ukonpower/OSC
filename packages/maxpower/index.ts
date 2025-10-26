@@ -15,6 +15,7 @@ export * from './Component/PostProcessPipeline';
 export * from './Component/RaymarchInstanced';
 export * from './Component/Renderer';
 export * from "./Component/Renderer/DeferredRenderer";
+export * from './Component/Renderer/EditorRenderer';
 export * from './Component/Renderer/ProgramManager';
 export * from './Entity';
 export * from './Geometry';

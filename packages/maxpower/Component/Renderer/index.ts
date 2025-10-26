@@ -30,6 +30,15 @@ export type RenderStack = {
 	ui: Entity[];
 }
 
+// render hooks
+
+export type RenderHookContext = {
+	stack: RenderStack;
+	cameraEntity: Entity;
+	camera: RenderCamera;
+	event: EntityUpdateEvent;
+}
+
 // light
 
 type LightInfo = {
@@ -146,6 +155,10 @@ export class Renderer extends GLP.EventEmitter {
 	private _tmpLightDirection: GLP.Vector;
 	private _tmpModelMatrixInverse: GLP.Matrix;
 	private _tmpProjectionMatrixInverse: GLP.Matrix;
+
+	// hooks
+
+	protected onAfterUI?: ( context: RenderHookContext ) => void;
 
 	constructor( gl: WebGL2RenderingContext ) {
 
@@ -593,6 +606,18 @@ export class Renderer extends GLP.EventEmitter {
 		} );
 
 		this.gl.disable( this.gl.BLEND );
+
+		// UI描画後のフック（エディター機能など）
+		if ( this.onAfterUI ) {
+
+			this.onAfterUI( {
+				stack,
+				cameraEntity,
+				camera,
+				event
+			} );
+
+		}
 
 		if ( camera.displayOut ) {
 
