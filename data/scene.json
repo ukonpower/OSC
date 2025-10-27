@@ -90,10 +90,31 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneMaguro/DebaBouChou",
+			"components": [
+				{
+					"name": "DebaBouChou"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneMaguro/Maguro",
 			"components": [
 				{
 					"name": "Maguro"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/MaguroBlock",
+			"components": [
+				{
+					"name": "MaguroBlock",
+					"props": {
+						"Block Size/width": 1,
+						"Block Size/height": 1,
+						"Block Size/depth": 1
+					}
 				}
 			]
 		},

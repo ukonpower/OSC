@@ -16,17 +16,23 @@ export class DebaBouChou extends MXP.Component {
 
 		super( param );
 
-		// geometry - cube形状を保持
+		// geometry
 
-		const geo = new MXP.SphereGeometry( {
-			radius: 1
+		const geo = new MXP.CubeGeometry( {
+			height: 2,
+			depth: 0.2,
+			width: 0.4,
 		} );
 
 		// material
 
 		const mat = new MXP.Material( {
 			frag: MXP.hotGet( 'debaBouChouFrag', debaBouChouFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+			uniforms: MXP.UniformsUtils.merge(
+				globalUniforms.resolution,
+				globalUniforms.time,
+				globalUniforms.noiseTex
+			)
 		} );
 
 		this.mesh = this.entity.addComponent( MXP.Mesh, {

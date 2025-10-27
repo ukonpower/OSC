@@ -5,6 +5,7 @@
 	"frameLoop/enabled": false,
 	"frameLoop/start": 2558.011007808154,
 	"frameLoop/end": 4019.2214883177085,
-	"timelineCurrent": 750,
-	"selectedEntityId": "87"
+	"timelineCurrent": 876,
+	"selectedEntityId": "bc",
+	"showWireframe": true
 }
