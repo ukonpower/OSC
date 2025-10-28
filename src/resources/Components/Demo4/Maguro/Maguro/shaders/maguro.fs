@@ -96,15 +96,19 @@ SDFResult D( vec3 p ) {
 
 	float mgr = maguro( p );
 	mgr = opSmoothSub( sdBox( p + vec3( 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), mgr, 0.0 );
-	
+
 	float blk = maguroBlock( p * mix( 1.0, 0.5, uState.x ) );
 
 	float d = opSmoothAdd( mgr, blk, 0.10 );
 
+	// マテリアル判定: どちらが近いかでマテリアルIDを決定
+	// mgr < blk の場合はマグロ本体(mat=0.0)、そうでない場合はブロック(mat=1.0)
+	float matID = mgr < blk ? 0.0 : 1.0;
+
 	return SDFResult(
 		d,
 		p,
-		0.0
+		matID
 	);
 
 }
@@ -146,15 +150,26 @@ void main( void ) {
 	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0 );
 	vec4 n3 = texture(uNoiseTex, noiseUV * 1.0 + n1.xy);
 
-	outRoughness = smoothstep( 0.2, 1.0, n1.r );
-	outNormal = normalize( outNormal + n3.xyz * 0.3 );
+	// マテリアルIDに応じた処理
+	if( dist.mat < 0.5 ) {
+		// マグロ本体 (mat=0.0)
+		outRoughness = smoothstep( 0.2, 1.0, n1.r );
+		outNormal = normalize( outNormal + n3.xyz * 0.3 );
 
-	vec3 c = vec3( 1.0 );
-	float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
-	c.xyz = mix(c, vec3( 0.0 ), kuro );
-	outColor.xyz = c;
-	outFlatness = kuro;
-	outMetalic = 0.2;
+		vec3 c = vec3( 1.0 );
+		float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
+		c.xyz = mix(c, vec3( 0.0 ), kuro );
+		outColor.xyz = c;
+		outFlatness = kuro;
+		outMetalic = 0.2;
+	} else {
+		// マグロブロック (mat=1.0)
+		outRoughness = 0.5;
+		outNormal = normalize( outNormal + n3.xyz * 0.1 );
+		outColor.xyz = vec3( 0.9, 0.2, 0.15 ); // 赤っぽい色
+		outFlatness = 0.0;
+		outMetalic = 0.1;
+	}
 
 
 	#include <frag_out>
