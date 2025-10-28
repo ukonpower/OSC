@@ -18,7 +18,7 @@ void main( void ) {
 	vec3 col = vec3( 0.0, 0.0, 0.0 );
 	vec2 uv = vUv;
 	vec2 cuv = uv - 0.5;
-	float w = 0.00;
+	float w = 0.09 * smoothstep( 0.40, 0.55, length( cuv ) );
 
 	float d;
 	float s = 0.98; 

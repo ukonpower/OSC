@@ -20,9 +20,6 @@ export class Finalize extends MXP.PostProcess {
 
 		}
 
-		console.log( blidger );
-
-
 		super( {
 			name: "Finalize",
 			passes: [

@@ -16,6 +16,7 @@ uniform sampler2D uNoiseTex;
 SDFResult D( vec3 p ) {
 
 	vec3 knifeP = p;
+	knifeP.y -= 0.6;
 
 	vec2 d = vec2( 100.0, 1.0 ); // マテリアルID: 1=刃
 
@@ -101,18 +102,18 @@ void main( void ) {
 	float metal = 0.0;
 
 	// 1: 刃
-	if( matId > 0.5 && matId < 1.5 ) {
+	if( matId == 1.0 ) {
 		col = vec3( 0.9, 0.92, 0.95 ); // 銀色
 		rough = 0.01;
 		metal = 1.0;
 	}
 	// 2: 柄
-	else if( matId > 1.5 && matId < 2.5 ) {
+	else if( matId == 2.0 ) {
 		col = vec3( 1.0, 0.7, 0.45 ); // 暗い木目色
 		rough = 1.0;
 		metal = 0.0;
+		outFlatness = -1.0;
 	}
-
 
 	outNormal = normalize( outNormal + n3.xyz * 0.15 );
 	outColor.xyz = col;

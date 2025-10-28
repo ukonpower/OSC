@@ -24,6 +24,10 @@ export class DebaBouChou extends MXP.Component {
 			width: 0.4,
 		} );
 
+		// position の y に 0.5 を足す
+		const offsetMatrix = new GLP.Matrix().setFromTransform( new GLP.Vector( 0, 0.6, 0 ) );
+		geo.applyMatrix( offsetMatrix );
+
 		// material
 
 		const mat = new MXP.Material( {

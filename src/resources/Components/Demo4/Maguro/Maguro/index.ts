@@ -4,6 +4,7 @@ import * as MXP from 'maxpower';
 import maguroFrag from './shaders/maguro.fs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 
 export class Maguro extends MXP.Component {

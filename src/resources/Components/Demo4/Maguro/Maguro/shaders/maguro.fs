@@ -12,7 +12,6 @@
 uniform float uTimeE;
 uniform sampler2D uNoiseTex;
 
-
 SDFResult D( vec3 p ) {
 
 	vec3 maguroP = p;

@@ -104,10 +104,10 @@ void main( void ) {
 	vec3 noise = texture( uNoiseSimpleTex, vUv * 0.3 ).xyz;
 
 	vec3 hsv = rgb2hsv( outColor.xyz );
-	hsv.x += noise.x * 0.1 * mix( 0.5, 1.0, rnd );
+	hsv.x += noise.x * ( 0.1 * mat.flatness ) * mix( 0.5, 1.0, rnd );
 
 
-	outColor.xyz = mix( outColor.xyz, hsv2rgb( hsv ), mat.flatness );
+	outColor.xyz = mix( outColor.xyz, hsv2rgb( hsv ), abs( mat.flatness ) );
 
 	// outColor.xyz = mix( outColor.xyz, vec3( 1.0, 0.0, 1.0 ),  mat.flatness );
 
