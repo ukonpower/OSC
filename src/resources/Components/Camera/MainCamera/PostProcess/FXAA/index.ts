@@ -6,7 +6,7 @@ import { gl } from '~/globals';
 
 export class FXAA extends MXP.PostProcess {
 
-	constructor( ) {
+	constructor( params: MXP.PostProcessParams<void> ) {
 
 		super( {
 			name: "FXAA",

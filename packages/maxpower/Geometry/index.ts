@@ -69,6 +69,50 @@ export class Geometry extends Serializable {
 
 	}
 
+	public applyMatrix( matrix: GLP.Matrix ) {
+
+		const vec = new GLP.Vector();
+
+		// 配列に行列を適用するヘルパー
+		const apply = ( array: GLP.TArrayBuffer, mat: GLP.Matrix, asPosition: boolean ) => {
+
+			for ( let i = 0; i < array.length; i += 3 ) {
+
+				vec.set( array[ i ], array[ i + 1 ], array[ i + 2 ] );
+
+				if ( asPosition ) {
+
+					vec.applyMatrix4AsPosition( mat );
+
+				} else {
+
+					vec.applyMatrix4AsDirection( mat ).normalize();
+
+				}
+
+				array[ i ] = vec.x;
+				array[ i + 1 ] = vec.y;
+				array[ i + 2 ] = vec.z;
+
+			}
+
+		};
+
+		// position属性に行列を適用
+		const posAttr = this.attributes.get( 'position' );
+		if ( posAttr ) apply( posAttr.array, matrix, true );
+
+		// normal属性に逆転置行列を適用
+		const normalAttr = this.attributes.get( 'normal' );
+		if ( normalAttr ) apply( normalAttr.array, matrix.clone().inverse().transpose(), false );
+
+		// バッファの更新をリクエスト
+		this.requestUpdate();
+
+		return this;
+
+	}
+
 	public createBuffers( gl: WebGL2RenderingContext ) {
 
 		this.attributes.forEach( ( attr, key ) => {

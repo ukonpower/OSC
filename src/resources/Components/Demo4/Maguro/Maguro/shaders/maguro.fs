@@ -11,24 +11,26 @@
 
 uniform float uTimeE;
 uniform sampler2D uNoiseTex;
+uniform vec4 uState;
 
-
-SDFResult D( vec3 p ) {
+// マグロの形状を定義
+float maguro( vec3 p ) {
 
 	vec3 maguroP = p;
+	maguroP *= 0.8;
 	maguroP.xz *= rotate( sin( -p.x - 0.3 + uTimeE * 1.0 ) * 0.5 * smoothstep( -1.0, 1.0, p.x )  );
 
 	// ボデー
 
 	vec3 pp = maguroP;
 	pp.z *= 1.2;
-	vec2 d = vec2( sdVesicaSegment( pp, vec3( -0.5, 0.0, 0.0 ), vec3( 0.5, 0.0, 0.0 ), 0.2 * cos(pp.x + 0.5) ), 0.0 );
+	float d = sdVesicaSegment( pp, vec3( -0.5, 0.0, 0.0 ), vec3( 0.5, 0.0, 0.0 ), 0.2 * cos(pp.x + 0.5) );
 
 	// 口
 
 	pp = maguroP;
 	pp += vec3( 0.5, -0.05, 0.0 );
-	d.x = opSmoothSub( sdTriPrism( pp, vec2(0.14, 0.2) ), d.x, 0.0 );
+	d = opSmoothSub( sdTriPrism( pp, vec2(0.14, 0.2) ), d, 0.0 );
 
 	// ヒレ下
 
@@ -36,18 +38,18 @@ SDFResult D( vec3 p ) {
 	pp += vec3( -0.1, 0.09, 0.0 );
 	pp.x += pp.y * 0.3;
 	pp.xy *= rotate( PI);
-	d.x = opSmoothAdd( sdTriPrism( pp, vec2(0.14, 0.01) ) - 0.002, d.x, 0.04 );
-	
+	d = opSmoothAdd( sdTriPrism( pp, vec2(0.14, 0.01) ) - 0.002, d, 0.04 );
+
 	// ヒレ上
-	
+
 	pp = maguroP;
 	pp += vec3( -0.1, -0.2, 0.0 );
 	pp.x *= 1.2;
 	pp.x -= pow(pp.y, 2.0 ) * 2.0;
-	d.x = opSmoothAdd( sdTriPrism( pp, vec2(0.10, 0.001) ) - 0.002, d.x, 0.04 );
+	d = opSmoothAdd( sdTriPrism( pp, vec2(0.10, 0.001) ) - 0.002, d, 0.04 );
 
 	// ヒレ横
-	
+
 	pp = maguroP;
 	pp.z = abs( pp.z );
 	pp += vec3( -0.0, 0.01, -0.14 );
@@ -57,7 +59,7 @@ SDFResult D( vec3 p ) {
 	pp.x -= 0.03;
 	pp.xy *= rotate( - 1.7 );
 	pp.y *= 0.5;
-	d.x = opSmoothAdd( sdTriPrism( pp, vec2(0.05, 0.001) ) - 0.002, d.x, 0.01 );
+	d = opSmoothAdd( sdTriPrism( pp, vec2(0.05, 0.001) ) - 0.002, d, 0.01 );
 
 	// ヒレ後ろ
 
@@ -67,7 +69,7 @@ SDFResult D( vec3 p ) {
 	pp += vec3( -0.5, -0.05, 0.0 );
 	pp.y *= 0.24;
 
-	d.x = opSmoothAdd( sdTriPrism( pp, vec2(0.03, 0.01) ) - 0.002, d.x, 0.04 );
+	d = opSmoothAdd( sdTriPrism( pp, vec2(0.03, 0.01) ) - 0.002, d, 0.04 );
 
 	// ギザギザ
 
@@ -77,12 +79,32 @@ SDFResult D( vec3 p ) {
 	pp.y -= w * 0.17;
 	pp.x = mod( pp.x, 0.05 ) - 0.025;
 	float s = smoothstep( 0.15, 0.1, abs( maguroP.x - 0.3 ) );
-	d.x = opSmoothAdd( sdTriPrism( pp, vec2(0.015 * s, 0.005 * s) ), d.x, 0.01 );
+	d = opSmoothAdd( sdTriPrism( pp, vec2(0.015 * s, 0.005 * s) ), d, 0.01 );
+
+	return d;
+
+}
+
+// マグロブロックの形状を定義
+float maguroBlock( vec3 p ) {
+
+	return sdBox( p, vec3( 0.1 ) );
+
+}
+
+SDFResult D( vec3 p ) {
+
+	float mgr = maguro( p );
+	mgr = opSmoothSub( sdBox( p + vec3( 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), mgr, 0.0 );
+	
+	float blk = maguroBlock( p * mix( 1.0, 0.5, uState.x ) );
+
+	float d = opSmoothAdd( mgr, blk, 0.10 );
 
 	return SDFResult(
-		d.x,
+		d,
 		p,
-		d.y
+		0.0
 	);
 
 }

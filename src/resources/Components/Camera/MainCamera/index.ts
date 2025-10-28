@@ -87,21 +87,21 @@ export class MainCamera extends MXP.Component {
 
 		// fxaa
 
-		this.postProcessPipeline.add( new FXAA() );
+		this.postProcessPipeline.add( FXAA );
 
 		// bloom
 
-		const bloom = this.postProcessPipeline.add( new Bloom( this.renderCamera.renderTarget.shadingBuffer.textures[ 0 ] ) );
+		const bloom = this.postProcessPipeline.add( Bloom, { srcTexture: this.renderCamera.renderTarget.shadingBuffer.textures[ 0 ] } );
 		bloom.threshold = 1.0;
 		bloom.brightness = 1;
 
 		// colorGrading
 
-		this.postProcessPipeline.add( new ColorGrading() );
+		this.postProcessPipeline.add( ColorGrading );
 
 		// finalize
 
-		this.postProcessPipeline.add( new Finalize() );
+		this.postProcessPipeline.add( Finalize );
 
 		// dof
 
@@ -140,6 +140,7 @@ export class MainCamera extends MXP.Component {
 			}
 
 			const lookAtTarget = root.findEntityByName( "CamLook" ) || null;
+
 			this._lookAt.setTarget( lookAtTarget );
 			this._dofTarget = root.findEntityByName( 'CamDof' ) || null;
 
@@ -314,6 +315,7 @@ export class MainCamera extends MXP.Component {
 
 
 			const cameraState = blidger.animations.get( "state" );
+
 
 			if ( cameraState ) {
 

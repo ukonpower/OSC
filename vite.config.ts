@@ -46,7 +46,9 @@ export default defineConfig( {
 	plugins: [
 		react(),
 		OREngineFileSystemPlugin(),
-		ShaderLoader(),
+		ShaderLoader( {
+			skipMinifier: true,
+		} ),
 		ResourceManager(),
 	],
 	define: {

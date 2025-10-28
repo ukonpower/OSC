@@ -6,14 +6,26 @@ import { gl, globalUniforms } from '~/globals';
 
 export class Finalize extends MXP.PostProcess {
 
-	constructor() {
+	constructor( params: MXP.PostProcessParams<void> ) {
+
+		const { pipeline } = params;
+		const blidger = pipeline.entity.getComponent( MXP.BLidger );
+
+		const uniforms = MXP.UniformsUtils.merge( globalUniforms.time );
+
+		// BLidgerのuniformsをバインド
+		if ( blidger ) {
+
+			blidger.bindUniforms( uniforms );
+
+		}
 
 		super( {
 			name: "Finalize",
 			passes: [
 				new MXP.PostProcessPass( gl, {
 					frag: finalizeFrag,
-					uniforms: globalUniforms.time,
+					uniforms: uniforms,
 				} )
 			]
 		} );

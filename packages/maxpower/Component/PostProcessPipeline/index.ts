@@ -1,7 +1,13 @@
 import * as GLP from 'glpower';
 
 import { Component, ComponentParams } from '..';
-import { PostProcess } from '../../PostProcess';
+import { Entity } from '../../Entity';
+import { PostProcess, PostProcessParams } from '../../PostProcess';
+
+export type PostProcessConstructorArgType<T extends typeof PostProcess> =
+  ConstructorParameters<T>[0] extends PostProcessParams<infer A>
+    ? A
+    : never;
 
 export class PostProcessPipeline extends Component {
 
@@ -57,13 +63,22 @@ export class PostProcessPipeline extends Component {
 
 	}
 
-	public add<T extends PostProcess>( newPostProcess: T ) {
+	public add<T extends typeof PostProcess>(
+		postProcessClass: T,
+		...args: PostProcessConstructorArgType<T> extends undefined ? [] | [PostProcessConstructorArgType<T>]
+		  : [PostProcessConstructorArgType<T>]
+	): InstanceType<T> {
+
+		// クラスコンストラクタからインスタンス化
+		const [ postProcessArgs ] = args;
+
+		const newPostProcess = new postProcessClass( { pipeline: this, args: postProcessArgs || {} } );
 
 		this.postProcesses.push( newPostProcess );
 
 		newPostProcess.resize( this._resolution );
 
-		return newPostProcess;
+		return newPostProcess as InstanceType<T>;
 
 	}
 

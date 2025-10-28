@@ -5,6 +5,7 @@ import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
 import sampleFrag from './shaders/sample.fs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 /**
  * ShaderMotionGraphics - 複数のシェーダーを切り替えて描画できるPlaneメッシュコンポーネント
@@ -128,7 +129,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 	private updateGeometry() {
 
 		// PlaneGeometryを作成
-		const geo = new MXP.PlaneGeometry( { width: 1.0, height: 1.0 } );
+		const geo = new MXP.PlaneGeometry( { width: 1.0, height: 1.0, widthSegments: 8, heightSegments: 8 } );
 
 		// レイヤー数が1より大きい場合、インスタンス属性を追加
 		if ( this.layers > 1 ) {
@@ -164,6 +165,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge(
 				globalUniforms.time,
 				globalUniforms.resolution,
+				globalUniforms.tex,
 				{
 					uLayers: { value: this.layers, type: '1i' },
 					uLayerSpacing: { value: this.layerSpacing, type: '1f' }
@@ -171,9 +173,12 @@ export class ShaderMotionGraphics extends MXP.Component {
 			)
 		} );
 
+		// BLidgerのuniformsをマテリアルにバインド
+		bindBlidgeUniform( this.mesh );
+
 	}
 
-	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+	protected updateImpl( _event: MXP.ComponentUpdateEvent ): void {
 
 		// カスタムユニフォームの更新などをここに記述可能
 

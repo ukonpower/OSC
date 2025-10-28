@@ -4,6 +4,7 @@ import * as MXP from 'maxpower';
 import maguroFrag from './shaders/maguro.fs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 
 export class Maguro extends MXP.Component {
@@ -16,7 +17,7 @@ export class Maguro extends MXP.Component {
 
 		const geo = new MXP.CubeGeometry( {
 			width: 1.5,
-			height: 1,
+			height: 0.8,
 			depth: 1
 		} );
 
@@ -27,9 +28,12 @@ export class Maguro extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, globalUniforms.tex )
 		} );
 
-		this.entity.addComponent( MXP.Mesh, {
+
+		const mesh = this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: mat
 		} );
+
+		bindBlidgeUniform( mesh );
 
 		// HMR
 

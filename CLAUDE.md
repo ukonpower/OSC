@@ -13,6 +13,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 3. **似たような処理があれば適度に共通化** - 重複コードを削減してサイズ削減
 4. **コメントはビルド時に自動で削除されるので気にせず、人間が読みやすいようにちゃんとコメントをする** - 保守性のため積極的にコメント記述
 5. **変数名はビルド時に自動的にマングルされるので、文字数などは気にせずわかりやすく記述する** - 可読性のため明確な変数名を使用
+6. **オプショナルチェーン(`?.`)は避ける** - トランスパイル時に冗長なコードになるため、代わりに`&&`演算子を使用する
+   - 悪い例: `obj?.prop || defaultValue` → トランスパイル後に余計な変数や条件分岐が生成される
+   - 良い例: `obj && obj.prop || defaultValue` → コンパクトにトランスパイルされる
 
 コードレビュー時は常にファイルサイズへの影響を考慮してください。
 
@@ -105,4 +108,9 @@ npm run build:storybook # Storybookビルド
 - **開発サーバー**: ユーザーは通常`localhost:3000`で開発サーバーを起動しているため、**新たにサーバーを立ち上げないこと**
 - **型チェック**: コード変更後は必ず最後に`npm run type-check`を実行してTypeScriptの型エラーがないことを確認すること
 - **ビルドサイズ**: 変更によるファイルサイズへの影響を常に意識し、必要に応じて`npm run build`で確認すること
+- **BLidger uniformsのバインド**: BLidgerコンポーネントのuniformsをバインドする際は、以下の優先順位で使用すること
+  1. `src/shortcuts.ts`の`bindBlidgeUniform()`が使える場合（Mesh向け）: それを使用
+  2. それ以外の場合: `blidger.bindUniforms(targetUniforms)`を直接使用
+  - ❌ 悪い例: `blidger.uniforms`を直接マージする
+  - ✅ 良い例: `blidger.bindUniforms(uniforms)`でバインドする
 
