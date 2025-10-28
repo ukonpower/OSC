@@ -28,9 +28,12 @@ export class Maguro extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, globalUniforms.tex )
 		} );
 
-		this.entity.addComponent( MXP.Mesh, {
+
+		const mesh = this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: mat
 		} );
+
+		bindBlidgeUniform( mesh );
 
 		// HMR
 
