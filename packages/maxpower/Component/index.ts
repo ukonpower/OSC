@@ -117,7 +117,13 @@ export class Component extends Serializable {
 
 		this._disposed = true;
 
+		this.disposeImpl();
+
 		this.emit( 'dispose' );
+
+	}
+
+	private disposeImpl( ): void {
 
 	}
 

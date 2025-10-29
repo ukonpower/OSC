@@ -143,6 +143,25 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneMaguro/Sushi",
+			"components": [
+				{
+					"name": "SushiMaguro"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneMaguro/Sushi/Sashimi",
+			"components": [
+				{
+					"name": "Sashimi",
+					"props": {
+						"sashimiType": "maguro"
+					}
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneMaguro/WaterPillar",
 			"components": [
 				{
