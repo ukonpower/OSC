@@ -106,14 +106,6 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/MaguroBlock",
-			"components": [
-				{
-					"name": "MaguroBlock"
-				}
-			]
-		},
-		{
 			"path": "/root/blidgeRoot/SceneMaguro/MBG",
 			"components": [
 				{

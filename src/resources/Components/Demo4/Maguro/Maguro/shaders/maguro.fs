@@ -125,6 +125,8 @@ SDFResult D( vec3 p ) {
 	mgr = opSmoothSub( sdBox( p + vec3( 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), mgr, 0.0 );
 
 	float blk = maguroBlock( p * mix( 1.0 , 0.4, uState.y ) );
+	blk = opSmoothSub( sdBox( p + vec3( -1.8 + uState.z * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), blk, 0.0 );
+
 
 	float d = opSmoothAdd( mgr, blk, 0.10 );
 
