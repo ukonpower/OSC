@@ -191,6 +191,7 @@ void main( void ) {
 		outFlatness = kuro;
 		outMetalic = 0.2;
 	} else {
+
 		// マグロブロック (mat=1.0)
 		float sss = subsurface( rayPos, normalize( (vec4( 0.0, 1.0, 0.0, 0.0 ) * uModelViewMatrix).xyz ), 0.3);
 
@@ -198,11 +199,19 @@ void main( void ) {
 		outNormal = normalize( outNormal + n3.xyz * 0.1 );
 
 		float kuro = smoothstep( 0.35, 0.1, length( rayPos.xy + vec2( -0.08, -0.11 ) ) );
-		outColor.xyz = mix( vec3( 1.0, 0.1, 0.1 ), vec3( 0.7, 0.0, 0.0 ), kuro );
-		outEmission.xyz += vec3( 0.9, 0.1, 0.2 ) * sss * 1.7;
+		float kawal = length( rayPos.xy + vec2( 0.05, -1.25 ) );
+		float kawa = smoothstep( 1.398, 1.415, kawal );
+		float kawaSoto = smoothstep( 1.42, 1.435, kawal );
+
+		outColor.xyz = mix( vec3( 1.0, 0.1, 0.1 ), vec3( 0.6, 0.0, 0.0 ), kuro );
+		outEmission.xyz += vec3( 0.9, 0.1, 0.2 ) * sss * 1.7 * ( 1.0 - kawa);
 		outFlatness = -1.0;
 		outMetalic = 0.0;
 		outRoughness = 0.2;
+
+
+		outColor.xyz = mix( outColor.xyz, vec3( 1.0, 0.7, 0.7 ), kawa );
+		outColor.xyz = mix( outColor.xyz, vec3( 0.0 ), kawaSoto );
 	}
 
 
