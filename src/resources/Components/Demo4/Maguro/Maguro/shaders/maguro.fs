@@ -88,7 +88,32 @@ float maguro( vec3 p ) {
 // マグロブロックの形状を定義
 float maguroBlock( vec3 p ) {
 
-	return sdBox( p, vec3( 0.1 ) );
+	vec3 blockP = p;
+	blockP.y -= 0.05;
+	blockP.x *= 1.2;
+	blockP.z *= 1.5;
+	blockP.x += noiseCyc( blockP.xyz * 2.0 + 0.12 ).x * 0.05;
+
+	blockP.z += fract( length( (blockP.xy + vec2( -0.02, 0.0 )) * vec2( 1.0, 1.2 ) * (1.0 + length( blockP.xy ) * 1.5 ) ) * 40.0 ) * 0.002;
+
+	vec3 pp = blockP;
+	pp.yz *= rotate( HPI );
+	pp.z += 0.89;
+	float d = sdCappedCylinder( pp, 1.0, 0.2 );
+
+	pp = blockP;
+	pp.y += 0.14;
+	pp.xy *= rotate( 0.5 );
+	d = opAnd( d, sdBox( pp, vec3( 0.1 ) ) - 0.05 );
+	d -= 0.01;
+
+	pp = blockP;
+	pp.z = abs(pp.z);
+	pp.z -= 0.23;
+
+	d = opSub( d, sdBox( pp, vec3( 1.0, 1.0, 0.1 ) ));
+
+	return d;
 
 }
 
@@ -96,15 +121,17 @@ SDFResult D( vec3 p ) {
 
 	float mgr = maguro( p );
 	mgr = opSmoothSub( sdBox( p + vec3( 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), mgr, 0.0 );
-	
-	float blk = maguroBlock( p * mix( 1.0, 0.5, uState.x ) );
+
+	float blk = maguroBlock( p * mix( 1.0 , 0.4, uState.y ) );
 
 	float d = opSmoothAdd( mgr, blk, 0.10 );
+
+	float matID = mgr < blk ? 0.0 : 1.0;
 
 	return SDFResult(
 		d,
 		p,
-		0.0
+		matID
 	);
 
 }
@@ -146,15 +173,29 @@ void main( void ) {
 	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0 );
 	vec4 n3 = texture(uNoiseTex, noiseUV * 1.0 + n1.xy);
 
-	outRoughness = smoothstep( 0.2, 1.0, n1.r );
-	outNormal = normalize( outNormal + n3.xyz * 0.3 );
+	// マテリアルIDに応じた処理
+	if( dist.mat < 0.5 ) {
+		// マグロ本体 (mat=0.0)
+		outRoughness = smoothstep( 0.2, 1.0, n1.r );
+		outNormal = normalize( outNormal + n3.xyz * 0.3 );
 
-	vec3 c = vec3( 1.0 );
-	float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
-	c.xyz = mix(c, vec3( 0.0 ), kuro );
-	outColor.xyz = c;
-	outFlatness = kuro;
-	outMetalic = 0.2;
+		vec3 c = vec3( 1.0 );
+		float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
+		c.xyz = mix(c, vec3( 0.0 ), kuro );
+		outColor.xyz = c;
+		outFlatness = kuro;
+		outMetalic = 0.2;
+	} else {
+		// マグロブロック (mat=1.0)
+		outRoughness = 0.5;
+		outNormal = normalize( outNormal + n3.xyz * 0.1 );
+
+		float kuro = smoothstep( 0.35, 0.1, length( rayPos.xy + vec2( -0.08, -0.11 ) ) );
+		outColor.xyz = mix( vec3( 1.0, 0.1, 0.1 ), vec3( 0.7, 0.0, 0.0 ), kuro );
+		outFlatness = -1.0;
+		outMetalic = 0.0;
+		outRoughness = 0.2;
+	}
 
 
 	#include <frag_out>
