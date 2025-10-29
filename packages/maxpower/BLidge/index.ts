@@ -126,6 +126,8 @@ export type BLidgeFrame = {
 	current: number;
 	fps: number;
 	playing: boolean;
+	/** タイムラインをドラッグ中かどうか */
+	scrubbing?: boolean;
 }
 
 type BLidgeConnection = {
