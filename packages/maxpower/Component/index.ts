@@ -123,7 +123,7 @@ export class Component extends Serializable {
 
 	}
 
-	private disposeImpl( ): void {
+	protected disposeImpl( ): void {
 
 	}
 

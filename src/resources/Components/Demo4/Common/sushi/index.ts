@@ -39,7 +39,7 @@ export class SushiMaguro extends MXP.Component {
 
 	}
 
-	protected dispose( ): void {
+	protected disposeImpl( ): void {
 
 		// 子エンティティのクリーンアップ
 		if ( this.shariEntity ) {
