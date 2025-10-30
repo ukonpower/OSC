@@ -1,9 +1,9 @@
 import * as MXP from 'maxpower';
 import { OREngineProjectData } from 'orengine';
 import { OREngine, useOREngine } from 'orengine/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { gl } from '~/globals';
+import { canvas, gl } from '~/globals/';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -84,6 +84,29 @@ const PreviewSceneManager = ( { componentName, shaderCode, onCompileError, onCom
 export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess }: PreviewPaneProps ) => {
 
 	const [ projectData, setProjectData ] = useState<OREngineProjectData>();
+	const canvasWrapperRef = useRef<HTMLDivElement>( null );
+
+	// Canvasのマウント処理
+	useEffect( () => {
+
+		const wrapper = canvasWrapperRef.current;
+		if ( ! wrapper ) return;
+
+		// CanvasをDOMにマウント
+		wrapper.appendChild( canvas );
+
+		return () => {
+
+			// クリーンアップ: CanvasをDOMから削除
+			if ( wrapper.contains( canvas ) ) {
+
+				wrapper.removeChild( canvas );
+
+			}
+
+		};
+
+	}, [] );
 
 	// プロジェクトデータ生成
 	useEffect( () => {
@@ -157,6 +180,7 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 
 	return (
 		<div className="shader-editor__pane shader-editor__pane--preview">
+			<div ref={canvasWrapperRef} className="shader-editor__canvas-wrapper" />
 			{projectData ? (
 				<OREngine gl={gl} project={projectData}>
 					<PreviewSceneManager

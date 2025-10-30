@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { CodePane } from './components/CodePane';
 import { PreviewPane } from './components/PreviewPane';
 import { Toolbar } from './components/Toolbar';
-import { ShaderComponent } from './componentList';
+import { loadComponent, loadShader, ShaderComponent } from './componentList';
 
 import './styles/shaderEditor.scss';
 
@@ -33,32 +33,16 @@ export const ShaderEditorApp = () => {
 
 		}
 
-		const loadComponent = async () => {
+		const loadComponentAndShader = async () => {
 
 			try {
 
-				// コンポーネントクラスを動的import
-				const componentModule = await import(
-					`~/resources/Components/${selectedComponent.path}/index.ts`
-				);
-
-				// デフォルトエクスポートまたは名前付きエクスポートを取得
-				const CompClass = componentModule.default || componentModule[ selectedComponent.name ];
-
-				if ( ! CompClass ) {
-
-					throw new Error( `Component class not found: ${selectedComponent.name}` );
-
-				}
-
+				// コンポーネントクラスを読み込み
+				const CompClass = await loadComponent( selectedComponent );
 				setComponentClass( () => CompClass );
 
 				// シェーダーファイルを読み込み
-				const shaderModule = await import(
-					`~/resources/Components/${selectedComponent.path}/${selectedComponent.shaderPath}?raw`
-				);
-
-				const shaderCode = shaderModule.default;
+				const shaderCode = await loadShader( selectedComponent );
 				setOriginalShaderCode( shaderCode );
 				setCurrentShaderCode( shaderCode );
 				setAppliedShaderCode( shaderCode );
@@ -73,7 +57,7 @@ export const ShaderEditorApp = () => {
 
 		};
 
-		loadComponent();
+		loadComponentAndShader();
 
 	}, [ selectedComponent ] );
 
