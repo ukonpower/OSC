@@ -189,10 +189,23 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneSamon/Salmon",
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon",
 			"components": [
 				{
 					"name": "Salmon"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneSalmon/SBG",
+			"components": [
+				{
+					"name": "ShaderMotionGraphics",
+					"props": {
+						"shaderName": "salmonBGScreen",
+						"layers": 1,
+						"layerSpacing": 0.01
+					}
 				}
 			]
 		},
