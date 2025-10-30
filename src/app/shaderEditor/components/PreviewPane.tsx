@@ -1,6 +1,6 @@
 import * as MXP from 'maxpower';
 import { OREngineProjectData } from 'orengine';
-import { OREngine } from 'orengine/react';
+import { OREngine, useOREngine } from 'orengine/react';
 import { useEffect, useState } from 'react';
 
 import { gl } from '~/globals';
@@ -12,6 +12,74 @@ interface PreviewPaneProps {
 	onCompileError?: ( error: string ) => void;
 	onCompileSuccess?: () => void;
 }
+
+// 内部コンポーネント: OREngineContextの中で動作し、シェーダー更新を行う
+const PreviewSceneManager = ( { componentName, shaderCode, onCompileError, onCompileSuccess }: Pick<PreviewPaneProps, 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess'> ) => {
+
+	const { engine } = useOREngine();
+
+	// シェーダーコード適用
+	useEffect( () => {
+
+		if ( ! shaderCode || ! componentName ) return;
+
+		try {
+
+			// エンティティツリーからPreviewObjectを検索
+			const previewObject = engine.root.findEntityByName( "PreviewObject" );
+
+			if ( ! previewObject ) {
+
+				console.error( 'PreviewObject not found in scene' );
+				return;
+
+			}
+
+			// Meshコンポーネントを取得（ほとんどのシェーダーコンポーネントはMeshを持つ）
+			const meshComponent = previewObject.getComponent( MXP.Mesh );
+
+			if ( ! meshComponent ) {
+
+				console.error( 'Mesh component not found on PreviewObject' );
+				return;
+
+			}
+
+			const material = meshComponent.material;
+
+			if ( ! material ) {
+
+				console.error( 'Material not found on Mesh' );
+				return;
+
+			}
+
+			// シェーダーコードを更新
+			material.frag = shaderCode;
+
+			// プログラムキャッシュをクリアして再コンパイルを強制
+			material.requestUpdate();
+
+			// コンパイル成功を通知
+			if ( onCompileSuccess ) onCompileSuccess();
+
+		} catch ( error ) {
+
+			console.error( 'Failed to update shader:', error );
+
+			if ( onCompileError ) {
+
+				onCompileError( error instanceof Error ? error.message : String( error ) );
+
+			}
+
+		}
+
+	}, [ engine, componentName, shaderCode, onCompileError, onCompileSuccess ] );
+
+	return null;
+
+};
 
 export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess }: PreviewPaneProps ) => {
 
@@ -63,7 +131,10 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 					path: "/root/Light",
 					components: [
 						{
-							name: "DirectionalLight"
+							name: "Light",
+							props: {
+								type: "directional"
+							}
 						}
 					]
 				},
@@ -82,15 +153,19 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 
 		if ( onCompileSuccess ) onCompileSuccess();
 
-	}, [ componentClass, componentName ] );
-
-	// シェーダーコード適用は別のアプローチが必要
-	// TODO: OREngineのAPIを使ってランタイムでシェーダー更新する方法を検討
+	}, [ componentClass, componentName, onCompileSuccess ] );
 
 	return (
 		<div className="shader-editor__pane shader-editor__pane--preview">
 			{projectData ? (
-				<OREngine gl={gl} project={projectData} />
+				<OREngine gl={gl} project={projectData}>
+					<PreviewSceneManager
+						componentName={componentName}
+						shaderCode={shaderCode}
+						onCompileError={onCompileError}
+						onCompileSuccess={onCompileSuccess}
+					/>
+				</OREngine>
 			) : (
 				<div className="shader-editor__empty">
 					コンポーネントを選択してください
