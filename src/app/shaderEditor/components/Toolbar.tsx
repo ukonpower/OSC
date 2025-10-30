@@ -1,3 +1,7 @@
+import { Button } from 'orengine/components/primitives/Button';
+import { InputSelect } from 'orengine/components/primitives/Input/InputSelect';
+import { Label } from 'orengine/components/primitives/Label';
+
 import { SHADER_COMPONENTS, ShaderComponent } from '../componentList';
 
 interface ToolbarProps {
@@ -10,9 +14,15 @@ interface ToolbarProps {
 
 export const Toolbar = ( { selectedComponent, onComponentChange, onApply, onSave, isSaving }: ToolbarProps ) => {
 
-	const handleSelectChange = ( e: React.ChangeEvent<HTMLSelectElement> ) => {
+	const selectList = [
+		{ value: '', label: '-- Select Component --' },
+		...SHADER_COMPONENTS.map( comp => ( {
+			value: comp.path,
+			label: comp.name
+		} ) )
+	];
 
-		const value = e.target.value;
+	const handleSelectChange = ( value: string ) => {
 
 		if ( value === '' ) {
 
@@ -31,37 +41,21 @@ export const Toolbar = ( { selectedComponent, onComponentChange, onApply, onSave
 		<div className="shader-editor__header">
 			<h1 className="shader-editor__title">🎨 Shader Editor</h1>
 
-			<div className="shader-editor__selector">
-				<label htmlFor="component-select">Component:</label>
-				<select
-					id="component-select"
+			<Label title="Component:">
+				<InputSelect
 					value={selectedComponent?.path || ''}
+					selectList={selectList}
 					onChange={handleSelectChange}
-				>
-					<option value="">-- Select Component --</option>
-					{SHADER_COMPONENTS.map( ( comp ) => (
-						<option key={comp.path} value={comp.path}>
-							{comp.name}
-						</option>
-					) )}
-				</select>
-			</div>
+				/>
+			</Label>
 
-			<button
-				className="shader-editor__button"
-				onClick={onApply}
-				disabled={! selectedComponent}
-			>
+			<Button onClick={onApply}>
 				Apply
-			</button>
+			</Button>
 
-			<button
-				className="shader-editor__button shader-editor__button--save"
-				onClick={onSave}
-				disabled={! selectedComponent || isSaving}
-			>
+			<Button onClick={onSave}>
 				{isSaving ? 'Saving...' : 'Save to File'}
-			</button>
+			</Button>
 		</div>
 	);
 
