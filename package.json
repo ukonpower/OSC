@@ -15,6 +15,7 @@
   },
   "workspaces": [],
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@spz-loader/core": "^0.2.0",
     "react": "^18.3.1",
