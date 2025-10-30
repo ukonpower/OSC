@@ -17,6 +17,7 @@ import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { WaterPillar } from './Components/Demo4/Maguro/WaterPillar/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
+import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
@@ -50,6 +51,9 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			WaterPillar,
 		},
 		Music,
+		Salmon: {
+			Salmon,
+		},
 		TruchetSushiLane,
 	},
 	ObjectControls: {
