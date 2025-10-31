@@ -1,9 +1,9 @@
 import * as MXP from 'maxpower';
-import { OREngineProjectData } from 'orengine';
 import { OREngine, useOREngine } from 'orengine/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { canvas, gl } from '~/globals/';
+import { OrbitControls } from '~/resources/Components/_DevOnly/OrbitControls';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -13,10 +13,65 @@ interface PreviewPaneProps {
 	onCompileSuccess?: () => void;
 }
 
-// 内部コンポーネント: OREngineContextの中で動作し、シェーダー更新を行う
-const PreviewSceneManager = ( { componentName, shaderCode, onCompileError, onCompileSuccess }: Pick<PreviewPaneProps, 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess'> ) => {
+// 内部コンポーネント: OREngineContextの中で動作し、シーンを構築・シェーダー更新を行う
+const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess }: Pick<PreviewPaneProps, 'componentClass' | 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess'> ) => {
 
 	const { engine } = useOREngine();
+
+	// シーン構築
+	useEffect( () => {
+
+		if ( ! componentClass || ! componentName ) return;
+
+		try {
+
+			// Camera作成
+			const camera = new MXP.Entity();
+			camera.name = "Camera";
+			camera.position.set( 0, 0, 3 );
+			camera.addComponent( MXP.Camera );
+			camera.addComponent( OrbitControls );
+			engine.root.add( camera );
+
+			// Light作成
+			const light = new MXP.Entity();
+			light.name = "Light";
+			light.position.set( 2, 2, 2 );
+			const lightComp = light.addComponent( MXP.Light );
+			lightComp.lightType = "directional";
+			engine.root.add( light );
+
+			// PreviewObject作成
+			const previewObject = new MXP.Entity();
+			previewObject.name = "PreviewObject";
+			previewObject.addComponent( componentClass );
+			engine.root.add( previewObject );
+
+			// 初期化成功を通知
+			if ( onCompileSuccess ) onCompileSuccess();
+
+			// クリーンアップ
+			return () => {
+
+				engine.root.remove( camera );
+				engine.root.remove( light );
+				engine.root.remove( previewObject );
+
+			};
+
+		} catch ( error ) {
+
+			console.error( 'Failed to create scene:', error );
+
+			if ( onCompileError ) {
+
+				onCompileError( error instanceof Error ? error.message : String( error ) );
+
+			}
+
+		}
+
+	}, [ engine, componentClass, componentName, onCompileSuccess, onCompileError ] );
 
 	// シェーダーコード適用
 	useEffect( () => {
@@ -83,7 +138,6 @@ const PreviewSceneManager = ( { componentName, shaderCode, onCompileError, onCom
 
 export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess }: PreviewPaneProps ) => {
 
-	const [ projectData, setProjectData ] = useState<OREngineProjectData>();
 	const canvasWrapperRef = useRef<HTMLDivElement>( null );
 
 	// Canvasのマウント処理
@@ -108,93 +162,24 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 
 	}, [] );
 
-	// プロジェクトデータ生成
-	useEffect( () => {
-
-		if ( ! componentClass || ! componentName ) {
-
-			setProjectData( undefined );
-			return;
-
-		}
-
-		// シンプルなシーンを生成
-		const data: OREngineProjectData = {
-			name: "ShaderEditor",
-			scene: {
-				name: "root",
-				pos: [ 0, 0, 0 ],
-				childs: [
-					{
-						name: "Camera",
-						pos: [ 0, 0, 3 ]
-					},
-					{
-						name: "Light",
-						pos: [ 2, 2, 2 ]
-					},
-					{
-						name: "PreviewObject"
-					}
-				]
-			},
-			overrides: [
-				{
-					path: "/root/Camera",
-					components: [
-						{
-							name: "Camera"
-						},
-						{
-							name: "OrbitControls"
-						}
-					]
-				},
-				{
-					path: "/root/Light",
-					components: [
-						{
-							name: "Light",
-							props: {
-								type: "directional"
-							}
-						}
-					]
-				},
-				{
-					path: "/root/PreviewObject",
-					components: [
-						{
-							name: componentName
-						}
-					]
-				}
-			]
-		};
-
-		setProjectData( data );
-
-		if ( onCompileSuccess ) onCompileSuccess();
-
-	}, [ componentClass, componentName, onCompileSuccess ] );
-
 	return (
 		<div className="shader-editor__pane shader-editor__pane--preview">
 			<div ref={canvasWrapperRef} className="shader-editor__canvas-wrapper" />
-			{projectData ? (
-				<OREngine gl={gl} project={projectData}>
+			<OREngine gl={gl} project={undefined}>
+				{componentClass && componentName ? (
 					<PreviewSceneManager
+						componentClass={componentClass}
 						componentName={componentName}
 						shaderCode={shaderCode}
 						onCompileError={onCompileError}
 						onCompileSuccess={onCompileSuccess}
 					/>
-				</OREngine>
-			) : (
-				<div className="shader-editor__empty">
-					コンポーネントを選択してください
-				</div>
-			)}
+				) : (
+					<div className="shader-editor__empty">
+						コンポーネントを選択してください
+					</div>
+				)}
+			</OREngine>
 		</div>
 	);
 
