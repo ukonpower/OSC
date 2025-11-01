@@ -21,7 +21,8 @@ SDFResult D( vec3 p ) {
 	return SDFResult(
 		d.x,
 		p,
-		d.y
+		d.y,
+		vec4(0.0)
 	);
 
 }

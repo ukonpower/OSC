@@ -70,7 +70,7 @@
 SDFResult D( vec3 p ) {
     p = mod( p, 10.0 ) - 5.0;
     float d = sdSphere( p, 1.0 );  // sdfからインクルードされた関数
-    return SDFResult( d, p, 0.0 );
+    return SDFResult( d, p, 0.0, vec4(0.0) );
 }
 
 void main() {

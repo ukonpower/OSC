@@ -136,7 +136,8 @@ SDFResult D( vec3 p ) {
 	return SDFResult(
 		d,
 		p,
-		matID
+		matID,
+		vec4(0.0)
 	);
 
 }

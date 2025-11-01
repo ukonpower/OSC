@@ -88,7 +88,7 @@ float salmon( vec3 p ) {
 }
 
 // サーモンブロックの形状を定義
-vec2 salmonBlock( vec3 p ) {
+vec4 salmonBlock( vec3 p ) {
 
 	vec3 blockP = p;
 	blockP *= 0.4;
@@ -100,7 +100,7 @@ vec2 salmonBlock( vec3 p ) {
 	pp.y *= 1.0 + cos( pp.x * PI * 1.3 - 0.6 );
 	pp.yz *= rotate( HPI );
 	float d = sdCappedCylinder( pp, 0.2, 0.02 );
-	float lenBody = length( pp );
+	vec3 bodyP = pp;
 
 	d = opSmoothSub(  sdBox( blockP + vec3( 0.1, 0.5, 0.0 ), vec3( 0.5, 0.5, 0.5 ) ), d, 0.02 );
 
@@ -110,7 +110,7 @@ vec2 salmonBlock( vec3 p ) {
 	pp.yz *= rotate( HPI );
 	d = opSmoothSub( sdCappedCylinder( pp, 0.18, 0.5 ), d, 0.01 );
 
-	return vec2( d, lenBody );
+	return vec4( d, bodyP );
 
 }
 
@@ -119,10 +119,10 @@ SDFResult D( vec3 p ) {
 	float slm = salmon( p );
 	slm = opSmoothSub( sdBox( p + vec3( 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), slm, 0.0 );
 
-	vec2 blk = salmonBlock( p * mix( 1.0 , 0.4, uState.y ) );
-	blk.x = opSmoothSub( sdBox( p + vec3( -1.8 + uState.z * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), blk.x, 0.0 );
+	vec4 blk = salmonBlock( p * mix( 1.0 , 0.4, uState.y ) );
+	blk.x = opSmoothSub( sdBox( p + vec3( -2.0 + 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), blk.x, 0.0 );
 
-	float d = opSmoothAdd( slm, blk, 0.10 );
+	float d = opAdd( slm, blk.x );
 
 	float matID = slm < blk.x ? 0.0 : 1.0;
 
@@ -130,7 +130,8 @@ SDFResult D( vec3 p ) {
 	return SDFResult(
 		d,
 		p,
-		matID
+		matID,
+		vec4(blk.y, blk.yzw)
 	);
 
 }
@@ -172,6 +173,7 @@ void main( void ) {
 	vec4 n1 = texture(uNoiseTex, noiseUV);
 	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0 );
 	vec4 n3 = texture(uNoiseTex, noiseUV * 1.0 + n1.xy);
+	vec4 n4 = texture(uNoiseTex, rayPos.xz * 1.0 - 0.5 );
 
 	float dnv = dot( rayDir, -outNormal.xyz );
 
@@ -194,15 +196,22 @@ void main( void ) {
 		outRoughness = 0.5;
 		outNormal = normalize( outNormal + n3.xyz * 0.1 );
 
-		float kawal = length( rayPos.xy * vec2( 1.0, 3.0 ) + vec2( -0.05, 0.1 ) );
-		float kawa = smoothstep( 0.4, 0.5, kawal );
+		float kawal = length( dist.matparam.yzw );
+		float kawa = smoothstep( 0.19, 0.2, kawal );
 
 		outColor.xyz = mix( vec3( 1.0, 0.5, 0.2 ), vec3( 0.9, 0.3, 0.1 ), 0.0 );
 		outEmission.xyz += vec3( 1.0, 0.4, 0.1 ) * sss * 1.7 * ( 1.0 - kawa );
 		outMetalic = 0.0;
-		outRoughness = 0.2;
+		outRoughness = 0.1;
 
-		outColor.xyz = mix( outColor.xyz, vec3( 0.0 ), kawa );
+		
+		vec3 bodyP = dist.matparam.yzw;
+		
+		float line = fract( length( bodyP * vec3( 2.0, 1.0, 1.0 ) + vec3( 0.05 + sin( bodyP.y ), 0.0, 0.0 ) + n1.x * 0.005 ) * 30.0 );
+		line = smoothstep( 0.5, 1.0, line );
+		outColor.xyz += line * 0.1;
+		outColor.xyz = mix( outColor.xyz, vec3( 0.9 + n4.x  ) * smoothstep( -0.4, 0.8, rayPos.x ), kawa );
+
 	}
 
 

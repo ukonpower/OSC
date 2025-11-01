@@ -20,7 +20,8 @@ SDFResult D( vec3 p ) {
 	return SDFResult(
 		d,
 		p,
-		0.0
+		0.0,
+		vec4(0.0)
 	);
 
 }
