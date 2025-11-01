@@ -6,6 +6,8 @@ import { useEffect, useRef } from 'react';
 import { gl, canvas } from '~/globals';
 import { OrbitControls } from '~/resources/Components/_DevOnly/OrbitControls';
 import { SkyBox } from '~/resources/Components/Demo4/Common/SkyBox';
+import { TextureGenerator } from '~/resources/Components/Texture/TextureGenerator';
+import { UniformControls } from '~/resources/Components/Utilities/UniformsControls';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -30,6 +32,17 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 		if ( ! componentClass || ! componentName ) return;
 
 		try {
+
+			// TextureGeneratorとUniformControlsをrootに追加
+			const textureGenerator = new MXP.Entity();
+			textureGenerator.name = "TextureGenerator";
+			textureGenerator.addComponent( TextureGenerator );
+			engine.root.add( textureGenerator );
+
+			const uniformControls = new MXP.Entity();
+			uniformControls.name = "UniformControls";
+			uniformControls.addComponent( UniformControls );
+			engine.root.add( uniformControls );
 
 			// Camera作成
 			const camera = new MXP.Entity();
@@ -96,6 +109,8 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 				engine.root.remove( light );
 				engine.root.remove( skybox );
 				engine.root.remove( previewObject );
+				engine.root.remove( textureGenerator );
+				engine.root.remove( uniformControls );
 
 			};
 
