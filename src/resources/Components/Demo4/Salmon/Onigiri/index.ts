@@ -1,37 +1,58 @@
 import * as MXP from 'maxpower';
 
-import { Shari } from '../../Common/Shari';
+import onigirifrag from './shaders/onigiri.fs';
+
+import { globalUniforms } from '~/globals';
 
 /**
- * Onigiri - Shariのみを使用したおにぎりコンポーネント
+ * Onigiri - レイマーチングによるおにぎりコンポーネント
  */
 export class Onigiri extends MXP.Component {
 
-	private shariEntity: MXP.Entity | null = null;
+	private mesh: MXP.Mesh;
 
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
 
-		// Shariエンティティを作成（おにぎりのご飯部分）
-		this.shariEntity = new MXP.Entity();
-		this.shariEntity.name = "Shari";
-		this.shariEntity.addComponent( Shari );
+		// geometry
+		const geo = new MXP.SphereGeometry( {
+			radius: 1
+		} );
 
-		this.entity.add( this.shariEntity );
+		// material
+		const mat = new MXP.Material( {
+			frag: MXP.hotGet( 'onigirifrag', onigirifrag ),
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+		} );
+
+		this.mesh = this.entity.addComponent( MXP.Mesh, {
+			geometry: geo, material: mat
+		} );
+
+		// HMR
+		if ( import.meta.hot ) {
+
+			import.meta.hot.accept( './shaders/onigiri.fs', ( module ) => {
+
+				if ( module ) {
+
+					mat.frag = MXP.hotUpdate( 'onigirifrag', module.default );
+
+					mat.requestUpdate();
+
+				}
+
+			} );
+
+		}
 
 	}
 
-	protected disposeImpl( ): void {
+	protected disposeImpl(): void {
 
-		// 子エンティティのクリーンアップ
-		if ( this.shariEntity ) {
-
-			this.entity.remove( this.shariEntity );
-			this.shariEntity.dispose();
-			this.shariEntity = null;
-
-		}
+		// Meshコンポーネントを削除
+		this._entity.removeComponent( MXP.Mesh );
 
 	}
 
