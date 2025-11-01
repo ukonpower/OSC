@@ -151,7 +151,7 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/Sushi/Sashimi",
+			"path": "/root/blidgeRoot/SceneMaguro/Sushi/SushiSakana/Sashimi",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -170,7 +170,7 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001/Sashimi",
+			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001/SushiSakana/Sashimi",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -189,6 +189,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneSalmon/Cube.013",
+			"components": [
+				{
+					"name": "Onigiri"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon",
 			"components": [
 				{
@@ -200,12 +208,12 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneSalmon/Salmon/Sashimi_Salmon",
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon/SushiSakana/Sashimi",
 			"components": [
 				{
 					"name": "Sashimi",
 					"props": {
-						"sashimiType": "salmon"
+						"sashimiType": "maguro"
 					}
 				}
 			]
@@ -230,12 +238,12 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2/Sashimi_Salmon",
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2/SushiSakana/Sashimi",
 			"components": [
 				{
 					"name": "Sashimi",
 					"props": {
-						"sashimiType": "salmon"
+						"sashimiType": "maguro"
 					}
 				}
 			]
