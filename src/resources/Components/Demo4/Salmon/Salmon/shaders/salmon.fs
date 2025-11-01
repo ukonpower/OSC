@@ -33,8 +33,10 @@ float salmon( vec3 p ) {
 	// 口
 
 	pp = salmonP;
-	pp += vec3( 0.5, -0.00, 0.0 );
-	// d = opSmoothSub( sdTriPrism( pp, vec2(0.1, 0.2) ), d, 0.0 );
+	pp += vec3( 0.5, 0.000, 0.0 );
+	pp.y += pow( pp.x * 1.0, 2.0 ) * 1.5;
+	pp.x *= 0.10;
+	d = opSmoothSub( sdTriPrism( pp, vec2(0.022, 0.2) ), d, 0.0 );
 
 	// ヒレ下
 
