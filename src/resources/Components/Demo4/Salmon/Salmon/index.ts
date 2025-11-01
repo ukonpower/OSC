@@ -35,6 +35,9 @@ export class Salmon extends MXP.Component {
 
 		bindBlidgeUniform( mesh );
 
+		console.log( mesh.material.uniforms );
+
+
 		// HMR
 
 		if ( import.meta.hot ) {

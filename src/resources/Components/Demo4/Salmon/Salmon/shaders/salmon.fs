@@ -127,13 +127,10 @@ SDFResult D( vec3 p ) {
 	float blk = salmonBlock( p * mix( 1.0 , 0.4, uState.y ) );
 	blk = opSmoothSub( sdBox( p + vec3( -1.8 + uState.z * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), blk, 0.0 );
 
-
 	float d = opSmoothAdd( slm, blk, 0.10 );
 
 	float matID = slm < blk ? 0.0 : 1.0;
-	
-	d = slm;
-	matID = 0.0;
+
 
 	return SDFResult(
 		d,
