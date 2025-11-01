@@ -134,7 +134,8 @@ export class Pointer extends GLP.EventEmitter {
 
 		if ( pointerType != null ) {
 
-			if ( pointerType == 'mouse' && ( e.button == - 1 || e.button == 0 ) ) {
+			// マウスとタッチの両方をサポート
+			if ( ( pointerType == 'mouse' && ( e.button == - 1 || e.button == 0 ) ) || pointerType == 'touch' || pointerType == 'pen' ) {
 
                                 this._touchEventHandler( e.pageX, e.pageY, type, e as PointerEvent );
 

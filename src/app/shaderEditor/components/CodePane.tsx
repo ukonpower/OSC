@@ -1,5 +1,5 @@
 import Editor, { OnMount } from '@monaco-editor/react';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface CodePaneProps {
 	code: string;
@@ -7,6 +7,27 @@ interface CodePaneProps {
 }
 
 export const CodePane = ( { code, onChange }: CodePaneProps ) => {
+
+	// スマホ判定（768px以下）
+	const [ isMobile, setIsMobile ] = useState( window.innerWidth <= 768 );
+
+	useEffect( () => {
+
+		const handleResize = () => {
+
+			setIsMobile( window.innerWidth <= 768 );
+
+		};
+
+		window.addEventListener( 'resize', handleResize );
+
+		return () => {
+
+			window.removeEventListener( 'resize', handleResize );
+
+		};
+
+	}, [] );
 
 	// Monaco Editorマウント時にGLSL言語定義を登録
 	const handleEditorMount: OnMount = useCallback( ( editor, monaco ) => {
@@ -100,7 +121,7 @@ export const CodePane = ( { code, onChange }: CodePaneProps ) => {
 				onChange={onChange}
 				onMount={handleEditorMount}
 				options={{
-					minimap: { enabled: true },
+					minimap: { enabled: ! isMobile },
 					fontSize: 14,
 					lineNumbers: 'on',
 					renderWhitespace: 'selection',

@@ -98,12 +98,17 @@
 
 			@media (max-width: 768px) {
 				border-right: none;
-				border-bottom: 1px solid #3e3e42;
+				border-top: 1px solid #3e3e42;
+				order: 2; // スマホ時は下に配置
 			}
 		}
 
 		&--preview {
 			background: #1e1e1e;
+
+			@media (max-width: 768px) {
+				order: 1; // スマホ時は上に配置
+			}
 		}
 	}
 
@@ -163,12 +168,14 @@
 		flex: 1;
 		position: relative;
 		overflow: hidden;
+		touch-action: none; // タッチイベントを完全にコントロール
 
 		canvas {
 			width: 100%;
 			height: 100%;
 			display: block;
 			object-fit: contain;
+			touch-action: none; // ブラウザのデフォルトタッチ動作を無効化
 		}
 	}
 
