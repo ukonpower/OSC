@@ -219,8 +219,11 @@ export class OrbitControls extends MXP.Component {
 
 		}
 
-		this.orbit_.x = Math.atan2( this.eye_.y - this.target_.y, new GLP.Vector( this.eye_.x, this.eye_.z ).length() - new GLP.Vector( this.target_.x, this.target_.z ).length() );
-		this.orbit_.y = - Math.atan2( this.eye_.x - this.target_.x, this.eye_.z - this.target_.z );
+		// 差分ベクトルを計算してspherical座標系へ変換
+		const diff = this.eye_.clone().sub( this.target_ );
+		const horizontalDist = Math.sqrt( diff.x * diff.x + diff.z * diff.z );
+		this.orbit_.x = Math.atan2( diff.y, horizontalDist );
+		this.orbit_.y = - Math.atan2( diff.x, diff.z );
 
 		this.distance_ = this.eye_.clone().sub( this.target_ ).length();
 
