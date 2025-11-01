@@ -151,18 +151,18 @@ this._gBuffer.setTexture( [
 ```glsl
 outColor0 = vec4( outPos, outEmission.x );
 outColor1 = vec4( normalize( outNormal * ( gl_FrontFacing ? 1.0 : -1.0 ) ), outEmission.y );
-outColor2 = vec4( outColor.xyz, outNoisy );
+outColor2 = vec4( outColor.xyz, outGradient );
 outColor3 = vec4( outRoughness, outMetalic, outSSN, outEnv );
-outColor4 = vec4( vVelocity, outGradient, outEmission.z );
+outColor4 = vec4( vVelocity, 0.0, outEmission.z );
 ```
 
 | テクスチャ | 形式 | R | G | B | A | 用途 |
 |-----------|------|---|---|---|---|------|
 | **texture[0]** | RGBA32F (NEAREST) | outPos.x | outPos.y | outPos.z | outEmission.x | ワールド座標 + エミッション(R) |
 | **texture[1]** | RGBA32F | outNormal.x | outNormal.y | outNormal.z | outEmission.y | ワールド法線 + エミッション(G) |
-| **texture[2]** | RGBA8 | outColor.r | outColor.g | outColor.b | **outNoisy** | アルベドカラー + **ノイズ質感パラメータ** |
+| **texture[2]** | RGBA8 | outColor.r | outColor.g | outColor.b | **outGradient** | アルベドカラー + **グラデーションパラメータ** |
 | **texture[3]** | RGBA8 | outRoughness | outMetalic | outSSN | outEnv | マテリアルパラメータ (Selector使用中) |
-| **texture[4]** | RGBA32F | vVelocity.x | vVelocity.y | **outGradient** | outEmission.z | モーションベクター + **グラデーションパラメータ** + エミッション(B) |
+| **texture[4]** | RGBA32F | vVelocity.x | vVelocity.y | **未使用** | outEmission.z | モーションベクター + エミッション(B) |
 
 ### Forwardレンダリング時の出力
 
@@ -174,17 +174,13 @@ outColor2 = vec4(vVelocity, 0.0, 1.0);
 
 ### 利用可能な空きチャンネル
 
-現在すべてのチャンネルが使用されています。
+- **texture[4].b** (32bit浮動小数点) - 現在未使用
 
-### outNoisy / outGradient パラメータの使い方
+### outGradient パラメータの使い方
 
-**outNoisy** (texture[2].a, 8bit整数):
-- ノイズ質感を適用する強度パラメータ（デフォルト値: `0.0`）
-- 0.0～1.0の範囲で、ノイズテクスチャによる色相変調の強度を制御
-
-**outGradient** (texture[4].b, 32bit浮動小数点):
+**outGradient** (texture[2].a, 8bit整数):
 - グラデーション効果を適用する強度パラメータ（デフォルト値: `0.0`）
-- 0.0～1.0の範囲で、グラデーション効果の強度を制御
+- 0.0～1.0の範囲で、ノイズテクスチャによる色相変調の強度を制御
 
 **使用例:**
 
@@ -195,31 +191,26 @@ outColor2 = vec4(vVelocity, 0.0, 1.0);
 
 void main() {
     outColor = vec4(1.0, 0.5, 0.0, 1.0);
-    outNoisy = 1.0;      // ノイズ質感を最大強度で適用
-    outGradient = 0.5;   // グラデーションを中程度の強度で適用
+    outGradient = 1.0;   // グラデーション質感を最大強度で適用
 }
 ```
 
 **deferred shadingシェーダーでの利用:**
 
-`Material`構造体の`noisy`と`gradient`フィールドとしてアクセス可能です:
+`Material`構造体の`gradient`フィールドとしてアクセス可能です:
 
 ```glsl
 // deferredShading.fs内
 Material mat = Material(...);
-// mat.noisy, mat.gradientに値が格納されている
+// mat.gradientに値が格納されている
 
-// ノイズ質感効果
-if( mat.noisy > 0.0 ) {
+// グラデーション質感効果
+if( mat.gradient > 0.0 ) {
+    float rnd = random( vUv );
     vec3 noise = texture( uNoiseSimpleTex, vUv * 0.3 ).xyz;
     vec3 hsv = rgb2hsv( outColor.xyz );
-    hsv.x += noise.x * 0.1 * mat.noisy;
-    outColor.xyz = mix( outColor.xyz, hsv2rgb( hsv ), mat.noisy );
-}
-
-// グラデーション効果
-if( mat.gradient > 0.0 ) {
-    outColor.xyz = mix( outColor.xyz, outColor.xyz * 1.1, mat.gradient * 0.5 );
+    hsv.x += noise.x * 0.1 * mix( 0.5, 1.0, rnd );
+    outColor.xyz = hsv2rgb( hsv );
 }
 ```
 

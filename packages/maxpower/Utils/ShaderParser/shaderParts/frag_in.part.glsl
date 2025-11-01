@@ -8,4 +8,3 @@ float outMetalic = 0.0;
 vec3 outPos = vPos;
 float outEnv = 1.0;
 float outGradient = 0.0;
-float outNoisy = 0.0;

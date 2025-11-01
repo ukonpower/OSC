@@ -47,8 +47,7 @@ void main( void ) {
 
 	vec3 normal = tex1.xyz;
 	vec3 color = tex2.xyz;
-	float noisy = tex2.w;
-	float gradient = tex4.z;
+	float gradient = tex2.w;
 	float roughness = tex3.x;
 	float metalic = tex3.y;
 	vec3 emission = vec3( tex0.w, tex1.w, tex4.w );
@@ -71,8 +70,7 @@ void main( void ) {
 		mix( color, vec3( 0.0, 0.0, 0.0 ), metalic ),
 		mix( vec3( 1.0, 1.0, 1.0 ), color, metalic ),
 		envMapIntensity,
-		gradient,
-		noisy
+		gradient
 	);
 	vec3 outColor = vec3( 0.0 );
 	//]
@@ -101,12 +99,12 @@ void main( void ) {
 
 	// DEMO4 CUSTOM ----------
 
-	// ノイズ質感効果
-	if( mat.noisy > 0.0 || mat.gradient > 0.0 ) {
+	// グラデーション質感効果
+	if( mat.gradient > 0.0 ) {
 		float rnd = random( vUv );
-		vec3 noise = texture( uNoiseSimpleTex, vUv * 0.3 ).xyz;
+		vec3 noise = texture( uNoiseSimpleTex, vUv * 0.3 * vec2( 1.0, 0.5 ) ).xyz;
 		vec3 hsv = rgb2hsv( outColor.xyz );
-		hsv.x += noise.x * 0.1 * mix( 0.5, 1.0, rnd );
+		hsv.x += noise.x * gradient * rnd * 0.08;
 		outColor.xyz = hsv2rgb( hsv );
 	}
 
