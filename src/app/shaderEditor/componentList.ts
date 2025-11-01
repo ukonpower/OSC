@@ -1,36 +1,17 @@
 import * as MXP from 'maxpower';
 
-// コンポーネントの動的インポート用マッピング
-// Viteの制約により、動的インポートは静的に解決可能なパスのみサポート
-const COMPONENT_IMPORTS: Record<string, () => Promise<any>> = {
-	"Demo4/Maguro/Maguro": () => import( "~/resources/Components/Demo4/Maguro/Maguro/index.ts" ),
-	"Demo4/Maguro/Sashimi": () => import( "~/resources/Components/Demo4/Maguro/Sashimi/index.ts" ),
-};
+// 自動生成されたシェーダーコンポーネント情報をインポート
+import {
+	COMPONENT_IMPORTS,
+	SHADER_IMPORTS,
+	SHADER_COMPONENTS,
+	type ShaderComponent,
+	type ShaderFile
+} from './_shaderComponents';
 
-const SHADER_IMPORTS: Record<string, () => Promise<any>> = {
-	"Demo4/Maguro/Maguro/shaders/maguro.fs": () => import( "~/resources/Components/Demo4/Maguro/Maguro/shaders/maguro.fs?raw" ),
-	"Demo4/Maguro/Sashimi/shaders/sashimi.fs": () => import( "~/resources/Components/Demo4/Maguro/Sashimi/shaders/sashimi.fs?raw" ),
-};
-
-// シェーダーエディタで編集可能なコンポーネント一覧
-export interface ShaderComponent {
-	name: string;
-	path: string;
-	shaderPath: string;
-}
-
-export const SHADER_COMPONENTS: ShaderComponent[] = [
-	{
-		name: "Maguro",
-		path: "Demo4/Maguro/Maguro",
-		shaderPath: "shaders/maguro.fs"
-	},
-	{
-		name: "Sashimi",
-		path: "Demo4/Maguro/Sashimi",
-		shaderPath: "shaders/sashimi.fs"
-	},
-];
+// 型を再エクスポート
+export type { ShaderComponent, ShaderFile };
+export { SHADER_COMPONENTS };
 
 // コンポーネントを読み込む
 export const loadComponent = async ( component: ShaderComponent ): Promise<typeof MXP.Component> => {
@@ -57,9 +38,9 @@ export const loadComponent = async ( component: ShaderComponent ): Promise<typeo
 };
 
 // シェーダーファイルを読み込む
-export const loadShader = async ( component: ShaderComponent ): Promise<string> => {
+export const loadShader = async ( component: ShaderComponent, shaderFile: ShaderFile ): Promise<string> => {
 
-	const shaderKey = `${component.path}/${component.shaderPath}`;
+	const shaderKey = `${component.path}/${shaderFile.path}`;
 	const importer = SHADER_IMPORTS[ shaderKey ];
 
 	if ( ! importer ) {

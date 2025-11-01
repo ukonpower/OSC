@@ -4,13 +4,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { CodePane } from './components/CodePane';
 import { PreviewPane } from './components/PreviewPane';
 import { Toolbar } from './components/Toolbar';
-import { loadComponent, loadShader, ShaderComponent } from './componentList';
+import { loadComponent, loadShader, ShaderComponent, ShaderFile } from './componentList';
 
 import './styles/shaderEditor.scss';
 
 export const ShaderEditorApp = () => {
 
 	const [ selectedComponent, setSelectedComponent ] = useState<ShaderComponent>();
+	const [ selectedShader, setSelectedShader ] = useState<ShaderFile>();
 	const [ componentClass, setComponentClass ] = useState<typeof MXP.Component>();
 	const [ originalShaderCode, setOriginalShaderCode ] = useState<string>( '' );
 	const [ currentShaderCode, setCurrentShaderCode ] = useState<string>( '' );
@@ -25,28 +26,18 @@ export const ShaderEditorApp = () => {
 		if ( ! selectedComponent ) {
 
 			setComponentClass( undefined );
-			setOriginalShaderCode( '' );
-			setCurrentShaderCode( '' );
-			setAppliedShaderCode( undefined );
-			setCompileStatus( 'idle' );
+			setSelectedShader( undefined );
 			return;
 
 		}
 
-		const loadComponentAndShader = async () => {
+		const loadComp = async () => {
 
 			try {
 
 				// コンポーネントクラスを読み込み
 				const CompClass = await loadComponent( selectedComponent );
 				setComponentClass( () => CompClass );
-
-				// シェーダーファイルを読み込み
-				const shaderCode = await loadShader( selectedComponent );
-				setOriginalShaderCode( shaderCode );
-				setCurrentShaderCode( shaderCode );
-				setAppliedShaderCode( shaderCode );
-				setCompileStatus( 'idle' );
 
 			} catch ( error ) {
 
@@ -57,9 +48,46 @@ export const ShaderEditorApp = () => {
 
 		};
 
-		loadComponentAndShader();
+		loadComp();
 
 	}, [ selectedComponent ] );
+
+	// シェーダー選択時の処理
+	useEffect( () => {
+
+		if ( ! selectedComponent || ! selectedShader ) {
+
+			setOriginalShaderCode( '' );
+			setCurrentShaderCode( '' );
+			setAppliedShaderCode( undefined );
+			setCompileStatus( 'idle' );
+			return;
+
+		}
+
+		const loadShaderCode = async () => {
+
+			try {
+
+				// シェーダーファイルを読み込み
+				const shaderCode = await loadShader( selectedComponent, selectedShader );
+				setOriginalShaderCode( shaderCode );
+				setCurrentShaderCode( shaderCode );
+				setAppliedShaderCode( shaderCode );
+				setCompileStatus( 'idle' );
+
+			} catch ( error ) {
+
+				console.error( 'Failed to load shader:', error );
+				alert( `Failed to load shader: ${error}` );
+
+			}
+
+		};
+
+		loadShaderCode();
+
+	}, [ selectedComponent, selectedShader ] );
 
 	// コード変更ハンドラ
 	const handleCodeChange = useCallback( ( value: string | undefined ) => {
@@ -79,13 +107,13 @@ export const ShaderEditorApp = () => {
 	// Save処理
 	const handleSave = useCallback( async () => {
 
-		if ( ! selectedComponent ) return;
+		if ( ! selectedComponent || ! selectedShader ) return;
 
 		setIsSaving( true );
 
 		try {
 
-			const filePath = `resources/Components/${selectedComponent.path}/${selectedComponent.shaderPath}`;
+			const filePath = `resources/Components/${selectedComponent.path}/${selectedShader.path}`;
 
 			const response = await fetch( '/api/writeShader', {
 				method: 'POST',
@@ -116,7 +144,7 @@ export const ShaderEditorApp = () => {
 
 		}
 
-	}, [ selectedComponent, currentShaderCode ] );
+	}, [ selectedComponent, selectedShader, currentShaderCode ] );
 
 	// コンパイルエラーハンドラ
 	const handleCompileError = useCallback( ( error: string ) => {
@@ -141,7 +169,9 @@ export const ShaderEditorApp = () => {
 		<div className="shader-editor">
 			<Toolbar
 				selectedComponent={selectedComponent}
+				selectedShader={selectedShader}
 				onComponentChange={setSelectedComponent}
+				onShaderChange={setSelectedShader}
 				compileStatus={compileStatus}
 				errorMessage={compileError}
 			/>
