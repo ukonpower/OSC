@@ -134,22 +134,22 @@ export const ShaderEditorApp = () => {
 
 	}, [] );
 
+	// 未保存の変更があるかチェック
+	const hasUnsavedChanges = originalShaderCode !== currentShaderCode;
+
 	return (
 		<div className="shader-editor">
 			<Toolbar
 				selectedComponent={selectedComponent}
 				onComponentChange={setSelectedComponent}
-				onApply={handleApply}
-				onSave={handleSave}
-				isSaving={isSaving}
+				compileStatus={compileStatus}
+				errorMessage={compileError}
 			/>
 
 			<div className="shader-editor__content">
 				<CodePane
 					code={currentShaderCode}
 					onChange={handleCodeChange}
-					compileStatus={compileStatus}
-					errorMessage={compileError}
 				/>
 
 				<PreviewPane
@@ -158,6 +158,10 @@ export const ShaderEditorApp = () => {
 					shaderCode={appliedShaderCode}
 					onCompileError={handleCompileError}
 					onCompileSuccess={handleCompileSuccess}
+					onApply={handleApply}
+					onSave={handleSave}
+					isSaving={isSaving}
+					hasUnsavedChanges={hasUnsavedChanges}
 				/>
 			</div>
 		</div>

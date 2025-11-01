@@ -7,12 +7,11 @@ import { SHADER_COMPONENTS, ShaderComponent } from '../componentList';
 interface ToolbarProps {
 	selectedComponent?: ShaderComponent;
 	onComponentChange: ( component: ShaderComponent | undefined ) => void;
-	onApply: () => void;
-	onSave: () => void;
-	isSaving?: boolean;
+	compileStatus?: 'idle' | 'success' | 'error';
+	errorMessage?: string;
 }
 
-export const Toolbar = ( { selectedComponent, onComponentChange, onApply, onSave, isSaving }: ToolbarProps ) => {
+export const Toolbar = ( { selectedComponent, onComponentChange, compileStatus, errorMessage }: ToolbarProps ) => {
 
 	const selectList = [
 		{ value: '', label: '-- Select Component --' },
@@ -39,23 +38,23 @@ export const Toolbar = ( { selectedComponent, onComponentChange, onApply, onSave
 
 	return (
 		<div className="shader-editor__header">
-			<h1 className="shader-editor__title">🎨 Shader Editor</h1>
+			<div className="shader-editor__header-left">
+				<h1 className="shader-editor__title">Shader Editor</h1>
+				<Label title="Component">
+					<InputSelect
+						value={selectedComponent?.path || ''}
+						selectList={selectList}
+						onChange={handleSelectChange}
+					/>
+				</Label>
+			</div>
 
-			<Label title="Component:">
-				<InputSelect
-					value={selectedComponent?.path || ''}
-					selectList={selectList}
-					onChange={handleSelectChange}
-				/>
-			</Label>
-
-			<Button onClick={onApply}>
-				Apply
-			</Button>
-
-			<Button onClick={onSave}>
-				{isSaving ? 'Saving...' : 'Save to File'}
-			</Button>
+			{compileStatus && compileStatus !== 'idle' && (
+				<div className={`shader-editor__header-status shader-editor__header-status--${compileStatus}`}>
+					{compileStatus === 'success' && '✓ Compiled Successfully'}
+					{compileStatus === 'error' && `✗ ${errorMessage || 'Compilation failed'}`}
+				</div>
+			)}
 		</div>
 	);
 

@@ -1,8 +1,8 @@
+import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 import { OREngine, useOREngine } from 'orengine/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
-import { canvas, gl } from '~/globals/';
 import { OrbitControls } from '~/resources/Components/_DevOnly/OrbitControls';
 
 interface PreviewPaneProps {
@@ -11,6 +11,10 @@ interface PreviewPaneProps {
 	shaderCode?: string;
 	onCompileError?: ( error: string ) => void;
 	onCompileSuccess?: () => void;
+	onApply?: () => void;
+	onSave?: () => void;
+	isSaving?: boolean;
+	hasUnsavedChanges?: boolean;
 }
 
 // 内部コンポーネント: OREngineContextの中で動作し、シーンを構築・シェーダー更新を行う
@@ -33,6 +37,9 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			camera.addComponent( OrbitControls );
 			engine.root.add( camera );
 
+			// カメラをエンジンに登録（レンダリングに必要）
+			engine.setCamera( camera );
+
 			// Light作成
 			const light = new MXP.Entity();
 			light.name = "Light";
@@ -53,6 +60,7 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			// クリーンアップ
 			return () => {
 
+				engine.setCamera( null );
 				engine.root.remove( camera );
 				engine.root.remove( light );
 				engine.root.remove( previewObject );
@@ -132,41 +140,145 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 	}, [ engine, componentName, shaderCode, onCompileError, onCompileSuccess ] );
 
+	// Engineのサイズを画面サイズに応じて更新
+	useEffect( () => {
+
+		const canvas = engine.gl.canvas;
+
+		// OffscreenCanvasの場合はResizeObserverは使えない
+		if ( canvas instanceof OffscreenCanvas ) return;
+
+		// ResizeObserverでcanvasのリサイズを監視し、Engineのサイズを更新
+		const resizeObserver = new ResizeObserver( () => {
+
+			const width = canvas.width;
+			const height = canvas.height;
+			engine.setSize( new GLP.Vector( width, height ) );
+
+		} );
+
+		resizeObserver.observe( canvas );
+
+		return () => {
+
+			resizeObserver.disconnect();
+
+		};
+
+	}, [ engine ] );
+
+	// レンダリングループ
+	useEffect( () => {
+
+		let animationId: number;
+
+		const animate = () => {
+
+			engine.update();
+			animationId = requestAnimationFrame( animate );
+
+		};
+
+		animate();
+
+		return () => {
+
+			cancelAnimationFrame( animationId );
+
+		};
+
+	}, [ engine ] );
+
 	return null;
 
 };
 
-export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess }: PreviewPaneProps ) => {
+export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, onApply, onSave, isSaving, hasUnsavedChanges }: PreviewPaneProps ) => {
 
 	const canvasWrapperRef = useRef<HTMLDivElement>( null );
 
-	// Canvasのマウント処理
+	// シェーダーエディター専用のcanvasとglコンテキストを作成
+	const { canvas: previewCanvas, gl: previewGl } = useMemo( () => {
+
+		const canvas = document.createElement( 'canvas' );
+		const gl = canvas.getContext( 'webgl2', { antialias: false } );
+
+		if ( ! gl ) {
+
+			throw new Error( 'WebGL2 is not supported' );
+
+		}
+
+		return { canvas, gl };
+
+	}, [] );
+
+	// Canvasのマウント処理とリサイズ監視
 	useEffect( () => {
 
 		const wrapper = canvasWrapperRef.current;
 		if ( ! wrapper ) return;
 
 		// CanvasをDOMにマウント
-		wrapper.appendChild( canvas );
+		wrapper.appendChild( previewCanvas );
+
+		// ResizeObserverでcanvas-wrapperのサイズ変更を監視し、canvasの解像度を更新
+		const resizeObserver = new ResizeObserver( ( entries ) => {
+
+			for ( const entry of entries ) {
+
+				const { width, height } = entry.contentRect;
+				previewCanvas.width = width;
+				previewCanvas.height = height;
+
+			}
+
+		} );
+
+		resizeObserver.observe( wrapper );
 
 		return () => {
 
-			// クリーンアップ: CanvasをDOMから削除
-			if ( wrapper.contains( canvas ) ) {
+			resizeObserver.disconnect();
 
-				wrapper.removeChild( canvas );
+			// クリーンアップ: CanvasをDOMから削除
+			if ( wrapper.contains( previewCanvas ) ) {
+
+				wrapper.removeChild( previewCanvas );
 
 			}
 
 		};
 
-	}, [] );
+	}, [ previewCanvas ] );
 
 	return (
 		<div className="shader-editor__pane shader-editor__pane--preview">
+			<div className="shader-editor__preview-controls">
+				<button
+					className="shader-editor__control-btn shader-editor__control-btn--apply"
+					onClick={onApply}
+					disabled={! componentClass}
+				>
+					Apply (Ctrl+Enter)
+				</button>
+				<button
+					className="shader-editor__control-btn shader-editor__control-btn--save"
+					onClick={onSave}
+					disabled={! componentClass || isSaving}
+				>
+					{isSaving ? 'Saving...' : hasUnsavedChanges ? 'Save *' : 'Save'}
+				</button>
+			</div>
+
 			<div ref={canvasWrapperRef} className="shader-editor__canvas-wrapper" />
-			<OREngine gl={gl} project={undefined}>
-				{componentClass && componentName ? (
+			{! ( componentClass && componentName ) && (
+				<div className="shader-editor__empty">
+					コンポーネントを選択してください
+				</div>
+			)}
+			<OREngine gl={previewGl} project={undefined}>
+				{componentClass && componentName && (
 					<PreviewSceneManager
 						componentClass={componentClass}
 						componentName={componentName}
@@ -174,10 +286,6 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 						onCompileError={onCompileError}
 						onCompileSuccess={onCompileSuccess}
 					/>
-				) : (
-					<div className="shader-editor__empty">
-						コンポーネントを選択してください
-					</div>
 				)}
 			</OREngine>
 		</div>
