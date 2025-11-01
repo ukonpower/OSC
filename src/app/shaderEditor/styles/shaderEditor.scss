@@ -75,6 +75,35 @@
 	}
 
 
+	&__menu-toggle {
+		display: none;
+		background: #3c3c3c;
+		border: 1px solid #555;
+		color: #ccc;
+		font-size: 18px;
+		width: 36px;
+		height: 36px;
+		cursor: pointer;
+		border-radius: 4px;
+		transition: all 0.15s ease;
+
+		&:hover {
+			background: #454545;
+			color: #fff;
+		}
+
+		&:active {
+			background: #333;
+		}
+
+		// モバイルでのみ表示
+		@media (max-width: 768px) {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+
 	&__content {
 		display: grid;
 		grid-template-columns: 250px 1fr 1fr;
@@ -86,26 +115,27 @@
 			grid-template-columns: 200px 1fr 1fr;
 		}
 
-		// モバイル: ComponentListを折りたたみ可能にして縦スタック
+		// モバイル: ComponentListはオーバーレイ、PreviewとCodeを縦スタック
 		@media (max-width: 768px) {
 			grid-template-columns: 1fr;
-			grid-template-rows: auto 1fr 1fr;
+			grid-template-rows: 50vh 1fr;
 		}
 
-		// ComponentList
+		// ComponentList (デスクトップのみ通常表示)
 		> *:nth-child(1) {
 			border-right: 1px solid #3e3e42;
 
 			@media (max-width: 768px) {
+				// モバイルではオーバーレイになるため、グリッドから除外
+				display: none;
 				border-right: none;
-				border-bottom: 1px solid #3e3e42;
-				max-height: 200px;
 			}
 		}
 
-		// CodePane
+		// PreviewPane (モバイルでは上半分)
 		> *:nth-child(2) {
 			border-right: 1px solid #3e3e42;
+			background: #1e1e1e;
 
 			@media (max-width: 768px) {
 				border-right: none;
@@ -113,9 +143,11 @@
 			}
 		}
 
-		// PreviewPane
+		// CodePane (モバイルでは下半分)
 		> *:nth-child(3) {
-			background: #1e1e1e;
+			@media (max-width: 768px) {
+				// モバイルで下に配置
+			}
 		}
 	}
 

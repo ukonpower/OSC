@@ -13,6 +13,8 @@ interface ComponentListProps {
 	components: ShaderComponent[];
 	selectedComponent?: ShaderComponent;
 	onSelect: ( comp: ShaderComponent ) => void;
+	isOpen?: boolean;
+	onClose?: () => void;
 }
 
 // 型ガード関数
@@ -136,24 +138,57 @@ const TreeItem = ( { item, selectedComponent, onSelect, depth = 0 }: TreeItemPro
 
 };
 
-export const ComponentList = ( { components, selectedComponent, onSelect }: ComponentListProps ) => {
+export const ComponentList = ( { components, selectedComponent, onSelect, isOpen, onClose }: ComponentListProps ) => {
 
 	const hierarchy = buildHierarchy( components );
 
+	const handleSelect = ( comp: ShaderComponent ) => {
+
+		onSelect( comp );
+		// モバイルでは選択後にオーバーレイを閉じる
+		if ( onClose ) {
+
+			onClose();
+
+		}
+
+	};
+
 	return (
-		<div className={style.componentList}>
-			<div className={style.header}>Components</div>
-			<div className={style.tree}>
-				{hierarchy.map( ( item, index ) => (
-					<TreeItem
-						key={index}
-						item={item}
-						selectedComponent={selectedComponent}
-						onSelect={onSelect}
-					/>
-				) )}
+		<>
+			{/* オーバーレイ背景（モバイルのみ） */}
+			{isOpen !== undefined && (
+				<div
+					className={`${style.overlay} ${isOpen ? style.overlayOpen : ''}`}
+					onClick={onClose}
+				/>
+			)}
+
+			<div className={`${style.componentList} ${isOpen !== undefined ? ( isOpen ? style.open : style.closed ) : ''}`}>
+				<div className={style.header}>
+					Components
+					{onClose && (
+						<button
+							className={style.closeButton}
+							onClick={onClose}
+							aria-label="Close"
+						>
+							✕
+						</button>
+					)}
+				</div>
+				<div className={style.tree}>
+					{hierarchy.map( ( item, index ) => (
+						<TreeItem
+							key={index}
+							item={item}
+							selectedComponent={selectedComponent}
+							onSelect={handleSelect}
+						/>
+					) )}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 
 };

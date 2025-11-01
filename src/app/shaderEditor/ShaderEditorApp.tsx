@@ -26,6 +26,7 @@ export const ShaderEditorApp = () => {
 	const [ compileStatus, setCompileStatus ] = useState<'idle' | 'success' | 'error'>( 'idle' );
 	const [ compileError, setCompileError ] = useState<string>();
 	const [ isSaving, setIsSaving ] = useState( false );
+	const [ isComponentListOpen, setIsComponentListOpen ] = useState( false );
 
 	// コンポーネント選択時の処理
 	useEffect( () => {
@@ -183,12 +184,27 @@ export const ShaderEditorApp = () => {
 	// 未保存の変更があるかチェック
 	const hasUnsavedChanges = originalShaderCode !== currentShaderCode;
 
+	// ComponentListトグルハンドラ
+	const handleToggleComponentList = useCallback( () => {
+
+		setIsComponentListOpen( prev => ! prev );
+
+	}, [] );
+
+	const handleCloseComponentList = useCallback( () => {
+
+		setIsComponentListOpen( false );
+
+	}, [] );
+
 	return (
 		<MouseMenuContext.Provider value={mouseMenuContext}>
 			<div className="shader-editor">
 				<Toolbar
 					compileStatus={compileStatus}
 					errorMessage={compileError}
+					isComponentListOpen={isComponentListOpen}
+					onToggleComponentList={handleToggleComponentList}
 				/>
 
 				<div className="shader-editor__content">
@@ -196,11 +212,8 @@ export const ShaderEditorApp = () => {
 						components={SHADER_COMPONENTS}
 						selectedComponent={selectedComponent}
 						onSelect={handleComponentSelect}
-					/>
-
-					<CodePane
-						code={currentShaderCode}
-						onChange={handleCodeChange}
+						isOpen={isComponentListOpen}
+						onClose={handleCloseComponentList}
 					/>
 
 					<PreviewPane
@@ -213,6 +226,11 @@ export const ShaderEditorApp = () => {
 						onSave={handleSave}
 						isSaving={isSaving}
 						hasUnsavedChanges={hasUnsavedChanges}
+					/>
+
+					<CodePane
+						code={currentShaderCode}
+						onChange={handleCodeChange}
 					/>
 				</div>
 

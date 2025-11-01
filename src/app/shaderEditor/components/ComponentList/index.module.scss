@@ -1,11 +1,52 @@
 @use '~/styles/common' as *;
 
+// オーバーレイ背景
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 998;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	pointer-events: none;
+
+	&.overlayOpen {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
+
 .componentList {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 	background-color: $bgColWindow0;
 	border-right: 1px solid $bgCol3;
+	transition: transform 0.2s ease;
+
+	// モバイル: オーバーレイモード
+	&.open,
+	&.closed {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 280px;
+		max-width: 80vw;
+		height: 100%;
+		z-index: 999;
+		box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+	}
+
+	&.closed {
+		transform: translateX(-100%);
+	}
+
+	&.open {
+		transform: translateX(0);
+	}
 }
 
 .header {
@@ -13,6 +54,30 @@
 	font-weight: bold;
 	border-bottom: 1px solid $bgCol3;
 	background-color: $bgCol1;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.closeButton {
+	background: none;
+	border: none;
+	color: #ccc;
+	font-size: 20px;
+	cursor: pointer;
+	padding: 0 8px;
+	line-height: 1;
+	display: none;
+
+	&:hover {
+		color: #fff;
+	}
+
+	// モバイルでのみ表示
+	.componentList.open &,
+	.componentList.closed & {
+		display: block;
+	}
 }
 
 .tree {
