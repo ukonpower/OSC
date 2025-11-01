@@ -191,7 +191,8 @@ void main( void ) {
 		float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
 		c.xyz = mix(c, vec3( 0.0 ), kuro );
 		outColor.xyz = c;
-		outFlatness = kuro;
+		outNoisy = 0.0;
+		outGradient = 0.0;
 		outMetalic = 0.2;
 	} else {
 
@@ -208,7 +209,8 @@ void main( void ) {
 
 		outColor.xyz = mix( vec3( 1.0, 0.1, 0.1 ), vec3( 0.6, 0.0, 0.0 ), kuro );
 		outEmission.xyz += vec3( 0.9, 0.1, 0.2 ) * sss * 1.7 * ( 1.0 - kawa);
-		outFlatness = -1.0;
+		outNoisy = 0.0;
+		outGradient = 0.0;
 		outMetalic = 0.0;
 		outRoughness = 0.2;
 

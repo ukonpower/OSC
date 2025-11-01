@@ -112,7 +112,8 @@ void main( void ) {
 		col = vec3( 1.0, 0.7, 0.45 ); // 暗い木目色
 		rough = 1.0;
 		metal = 0.0;
-		outFlatness = -1.0;
+		outNoisy = 0.0;
+		outGradient = 0.0;
 	}
 
 	outNormal = normalize( outNormal + n3.xyz * 0.15 );

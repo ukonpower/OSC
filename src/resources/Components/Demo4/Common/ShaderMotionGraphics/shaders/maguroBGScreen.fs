@@ -51,7 +51,8 @@ void main( void ) {
 	outMetalic = 0.3;
 	outEmission = color;
 	outEnv = 0.0;
-	outFlatness = -1.0;
+	outNoisy = 1.0;
+	outGradient = 1.0;
 
 	#include <frag_out>
 
