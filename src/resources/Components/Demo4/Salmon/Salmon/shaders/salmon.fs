@@ -88,34 +88,29 @@ float salmon( vec3 p ) {
 }
 
 // サーモンブロックの形状を定義
-float salmonBlock( vec3 p ) {
+vec2 salmonBlock( vec3 p ) {
 
 	vec3 blockP = p;
-	blockP.y -= 0.05;
-	blockP.x *= 1.2;
-	blockP.z *= 1.5;
+	blockP *= 0.4;
+	blockP.x -= 0.05;
+	blockP.y += 0.05;
 	blockP.x += texture( uNoiseTex, (blockP.xz + blockP.x)  * 0.4).x * 0.05;
 
-	blockP.z += fract( length( (blockP.xy + vec2( -0.02, 0.0 )) * vec2( 1.0, 1.2 ) * (1.0 + length( blockP.xy ) * 1.5 ) ) * 40.0 ) * 0.002;
-
 	vec3 pp = blockP;
+	pp.y *= 1.0 + cos( pp.x * PI * 1.3 - 0.6 );
 	pp.yz *= rotate( HPI );
-	pp.z += 0.89;
-	float d = sdCappedCylinder( pp, 1.0, 0.2 );
+	float d = sdCappedCylinder( pp, 0.2, 0.02 );
+	float lenBody = length( pp );
+
+	d = opSmoothSub(  sdBox( blockP + vec3( 0.1, 0.5, 0.0 ), vec3( 0.5, 0.5, 0.5 ) ), d, 0.02 );
 
 	pp = blockP;
-	pp.y += 0.14;
-	pp.xy *= rotate( 0.5 );
-	d = opAnd( d, sdBox( pp, vec3( 0.1 ) ) - 0.05 );
-	d -= 0.01;
+	pp.y += 0.15;
+	pp.x -= 0.02;
+	pp.yz *= rotate( HPI );
+	d = opSmoothSub( sdCappedCylinder( pp, 0.18, 0.5 ), d, 0.01 );
 
-	pp = blockP;
-	pp.z = abs(pp.z);
-	pp.z -= 0.23;
-
-	d = opSub( d, sdBox( pp, vec3( 1.0, 1.0, 0.1 ) ));
-
-	return d;
+	return vec2( d, lenBody );
 
 }
 
@@ -124,12 +119,12 @@ SDFResult D( vec3 p ) {
 	float slm = salmon( p );
 	slm = opSmoothSub( sdBox( p + vec3( 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), slm, 0.0 );
 
-	float blk = salmonBlock( p * mix( 1.0 , 0.4, uState.y ) );
-	blk = opSmoothSub( sdBox( p + vec3( -1.8 + uState.z * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), blk, 0.0 );
+	vec2 blk = salmonBlock( p * mix( 1.0 , 0.4, uState.y ) );
+	blk.x = opSmoothSub( sdBox( p + vec3( -1.8 + uState.z * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), blk.x, 0.0 );
 
 	float d = opSmoothAdd( slm, blk, 0.10 );
 
-	float matID = slm < blk ? 0.0 : 1.0;
+	float matID = slm < blk.x ? 0.0 : 1.0;
 
 
 	return SDFResult(
@@ -194,25 +189,20 @@ void main( void ) {
 	} else {
 
 		// サーモンブロック (mat=1.0)
-		float sss = subsurface( rayPos, normalize( (vec4( 0.0, 1.0, 0.0, 0.0 ) * uModelViewMatrix).xyz ), 0.3);
+		float sss = subsurface( rayPos, normalize( (vec4( 0.0, 1.0, 0.0, 0.0 ) * uModelViewMatrix).xyz ), 0.15);
 
 		outRoughness = 0.5;
 		outNormal = normalize( outNormal + n3.xyz * 0.1 );
 
-		float kuro = smoothstep( 0.35, 0.1, length( rayPos.xy + vec2( -0.08, -0.11 ) ) );
-		float kawal = length( rayPos.xy + vec2( 0.05, -1.25 ) );
-		float kawa = smoothstep( 1.398, 1.415, kawal );
-		float kawaSoto = smoothstep( 1.42, 1.435, kawal );
+		float kawal = length( rayPos.xy * vec2( 1.0, 3.0 ) + vec2( -0.05, 0.1 ) );
+		float kawa = smoothstep( 0.4, 0.5, kawal );
 
-		// サーモンのオレンジ色に変更
-		outColor.xyz = mix( vec3( 1.0, 0.5, 0.2 ), vec3( 0.9, 0.3, 0.1 ), kuro );
-		outEmission.xyz += vec3( 1.0, 0.4, 0.1 ) * sss * 1.7 * ( 1.0 - kawa);
+		outColor.xyz = mix( vec3( 1.0, 0.5, 0.2 ), vec3( 0.9, 0.3, 0.1 ), 0.0 );
+		outEmission.xyz += vec3( 1.0, 0.4, 0.1 ) * sss * 1.7 * ( 1.0 - kawa );
 		outMetalic = 0.0;
 		outRoughness = 0.2;
 
-
-		outColor.xyz = mix( outColor.xyz, vec3( 1.0, 0.8, 0.7 ), kawa );
-		outColor.xyz = mix( outColor.xyz, vec3( 0.0 ), kawaSoto );
+		outColor.xyz = mix( outColor.xyz, vec3( 0.0 ), kawa );
 	}
 
 
