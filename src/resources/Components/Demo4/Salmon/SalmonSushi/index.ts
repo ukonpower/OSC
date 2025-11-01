@@ -1,11 +1,11 @@
 import * as MXP from 'maxpower';
 
-import { SushiSakana } from '../SushiSakana';
+import { SushiSakana } from '../../Common/SushiSakana';
 
 /**
- * SushiMaguro - マグロの寿司コンポーネント（SushiSakanaを使用）
+ * SalmonSushi - Emptyを作成してSushiSakanaを追加するコンポーネント
  */
-export class SushiMaguro extends MXP.Component {
+export class SalmonSushi extends MXP.Component {
 
 	private sushiEntity: MXP.Entity | null = null;
 

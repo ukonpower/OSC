@@ -193,6 +193,20 @@
 			"components": [
 				{
 					"name": "Salmon"
+				},
+				{
+					"name": "SalmonSushi"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon/Sashimi_Salmon",
+			"components": [
+				{
+					"name": "Sashimi",
+					"props": {
+						"sashimiType": "salmon"
+					}
 				}
 			]
 		},
@@ -209,6 +223,20 @@
 			"components": [
 				{
 					"name": "Salmon"
+				},
+				{
+					"name": "SalmonSushi"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2/Sashimi_Salmon",
+			"components": [
+				{
+					"name": "Sashimi",
+					"props": {
+						"sashimiType": "salmon"
+					}
 				}
 			]
 		},
