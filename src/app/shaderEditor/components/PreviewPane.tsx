@@ -1,9 +1,11 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 import { OREngine, useOREngine } from 'orengine/react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
+import { gl, canvas } from '~/globals';
 import { OrbitControls } from '~/resources/Components/_DevOnly/OrbitControls';
+import { SkyBox } from '~/resources/Components/Demo4/Common/SkyBox';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -33,12 +35,30 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			const camera = new MXP.Entity();
 			camera.name = "Camera";
 			camera.position.set( 0, 0, 3 );
-			camera.addComponent( MXP.Camera );
-			camera.addComponent( OrbitControls );
+			const renderCamera = camera.addComponent( MXP.RenderCamera, { gl: gl } );
+			const orbitControls = camera.addComponent( OrbitControls );
+
+			// グローバルcanvasがHTMLCanvasElementの場合のみOrbitControlsを有効化
+			if ( canvas instanceof HTMLCanvasElement ) {
+
+				orbitControls.setElm( canvas );
+				orbitControls.enabled = true;
+
+			}
+
 			engine.root.add( camera );
 
 			// カメラをエンジンに登録（レンダリングに必要）
 			engine.setCamera( camera );
+
+			// カメラパラメータの初期設定
+			const resolution = new GLP.Vector( canvas.width, canvas.height );
+			renderCamera.aspect = resolution.x / resolution.y;
+			renderCamera.near = 0.5;
+			renderCamera.far = 3000;
+			renderCamera.fov = 50;
+			renderCamera.needsUpdateProjectionMatrix = true;
+			renderCamera.resize( resolution );
 
 			// Light作成
 			const light = new MXP.Entity();
@@ -47,6 +67,12 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			const lightComp = light.addComponent( MXP.Light );
 			lightComp.lightType = "directional";
 			engine.root.add( light );
+
+			// Skybox作成
+			const skybox = new MXP.Entity();
+			skybox.name = "Skybox";
+			skybox.addComponent( SkyBox );
+			engine.root.add( skybox );
 
 			// PreviewObject作成
 			const previewObject = new MXP.Entity();
@@ -63,6 +89,7 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 				engine.setCamera( null );
 				engine.root.remove( camera );
 				engine.root.remove( light );
+				engine.root.remove( skybox );
 				engine.root.remove( previewObject );
 
 			};
@@ -153,7 +180,23 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 			const width = canvas.width;
 			const height = canvas.height;
-			engine.setSize( new GLP.Vector( width, height ) );
+			const resolution = new GLP.Vector( width, height );
+			engine.setSize( resolution );
+
+			// RenderCameraのresizeとパラメータ更新
+			const cameraEntity = engine.root.findEntityByName( "Camera" );
+			if ( cameraEntity ) {
+
+				const renderCamera = cameraEntity.getComponent( MXP.RenderCamera );
+				if ( renderCamera ) {
+
+					renderCamera.aspect = width / height;
+					renderCamera.needsUpdateProjectionMatrix = true;
+					renderCamera.resize( resolution );
+
+				}
+
+			}
 
 		} );
 
@@ -197,60 +240,27 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 
 	const canvasWrapperRef = useRef<HTMLDivElement>( null );
 
-	// シェーダーエディター専用のcanvasとglコンテキストを作成
-	const { canvas: previewCanvas, gl: previewGl } = useMemo( () => {
-
-		const canvas = document.createElement( 'canvas' );
-		const gl = canvas.getContext( 'webgl2', { antialias: false } );
-
-		if ( ! gl ) {
-
-			throw new Error( 'WebGL2 is not supported' );
-
-		}
-
-		return { canvas, gl };
-
-	}, [] );
-
-	// Canvasのマウント処理とリサイズ監視
+	// Canvasのアタッチ処理
 	useEffect( () => {
 
-		const wrapper = canvasWrapperRef.current;
-		if ( ! wrapper ) return;
+		const wrapperElm = canvasWrapperRef.current;
+		if ( ! wrapperElm || ! canvas ) return;
 
-		// CanvasをDOMにマウント
-		wrapper.appendChild( previewCanvas );
+		// キャンバスを追加
+		wrapperElm.appendChild( canvas );
 
-		// ResizeObserverでcanvas-wrapperのサイズ変更を監視し、canvasの解像度を更新
-		const resizeObserver = new ResizeObserver( ( entries ) => {
-
-			for ( const entry of entries ) {
-
-				const { width, height } = entry.contentRect;
-				previewCanvas.width = width;
-				previewCanvas.height = height;
-
-			}
-
-		} );
-
-		resizeObserver.observe( wrapper );
-
+		// クリーンアップ関数
 		return () => {
 
-			resizeObserver.disconnect();
+			if ( wrapperElm.contains( canvas ) ) {
 
-			// クリーンアップ: CanvasをDOMから削除
-			if ( wrapper.contains( previewCanvas ) ) {
-
-				wrapper.removeChild( previewCanvas );
+				wrapperElm.removeChild( canvas );
 
 			}
 
 		};
 
-	}, [ previewCanvas ] );
+	}, [] );
 
 	return (
 		<div className="shader-editor__pane shader-editor__pane--preview">
@@ -277,7 +287,7 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 					コンポーネントを選択してください
 				</div>
 			)}
-			<OREngine gl={previewGl} project={undefined}>
+			<OREngine gl={gl} project={undefined}>
 				{componentClass && componentName && (
 					<PreviewSceneManager
 						componentClass={componentClass}
