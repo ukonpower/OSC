@@ -21,7 +21,7 @@ float salmon( vec3 p ) {
 	vec3 salmonP = p;
 	salmonP *= 0.8;
 	salmonP.y -= 0.05;
-	salmonP.xz *= rotate( sin( -p.x - 0.3 + uTimeE * 1.0 ) * 0.5 * smoothstep( -1.0, 1.0, p.x )  );
+	salmonP.xz *= rotate( sin( -p.x - 0.3 + uTimeE * 12.0 ) * 0.5 * smoothstep( -1.0, 1.0, p.x )  );
 
 	// ボデー
 
@@ -193,7 +193,6 @@ void main( void ) {
 		float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
 		c.xyz = mix(c, vec3( 0.5 ), kuro );
 		outColor.xyz = c;
-		outGradient = 0.0;
 		outMetalic = 0.2;
 	} else {
 
@@ -211,7 +210,6 @@ void main( void ) {
 		// サーモンのオレンジ色に変更
 		outColor.xyz = mix( vec3( 1.0, 0.5, 0.2 ), vec3( 0.9, 0.3, 0.1 ), kuro );
 		outEmission.xyz += vec3( 1.0, 0.4, 0.1 ) * sss * 1.7 * ( 1.0 - kawa);
-		outGradient = 0.0;
 		outMetalic = 0.0;
 		outRoughness = 0.2;
 

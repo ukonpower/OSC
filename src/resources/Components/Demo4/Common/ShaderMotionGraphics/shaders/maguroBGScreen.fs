@@ -4,7 +4,7 @@
 #include <noise_simplex>
 
 in vec2 vLayerIndex;
-uniform float uTime;
+uniform float uTimeE;
 uniform vec4 uState;
 
 uniform sampler2D uNoiseTex;
@@ -19,10 +19,10 @@ void main( void ) {
 	vec2 p = uv * 2.0 - 1.0;
 
 	// 時間ベースのアニメーション
-	float t = uTime * 0.2;
+	float t = uTimeE * 0.2;
 
 	// ノイズのフェッチ - レイヤーごとに異なるノイズパターン (整数値を使用)
-	float noise1 = noiseSimplex( vec3( p * 2.0, vLayerIndex.x * 10.0 + t  ) ) * 0.5 + 0.5;
+	float noise1 = noiseSimplex( vec3( p * 2.5, vLayerIndex.x * 10.0 + t  ) ) * 0.5 + 0.5;
 
 	vec4 noiseTex = texture( uNoiseTex, vUv );
 
@@ -34,7 +34,7 @@ void main( void ) {
 	v = easeBounce(v, 2.5);
 
 	hole += noise1 * 0.1;
-	hole -= (1.0 - v) * 0.3;
+	hole -= (1.0 - v) * 0.5;
 
 	if( hole < 0.15 + (1.0 - vLayerIndex.y) * 0.1 ) {
 
@@ -44,7 +44,6 @@ void main( void ) {
 
 	// シンプルなマグロの赤身カラー - 正規化値で明るさを調整
 	vec3 color;
-	color = mix( vec3( 0.0, 0.7, 1.0 ), vec3(  0.0, 0.3, 1.0 ), vLayerIndex.y);
 	color = mix( vec3( 1.0, 0.0, 0.0 ), vec3(  0.5, 0.0, 0.0 ), vLayerIndex.y);
 	outColor = vec4( color, 1.0 );
 	outRoughness = 0.4;
