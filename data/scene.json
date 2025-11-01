@@ -197,6 +197,22 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub1",
+			"components": [
+				{
+					"name": "Salmon"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2",
+			"components": [
+				{
+					"name": "Salmon"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneSalmon/SBG",
 			"components": [
 				{

@@ -4,7 +4,7 @@
 #include <noise_simplex>
 
 in vec2 vLayerIndex;
-uniform float uTimeE;
+uniform float uTime;
 uniform vec4 uState;
 
 uniform sampler2D uNoiseTex;
@@ -19,10 +19,10 @@ void main( void ) {
 	vec2 p = uv * 2.0 - 1.0;
 
 	// 時間ベースのアニメーション
-	float t = uTimeE * 0.2;
+	float t = uTime * 0.2;
 
 	// ノイズのフェッチ - レイヤーごとに異なるノイズパターン (整数値を使用)
-	float noise1 = noiseSimplex( vec3( p * 2.0 + uTimeE * 0.4, vLayerIndex.x * 10.0 + t  ) ) * 0.5 + 0.5;
+	float noise1 = noiseSimplex( vec3( p * 2.0 + uTime * 0.4, vLayerIndex.x * 10.0 + t  ) ) * 0.5 + 0.5;
 
 	vec4 noiseTex = texture( uNoiseTex, vUv );
 
