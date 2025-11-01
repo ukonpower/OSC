@@ -54,8 +54,8 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			// カメラパラメータの初期設定
 			const resolution = new GLP.Vector( canvas.width, canvas.height );
 			renderCamera.aspect = resolution.x / resolution.y;
-			renderCamera.near = 0.5;
-			renderCamera.far = 3000;
+			renderCamera.near = 0.001;
+			renderCamera.far = 1000;
 			renderCamera.fov = 50;
 			renderCamera.needsUpdateProjectionMatrix = true;
 			renderCamera.resize( resolution );
