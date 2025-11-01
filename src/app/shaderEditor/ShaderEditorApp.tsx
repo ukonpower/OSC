@@ -1,14 +1,21 @@
 import * as MXP from 'maxpower';
 import { useCallback, useEffect, useState } from 'react';
 
+import { MouseMenu } from 'orengine/components/composites/MouseMenu';
+import { MouseMenuContext } from 'orengine/components/composites/MouseMenu/Context/MouseMenuContext';
+import { useMouseMenuContext } from 'orengine/components/composites/MouseMenu/Hooks/useMouseMenuContext';
+
 import { CodePane } from './components/CodePane';
+import { ComponentList } from './components/ComponentList';
 import { PreviewPane } from './components/PreviewPane';
 import { Toolbar } from './components/Toolbar';
-import { loadComponent, loadShader, ShaderComponent, ShaderFile } from './componentList';
+import { loadComponent, loadShader, SHADER_COMPONENTS, ShaderComponent, ShaderFile } from './componentList';
 
 import './styles/shaderEditor.scss';
 
 export const ShaderEditorApp = () => {
+
+	const mouseMenuContext = useMouseMenuContext();
 
 	const [ selectedComponent, setSelectedComponent ] = useState<ShaderComponent>();
 	const [ selectedShader, setSelectedShader ] = useState<ShaderFile>();
@@ -162,39 +169,56 @@ export const ShaderEditorApp = () => {
 
 	}, [] );
 
+	// コンポーネント選択ハンドラ
+	const handleComponentSelect = useCallback( ( component: ShaderComponent ) => {
+
+		setSelectedComponent( component );
+
+		// 最初のシェーダーを自動選択（fsを優先）
+		const defaultShader = component.shaders.find( s => s.type === 'fs' ) || component.shaders[ 0 ];
+		setSelectedShader( defaultShader );
+
+	}, [] );
+
 	// 未保存の変更があるかチェック
 	const hasUnsavedChanges = originalShaderCode !== currentShaderCode;
 
 	return (
-		<div className="shader-editor">
-			<Toolbar
-				selectedComponent={selectedComponent}
-				selectedShader={selectedShader}
-				onComponentChange={setSelectedComponent}
-				onShaderChange={setSelectedShader}
-				compileStatus={compileStatus}
-				errorMessage={compileError}
-			/>
-
-			<div className="shader-editor__content">
-				<CodePane
-					code={currentShaderCode}
-					onChange={handleCodeChange}
+		<MouseMenuContext.Provider value={mouseMenuContext}>
+			<div className="shader-editor">
+				<Toolbar
+					compileStatus={compileStatus}
+					errorMessage={compileError}
 				/>
 
-				<PreviewPane
-					componentClass={componentClass}
-					componentName={selectedComponent?.name}
-					shaderCode={appliedShaderCode}
-					onCompileError={handleCompileError}
-					onCompileSuccess={handleCompileSuccess}
-					onApply={handleApply}
-					onSave={handleSave}
-					isSaving={isSaving}
-					hasUnsavedChanges={hasUnsavedChanges}
-				/>
+				<div className="shader-editor__content">
+					<ComponentList
+						components={SHADER_COMPONENTS}
+						selectedComponent={selectedComponent}
+						onSelect={handleComponentSelect}
+					/>
+
+					<CodePane
+						code={currentShaderCode}
+						onChange={handleCodeChange}
+					/>
+
+					<PreviewPane
+						componentClass={componentClass}
+						componentName={selectedComponent?.name}
+						shaderCode={appliedShaderCode}
+						onCompileError={handleCompileError}
+						onCompileSuccess={handleCompileSuccess}
+						onApply={handleApply}
+						onSave={handleSave}
+						isSaving={isSaving}
+						hasUnsavedChanges={hasUnsavedChanges}
+					/>
+				</div>
+
+				<MouseMenu />
 			</div>
-		</div>
+		</MouseMenuContext.Provider>
 	);
 
 };

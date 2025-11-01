@@ -76,39 +76,46 @@
 
 
 	&__content {
-		display: flex;
+		display: grid;
+		grid-template-columns: 250px 1fr 1fr;
 		flex: 1;
 		overflow: hidden;
 
-		// モバイル: 上下レイアウト
-		@media (max-width: 768px) {
-			flex-direction: column;
+		// タブレット: ComponentListを縮小
+		@media (max-width: 1024px) {
+			grid-template-columns: 200px 1fr 1fr;
 		}
-	}
 
-	&__pane {
-		flex: 1;
-		position: relative;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
+		// モバイル: ComponentListを折りたたみ可能にして縦スタック
+		@media (max-width: 768px) {
+			grid-template-columns: 1fr;
+			grid-template-rows: auto 1fr 1fr;
+		}
 
-		&--code {
+		// ComponentList
+		> *:nth-child(1) {
 			border-right: 1px solid #3e3e42;
 
 			@media (max-width: 768px) {
 				border-right: none;
-				border-top: 1px solid #3e3e42;
-				order: 2; // スマホ時は下に配置
+				border-bottom: 1px solid #3e3e42;
+				max-height: 200px;
 			}
 		}
 
-		&--preview {
-			background: #1e1e1e;
+		// CodePane
+		> *:nth-child(2) {
+			border-right: 1px solid #3e3e42;
 
 			@media (max-width: 768px) {
-				order: 1; // スマホ時は上に配置
+				border-right: none;
+				border-bottom: 1px solid #3e3e42;
 			}
+		}
+
+		// PreviewPane
+		> *:nth-child(3) {
+			background: #1e1e1e;
 		}
 	}
 

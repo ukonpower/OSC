@@ -1,0 +1,65 @@
+@use '~/styles/common' as *;
+
+.componentList {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	background-color: $bgColWindow0;
+	border-right: 1px solid $bgCol3;
+}
+
+.header {
+	padding: $padding;
+	font-weight: bold;
+	border-bottom: 1px solid $bgCol3;
+	background-color: $bgCol1;
+}
+
+.tree {
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.directory {
+	user-select: none;
+}
+
+.directoryHeader {
+	padding: 4px 8px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	&:hover {
+		background-color: $bgColWindow0_active;
+	}
+}
+
+.arrow {
+	font-size: 10px;
+	width: 12px;
+	display: inline-block;
+}
+
+.directoryChildren {
+	// 子要素用のスタイル
+}
+
+.item {
+	padding: 4px 8px;
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	&:hover {
+		background-color: $bgColWindow0_active;
+	}
+
+	&.selected {
+		background-color: $bgCol2;
+		color: $fontCol1;
+	}
+}
