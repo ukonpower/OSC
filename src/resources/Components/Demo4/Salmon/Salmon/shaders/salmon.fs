@@ -20,68 +20,66 @@ float salmon( vec3 p ) {
 
 	vec3 salmonP = p;
 	salmonP *= 0.8;
+	salmonP.y -= 0.05;
 	salmonP.xz *= rotate( sin( -p.x - 0.3 + uTimeE * 1.0 ) * 0.5 * smoothstep( -1.0, 1.0, p.x )  );
 
 	// ボデー
 
 	vec3 pp = salmonP;
-	pp.z *= 1.2;
-	float d = sdVesicaSegment( pp, vec3( -0.5, 0.0, 0.0 ), vec3( 0.5, 0.0, 0.0 ), 0.2 * cos(pp.x + 0.5) );
+	pp.z *= 1.3;
+	pp.y += cos( pp.x * PI  ) * 0.05;
+	float d = sdVesicaSegment( pp, vec3( -0.5, 0.0, 0.0 ), vec3( 0.5, 0.0, 0.0 ), 0.13 * cos(pp.x + 0.5) );
 
 	// 口
 
 	pp = salmonP;
-	pp += vec3( 0.5, -0.05, 0.0 );
-	d = opSmoothSub( sdTriPrism( pp, vec2(0.14, 0.2) ), d, 0.0 );
+	pp += vec3( 0.5, -0.00, 0.0 );
+	// d = opSmoothSub( sdTriPrism( pp, vec2(0.1, 0.2) ), d, 0.0 );
 
 	// ヒレ下
 
 	pp = salmonP;
-	pp += vec3( -0.1, 0.09, 0.0 );
-	pp.x += pp.y * 0.3;
-	pp.xy *= rotate( PI);
-	d = opSmoothAdd( sdTriPrism( pp, vec2(0.14, 0.01) ) - 0.002, d, 0.04 );
+	pp += vec3( -0.26, 0.13, 0.0 );
+	pp.x *= 0.5;
+	pp.x -= pow( pp.y, 2.0 ) * 5.0;
+	pp.xy *= rotate( PI + 0.6 );
+	pp.x -= pow(pp.y, 2.0 ) * 1.0;
+	d = opSmoothAdd( sdTriPrism( pp, vec2(0.05, 0.001) ) - 0.002, d, 0.01 );
 
 	// ヒレ上
 
 	pp = salmonP;
-	pp += vec3( -0.1, -0.2, 0.0 );
-	pp.x *= 1.2;
-	pp.x -= pow(pp.y, 2.0 ) * 2.0;
-	d = opSmoothAdd( sdTriPrism( pp, vec2(0.10, 0.001) ) - 0.002, d, 0.04 );
+	pp += vec3( -0.03, -0.07, 0.0 );
+	pp.x *= 0.5;
+	pp.x -= pow( pp.y, 2.0 ) * 6.0;
+	pp.x -= pow(pp.y, 2.0 ) * 1.0;
+	d = opSmoothAdd( sdTriPrism( pp, vec2(0.065, 0.001) ) - 0.002, d, 0.01 );
 
 	// ヒレ横
 
 	pp = salmonP;
 	pp.z = abs( pp.z );
-	pp += vec3( -0.0, 0.01, -0.14 );
+	pp += vec3( 0.14, 0.09, -0.08 );
 	pp.y += pow(pp.x, 2.0 ) * 1.0;
 	pp.x += 0.03;
 	pp.xz *= rotate( 0.5 + sin( uTimeE * 3.0 - pp.x * 5.0) * 0.2 );
 	pp.x -= 0.03;
 	pp.xy *= rotate( - 1.7 );
-	pp.y *= 0.5;
-	d = opSmoothAdd( sdTriPrism( pp, vec2(0.05, 0.001) ) - 0.002, d, 0.01 );
+	pp.y *= 0.3;
+	d = opSmoothAdd( sdBox( pp, vec3(0.02 + pp.y * 0.5, 0.03 - pp.x * 0.3, 0.001) ), d, 0.01 );
 
 	// ヒレ後ろ
 
 	pp = salmonP;
+
 	pp.y = abs( pp.y );
-	pp.x -= pow(pp.y, 2.0 ) * 1.3;
-	pp += vec3( -0.5, -0.05, 0.0 );
-	pp.y *= 0.24;
+	pp.x -= pow(pp.y, 1.19 ) * 1.3;
+	pp += vec3( -0.48, -0.00, 0.0 );
+	pp.xy *= rotate( -0.0 );
+	// pp.y *= 0.4;
 
-	d = opSmoothAdd( sdTriPrism( pp, vec2(0.03, 0.01) ) - 0.002, d, 0.04 );
+	d = opSmoothAdd( sdTriPrism( pp, vec2(0.1, 0.001) ) - 0.002, d, 0.07 );
 
-	// ギザギザ
-
-	pp = salmonP;
-	pp.y = abs( pp.y );
-	float w = cos( pp.x * PI );
-	pp.y -= w * 0.17;
-	pp.x = mod( pp.x, 0.05 ) - 0.025;
-	float s = smoothstep( 0.15, 0.1, abs( salmonP.x - 0.3 ) );
-	d = opSmoothAdd( sdTriPrism( pp, vec2(0.015 * s, 0.005 * s) ), d, 0.01 );
 
 	return d;
 
@@ -131,6 +129,9 @@ SDFResult D( vec3 p ) {
 	float d = opSmoothAdd( slm, blk, 0.10 );
 
 	float matID = slm < blk ? 0.0 : 1.0;
+	
+	d = slm;
+	matID = 0.0;
 
 	return SDFResult(
 		d,
@@ -188,7 +189,7 @@ void main( void ) {
 
 		vec3 c = vec3( 1.0 );
 		float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
-		c.xyz = mix(c, vec3( 0.0 ), kuro );
+		c.xyz = mix(c, vec3( 0.5 ), kuro );
 		outColor.xyz = c;
 		outFlatness = kuro;
 		outMetalic = 0.2;
