@@ -15,7 +15,7 @@ void main( void ) {
 	vec3 normal = normalize( - vNormal );
 	outRoughness = 1.0;
 	outColor *= 0.0;
-	outEmission = vec3( 0.75 );
+	outEmission = vec3( 1.0 );
 
 	#ifdef IS_FORWARD
 

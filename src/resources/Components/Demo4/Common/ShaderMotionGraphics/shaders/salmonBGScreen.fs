@@ -42,9 +42,9 @@ void main( void ) {
 
 	}
 
-	// サーモンのオレンジカラー - 正規化値で明るさを調整
+	// シンプルなマグロの赤身カラー - 正規化値で明るさを調整
 	vec3 color;
-	color = mix( vec3( 1.0, 0.5, 0.2 ), vec3( 0.9, 0.3, 0.1 ), vLayerIndex.y);
+	color = mix( vec3( 0.0, 0.7, 1.0 ), vec3(  0.0, 0.3, 1.0 ), vLayerIndex.y);
 	outColor = vec4( color, 1.0 );
 	outRoughness = 0.4;
 	outMetalic = 0.3;
