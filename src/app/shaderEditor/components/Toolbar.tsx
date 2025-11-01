@@ -20,10 +20,9 @@ export const Toolbar = ( { compileStatus, errorMessage, isComponentListOpen, onT
 				<h1 className="shader-editor__title">Shader Editor</h1>
 			</div>
 
-			{compileStatus && compileStatus !== 'idle' && (
-				<div className={`shader-editor__header-status shader-editor__header-status--${compileStatus}`}>
-					{compileStatus === 'success' && '✓ Compiled Successfully'}
-					{compileStatus === 'error' && `✗ ${errorMessage || 'Compilation failed'}`}
+			{compileStatus === 'error' && errorMessage && (
+				<div className="shader-editor__header-status shader-editor__header-status--error">
+					✗ {errorMessage}
 				</div>
 			)}
 		</div>

@@ -44,7 +44,7 @@
 		color: #cccccc;
 
 		@media (max-width: 768px) {
-			font-size: 14px;
+			font-size: 16px; // iOS zoomを防ぐため16px以上
 		}
 	}
 
@@ -136,6 +136,8 @@
 		> *:nth-child(2) {
 			border-right: 1px solid #3e3e42;
 			background: #1e1e1e;
+			display: flex;
+			flex-direction: column;
 
 			@media (max-width: 768px) {
 				border-right: none;
@@ -151,23 +153,62 @@
 		}
 	}
 
+	&__canvas-container {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #1e1e1e;
+		overflow: hidden;
+		position: relative;
+	}
+
+	&__canvas-wrapper {
+		width: 100%;
+		height: 100%;
+		max-height: calc(100vw * 9 / 16); // 16:9アスペクト比
+		position: relative;
+		overflow: hidden;
+		touch-action: none; // タッチイベントを完全にコントロール
+
+		canvas {
+			width: 100%;
+			height: 100%;
+			display: block;
+			object-fit: contain;
+			touch-action: none; // ブラウザのデフォルトタッチ動作を無効化
+		}
+
+		@media (max-width: 768px) {
+			max-height: none; // モバイルでは高さ制約を解除
+			aspect-ratio: 16 / 9; // アスペクト比を維持
+		}
+	}
+
 	&__preview-controls {
 		display: flex;
 		gap: 8px;
 		padding: 8px;
 		background: #2d2d30;
-		border-bottom: 1px solid #3e3e42;
+		border-top: 1px solid #3e3e42;
 		flex-shrink: 0;
+		justify-content: center;
 	}
 
 	&__control-btn {
-		padding: 6px 16px;
+		padding: 8px 16px;
 		border: none;
 		border-radius: 3px;
-		font-size: 13px;
+		font-size: 16px; // iOS zoomを防ぐため16px以上
 		font-weight: 500;
 		cursor: pointer;
 		transition: all 0.15s ease;
+
+		@media (max-width: 768px) {
+			padding: 10px 20px;
+			font-size: 16px;
+			min-width: 80px;
+		}
 
 		&--apply {
 			background: #0e639c;
@@ -200,21 +241,6 @@
 			color: #6d6d6d;
 			cursor: not-allowed;
 			opacity: 0.6;
-		}
-	}
-
-	&__canvas-wrapper {
-		flex: 1;
-		position: relative;
-		overflow: hidden;
-		touch-action: none; // タッチイベントを完全にコントロール
-
-		canvas {
-			width: 100%;
-			height: 100%;
-			display: block;
-			object-fit: contain;
-			touch-action: none; // ブラウザのデフォルトタッチ動作を無効化
 		}
 	}
 

@@ -303,13 +303,22 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 
 	return (
 		<div className="shader-editor__pane shader-editor__pane--preview">
+			<div className="shader-editor__canvas-container">
+				<div ref={canvasWrapperRef} className="shader-editor__canvas-wrapper" />
+				{! ( componentClass && componentName ) && (
+					<div className="shader-editor__empty">
+						コンポーネントを選択してください
+					</div>
+				)}
+			</div>
+
 			<div className="shader-editor__preview-controls">
 				<button
 					className="shader-editor__control-btn shader-editor__control-btn--apply"
 					onClick={onApply}
 					disabled={! componentClass}
 				>
-					Apply (Ctrl+Enter)
+					Apply
 				</button>
 				<button
 					className="shader-editor__control-btn shader-editor__control-btn--save"
@@ -320,12 +329,6 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 				</button>
 			</div>
 
-			<div ref={canvasWrapperRef} className="shader-editor__canvas-wrapper" />
-			{! ( componentClass && componentName ) && (
-				<div className="shader-editor__empty">
-					コンポーネントを選択してください
-				</div>
-			)}
 			<OREngine gl={gl} project={undefined}>
 				{componentClass && componentName && (
 					<PreviewSceneManager
