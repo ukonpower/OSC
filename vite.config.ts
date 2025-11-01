@@ -3,6 +3,7 @@ import path from 'path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+import { FileWriter } from './plugins/FileWriter';
 import { OREngineFileSystemPlugin } from './plugins/OREngineFileSystem';
 import { ResourceManager } from './plugins/ResourceManager';
 import { ShaderLoader } from "./plugins/ShaderLoader";
@@ -50,6 +51,7 @@ export default defineConfig( {
 			skipMinifier: true,
 		} ),
 		ResourceManager(),
+		FileWriter(),
 	],
 	define: {
 		BASE_PATH: `"${basePath}"`,

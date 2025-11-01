@@ -1,0 +1,181 @@
+.shader-editor {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background: #1e1e1e;
+	color: #fff;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	overflow: hidden;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px 16px;
+		background: #2d2d30;
+		border-bottom: 1px solid #3e3e42;
+		flex-shrink: 0;
+		flex-wrap: wrap;
+
+		// モバイル: コンパクトレイアウト
+		@media (max-width: 768px) {
+			padding: 8px 12px;
+			gap: 8px;
+		}
+	}
+
+	&__title {
+		font-size: 14px;
+		font-weight: 600;
+		margin: 0;
+		margin-right: auto;
+
+		// モバイル: タイトルを小さく
+		@media (max-width: 768px) {
+			font-size: 12px;
+			width: 100%;
+			margin-bottom: 4px;
+		}
+	}
+
+	&__selector {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		label {
+			font-size: 12px;
+			color: #cccccc;
+		}
+
+		select {
+			padding: 4px 8px;
+			background: #3c3c3c;
+			border: 1px solid #555;
+			border-radius: 2px;
+			color: #fff;
+			font-size: 13px;
+			cursor: pointer;
+
+			&:focus {
+				outline: 1px solid #007acc;
+			}
+		}
+	}
+
+	&__button {
+		padding: 6px 12px;
+		background: #0e639c;
+		border: none;
+		border-radius: 2px;
+		color: #fff;
+		font-size: 13px;
+		cursor: pointer;
+		transition: background 0.2s;
+
+		&:hover {
+			background: #1177bb;
+		}
+
+		&:active {
+			background: #0d5a8f;
+		}
+
+		&--save {
+			background: #0e8c4c;
+
+			&:hover {
+				background: #0fa55e;
+			}
+
+			&:active {
+				background: #0c7a3f;
+			}
+		}
+
+		&:disabled {
+			background: #555;
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex: 1;
+		overflow: hidden;
+
+		// モバイル: 上下レイアウト
+		@media (max-width: 768px) {
+			flex-direction: column;
+		}
+	}
+
+	&__pane {
+		flex: 1;
+		position: relative;
+		overflow: hidden;
+
+		&--code {
+			border-right: 1px solid #3e3e42;
+
+			// モバイル: 右ボーダーの代わりに下ボーダー
+			@media (max-width: 768px) {
+				border-right: none;
+				border-bottom: 1px solid #3e3e42;
+			}
+		}
+	}
+
+	&__status {
+		position: absolute;
+		bottom: 8px;
+		left: 8px;
+		padding: 4px 8px;
+		background: rgba(0, 0, 0, 0.7);
+		border-radius: 2px;
+		font-size: 11px;
+		z-index: 10;
+
+		&--error {
+			color: #f48771;
+		}
+
+		&--success {
+			color: #89d185;
+		}
+	}
+
+	&__canvas-wrapper {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+
+		canvas {
+			width: 100%;
+			height: 100%;
+			display: block;
+		}
+	}
+
+	&__preview-canvas {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	&__empty {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		color: #858585;
+		font-size: 14px;
+		position: relative;
+		z-index: 2;
+	}
+}
