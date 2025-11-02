@@ -129,6 +129,7 @@ export const CodePane = ( { code, onChange }: CodePaneProps ) => {
 					automaticLayout: true,
 					scrollBeyondLastLine: false,
 					wordWrap: 'on',
+					accessibilitySupport: 'off', // キーボードアイコンを非表示
 				}}
 			/>
 		</div>

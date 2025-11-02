@@ -143,13 +143,13 @@
 
 	&__content {
 		display: grid;
-		grid-template-columns: 250px 1fr 1fr;
+		grid-template-columns: 250px minmax(400px, 35%) 1fr;
 		flex: 1;
 		overflow: hidden;
 
 		// タブレット: ComponentListを縮小
 		@media (max-width: 1024px) {
-			grid-template-columns: 200px 1fr 1fr;
+			grid-template-columns: 200px minmax(350px, 35%) 1fr;
 		}
 
 		// モバイル: ComponentListはオーバーレイ、PreviewとCodeを縦スタック
@@ -198,27 +198,25 @@
 		background: #1e1e1e;
 		overflow: hidden;
 		position: relative;
+		min-height: 0; // flexコンテナ内でのオーバーフロー対策
 	}
 
 	&__canvas-wrapper {
-		width: 100%;
-		height: 100%;
-		max-height: calc(100vw * 9 / 16); // 16:9アスペクト比
+		// 16:9アスペクト比を維持しつつ、コンテナに収まるサイズに
 		position: relative;
 		overflow: hidden;
-		touch-action: none; // タッチイベントを完全にコントロール
+		touch-action: none;
+
+		// 親コンテナの高さ基準で100%、幅はアスペクト比で自動計算
+		height: 100%;
+		aspect-ratio: 16 / 9;
+		max-width: 100%; // 幅が親を超えないように
 
 		canvas {
 			width: 100%;
 			height: 100%;
 			display: block;
-			object-fit: contain;
-			touch-action: none; // ブラウザのデフォルトタッチ動作を無効化
-		}
-
-		@media (max-width: 768px) {
-			max-height: none; // モバイルでは高さ制約を解除
-			aspect-ratio: 16 / 9; // アスペクト比を維持
+			touch-action: none;
 		}
 	}
 
@@ -305,5 +303,21 @@
 		text-align: center;
 		z-index: 10;
 		pointer-events: none;
+	}
+
+	&__pane {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
+
+		&--preview {
+			// PreviewPaneに固有のスタイルがあればここに追加
+		}
+
+		&--code {
+			// CodePaneは高さ100%で画面いっぱいに
+			min-height: 0; // flexコンテナ内でのオーバーフロー対策
+		}
 	}
 }
