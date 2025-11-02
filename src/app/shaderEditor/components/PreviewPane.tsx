@@ -11,6 +11,7 @@ import { UniformControls } from '~/resources/Components/Utilities/UniformsContro
 
 import { InputSelect } from 'orengine/components/primitives/Input/InputSelect';
 import { InputBoolean } from 'orengine/components/primitives/Input/InputCheckBox';
+import { Button } from 'orengine/components/primitives/Button';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -399,20 +400,16 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 						onChange={( checked: boolean ) => setShowWireframe( checked )}
 					/>
 				</div>
-				<button
-					className="shader-editor__control-btn shader-editor__control-btn--apply"
-					onClick={onApply}
-					disabled={! componentClass}
-				>
-					Apply
-				</button>
-				<button
-					className="shader-editor__control-btn shader-editor__control-btn--save"
-					onClick={onSave}
-					disabled={! componentClass || isSaving}
-				>
-					{isSaving ? 'Saving...' : hasUnsavedChanges ? 'Save *' : 'Save'}
-				</button>
+				<div className="shader-editor__control-group">
+					<Button onClick={onApply} disabled={! componentClass}>
+						Apply
+					</Button>
+				</div>
+				<div className="shader-editor__control-group">
+					<Button onClick={onSave} disabled={! componentClass || isSaving}>
+						{isSaving ? 'Saving...' : hasUnsavedChanges ? 'Save *' : 'Save'}
+					</Button>
+				</div>
 			</div>
 
 			<OREngine gl={gl} project={undefined}>
