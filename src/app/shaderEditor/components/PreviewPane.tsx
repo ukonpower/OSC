@@ -1,13 +1,15 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 import { OREngine, useOREngine } from 'orengine/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { gl, canvas } from '~/globals';
 import { OrbitControls } from '~/resources/Components/_DevOnly/OrbitControls';
 import { SkyBox } from '~/resources/Components/Demo4/Common/SkyBox';
 import { TextureGenerator } from '~/resources/Components/Texture/TextureGenerator';
 import { UniformControls } from '~/resources/Components/Utilities/UniformsControls';
+
+import { InputSelect } from 'orengine/components/primitives/Input/InputSelect';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -22,7 +24,7 @@ interface PreviewPaneProps {
 }
 
 // 内部コンポーネント: OREngineContextの中で動作し、シーンを構築・シェーダー更新を行う
-const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess }: Pick<PreviewPaneProps, 'componentClass' | 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess'> ) => {
+const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, resolutionScale }: Pick<PreviewPaneProps, 'componentClass' | 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess'> & { resolutionScale: number } ) => {
 
 	const { engine } = useOREngine();
 
@@ -196,10 +198,16 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 		if ( canvas instanceof OffscreenCanvas ) return;
 
 		// ResizeObserverでcanvasのリサイズを監視し、Engineのサイズを更新
-		const resizeObserver = new ResizeObserver( () => {
+		const resizeObserver = new ResizeObserver( ( entries ) => {
 
-			const width = canvas.width;
-			const height = canvas.height;
+			// ResizeObserverEntryからDOM要素の実際の表示サイズを取得
+			const entry = entries[ 0 ];
+			const displayWidth = entry.contentRect.width;
+			const displayHeight = entry.contentRect.height;
+
+			// 解像度スケールを適用（表示サイズを基準に計算）
+			const width = displayWidth * resolutionScale;
+			const height = displayHeight * resolutionScale;
 			const resolution = new GLP.Vector( width, height );
 			engine.setSize( resolution );
 
@@ -210,7 +218,7 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 				const renderCamera = cameraEntity.getComponent( MXP.RenderCamera );
 				if ( renderCamera ) {
 
-					renderCamera.aspect = width / height;
+					renderCamera.aspect = displayWidth / displayHeight;
 					renderCamera.needsUpdateProjectionMatrix = true;
 					renderCamera.resize( resolution );
 
@@ -233,7 +241,7 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 		};
 
-	}, [ engine ] );
+	}, [ engine, resolutionScale ] );
 
 	// レンダリングループ
 	useEffect( () => {
@@ -279,6 +287,20 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 
 	const canvasWrapperRef = useRef<HTMLDivElement>( null );
 
+	// 解像度スケールの状態管理（デフォルト: 1.0 = 等倍）
+	const [ resolutionScale, setResolutionScale ] = useState<number>( 1.0 );
+
+	// 解像度スケールの選択肢を生成（editorのScreenパネルと同じ形式）
+	const resolutionScaleList = new Array( 6 ).fill( 0 ).map( ( _, i ) => {
+
+		const invScale = Math.pow( 2, i );
+		const value = 1.0 / invScale;
+		const label = value == 1 ? '1' : '1/' + invScale;
+
+		return { value: value, label: label };
+
+	} );
+
 	// Canvasのアタッチ処理
 	useEffect( () => {
 
@@ -313,6 +335,14 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 			</div>
 
 			<div className="shader-editor__preview-controls">
+				<div className="shader-editor__control-group">
+					<label className="shader-editor__control-label">Resolution:</label>
+					<InputSelect
+						value={resolutionScale}
+						selectList={resolutionScaleList}
+						onChange={( value: number ) => setResolutionScale( Number( value ) )}
+					/>
+				</div>
 				<button
 					className="shader-editor__control-btn shader-editor__control-btn--apply"
 					onClick={onApply}
@@ -337,6 +367,7 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 						shaderCode={shaderCode}
 						onCompileError={onCompileError}
 						onCompileSuccess={onCompileSuccess}
+						resolutionScale={resolutionScale}
 					/>
 				)}
 			</OREngine>
