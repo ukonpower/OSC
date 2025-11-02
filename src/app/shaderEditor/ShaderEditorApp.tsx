@@ -104,13 +104,51 @@ export const ShaderEditorApp = () => {
 
 	}, [] );
 
-	// Apply処理
-	const handleApply = useCallback( () => {
+	// Apply処理（シェーダー適用と保存を同時に実行）
+	const handleApply = useCallback( async () => {
 
+		if ( ! selectedComponent || ! selectedShader ) return;
+
+		// シェーダーコードを適用
 		setAppliedShaderCode( currentShaderCode );
 		setCompileStatus( 'idle' );
 
-	}, [ currentShaderCode ] );
+		// ファイルに保存
+		setIsSaving( true );
+
+		try {
+
+			const filePath = `resources/Components/${selectedComponent.path}/${selectedShader.path}`;
+
+			const response = await fetch( '/api/writeShader', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify( {
+					filePath,
+					code: currentShaderCode
+				} )
+			} );
+
+			if ( ! response.ok ) {
+
+				throw new Error( `Failed to save: ${response.statusText}` );
+
+			}
+
+			setOriginalShaderCode( currentShaderCode );
+
+		} catch ( error ) {
+
+			console.error( 'Save error:', error );
+			alert( `Failed to save shader: ${error}` );
+
+		} finally {
+
+			setIsSaving( false );
+
+		}
+
+	}, [ currentShaderCode, selectedComponent, selectedShader ] );
 
 	// Save処理
 	const handleSave = useCallback( async () => {
