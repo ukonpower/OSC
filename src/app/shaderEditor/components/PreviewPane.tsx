@@ -10,6 +10,7 @@ import { TextureGenerator } from '~/resources/Components/Texture/TextureGenerato
 import { UniformControls } from '~/resources/Components/Utilities/UniformsControls';
 
 import { InputSelect } from 'orengine/components/primitives/Input/InputSelect';
+import { InputBoolean } from 'orengine/components/primitives/Input/InputCheckBox';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -24,7 +25,7 @@ interface PreviewPaneProps {
 }
 
 // 内部コンポーネント: OREngineContextの中で動作し、シーンを構築・シェーダー更新を行う
-const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, resolutionScale }: Pick<PreviewPaneProps, 'componentClass' | 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess'> & { resolutionScale: number } ) => {
+const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, resolutionScale, showWireframe }: Pick<PreviewPaneProps, 'componentClass' | 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess'> & { resolutionScale: number; showWireframe: boolean } ) => {
 
 	const { engine } = useOREngine();
 
@@ -189,6 +190,23 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 	}, [ engine, componentName, shaderCode, onCompileError, onCompileSuccess ] );
 
+	// ワイヤーフレーム表示の切り替え
+	useEffect( () => {
+
+		const previewObject = engine.root.findEntityByName( "PreviewObject" );
+		if ( ! previewObject ) return;
+
+		const meshComponent = previewObject.getComponent( MXP.Mesh );
+		if ( ! meshComponent ) return;
+
+		const material = meshComponent.material;
+		if ( ! material ) return;
+
+		// ワイヤーフレーム表示の設定
+		material.drawType = showWireframe ? 'LINES' : 'TRIANGLES';
+
+	}, [ engine, showWireframe ] );
+
 	// Engineのサイズを画面サイズに応じて更新
 	useEffect( () => {
 
@@ -287,8 +305,25 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 
 	const canvasWrapperRef = useRef<HTMLDivElement>( null );
 
-	// 解像度スケールの状態管理（デフォルト: 1.0 = 等倍）
-	const [ resolutionScale, setResolutionScale ] = useState<number>( 1.0 );
+	// ローカルストレージのキー
+	const STORAGE_KEY_RESOLUTION = 'shaderEditor.resolutionScale';
+	const STORAGE_KEY_WIREFRAME = 'shaderEditor.showWireframe';
+
+	// 解像度スケールの状態管理（ローカルストレージから初期値を読み込み）
+	const [ resolutionScale, setResolutionScale ] = useState<number>( () => {
+
+		const saved = localStorage.getItem( STORAGE_KEY_RESOLUTION );
+		return saved ? parseFloat( saved ) : 1.0;
+
+	} );
+
+	// ワイヤーフレーム表示の状態管理（ローカルストレージから初期値を読み込み）
+	const [ showWireframe, setShowWireframe ] = useState<boolean>( () => {
+
+		const saved = localStorage.getItem( STORAGE_KEY_WIREFRAME );
+		return saved ? saved === 'true' : false;
+
+	} );
 
 	// 解像度スケールの選択肢を生成（editorのScreenパネルと同じ形式）
 	const resolutionScaleList = new Array( 6 ).fill( 0 ).map( ( _, i ) => {
@@ -300,6 +335,20 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 		return { value: value, label: label };
 
 	} );
+
+	// 解像度スケールが変更されたらローカルストレージに保存
+	useEffect( () => {
+
+		localStorage.setItem( STORAGE_KEY_RESOLUTION, resolutionScale.toString() );
+
+	}, [ resolutionScale, STORAGE_KEY_RESOLUTION ] );
+
+	// ワイヤーフレーム表示が変更されたらローカルストレージに保存
+	useEffect( () => {
+
+		localStorage.setItem( STORAGE_KEY_WIREFRAME, showWireframe.toString() );
+
+	}, [ showWireframe, STORAGE_KEY_WIREFRAME ] );
 
 	// Canvasのアタッチ処理
 	useEffect( () => {
@@ -343,6 +392,13 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 						onChange={( value: number ) => setResolutionScale( Number( value ) )}
 					/>
 				</div>
+				<div className="shader-editor__control-group">
+					<label className="shader-editor__control-label">Wireframe:</label>
+					<InputBoolean
+						checked={showWireframe}
+						onChange={( checked: boolean ) => setShowWireframe( checked )}
+					/>
+				</div>
 				<button
 					className="shader-editor__control-btn shader-editor__control-btn--apply"
 					onClick={onApply}
@@ -368,6 +424,7 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 						onCompileError={onCompileError}
 						onCompileSuccess={onCompileSuccess}
 						resolutionScale={resolutionScale}
+						showWireframe={showWireframe}
 					/>
 				)}
 			</OREngine>
