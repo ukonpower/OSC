@@ -8,6 +8,7 @@ import { useMouseMenuContext } from 'orengine/components/composites/MouseMenu/Ho
 import { CodePane } from './components/CodePane';
 import { ComponentList } from './components/ComponentList';
 import { PreviewPane } from './components/PreviewPane';
+import { SettingsBar } from './components/SettingsBar';
 import { Toolbar } from './components/Toolbar';
 import { loadComponent, loadShader, SHADER_COMPONENTS, ShaderComponent, ShaderFile } from './componentList';
 
@@ -27,6 +28,40 @@ export const ShaderEditorApp = () => {
 	const [ compileError, setCompileError ] = useState<string>();
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ isComponentListOpen, setIsComponentListOpen ] = useState( false );
+
+	// ローカルストレージのキー
+	const STORAGE_KEY_RESOLUTION = 'shaderEditor.resolutionScale';
+	const STORAGE_KEY_WIREFRAME = 'shaderEditor.showWireframe';
+
+	// 解像度スケールの状態管理（ローカルストレージから初期値を読み込み）
+	const [ resolutionScale, setResolutionScale ] = useState<number>( () => {
+
+		const saved = localStorage.getItem( STORAGE_KEY_RESOLUTION );
+		return saved ? parseFloat( saved ) : 1.0;
+
+	} );
+
+	// ワイヤーフレーム表示の状態管理（ローカルストレージから初期値を読み込み）
+	const [ showWireframe, setShowWireframe ] = useState<boolean>( () => {
+
+		const saved = localStorage.getItem( STORAGE_KEY_WIREFRAME );
+		return saved ? saved === 'true' : false;
+
+	} );
+
+	// 解像度スケールが変更されたらローカルストレージに保存
+	useEffect( () => {
+
+		localStorage.setItem( STORAGE_KEY_RESOLUTION, resolutionScale.toString() );
+
+	}, [ resolutionScale, STORAGE_KEY_RESOLUTION ] );
+
+	// ワイヤーフレーム表示が変更されたらローカルストレージに保存
+	useEffect( () => {
+
+		localStorage.setItem( STORAGE_KEY_WIREFRAME, showWireframe.toString() );
+
+	}, [ showWireframe, STORAGE_KEY_WIREFRAME ] );
 
 	// コンポーネント選択時の処理
 	useEffect( () => {
@@ -210,6 +245,13 @@ export const ShaderEditorApp = () => {
 					onToggleComponentList={handleToggleComponentList}
 				/>
 
+				<SettingsBar
+					resolutionScale={resolutionScale}
+					onResolutionScaleChange={setResolutionScale}
+					showWireframe={showWireframe}
+					onWireframeChange={setShowWireframe}
+				/>
+
 				<div className="shader-editor__content">
 					<ComponentList
 						components={SHADER_COMPONENTS}
@@ -229,6 +271,8 @@ export const ShaderEditorApp = () => {
 						onSave={handleSave}
 						isSaving={isSaving}
 						hasUnsavedChanges={hasUnsavedChanges}
+						resolutionScale={resolutionScale}
+						showWireframe={showWireframe}
 					/>
 
 					<CodePane

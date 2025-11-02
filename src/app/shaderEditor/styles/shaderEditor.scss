@@ -74,6 +74,43 @@
 		}
 	}
 
+	&__settings-bar {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 8px 16px;
+		background: #2d2d30;
+		border-bottom: 1px solid #3e3e42;
+		flex-shrink: 0;
+
+		@media (max-width: 768px) {
+			flex-wrap: wrap;
+			gap: 8px;
+			padding: 8px 12px;
+		}
+	}
+
+	&__settings-group {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		@media (max-width: 768px) {
+			flex: 1 1 auto;
+		}
+	}
+
+	&__settings-label {
+		font-size: 13px;
+		color: #cccccc;
+		margin: 0;
+		white-space: nowrap;
+
+		@media (max-width: 768px) {
+			font-size: 12px;
+		}
+	}
+
 
 	&__menu-toggle {
 		display: none;

@@ -9,8 +9,6 @@ import { SkyBox } from '~/resources/Components/Demo4/Common/SkyBox';
 import { TextureGenerator } from '~/resources/Components/Texture/TextureGenerator';
 import { UniformControls } from '~/resources/Components/Utilities/UniformsControls';
 
-import { InputSelect } from 'orengine/components/primitives/Input/InputSelect';
-import { InputBoolean } from 'orengine/components/primitives/Input/InputCheckBox';
 import { Button } from 'orengine/components/primitives/Button';
 
 interface PreviewPaneProps {
@@ -23,6 +21,8 @@ interface PreviewPaneProps {
 	onSave?: () => void;
 	isSaving?: boolean;
 	hasUnsavedChanges?: boolean;
+	resolutionScale: number;
+	showWireframe: boolean;
 }
 
 // 内部コンポーネント: OREngineContextの中で動作し、シーンを構築・シェーダー更新を行う
@@ -302,54 +302,9 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 };
 
-export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, onApply, onSave, isSaving, hasUnsavedChanges }: PreviewPaneProps ) => {
+export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, onApply, onSave, isSaving, hasUnsavedChanges, resolutionScale, showWireframe }: PreviewPaneProps ) => {
 
 	const canvasWrapperRef = useRef<HTMLDivElement>( null );
-
-	// ローカルストレージのキー
-	const STORAGE_KEY_RESOLUTION = 'shaderEditor.resolutionScale';
-	const STORAGE_KEY_WIREFRAME = 'shaderEditor.showWireframe';
-
-	// 解像度スケールの状態管理（ローカルストレージから初期値を読み込み）
-	const [ resolutionScale, setResolutionScale ] = useState<number>( () => {
-
-		const saved = localStorage.getItem( STORAGE_KEY_RESOLUTION );
-		return saved ? parseFloat( saved ) : 1.0;
-
-	} );
-
-	// ワイヤーフレーム表示の状態管理（ローカルストレージから初期値を読み込み）
-	const [ showWireframe, setShowWireframe ] = useState<boolean>( () => {
-
-		const saved = localStorage.getItem( STORAGE_KEY_WIREFRAME );
-		return saved ? saved === 'true' : false;
-
-	} );
-
-	// 解像度スケールの選択肢を生成（editorのScreenパネルと同じ形式）
-	const resolutionScaleList = new Array( 6 ).fill( 0 ).map( ( _, i ) => {
-
-		const invScale = Math.pow( 2, i );
-		const value = 1.0 / invScale;
-		const label = value == 1 ? '1' : '1/' + invScale;
-
-		return { value: value, label: label };
-
-	} );
-
-	// 解像度スケールが変更されたらローカルストレージに保存
-	useEffect( () => {
-
-		localStorage.setItem( STORAGE_KEY_RESOLUTION, resolutionScale.toString() );
-
-	}, [ resolutionScale, STORAGE_KEY_RESOLUTION ] );
-
-	// ワイヤーフレーム表示が変更されたらローカルストレージに保存
-	useEffect( () => {
-
-		localStorage.setItem( STORAGE_KEY_WIREFRAME, showWireframe.toString() );
-
-	}, [ showWireframe, STORAGE_KEY_WIREFRAME ] );
 
 	// Canvasのアタッチ処理
 	useEffect( () => {
@@ -385,21 +340,6 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 			</div>
 
 			<div className="shader-editor__preview-controls">
-				<div className="shader-editor__control-group">
-					<label className="shader-editor__control-label">Resolution:</label>
-					<InputSelect
-						value={resolutionScale}
-						selectList={resolutionScaleList}
-						onChange={( value: number ) => setResolutionScale( Number( value ) )}
-					/>
-				</div>
-				<div className="shader-editor__control-group">
-					<label className="shader-editor__control-label">Wireframe:</label>
-					<InputBoolean
-						checked={showWireframe}
-						onChange={( checked: boolean ) => setShowWireframe( checked )}
-					/>
-				</div>
 				<div className="shader-editor__control-group">
 					<Button onClick={onApply} disabled={! componentClass}>
 						Apply
