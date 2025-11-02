@@ -142,54 +142,55 @@
 	}
 
 	&__content {
-		display: grid;
-		grid-template-columns: 250px minmax(400px, 35%) 1fr;
+		display: flex;
 		flex: 1;
 		overflow: hidden;
+		flex-direction: column;
 
-		// タブレット: ComponentListを縮小
-		@media (max-width: 1024px) {
-			grid-template-columns: 200px minmax(350px, 35%) 1fr;
-		}
-
-		// モバイル: ComponentListはオーバーレイ、PreviewとCodeを縦スタック
-		@media (max-width: 768px) {
-			grid-template-columns: 1fr;
-			grid-template-rows: 50vh 1fr;
-		}
-
-		// ComponentList (デスクトップのみ通常表示)
-		> *:nth-child(1) {
-			border-right: 1px solid #3e3e42;
-
-			@media (max-width: 768px) {
-				// モバイルではオーバーレイになるため、グリッドから除外
-				display: none;
-				border-right: none;
-			}
-		}
-
-		// PreviewPane (モバイルでは上半分)
-		> *:nth-child(2) {
-			border-right: 1px solid #3e3e42;
-			background: #1e1e1e;
-			display: flex;
-			flex-direction: column;
-
-			@media (max-width: 768px) {
-				border-right: none;
-				border-bottom: 1px solid #3e3e42;
-			}
-		}
-
-		// CodePane (モバイルでは下半分)
-		> *:nth-child(3) {
-			@media (max-width: 768px) {
-				// モバイルで下に配置
-			}
+		@media (min-width: 769px) {
+			flex-direction: row;
 		}
 	}
 
+	// ComponentList
+	&__component-list {
+		display: none;
+
+		@media (min-width: 769px) {
+			display: flex;
+			flex: 0 0 250px;
+			border-right: 1px solid #3e3e42;
+		}
+
+		@media (min-width: 769px) and (max-width: 1024px) {
+			flex: 0 0 200px;
+		}
+	}
+
+	// PreviewPane全体
+	&__pane--preview {
+		// モバイル: 画面の40%、最低300px
+		flex: 0 0 300px;
+		max-height: 40vh;
+		border-bottom: 1px solid #3e3e42;
+
+		@media (min-width: 769px) {
+			// デスクトップ: 固定幅600px、高さ100%
+			flex: 0 0 600px;
+			max-height: none;
+			border-bottom: none;
+			border-right: 1px solid #3e3e42;
+		}
+	}
+
+	// CodePane
+	&__pane--code {
+		flex: 1;
+		min-height: 0;
+		min-width: 0;
+	}
+
+	// キャンバスコンテナ（PreviewPane内）
 	&__canvas-container {
 		flex: 1;
 		display: flex;
@@ -198,24 +199,22 @@
 		background: #1e1e1e;
 		overflow: hidden;
 		position: relative;
-		min-height: 0; // flexコンテナ内でのオーバーフロー対策
+		min-height: 0;
 	}
 
+	// キャンバスラッパー
 	&__canvas-wrapper {
-		// 16:9アスペクト比を維持しつつ、コンテナに収まるサイズに
 		position: relative;
-		overflow: hidden;
-		touch-action: none;
-
-		// 親コンテナの高さ基準で100%、幅はアスペクト比で自動計算
+		width: 100%;
 		height: 100%;
-		aspect-ratio: 16 / 9;
-		max-width: 100%; // 幅が親を超えないように
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		canvas {
 			width: 100%;
 			height: 100%;
-			display: block;
+			object-fit: contain;
 			touch-action: none;
 		}
 	}
@@ -223,12 +222,18 @@
 	&__preview-controls {
 		display: flex;
 		gap: 8px;
-		padding: 8px;
+		padding: 6px 8px; // 上下のpaddingを減らして高さを節約
 		background: #2d2d30;
 		border-top: 1px solid #3e3e42;
 		flex-shrink: 0;
 		justify-content: center;
 		align-items: center;
+
+		// モバイルではさらにコンパクトに
+		@media (max-width: 768px) {
+			padding: 4px 8px;
+			gap: 6px;
+		}
 	}
 
 	&__control-group {
@@ -254,9 +259,9 @@
 		transition: all 0.15s ease;
 
 		@media (max-width: 768px) {
-			padding: 10px 20px;
+			padding: 8px 16px; // デスクトップと同じサイズに
 			font-size: 16px;
-			min-width: 80px;
+			min-width: 70px;
 		}
 
 		&--apply {
@@ -305,19 +310,11 @@
 		pointer-events: none;
 	}
 
+	// 共通のpaneスタイル
 	&__pane {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
 		overflow: hidden;
-
-		&--preview {
-			// PreviewPaneに固有のスタイルがあればここに追加
-		}
-
-		&--code {
-			// CodePaneは高さ100%で画面いっぱいに
-			min-height: 0; // flexコンテナ内でのオーバーフロー対策
-		}
 	}
 }
