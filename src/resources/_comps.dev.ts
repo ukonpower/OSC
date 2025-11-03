@@ -12,12 +12,17 @@ import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
+import { SushiSakana } from './Components/Demo4/Common/SushiSakana/index.ts';
 import { SushiMaguro } from './Components/Demo4/Common/sushi/index.ts';
+import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
+import { Kyuuri } from './Components/Demo4/Ikura/Kyuuri/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { WaterPillar } from './Components/Demo4/Maguro/WaterPillar/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
+import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
+import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
@@ -27,6 +32,7 @@ import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
 import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
 import { InstancedMesh } from './Components/_Templates/InstancedMesh/index.ts';
+import { Particles } from './Components/_Templates/Particles/index.ts';
 import { RaymarchCube } from './Components/_Templates/RaymarchCube/index.ts';
 import { RaymarchScreen } from './Components/_Templates/RaymarchScreen/index.ts';
 import { RaymarchTransparent } from './Components/_Templates/RaymarchTransparent/index.ts';
@@ -43,7 +49,12 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			ShaderMotionGraphics,
 			Shari,
 			SkyBox,
+			SushiSakana,
 			SushiMaguro,
+		},
+		Ikura: {
+			IkuraFluids,
+			Kyuuri,
 		},
 		Maguro: {
 			Maguro,
@@ -52,7 +63,9 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		},
 		Music,
 		Salmon: {
+			Onigiri,
 			Salmon,
+			SalmonSushi,
 		},
 		TruchetSushiLane,
 	},
@@ -73,6 +86,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	_Templates: {
 		InstancedMesh,
+		Particles,
 		RaymarchCube,
 		RaymarchScreen,
 		RaymarchTransparent,

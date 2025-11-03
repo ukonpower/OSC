@@ -162,9 +162,6 @@ export class Editor extends MXP.Serializable {
 		// タイムラインの現在フレーム位置（エディタ固有の設定）
 		this.field( "timelineCurrent", () => this.engine.frame.current, v => {
 
-			console.log( v );
-
-
 			this.engine.seek( v );
 
 		} );

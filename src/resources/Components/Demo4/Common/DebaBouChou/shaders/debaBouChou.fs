@@ -51,7 +51,8 @@ SDFResult D( vec3 p ) {
 	return SDFResult(
 		d.x,
 		p,
-		d.y
+		d.y,
+		vec4(0.0)
 	);
 
 }
@@ -112,7 +113,6 @@ void main( void ) {
 		col = vec3( 1.0, 0.7, 0.45 ); // 暗い木目色
 		rough = 1.0;
 		metal = 0.0;
-		outFlatness = -1.0;
 	}
 
 	outNormal = normalize( outNormal + n3.xyz * 0.15 );

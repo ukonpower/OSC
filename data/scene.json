@@ -90,6 +90,35 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneIkura/IBG",
+			"components": [
+				{
+					"name": "ShaderMotionGraphics",
+					"props": {
+						"shaderName": "ikuraBGScreen",
+						"layers": 3,
+						"layerSpacing": -0.09
+					}
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneIkura/IkuraFluids",
+			"components": [
+				{
+					"name": "IkuraFluids"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneIkura/Kyuri",
+			"components": [
+				{
+					"name": "Kyuuri"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneMaguro/DebaBouChou",
 			"components": [
 				{
@@ -151,7 +180,7 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/Sushi/Sashimi",
+			"path": "/root/blidgeRoot/SceneMaguro/Sushi/SushiSakana/Sashimi",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -170,7 +199,7 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001/Sashimi",
+			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001/SushiSakana/Sashimi",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -189,10 +218,71 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneSalmon/Onigiri",
+			"components": [
+				{
+					"name": "Onigiri"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon",
 			"components": [
 				{
-					"name": "Salmon"
+					"name": "Salmon",
+					"props": {
+						"blockType": "saku"
+					}
+				},
+				{
+					"name": "SalmonSushi"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon/SushiSakana/Sashimi",
+			"components": [
+				{
+					"name": "Sashimi",
+					"props": {
+						"sashimiType": "salmon"
+					}
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub1",
+			"components": [
+				{
+					"name": "Salmon",
+					"props": {
+						"blockType": "kirimi"
+					}
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2",
+			"components": [
+				{
+					"name": "Salmon",
+					"props": {
+						"blockType": "saku"
+					}
+				},
+				{
+					"name": "SalmonSushi"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2/SushiSakana/Sashimi",
+			"components": [
+				{
+					"name": "Sashimi",
+					"props": {
+						"sashimiType": "salmon"
+					}
 				}
 			]
 		},
@@ -203,8 +293,8 @@
 					"name": "ShaderMotionGraphics",
 					"props": {
 						"shaderName": "salmonBGScreen",
-						"layers": 1,
-						"layerSpacing": 0.01
+						"layers": 3,
+						"layerSpacing": -0.09
 					}
 				}
 			]

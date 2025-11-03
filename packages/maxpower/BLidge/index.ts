@@ -7,7 +7,8 @@ export type BLidgeNodeType = 'empty' | 'cube' | 'sphere' | 'cylinder' | 'mesh' |
 // scene
 
 export type BLidgeScene = {
-    animations: BLidgeCurveParam[][];
+	fcurves: BLidgeCurveParam[];
+    animations: number[][];
 	root: BLidgeNodeParam;
 	frame: BLidgeFrame;
 }
@@ -313,7 +314,10 @@ export class BLidge extends GLP.EventEmitter {
 			const fcurveGroupName = fcurveGroupNames[ i ];
 			const fcurveGroup = new GLP.FCurveGroup( fcurveGroupName );
 
-			data.animations[ i ].forEach( fcurveData => {
+			// fcurvesからインデックスを使って参照
+			data.animations[ i ].forEach( fcurveIndex => {
+
+				const fcurveData = data.fcurves[ fcurveIndex ];
 
 				const curve = new GLP.FCurve();
 

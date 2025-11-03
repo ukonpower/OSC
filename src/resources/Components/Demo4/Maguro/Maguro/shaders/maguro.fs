@@ -91,7 +91,8 @@ float maguro( vec3 p ) {
 float maguroBlock( vec3 p ) {
 
 	vec3 blockP = p;
-	blockP.y -= 0.05;
+	blockP.x -= 0.03;
+	blockP.y -= 0.06;
 	blockP.x *= 1.2;
 	blockP.z *= 1.5;
 	blockP.x += texture( uNoiseTex, (blockP.xz + blockP.x)  * 0.4).x * 0.05;
@@ -135,7 +136,8 @@ SDFResult D( vec3 p ) {
 	return SDFResult(
 		d,
 		p,
-		matID
+		matID,
+		vec4(0.0)
 	);
 
 }
@@ -190,7 +192,6 @@ void main( void ) {
 		float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
 		c.xyz = mix(c, vec3( 0.0 ), kuro );
 		outColor.xyz = c;
-		outFlatness = kuro;
 		outMetalic = 0.2;
 	} else {
 
@@ -201,13 +202,12 @@ void main( void ) {
 		outNormal = normalize( outNormal + n3.xyz * 0.1 );
 
 		float kuro = smoothstep( 0.35, 0.1, length( rayPos.xy + vec2( -0.08, -0.11 ) ) );
-		float kawal = length( rayPos.xy + vec2( 0.05, -1.25 ) );
+		float kawal = length( rayPos.xy + vec2( -0.02, -1.27 ) );
 		float kawa = smoothstep( 1.398, 1.415, kawal );
-		float kawaSoto = smoothstep( 1.42, 1.435, kawal );
+		float kawaSoto = smoothstep( 1.41, 1.43, kawal );
 
 		outColor.xyz = mix( vec3( 1.0, 0.1, 0.1 ), vec3( 0.6, 0.0, 0.0 ), kuro );
 		outEmission.xyz += vec3( 0.9, 0.1, 0.2 ) * sss * 1.7 * ( 1.0 - kawa);
-		outFlatness = -1.0;
 		outMetalic = 0.0;
 		outRoughness = 0.2;
 
