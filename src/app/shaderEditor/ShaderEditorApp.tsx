@@ -27,7 +27,12 @@ export const ShaderEditorApp = () => {
 	const [ compileStatus, setCompileStatus ] = useState<'idle' | 'success' | 'error'>( 'idle' );
 	const [ compileError, setCompileError ] = useState<string>();
 	const [ isSaving, setIsSaving ] = useState( false );
-	const [ isComponentListOpen, setIsComponentListOpen ] = useState( false );
+	// PC画面(769px以上)ではデフォルトで開く、モバイルでは閉じる
+	const [ isComponentListOpen, setIsComponentListOpen ] = useState( () => {
+
+		return window.matchMedia( '(min-width: 769px)' ).matches;
+
+	} );
 
 	// ローカルストレージのキー
 	const STORAGE_KEY_RESOLUTION = 'shaderEditor.resolutionScale';
