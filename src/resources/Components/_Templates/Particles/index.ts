@@ -1,148 +1,127 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import particlesVert from './shaders/particles.vs';
 import particlesFrag from './shaders/particles.fs';
-import particlesComputeFrag from './shaders/particlesCompute.fs';
+import particlesVert from './shaders/particles.vs';
+import particlesCompute from './shaders/particlesCompute.fs';
 
 import { gl, globalUniforms } from '~/globals';
 
 /**
- * Particles - GPGPUとInstancedMeshを使用したパーティクルシステム
- * GPUで位置と速度を計算し、InstancedMeshで描画する高性能パーティクル
+ * Particles - GPUComputeとInstancedMeshを使用したパーティクルシステムテンプレート
+ *
+ * 使い方:
+ * 1. particleSize でパーティクル数を調整 (例: 32x32 = 1024個)
+ * 2. particlesCompute.fs で物理シミュレーションをカスタマイズ
+ * 3. particles.vs でパーティクルの形状・配置をカスタマイズ
+ * 4. particles.fs でマテリアル・色をカスタマイズ
  */
 export class Particles extends MXP.Component {
 
+	private gpu: MXP.GPUCompute;
 	private mesh: MXP.Mesh;
-
-	// GPGPU用のフレームバッファとテクスチャ
-	private gpuFrameBuffers: GLP.GLPowerFrameBuffer[];
-	private gpuTexturePositions: GLP.GLPowerTexture[];
-	private gpuTextureVelocities: GLP.GLPowerTexture[];
-
-	// GPGPU計算用のマテリアル
-	private gpuComputeMaterial: MXP.Material;
-
-	// パーティクル数（テクスチャサイズに基づく）
-	private particleTextureSize: number;
-	private particleCount: number;
-
-	// ダブルバッファリング用のインデックス
-	private gpuBufferIndex: number;
 
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
 
-		// パーティクル数の設定
-		// テクスチャサイズで管理（例: 32x32 = 1024パーティクル）
-		this.particleTextureSize = 32;
-		this.particleCount = this.particleTextureSize * this.particleTextureSize;
+		// パーティクル数の設定（32x32 = 1024個）
+		const particleSize = new GLP.Vector( 128, 128 );
 
-		// GPGPU初期化
-		this.gpuBufferIndex = 0;
-		this.gpuFrameBuffers = [];
-		this.gpuTexturePositions = [];
-		this.gpuTextureVelocities = [];
-
-		// ダブルバッファリング用に2セット作成
-		for ( let i = 0; i < 2; i ++ ) {
-
-			// 位置テクスチャ（RGBA: xyz位置 + wライフタイム）
-			const positionTexture = new GLP.GLPowerTexture( gl ).setting( {
-				type: gl.FLOAT,
-				internalFormat: gl.RGBA32F,
-				format: gl.RGBA,
-				magFilter: gl.NEAREST,
-				minFilter: gl.NEAREST,
-			} );
-
-			// 速度テクスチャ（RGBA: xyz速度 + w予備）
-			const velocityTexture = new GLP.GLPowerTexture( gl ).setting( {
-				type: gl.FLOAT,
-				internalFormat: gl.RGBA32F,
-				format: gl.RGBA,
-				magFilter: gl.NEAREST,
-				minFilter: gl.NEAREST,
-			} );
-
-			// 初期データ生成
-			this.initGPUTexture( positionTexture, velocityTexture );
-
-			this.gpuTexturePositions.push( positionTexture );
-			this.gpuTextureVelocities.push( velocityTexture );
-
-			// フレームバッファ作成（MRT用に2つのテクスチャをアタッチ）
-			const fbo = new GLP.GLPowerFrameBuffer( gl ).setTexture( [
-				positionTexture,
-				velocityTexture,
-			] );
-
-			this.gpuFrameBuffers.push( fbo );
-
-		}
-
-		// GPGPU計算用マテリアル
-		this.gpuComputeMaterial = new MXP.Material( {
-			name: 'particles/compute',
-			phase: [ 'postprocess' ],
-			frag: MXP.hotGet( 'particlesComputeFrag', particlesComputeFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, {
-				uGPUSampler0: {
-					value: this.gpuTexturePositions[ 0 ],
-					type: '1i'
-				},
-				uGPUSampler1: {
-					value: this.gpuTextureVelocities[ 0 ],
-					type: '1i'
-				},
-			} )
+		// GPUコンピュート初期化
+		this.gpu = new MXP.GPUCompute( {
+			passes: [
+				new MXP.GPUComputePass(
+					gl,
+					{
+						name: 'particles',
+						size: particleSize,
+						dataLayerCount: 2, // 位置と速度の2レイヤー
+						frag: MXP.hotGet( 'particlesCompute', particlesCompute ),
+						uniforms: MXP.UniformsUtils.merge( globalUniforms.time ),
+					}
+				)
+			]
 		} );
 
-		// Meshコンポーネント作成
-		this.mesh = this._entity.addComponent( MXP.Mesh );
+		// GPUテクスチャの初期化
+		this.gpu.passes[ 0 ].initTexture( ( layerIndex ) => {
 
-		// ジオメトリ作成（パーティクル1つあたりの形状）
-		const geo = new MXP.SphereGeometry( { radius: 0.5, widthSegments: 6, heightSegments: 4 } );
+			if ( layerIndex === 0 ) {
 
-		// インスタンスID属性を追加
-		const random = GLP.MathUtils.randomSeed( 1 );
+				// レイヤー0: 位置 (xyz) + ライフタイム (w)
+				return [
+					( Math.random() - 0.5 ) * 2.0,
+					( Math.random() - 0.5 ) * 2.0,
+					( Math.random() - 0.5 ) * 2.0,
+					Math.random()
+				];
+
+			} else {
+
+				// レイヤー1: 速度 (xyz) + 予備 (w)
+				return [ 0.0, 0.0, 0.0, 0.0 ];
+
+			}
+
+		} );
+
+		// パーティクルのジオメトリ（球体）
+		const geometry = new MXP.SphereGeometry( {
+			radius: 0.5,
+			widthSegments: 6,
+			heightSegments: 4
+		} );
+
+		// インスタンス属性の準備
+		const computeUVArray = [];
 		const idArray = [];
 
-		for ( let i = 0; i < this.particleCount; i ++ ) {
+		for ( let i = 0; i < particleSize.x; i ++ ) {
 
-			// x: 正規化されたインデックス（0~1）, y,z,w: ランダム値
-			idArray.push( i / this.particleCount, random(), random(), random() );
+			for ( let j = 0; j < particleSize.y; j ++ ) {
+
+				// cuv: GPUテクスチャのUV座標
+				computeUVArray.push( i / particleSize.x, j / particleSize.y );
+
+				// id: ランダム値
+				idArray.push( Math.random(), Math.random(), Math.random(), Math.random() );
+
+			}
 
 		}
 
-		geo.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
+		geometry.setAttribute( 'cuv', new Float32Array( computeUVArray ), 2, { instanceDivisor: 1 } );
+		geometry.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
 
-		this.mesh.geometry = geo;
-
-		// マテリアル作成
-		this.mesh.material = new MXP.Material( {
-			name: 'particles',
-			phase: [ "deferred", "shadowMap" ],
-			vert: MXP.hotGet( 'particlesVert', particlesVert ),
-			frag: MXP.hotGet( 'particlesFrag', particlesFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution, {
-				uGPUSampler0: {
-					value: this.gpuTexturePositions[ 0 ],
-					type: '1i'
-				},
-				uGPUSampler1: {
-					value: this.gpuTextureVelocities[ 0 ],
-					type: '1i'
-				},
-			} ),
-			// パーティクル用のブレンディング設定
-			blending: 'ADD',
-			depthWrite: false,
+		// Meshコンポーネント作成
+		this.mesh = this._entity.addComponent( MXP.Mesh, {
+			geometry,
+			material: new MXP.Material( {
+				name: 'particles',
+				phase: [ 'deferred', 'shadowMap' ],
+				vert: MXP.hotGet( 'particlesVert', particlesVert ),
+				frag: MXP.hotGet( 'particlesFrag', particlesFrag ),
+				uniforms: MXP.UniformsUtils.merge(
+					globalUniforms.time,
+					this.gpu.passes[ 0 ].outputUniforms
+				),
+			} )
 		} );
 
 		// ホットリロード対応
 		if ( import.meta.hot ) {
+
+			import.meta.hot.accept( './shaders/particlesCompute.fs', ( module ) => {
+
+				if ( module ) {
+
+					this.gpu.passes[ 0 ].frag = MXP.hotUpdate( 'particlesCompute', module.default );
+					this.gpu.passes[ 0 ].requestUpdate();
+
+				}
+
+			} );
 
 			import.meta.hot.accept( './shaders/particles.vs', ( module ) => {
 
@@ -166,121 +145,21 @@ export class Particles extends MXP.Component {
 
 			} );
 
-			import.meta.hot.accept( './shaders/particlesCompute.fs', ( module ) => {
-
-				if ( module ) {
-
-					this.gpuComputeMaterial.frag = MXP.hotUpdate( 'particlesComputeFrag', module.default );
-					this.gpuComputeMaterial.requestUpdate();
-
-				}
-
-			} );
-
 		}
-
-	}
-
-	/**
-	 * GPUテクスチャの初期化
-	 */
-	private initGPUTexture( positionTexture: GLP.GLPowerTexture, velocityTexture: GLP.GLPowerTexture ): void {
-
-		const size = this.particleTextureSize;
-		const random = GLP.MathUtils.randomSeed( 1 );
-
-		// 位置データ初期化
-		const positionData = new Float32Array( size * size * 4 );
-		for ( let i = 0; i < size * size; i ++ ) {
-
-			const i4 = i * 4;
-
-			// xyz: 初期位置（中心付近にランダム配置）
-			positionData[ i4 + 0 ] = ( random() - 0.5 ) * 2.0;
-			positionData[ i4 + 1 ] = ( random() - 0.5 ) * 2.0;
-			positionData[ i4 + 2 ] = ( random() - 0.5 ) * 2.0;
-
-			// w: ライフタイム（0~1でランダム）
-			positionData[ i4 + 3 ] = random();
-
-		}
-
-		// 速度データ初期化
-		const velocityData = new Float32Array( size * size * 4 );
-		for ( let i = 0; i < size * size; i ++ ) {
-
-			const i4 = i * 4;
-
-			// xyz: 初期速度（ランダム方向）
-			const theta = random() * Math.PI * 2;
-			const phi = random() * Math.PI;
-
-			velocityData[ i4 + 0 ] = Math.sin( phi ) * Math.cos( theta );
-			velocityData[ i4 + 1 ] = Math.sin( phi ) * Math.sin( theta );
-			velocityData[ i4 + 2 ] = Math.cos( phi );
-
-			// w: 予備
-			velocityData[ i4 + 3 ] = 0.0;
-
-		}
-
-		// テクスチャにデータ設定
-		positionTexture.attach( { width: size, height: size, data: positionData } );
-		velocityTexture.attach( { width: size, height: size, data: velocityData } );
-
-	}
-
-	/**
-	 * GPGPU計算を実行
-	 */
-	private updateGPGPU(): void {
-
-		// 読み込み元のバッファインデックス
-		const readIndex = this.gpuBufferIndex;
-		// 書き込み先のバッファインデックス
-		const writeIndex = ( this.gpuBufferIndex + 1 ) % 2;
-
-		// 読み込み元テクスチャを設定
-		const uniforms = this.gpuComputeMaterial.uniforms;
-		uniforms.uGPUSampler0.value = this.gpuTexturePositions[ readIndex ];
-		uniforms.uGPUSampler1.value = this.gpuTextureVelocities[ readIndex ];
-
-		// 書き込み先フレームバッファにレンダリング
-		const fbo = this.gpuFrameBuffers[ writeIndex ];
-
-		// レンダリング（実際の描画はRendererが行う想定）
-		// ここではセットアップのみ
-		// 注: このコンポーネントを使用する場合、Rendererにgpgpuフェーズを追加する必要があります
-
-		// バッファインデックスを入れ替え
-		this.gpuBufferIndex = writeIndex;
-
-		// メッシュマテリアルのテクスチャも更新
-		this.mesh.material.uniforms.uGPUSampler0.value = this.gpuTexturePositions[ writeIndex ];
-		this.mesh.material.uniforms.uGPUSampler1.value = this.gpuTextureVelocities[ writeIndex ];
 
 	}
 
 	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
 
-		// 毎フレームGPGPU計算を実行
-		this.updateGPGPU();
+		// 毎フレームGPUコンピュートを実行
+		this.gpu.compute( event.renderer );
 
 	}
 
 	protected disposeImpl(): void {
 
-		// メッシュコンポーネント削除
 		this._entity.removeComponent( MXP.Mesh );
-
-		// GPGPUリソース解放
-		for ( let i = 0; i < 2; i ++ ) {
-
-			this.gpuFrameBuffers[ i ].dispose();
-			this.gpuTexturePositions[ i ].dispose();
-			this.gpuTextureVelocities[ i ].dispose();
-
-		}
+		this.gpu.dispose();
 
 	}
 
