@@ -141,6 +141,9 @@ SDFResult D( vec3 p ) {
 
 void main( void ) {
 
+	// uState.yが1の時は何も表示しない
+	if( uState.y >= 1.0 ) discard;
+
 	#include <frag_in>
 	#include <rm_ray_obj>
 

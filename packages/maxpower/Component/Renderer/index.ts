@@ -1147,6 +1147,7 @@ export class Renderer extends GLP.EventEmitter {
 
 			program.use( ( program ) => {
 
+				program.resetUniforms();
 				program.uploadUniforms();
 
 				this.gl.bindVertexArray( vao.getVAO() );
