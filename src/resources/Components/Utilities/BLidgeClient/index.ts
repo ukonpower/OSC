@@ -23,6 +23,13 @@ export class BLidgeClient extends MXP.Component {
 	/** 名前をキーとするエンティティのマップ */
 	private entities: Map<string, MXP.Entity>;
 
+	/** アニメーション再生状態 */
+	private animationState: {
+		playing: boolean;
+		scrubbing: boolean;
+		currentFrame: number;
+	};
+
 	// connection
 	/** WebSocket接続情報 */
 	private connection: {
@@ -58,6 +65,13 @@ export class BLidgeClient extends MXP.Component {
 		this.gltfPath = BASE_PATH + "/scene.glb";
 		this.reloadTimerId = null;
 
+		// アニメーション状態を初期化
+		this.animationState = {
+			playing: false,
+			scrubbing: false,
+			currentFrame: 0,
+		};
+
 		/*-------------------------------
 			BLidge初期化
 		-------------------------------*/
@@ -74,7 +88,19 @@ export class BLidgeClient extends MXP.Component {
 
 			if ( this.entity ) {
 
-				this.emit( "update/blidge/frame", [ frame ] );
+				// アニメーション状態を更新
+				this.animationState.playing = frame.playing || false;
+				this.animationState.scrubbing = frame.scrubbing || false;
+				this.animationState.currentFrame = frame.current;
+
+				// スクラブ中はアニメーション補間を無効化
+				const shouldInterpolate = ! this.animationState.scrubbing;
+
+				// フレーム情報とともにオプションを送信
+				this.emit( "update/blidge/frame", [ frame, {
+					interpolate: shouldInterpolate,
+					scrubbing: this.animationState.scrubbing
+				} ] );
 
 			}
 
@@ -182,6 +208,25 @@ export class BLidgeClient extends MXP.Component {
 		} );
 		// WebSocket URL設定
 		ws.field( "url", () => this.connection.url, v => this.connection.url = v );
+
+		// デバッグ用：アニメーション状態を表示（読み取り専用）
+		const debug = this.fieldDir( "debug", { hidden: false } );
+
+		// 再生状態の表示
+		debug.field( "status", () => {
+
+			if ( this.animationState.scrubbing ) return "Scrubbing";
+			if ( this.animationState.playing ) return "Playing";
+			return "Stopped";
+
+		}, undefined, {
+			readOnly: true,
+		} );
+
+		// 現在のフレーム番号を表示
+		debug.field( "frame", () => this.animationState.currentFrame, undefined, {
+			readOnly: true,
+		} );
 
 		const engine = Engine.getInstance( gl );
 		engine.registerBLidgeClient( this );
@@ -293,6 +338,16 @@ export class BLidgeClient extends MXP.Component {
 			this.emit( "sceneCreated", [ this.blidgeRoot ] );
 
 		}
+
+	}
+
+	/**
+	 * 現在のアニメーション状態を取得
+	 * @returns アニメーション状態のコピー
+	 */
+	public getAnimationState() {
+
+		return { ...this.animationState };
 
 	}
 

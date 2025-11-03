@@ -15,10 +15,11 @@ SDFResult D( vec3 p ) {
 
 	vec2 d = vec2( sdBox( pp, vec3( 0.5, 0.5, 0.5) ) - 0.005, 0.0 );
 	
-	return SDFResult( 
+	return SDFResult(
 		d.x,
 		p,
-		d.y
+		d.y,
+		vec4(0.0)
 	);
 
 }

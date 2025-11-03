@@ -145,9 +145,60 @@ export class OrbitControls extends MXP.Component {
 
 		elm.addEventListener( "wheel", onWheel );
 
+		// ピンチズーム対応（タッチイベント）
+		let lastTouchDistance = 0;
+
+		const onTouchStart = ( e: TouchEvent ) => {
+
+			if ( e.touches.length === 2 ) {
+
+				const dx = e.touches[ 0 ].pageX - e.touches[ 1 ].pageX;
+				const dy = e.touches[ 0 ].pageY - e.touches[ 1 ].pageY;
+				lastTouchDistance = Math.sqrt( dx * dx + dy * dy );
+
+			}
+
+		};
+
+		const onTouchMove = ( e: TouchEvent ) => {
+
+			if ( e.touches.length === 2 ) {
+
+				e.preventDefault();
+
+				const dx = e.touches[ 0 ].pageX - e.touches[ 1 ].pageX;
+				const dy = e.touches[ 0 ].pageY - e.touches[ 1 ].pageY;
+				const distance = Math.sqrt( dx * dx + dy * dy );
+
+				if ( lastTouchDistance > 0 ) {
+
+					const delta = distance - lastTouchDistance;
+					this.distanceVel_ -= delta * 2;
+
+				}
+
+				lastTouchDistance = distance;
+
+			}
+
+		};
+
+		const onTouchEnd = () => {
+
+			lastTouchDistance = 0;
+
+		};
+
+		elm.addEventListener( "touchstart", onTouchStart, { passive: false } );
+		elm.addEventListener( "touchmove", onTouchMove, { passive: false } );
+		elm.addEventListener( "touchend", onTouchEnd );
+
 		this.elmDisposer = () => {
 
 			elm.removeEventListener( "wheel", onWheel );
+			elm.removeEventListener( "touchstart", onTouchStart );
+			elm.removeEventListener( "touchmove", onTouchMove );
+			elm.removeEventListener( "touchend", onTouchEnd );
 
 		};
 
@@ -219,8 +270,11 @@ export class OrbitControls extends MXP.Component {
 
 		}
 
-		this.orbit_.x = Math.atan2( this.eye_.y - this.target_.y, new GLP.Vector( this.eye_.x, this.eye_.z ).length() - new GLP.Vector( this.target_.x, this.target_.z ).length() );
-		this.orbit_.y = - Math.atan2( this.eye_.x - this.target_.x, this.eye_.z - this.target_.z );
+		// 差分ベクトルを計算してspherical座標系へ変換
+		const diff = this.eye_.clone().sub( this.target_ );
+		const horizontalDist = Math.sqrt( diff.x * diff.x + diff.z * diff.z );
+		this.orbit_.x = Math.atan2( diff.y, horizontalDist );
+		this.orbit_.y = - Math.atan2( diff.x, diff.z );
 
 		this.distance_ = this.eye_.clone().sub( this.target_ ).length();
 

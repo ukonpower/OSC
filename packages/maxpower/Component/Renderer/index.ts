@@ -963,6 +963,8 @@ export class Renderer extends GLP.EventEmitter {
 
 		}
 
+		program.resetUniforms();
+
 		if ( param ) {
 
 			// modelMatrix

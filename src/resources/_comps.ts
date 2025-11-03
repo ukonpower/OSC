@@ -11,14 +11,16 @@ import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
-import { ShariRaymarch } from './Components/Demo4/Common/ShariRaymarch/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
 import { SushiMaguro } from './Components/Demo4/Common/sushi/index.ts';
+import { SushiSakana } from './Components/Demo4/Common/SushiSakana/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
-import { MaguroBlock } from './Components/Demo4/Maguro/MaguroBlock/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { WaterPillar } from './Components/Demo4/Maguro/WaterPillar/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
+import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
+import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
+import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
@@ -37,17 +39,21 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			MizuBall,
 			ShaderMotionGraphics,
 			Shari,
-			ShariRaymarch,
 			SkyBox,
 			SushiMaguro,
+			SushiSakana,
 		},
 		Maguro: {
 			Maguro,
-			MaguroBlock,
 			Sashimi,
 			WaterPillar,
 		},
 		Music,
+		Salmon: {
+			Onigiri,
+			Salmon,
+			SalmonSushi,
+		},
 		TruchetSushiLane,
 	},
 	ObjectControls: {

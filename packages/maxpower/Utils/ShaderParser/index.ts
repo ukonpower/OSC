@@ -13,6 +13,7 @@ import random from './shaderModules/random.module.glsl';
 import raymarch_normal from './shaderModules/raymarch_normal.module.glsl';
 import rotate from './shaderModules/rotate.module.glsl';
 import sdf from './shaderModules/sdf.module.glsl';
+import subsurface from './shaderModules/subsurface.module.glsl';
 import frag_h from './shaderParts/frag_h.part.glsl';
 import frag_in from './shaderParts/frag_in.part.glsl';
 import frag_out from './shaderParts/frag_out.part.glsl';
@@ -79,6 +80,7 @@ export const shaderInclude = ( shader: string ) => {
 		[ "rm_out_obj", raymarch_out_obj ],
 		[ "uni_time", uniformTime ],
 		[ "pmrem", pmrem ],
+		[ "subsurface", subsurface ],
 	] );
 
 	shader = shader.replace( /#include\s?<([\S]*)>/g, ( _: string, body: string ) => {

@@ -70,7 +70,7 @@
 SDFResult D( vec3 p ) {
     p = mod( p, 10.0 ) - 5.0;
     float d = sdSphere( p, 1.0 );  // sdfからインクルードされた関数
-    return SDFResult( d, p, 0.0 );
+    return SDFResult( d, p, 0.0, vec4(0.0) );
 }
 
 void main() {
@@ -151,7 +151,7 @@ this._gBuffer.setTexture( [
 ```glsl
 outColor0 = vec4( outPos, outEmission.x );
 outColor1 = vec4( normalize( outNormal * ( gl_FrontFacing ? 1.0 : -1.0 ) ), outEmission.y );
-outColor2 = vec4( outColor.xyz, outFlatness );
+outColor2 = vec4( outColor.xyz, outGradient );
 outColor3 = vec4( outRoughness, outMetalic, outSSN, outEnv );
 outColor4 = vec4( vVelocity, 0.0, outEmission.z );
 ```
@@ -160,9 +160,9 @@ outColor4 = vec4( vVelocity, 0.0, outEmission.z );
 |-----------|------|---|---|---|---|------|
 | **texture[0]** | RGBA32F (NEAREST) | outPos.x | outPos.y | outPos.z | outEmission.x | ワールド座標 + エミッション(R) |
 | **texture[1]** | RGBA32F | outNormal.x | outNormal.y | outNormal.z | outEmission.y | ワールド法線 + エミッション(G) |
-| **texture[2]** | RGBA8 | outColor.r | outColor.g | outColor.b | **outFlatness** | アルベドカラー + **Flatnessパラメータ** |
+| **texture[2]** | RGBA8 | outColor.r | outColor.g | outColor.b | **outGradient** | アルベドカラー + **グラデーションパラメータ** |
 | **texture[3]** | RGBA8 | outRoughness | outMetalic | outSSN | outEnv | マテリアルパラメータ (Selector使用中) |
-| **texture[4]** | RGBA32F | vVelocity.x | vVelocity.y | **0.0 (未使用)** | outEmission.z | モーションベクター + **未使用チャンネル** + エミッション(B) |
+| **texture[4]** | RGBA32F | vVelocity.x | vVelocity.y | **未使用** | outEmission.z | モーションベクター + エミッション(B) |
 
 ### Forwardレンダリング時の出力
 
@@ -174,13 +174,13 @@ outColor2 = vec4(vVelocity, 0.0, 1.0);
 
 ### 利用可能な空きチャンネル
 
-1. **texture[4].b** (モーションベクターのZ成分) - 常に`0.0`が書き込まれている → **完全に未使用**
-   - 形式: 32bit浮動小数点
-   - 用途例: 深度情報、高精度パラメータ
+- **texture[4].b** (32bit浮動小数点) - 現在未使用
 
-### outFlatnessパラメータの使い方
+### outGradient パラメータの使い方
 
-`outFlatness`は`texture[2].a`に格納される、deferred shading時に使えるカスタムパラメータです（デフォルト値: `0.0`）。
+**outGradient** (texture[2].a, 8bit整数):
+- グラデーション効果を適用する強度パラメータ（デフォルト値: `0.0`）
+- 0.0～1.0の範囲で、ノイズテクスチャによる色相変調の強度を制御
 
 **使用例:**
 
@@ -191,21 +191,27 @@ outColor2 = vec4(vVelocity, 0.0, 1.0);
 
 void main() {
     outColor = vec4(1.0, 0.5, 0.0, 1.0);
-    outFlatness = 0.8;  // カスタムパラメータを設定
+    outGradient = 1.0;   // グラデーション質感を最大強度で適用
 }
 ```
 
 **deferred shadingシェーダーでの利用:**
 
-`Material`構造体の`flatness`フィールドとしてアクセス可能です:
+`Material`構造体の`gradient`フィールドとしてアクセス可能です:
 
 ```glsl
 // deferredShading.fs内
 Material mat = Material(...);
-// mat.flatnessに値が格納されている
+// mat.gradientに値が格納されている
 
-// 例: flatnessの値に応じてライティングを調整
-outColor = mix(outColor, mat.color, mat.flatness);
+// グラデーション質感効果
+if( mat.gradient > 0.0 ) {
+    float rnd = random( vUv );
+    vec3 noise = texture( uNoiseSimpleTex, vUv * 0.3 ).xyz;
+    vec3 hsv = rgb2hsv( outColor.xyz );
+    hsv.x += noise.x * 0.1 * mix( 0.5, 1.0, rnd );
+    outColor.xyz = hsv2rgb( hsv );
+}
 ```
 
 ### グローバルユニフォームでの公開

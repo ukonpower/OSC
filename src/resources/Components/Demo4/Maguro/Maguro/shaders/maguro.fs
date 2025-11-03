@@ -9,6 +9,8 @@
 #include <noise_value>
 #include <rm_h>
 
+uniform mat4 uModelViewMatrix;
+
 uniform float uTimeE;
 uniform sampler2D uNoiseTex;
 uniform vec4 uState;
@@ -89,10 +91,11 @@ float maguro( vec3 p ) {
 float maguroBlock( vec3 p ) {
 
 	vec3 blockP = p;
-	blockP.y -= 0.05;
+	blockP.x -= 0.03;
+	blockP.y -= 0.06;
 	blockP.x *= 1.2;
 	blockP.z *= 1.5;
-	blockP.x += noiseCyc( blockP.xyz * 2.0 + 0.12 ).x * 0.05;
+	blockP.x += texture( uNoiseTex, (blockP.xz + blockP.x)  * 0.4).x * 0.05;
 
 	blockP.z += fract( length( (blockP.xy + vec2( -0.02, 0.0 )) * vec2( 1.0, 1.2 ) * (1.0 + length( blockP.xy ) * 1.5 ) ) * 40.0 ) * 0.002;
 
@@ -123,6 +126,8 @@ SDFResult D( vec3 p ) {
 	mgr = opSmoothSub( sdBox( p + vec3( 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), mgr, 0.0 );
 
 	float blk = maguroBlock( p * mix( 1.0 , 0.4, uState.y ) );
+	blk = opSmoothSub( sdBox( p + vec3( -1.8 + uState.z * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), blk, 0.0 );
+
 
 	float d = opSmoothAdd( mgr, blk, 0.10 );
 
@@ -131,11 +136,13 @@ SDFResult D( vec3 p ) {
 	return SDFResult(
 		d,
 		p,
-		matID
+		matID,
+		vec4(0.0)
 	);
 
 }
 
+#include <subsurface>
 #include <rm_normal>
 
 void main( void ) {
@@ -173,6 +180,8 @@ void main( void ) {
 	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0 );
 	vec4 n3 = texture(uNoiseTex, noiseUV * 1.0 + n1.xy);
 
+	float dnv = dot( rayDir, -outNormal.xyz );
+
 	// マテリアルIDに応じた処理
 	if( dist.mat < 0.5 ) {
 		// マグロ本体 (mat=0.0)
@@ -183,18 +192,28 @@ void main( void ) {
 		float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
 		c.xyz = mix(c, vec3( 0.0 ), kuro );
 		outColor.xyz = c;
-		outFlatness = kuro;
 		outMetalic = 0.2;
 	} else {
+
 		// マグロブロック (mat=1.0)
+		float sss = subsurface( rayPos, normalize( (vec4( 0.0, 1.0, 0.0, 0.0 ) * uModelViewMatrix).xyz ), 0.3);
+
 		outRoughness = 0.5;
 		outNormal = normalize( outNormal + n3.xyz * 0.1 );
 
 		float kuro = smoothstep( 0.35, 0.1, length( rayPos.xy + vec2( -0.08, -0.11 ) ) );
-		outColor.xyz = mix( vec3( 1.0, 0.1, 0.1 ), vec3( 0.7, 0.0, 0.0 ), kuro );
-		outFlatness = -1.0;
+		float kawal = length( rayPos.xy + vec2( -0.02, -1.27 ) );
+		float kawa = smoothstep( 1.398, 1.415, kawal );
+		float kawaSoto = smoothstep( 1.41, 1.43, kawal );
+
+		outColor.xyz = mix( vec3( 1.0, 0.1, 0.1 ), vec3( 0.6, 0.0, 0.0 ), kuro );
+		outEmission.xyz += vec3( 0.9, 0.1, 0.2 ) * sss * 1.7 * ( 1.0 - kawa);
 		outMetalic = 0.0;
 		outRoughness = 0.2;
+
+
+		outColor.xyz = mix( outColor.xyz, vec3( 1.0, 0.7, 0.7 ), kawa );
+		outColor.xyz = mix( outColor.xyz, vec3( 0.0 ), kawaSoto );
 	}
 
 

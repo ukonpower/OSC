@@ -33,6 +33,9 @@ storybook-static
 
 .serena
 
+# Auto-generated files
+src/app/shaderEditor/_shaderComponents.ts
+
 # blidge
 
 node_modules

@@ -94,6 +94,13 @@ export class Light extends ShadowMapCamera {
 
 	}
 
+	public set lightType( value: LightType ) {
+
+		this._lightType = value;
+		this.updateProjectionMatrix();
+
+	}
+
 	public updateProjectionMatrix(): void {
 
 		this.fov = this.angle / Math.PI * 180;

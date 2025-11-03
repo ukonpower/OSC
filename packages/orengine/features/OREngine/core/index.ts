@@ -379,7 +379,7 @@ export class Engine extends MXP.Entity {
 		} );
 
 		// BLidgeClientのイベントをリッスンしてEngineを制御（WebSocketからのタイムライン更新用）
-		blidgeClient.on( "update/blidge/frame", ( e: any ) => {
+		blidgeClient.on( "update/blidge/frame", ( e: any, options?: { scrubbing?: boolean } ) => {
 
 			// currentはWebSocketから送られてくる場合のみ使用
 			if ( e.current !== undefined ) {
@@ -388,11 +388,14 @@ export class Engine extends MXP.Entity {
 
 			}
 
-			if ( e.playing && ! this.frame.playing ) {
+			// scrubbing中はタイムラインの自動進行を停止
+			const isScrubbing = options && options.scrubbing;
+
+			if ( e.playing && ! this.frame.playing && ! isScrubbing ) {
 
 				this.play();
 
-			} else if ( ! e.playing && this.frame.playing ) {
+			} else if ( ( ! e.playing || isScrubbing ) && this.frame.playing ) {
 
 				this.stop();
 

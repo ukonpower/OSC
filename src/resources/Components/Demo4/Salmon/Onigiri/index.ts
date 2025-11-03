@@ -1,14 +1,15 @@
-import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import maguroBlockFrag from './shaders/maguroBlock.fs';
+import onigirifrag from './shaders/onigiri.fs';
 
 import { globalUniforms } from '~/globals';
 
 /**
- * MaguroBlock - ブロック状のマグロコンポーネント
+ * Onigiri - レイマーチングによるおにぎりコンポーネント
  */
-export class MaguroBlock extends MXP.Component {
+export class Onigiri extends MXP.Component {
+
+	private mesh: MXP.Mesh;
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -21,22 +22,22 @@ export class MaguroBlock extends MXP.Component {
 
 		// material
 		const mat = new MXP.Material( {
-			frag: MXP.hotGet( 'maguroBlockFrag', maguroBlockFrag ),
+			frag: MXP.hotGet( 'onigirifrag', onigirifrag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
 		} );
 
-		this.entity.addComponent( MXP.Mesh, {
+		this.mesh = this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: mat
 		} );
 
 		// HMR
 		if ( import.meta.hot ) {
 
-			import.meta.hot.accept( './shaders/maguroBlock.fs', ( module ) => {
+			import.meta.hot.accept( './shaders/onigiri.fs', ( module ) => {
 
 				if ( module ) {
 
-					mat.frag = MXP.hotUpdate( 'maguroBlockFrag', module.default );
+					mat.frag = MXP.hotUpdate( 'onigirifrag', module.default );
 
 					mat.requestUpdate();
 
