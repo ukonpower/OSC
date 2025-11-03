@@ -89,7 +89,7 @@ void main( void ) {
 
 	// 刺身のカラー（マグロの赤身 or サーモンのオレンジ）
 	vec3 maguruColor = vec3( 0.9, 0.15, 0.1 );    // マグロ：赤身
-	vec3 salmonColor = vec3( 1.0, 0.5, 0.3 );      // サーモン：オレンジ
+	vec3 salmonColor = vec3(  1.0, 0.4, 0.2  );      // サーモン：オレンジ
 	vec3 sashimiColor = mix( maguruColor, salmonColor, uSashimiType );
 
 	outColor.xyz = sashimiColor;
@@ -97,7 +97,7 @@ void main( void ) {
 
 	// エミッションもサーモンの時はオレンジに
 	vec3 maguruEmission = vec3( 0.9, 0.1, 0.2 );
-	vec3 salmonEmission = vec3( 1.0, 0.6, 0.3 );
+	vec3 salmonEmission = vec3( 1.0, 0.4, 0.1 );
 	outEmission.xyz += mix( maguruEmission, salmonEmission, uSashimiType ) * sss * 0.9 * smoothstep( 1.5, 0.0, dnv );
 	outRoughness = 0.4;
 

@@ -30,6 +30,7 @@ import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
 import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
 import { InstancedMesh } from './Components/_Templates/InstancedMesh/index.ts';
+import { Particles } from './Components/_Templates/Particles/index.ts';
 import { RaymarchCube } from './Components/_Templates/RaymarchCube/index.ts';
 import { RaymarchScreen } from './Components/_Templates/RaymarchScreen/index.ts';
 import { RaymarchTransparent } from './Components/_Templates/RaymarchTransparent/index.ts';
@@ -79,6 +80,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	_Templates: {
 		InstancedMesh,
+		Particles,
 		RaymarchCube,
 		RaymarchScreen,
 		RaymarchTransparent,

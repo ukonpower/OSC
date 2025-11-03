@@ -90,6 +90,27 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneIkura/IBG",
+			"components": [
+				{
+					"name": "ShaderMotionGraphics",
+					"props": {
+						"shaderName": "sample",
+						"layers": 3,
+						"layerSpacing": -0.09
+					}
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneIkura/IkuraFluids",
+			"components": [
+				{
+					"name": "Particles"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneMaguro/DebaBouChou",
 			"components": [
 				{
