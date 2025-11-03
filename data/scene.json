@@ -200,7 +200,10 @@
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon",
 			"components": [
 				{
-					"name": "Salmon"
+					"name": "Salmon",
+					"props": {
+						"blockType": "saku"
+					}
 				},
 				{
 					"name": "SalmonSushi"
@@ -222,7 +225,10 @@
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub1",
 			"components": [
 				{
-					"name": "Salmon"
+					"name": "Salmon",
+					"props": {
+						"blockType": "kirimi"
+					}
 				}
 			]
 		},
@@ -230,7 +236,10 @@
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2",
 			"components": [
 				{
-					"name": "Salmon"
+					"name": "Salmon",
+					"props": {
+						"blockType": "saku"
+					}
 				},
 				{
 					"name": "SalmonSushi"

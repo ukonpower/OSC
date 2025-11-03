@@ -88,6 +88,7 @@ float salmon( vec3 p ) {
 }
 
 // サーモンブロックの形状を定義
+// BLOCK_KIRIMIまたはBLOCK_SAKUのdefineで形状を切り替え可能
 vec4 salmonBlock( vec3 p ) {
 
 	vec3 blockP = p;
@@ -102,13 +103,27 @@ vec4 salmonBlock( vec3 p ) {
 	float d = sdCappedCylinder( pp, 0.2, 0.02 );
 	vec3 bodyP = pp;
 
-	d = opSmoothSub(  sdBox( blockP + vec3( 0.1, 0.5, 0.0 ), vec3( 0.5, 0.5, 0.5 ) ), d, 0.02 );
+	#ifdef BLOCK_KIRIMI
+		// Kirimiタイプの形状（現在のデフォルト形状）
+		d = opSmoothSub(  sdBox( blockP + vec3( 0.1, 0.5, 0.0 ), vec3( 0.5, 0.5, 0.5 ) ), d, 0.02 );
 
-	pp = blockP;
-	pp.y += 0.15;
-	pp.x -= 0.02;
-	pp.yz *= rotate( HPI );
-	d = opSmoothSub( sdCappedCylinder( pp, 0.18, 0.5 ), d, 0.01 );
+		pp = blockP;
+		pp.y += 0.15;
+		pp.x -= 0.02;
+		pp.yz *= rotate( HPI );
+		d = opSmoothSub( sdCappedCylinder( pp, 0.18, 0.5 ), d, 0.01 );
+	#endif
+
+	#ifdef BLOCK_SAKU
+		// Sakuタイプの形状（より長方形的な形状）
+		d = opSmoothSub(  sdBox( blockP + vec3( 0.1, 0.5, 0.0 ), vec3( 0.5, 0.5, 0.5 ) ), d, 0.02 );
+
+		pp = blockP;
+		pp.y += 0.15;
+		pp.x -= 0.02;
+		pp.yz *= rotate( HPI );
+		d = opSmoothSub( sdCappedCylinder( pp, 0.18, 0.5 ), d, 0.01 );
+	#endif
 
 	return vec4( d, bodyP );
 

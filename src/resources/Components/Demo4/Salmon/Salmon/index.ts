@@ -9,9 +9,32 @@ import { bindBlidgeUniform } from '~/shortcuts';
 
 export class Salmon extends MXP.Component {
 
+	// サーモンブロックのタイプ（kirimiまたはsaku）
+	private blockType: 'kirimi' | 'saku' = 'saku';
+
 	constructor( param: MXP.ComponentParams ) {
 
 		super( param );
+
+		// エディタフィールドの定義
+		if ( import.meta.env.DEV ) {
+
+			this.field( "blockType", () => this.blockType, ( v ) => {
+
+				this.blockType = v;
+				this.updateMaterialDefines();
+
+			}, {
+				format: {
+					type: "select",
+					list: [
+						{ label: "Kirimi", value: "kirimi" },
+						{ label: "Saku", value: "saku" }
+					]
+				}
+			} );
+
+		}
 
 		// geometry
 
@@ -25,7 +48,8 @@ export class Salmon extends MXP.Component {
 
 		const mat = new MXP.Material( {
 			frag: MXP.hotGet( 'salmonFrag', salmonFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, globalUniforms.tex )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, globalUniforms.tex ),
+			defines: this.getDefines()
 		} );
 
 
@@ -34,6 +58,9 @@ export class Salmon extends MXP.Component {
 		} );
 
 		bindBlidgeUniform( mesh );
+
+		// マテリアルの参照を保持
+		this.material = mat;
 
 		// HMR
 
@@ -50,6 +77,40 @@ export class Salmon extends MXP.Component {
 				}
 
 			} );
+
+		}
+
+	}
+
+	// マテリアルの参照
+	private material: MXP.Material;
+
+	// blockTypeに応じたdefinesを取得
+	private getDefines(): { [ key: string ]: string } {
+
+		const defines: { [ key: string ]: string } = {};
+
+		if ( this.blockType === 'kirimi' ) {
+
+			defines.BLOCK_KIRIMI = '';
+
+		} else if ( this.blockType === 'saku' ) {
+
+			defines.BLOCK_SAKU = '';
+
+		}
+
+		return defines;
+
+	}
+
+	// マテリアルのdefinesを更新
+	private updateMaterialDefines(): void {
+
+		if ( this.material ) {
+
+			this.material.defines = this.getDefines();
+			this.material.requestUpdate();
 
 		}
 

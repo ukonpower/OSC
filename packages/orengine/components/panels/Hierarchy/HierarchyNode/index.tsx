@@ -41,7 +41,7 @@ export const HierarchyNode = ( props: HierarchyNodeProps ) => {
 
 		if ( selectedEntity && selectedEntity.uuid == props.entity.uuid && nodeRef.current ) {
 
-			nodeRef.current.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
+			nodeRef.current.scrollIntoView( { behavior: 'smooth', block: 'center' } );
 
 		}
 
