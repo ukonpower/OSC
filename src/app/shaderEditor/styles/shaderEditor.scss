@@ -11,93 +11,133 @@
 	&__header {
 		display: flex;
 		align-items: center;
-		gap: 12px;
-		padding: 12px 16px;
-		background: #2d2d30;
+		justify-content: space-between;
+		padding: 10px 16px;
+		background: #252526;
 		border-bottom: 1px solid #3e3e42;
 		flex-shrink: 0;
-		flex-wrap: wrap;
 
-		// モバイル: コンパクトレイアウト
 		@media (max-width: 768px) {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 8px;
 			padding: 8px 12px;
+		}
+	}
+
+	&__header-left {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+
+		@media (max-width: 768px) {
+			width: 100%;
+			flex-wrap: wrap;
 			gap: 8px;
 		}
 	}
 
 	&__title {
-		font-size: 14px;
+		font-size: 16px;
 		font-weight: 600;
 		margin: 0;
-		margin-right: auto;
+		color: #cccccc;
 
-		// モバイル: タイトルを小さく
 		@media (max-width: 768px) {
-			font-size: 12px;
-			width: 100%;
-			margin-bottom: 4px;
+			font-size: 16px; // iOS zoomを防ぐため16px以上
 		}
 	}
 
-	&__selector {
+	&__header-status {
+		padding: 4px 12px;
+		border-radius: 3px;
+		font-size: 12px;
+		font-weight: 500;
+
+		&--success {
+			background: rgba(137, 209, 133, 0.15);
+			color: #89d185;
+		}
+
+		&--error {
+			background: rgba(244, 135, 113, 0.15);
+			color: #f48771;
+			max-width: 600px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		@media (max-width: 768px) {
+			width: 100%;
+			font-size: 11px;
+		}
+	}
+
+	&__settings-bar {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 8px 16px;
+		background: #2d2d30;
+		border-bottom: 1px solid #3e3e42;
+		flex-shrink: 0;
+
+		@media (max-width: 768px) {
+			flex-wrap: wrap;
+			gap: 8px;
+			padding: 8px 12px;
+		}
+	}
+
+	&__settings-group {
 		display: flex;
 		align-items: center;
 		gap: 8px;
 
-		label {
-			font-size: 12px;
-			color: #cccccc;
-		}
-
-		select {
-			padding: 4px 8px;
-			background: #3c3c3c;
-			border: 1px solid #555;
-			border-radius: 2px;
-			color: #fff;
-			font-size: 13px;
-			cursor: pointer;
-
-			&:focus {
-				outline: 1px solid #007acc;
-			}
+		@media (max-width: 768px) {
+			flex: 1 1 auto;
 		}
 	}
 
-	&__button {
-		padding: 6px 12px;
-		background: #0e639c;
-		border: none;
-		border-radius: 2px;
-		color: #fff;
+	&__settings-label {
 		font-size: 13px;
+		color: #cccccc;
+		margin: 0;
+		white-space: nowrap;
+
+		@media (max-width: 768px) {
+			font-size: 12px;
+		}
+	}
+
+
+	&__menu-toggle {
+		display: none;
+		background: #3c3c3c;
+		border: 1px solid #555;
+		color: #ccc;
+		font-size: 18px;
+		width: 36px;
+		height: 36px;
 		cursor: pointer;
-		transition: background 0.2s;
+		border-radius: 4px;
+		transition: all 0.15s ease;
 
 		&:hover {
-			background: #1177bb;
+			background: #454545;
+			color: #fff;
 		}
 
 		&:active {
-			background: #0d5a8f;
+			background: #333;
 		}
 
-		&--save {
-			background: #0e8c4c;
-
-			&:hover {
-				background: #0fa55e;
-			}
-
-			&:active {
-				background: #0c7a3f;
-			}
-		}
-
-		&:disabled {
-			background: #555;
-			cursor: not-allowed;
-			opacity: 0.5;
+		// モバイルでのみ表示
+		@media (max-width: 768px) {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 	}
 
@@ -105,77 +145,176 @@
 		display: flex;
 		flex: 1;
 		overflow: hidden;
+		flex-direction: column;
 
-		// モバイル: 上下レイアウト
-		@media (max-width: 768px) {
-			flex-direction: column;
+		@media (min-width: 769px) {
+			flex-direction: row;
 		}
 	}
 
-	&__pane {
-		flex: 1;
-		position: relative;
-		overflow: hidden;
+	// ComponentList
+	&__component-list {
+		display: none;
 
-		&--code {
+		@media (min-width: 769px) {
+			display: flex;
+			flex: 0 0 250px;
 			border-right: 1px solid #3e3e42;
+		}
 
-			// モバイル: 右ボーダーの代わりに下ボーダー
-			@media (max-width: 768px) {
-				border-right: none;
-				border-bottom: 1px solid #3e3e42;
-			}
+		@media (min-width: 769px) and (max-width: 1024px) {
+			flex: 0 0 200px;
 		}
 	}
 
-	&__status {
-		position: absolute;
-		bottom: 8px;
-		left: 8px;
-		padding: 4px 8px;
-		background: rgba(0, 0, 0, 0.7);
-		border-radius: 2px;
-		font-size: 11px;
-		z-index: 10;
+	// PreviewPane全体
+	&__pane--preview {
+		// モバイル: 画面の40%、最低300px
+		flex: 0 0 300px;
+		max-height: 40vh;
+		border-bottom: 1px solid #3e3e42;
 
-		&--error {
-			color: #f48771;
-		}
-
-		&--success {
-			color: #89d185;
+		@media (min-width: 769px) {
+			// デスクトップ: 固定幅600px、高さ100%
+			flex: 0 0 600px;
+			max-height: none;
+			border-bottom: none;
+			border-right: 1px solid #3e3e42;
 		}
 	}
 
+	// CodePane
+	&__pane--code {
+		flex: 1;
+		min-height: 0;
+		min-width: 0;
+	}
+
+	// キャンバスコンテナ（PreviewPane内）
+	&__canvas-container {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #1e1e1e;
+		overflow: hidden;
+		position: relative;
+		min-height: 0;
+	}
+
+	// キャンバスラッパー
 	&__canvas-wrapper {
-		position: absolute;
-		top: 0;
-		left: 0;
+		position: relative;
 		width: 100%;
 		height: 100%;
-		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		canvas {
 			width: 100%;
 			height: 100%;
-			display: block;
+			object-fit: contain;
+			touch-action: none;
 		}
 	}
 
-	&__preview-canvas {
-		width: 100%;
-		height: 100%;
-		display: block;
+	&__preview-controls {
+		display: flex;
+		gap: 8px;
+		padding: 6px 8px; // 上下のpaddingを減らして高さを節約
+		background: #2d2d30;
+		border-top: 1px solid #3e3e42;
+		flex-shrink: 0;
+		justify-content: center;
+		align-items: center;
+
+		// モバイルではさらにコンパクトに
+		@media (max-width: 768px) {
+			padding: 4px 8px;
+			gap: 6px;
+		}
+	}
+
+	&__control-group {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	&__control-label {
+		font-size: 13px;
+		color: #cccccc;
+		margin: 0;
+		white-space: nowrap;
+	}
+
+	&__control-btn {
+		padding: 8px 16px;
+		border: none;
+		border-radius: 3px;
+		font-size: 16px; // iOS zoomを防ぐため16px以上
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.15s ease;
+
+		@media (max-width: 768px) {
+			padding: 8px 16px; // デスクトップと同じサイズに
+			font-size: 16px;
+			min-width: 70px;
+		}
+
+		&--apply {
+			background: #0e639c;
+			color: #fff;
+
+			&:hover:not(:disabled) {
+				background: #1177bb;
+			}
+
+			&:active:not(:disabled) {
+				background: #0d5a8f;
+			}
+		}
+
+		&--save {
+			background: #0e8c4c;
+			color: #fff;
+
+			&:hover:not(:disabled) {
+				background: #0fa55e;
+			}
+
+			&:active:not(:disabled) {
+				background: #0c7a3f;
+			}
+		}
+
+		&:disabled {
+			background: #3c3c3c;
+			color: #6d6d6d;
+			cursor: not-allowed;
+			opacity: 0.6;
+		}
 	}
 
 	&__empty {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		color: #858585;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		color: #6d6d6d;
 		font-size: 14px;
-		position: relative;
-		z-index: 2;
+		text-align: center;
+		z-index: 10;
+		pointer-events: none;
+	}
+
+	// 共通のpaneスタイル
+	&__pane {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
 	}
 }

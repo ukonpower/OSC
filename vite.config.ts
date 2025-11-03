@@ -6,6 +6,7 @@ import { defineConfig } from 'vite';
 import { FileWriter } from './plugins/FileWriter';
 import { OREngineFileSystemPlugin } from './plugins/OREngineFileSystem';
 import { ResourceManager } from './plugins/ResourceManager';
+import { ShaderComponentRegistry } from './plugins/ShaderComponentRegistry';
 import { ShaderLoader } from "./plugins/ShaderLoader";
 
 
@@ -51,6 +52,7 @@ export default defineConfig( {
 			skipMinifier: true,
 		} ),
 		ResourceManager(),
+		ShaderComponentRegistry(),
 		FileWriter(),
 	],
 	define: {
