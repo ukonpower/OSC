@@ -116,6 +116,17 @@ export class Raycaster {
 
 			}
 
+		} else if ( entity.visible ) {
+
+			// Meshを持たないEmpty判定：レイと原点の距離で判定
+			const hit = this._intersectEmpty( entity );
+
+			if ( hit ) {
+
+				hits.push( hit );
+
+			}
+
 		}
 
 		// 子エンティティを再帰的に処理
@@ -310,6 +321,49 @@ export class Raycaster {
 			// 交差点の計算
 			const point = origin.clone().add( direction.clone().multiply( t ) );
 			return { t, point };
+
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * Emptyエンティティとレイの交差判定（点との距離判定）
+	 * Emptyの原点とレイの最短距離で判定
+	 */
+	private _intersectEmpty( entity: Entity ): RaycastHit | null {
+
+		const threshold = 0.8; // クリック判定の閾値（ワールド座標）
+
+		// エンティティのワールド座標を取得
+		const emptyPosition = new GLP.Vector(
+			entity.matrixWorld.elm[ 12 ],
+			entity.matrixWorld.elm[ 13 ],
+			entity.matrixWorld.elm[ 14 ]
+		);
+
+		// レイ上で最も近い点を計算
+		const toEmpty = emptyPosition.clone().sub( this._ray.origin );
+		const t = toEmpty.dot( this._ray.direction );
+
+		// レイの始点より後ろにある場合はスキップ
+		if ( t < 0 ) return null;
+
+		// レイ上の最近接点
+		const closestPoint = this._ray.origin.clone().add( this._ray.direction.clone().multiply( t ) );
+
+		// Emptyとの距離
+		const distance = closestPoint.clone().sub( emptyPosition ).length();
+
+		// 閾値以内なら交差判定
+		if ( distance < threshold ) {
+
+			return {
+				entity,
+				distance: t,
+				point: closestPoint,
+			};
 
 		}
 

@@ -1,6 +1,5 @@
 import { Renderer } from '../';
 import { Geometry } from '../../../Geometry';
-import { CubeGeometry } from '../../../Geometry/CubeGeometry';
 import { Material } from '../../../Material';
 import { Mesh } from '../../Mesh';
 
@@ -13,6 +12,42 @@ let WireframeMaterial: WireframeMaterialConstructor | undefined;
 if ( import.meta.env.DEV ) {
 
 	WireframeMaterial = ( await import( '../../../Material/WireframeMaterial' ) ).WireframeMaterial;
+
+}
+
+/**
+ * Blenderスタイルの十字ワイヤーフレームジオメトリを作成
+ * X, Y, Z軸の3本の線（6頂点）を持つ
+ */
+function createEmptyCrossGeometry(): Geometry {
+
+	const size = 0.5;
+
+	// 6頂点：各軸の正負方向の端点
+	const positions = new Float32Array( [
+		// X軸
+		- size, 0, 0,
+		size, 0, 0,
+		// Y軸
+		0, - size, 0,
+		0, size, 0,
+		// Z軸
+		0, 0, - size,
+		0, 0, size,
+	] );
+
+	// LINES描画用のインデックス（3本の線 = 6インデックス）
+	const indices = new Uint16Array( [
+		0, 1, // X軸
+		2, 3, // Y軸
+		4, 5, // Z軸
+	] );
+
+	const geometry = new Geometry();
+	geometry.setAttribute( 'position', positions, 3 );
+	geometry.setAttribute( 'index', indices, 1 );
+
+	return geometry;
 
 }
 
@@ -41,8 +76,8 @@ export class EditorRenderer extends Renderer {
 			// 選択時のワイヤーフレーム（オレンジ色）
 			this._wireframeMaterialSelected = new WireframeMaterial( [ 1.0, 0.5, 0.0 ] );
 
-			// Empty用のワイヤーフレームジオメトリを作成（0.5サイズのキューブ）
-			this._emptyWireframeGeometry = new CubeGeometry( { width: 0.5, height: 0.5, depth: 0.5 } );
+			// Empty用の十字ワイヤーフレームジオメトリを作成
+			this._emptyWireframeGeometry = createEmptyCrossGeometry();
 
 		}
 
@@ -78,9 +113,6 @@ export class EditorRenderer extends Renderer {
 
 		// ワイヤーフレーム描画対象: deferredとforwardのメッシュ
 		const wireframeEntities = [ ...stack.deferred, ...stack.forward ];
-
-		// Meshを持たないエンティティも追加（Empty描画用）
-		const emptyEntities = [ ...stack.ui, ...stack.shadowMap ];
 
 		// ポリゴンオフセットでワイヤーフレームを手前に表示
 		this.gl.enable( this.gl.POLYGON_OFFSET_FILL );
@@ -123,16 +155,9 @@ export class EditorRenderer extends Renderer {
 		// Meshを持たないエンティティをEmpty用ワイヤーフレームで描画
 		if ( this._emptyWireframeGeometry ) {
 
-			for ( let i = 0; i < emptyEntities.length; i ++ ) {
+			for ( let i = 0; i < stack.empty.length; i ++ ) {
 
-				const entity = emptyEntities[ i ];
-				const mesh = entity.getComponent( Mesh );
-
-				// Meshを持つエンティティはスキップ
-				if ( mesh ) continue;
-
-				console.log( "yaahhhho" );
-
+				const entity = stack.empty[ i ];
 
 				// 選択されているエンティティはオレンジ色、それ以外は黒色
 				const isSelected = entity.uuid === this.selectedEntityId;
