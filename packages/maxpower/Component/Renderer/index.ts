@@ -28,6 +28,7 @@ export type RenderStack = {
 	deferred: Entity[];
 	forward: Entity[];
 	ui: Entity[];
+	empty: Entity[]; // Meshを持たないエンティティ
 }
 
 // render hooks
@@ -275,6 +276,7 @@ export class Renderer extends GLP.EventEmitter {
 			ui: [],
 			shadowMap: [],
 			envMap: [],
+			empty: [],
 		};
 
 		const _ = ( event: {entity: Entity, visibility: boolean} ) => {
@@ -293,6 +295,11 @@ export class Renderer extends GLP.EventEmitter {
 				if ( material.visibilityFlag.forward ) stack.forward.push( entity );
 				if ( material.visibilityFlag.ui ) stack.ui.push( entity );
 				if ( material.visibilityFlag.envMap ) stack.envMap.push( entity );
+
+			} else if ( visibility ) {
+
+				// Meshを持たないが可視のエンティティをemptyスタックに追加
+				stack.empty.push( entity );
 
 			}
 
