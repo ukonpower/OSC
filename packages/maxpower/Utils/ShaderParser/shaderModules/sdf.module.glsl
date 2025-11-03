@@ -53,6 +53,13 @@ float sdInfinityCylinder( vec3 p, vec3 c )
   return length(p.xz-c.xy)-c.z;
 }
 
+// Vertical Capsule
+float sdVerticalCapsule( vec3 p, float h, float r )
+{
+  p.y -= clamp( p.y, 0.0, h );
+  return length( p ) - r;
+}
+
 float sdRoundedCylinder( vec3 p, float ra, float rb, float h )
 {
   vec2 d = vec2( length(p.xz)-2.0*ra+rb, abs(p.y) - h );

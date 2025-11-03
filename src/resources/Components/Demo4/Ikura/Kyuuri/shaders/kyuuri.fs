@@ -15,11 +15,13 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	// きゅうりの基本形状 - 円柱
-	float cylinder = sdCappedCylinder(pp, 0.15, 0.4); // 半径0.15、高さ0.4の円柱
+	// きゅうりの基本形状 - カプセル
+	float h = 0.8;
+	pp.y += h / 2.0;
+	float cylinder = sdVerticalCapsule(pp, h, 0.09); // 高さ1.0、半径0.15のカプセル
 
 	// 表面のイボイボ（ノイズで凹凸を追加）
-	float bumps = noiseCyc(pp * 15.0 + uTime * 0.1).x * 0.015;
+	float bumps = noiseCyc(pp * 15.0 + uTime * 0.1).x * 0.005;
 
 	// きゅうりの形状にイボイボを追加
 	float d = cylinder - bumps;

@@ -19,7 +19,7 @@ export class Kyuuri extends MXP.Component {
 
 		// geometry - 球体ジオメトリを使用（レイマーチング用のバウンディングボリューム）
 		const geo = new MXP.SphereGeometry( {
-			radius: 1
+			radius: 0.5
 		} );
 
 		// material

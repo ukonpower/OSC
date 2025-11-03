@@ -43,6 +43,6 @@ void main( void ) {
 
 	#include <vert_out>
 
-	vVelocity += vel.xy * 0.02;
+	vVelocity += vel.xy * 0.002;
 
 }
