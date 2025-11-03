@@ -23,7 +23,11 @@ export default defineConfig( {
 		watch: {
 			ignored: [ "**/data/**/**.json" ],
 		},
+		hmr: {
+			overlay: false,
+		},
 	},
+	logLevel: 'warn',
 	build: {
 		outDir: '../dist/',
 		rollupOptions: {
