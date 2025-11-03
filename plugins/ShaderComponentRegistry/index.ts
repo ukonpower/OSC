@@ -206,8 +206,6 @@ const generateShaderComponentsFile = ( isProduction: boolean = false ) => {
 
 	fs.writeFileSync( outputFile, fileContent );
 
-	console.log( `[ShaderComponentRegistry] Generated ${outputFile} with ${components.length} components` );
-
 };
 
 export const ShaderComponentRegistry = (): Plugin => {
@@ -261,7 +259,6 @@ export const ShaderComponentRegistry = (): Plugin => {
 		},
 		buildStart: () => {
 
-			console.log( `[ShaderComponentRegistry] buildStart - isProduction: ${isProduction}` );
 			generateShaderComponentsFile( isProduction );
 
 		},

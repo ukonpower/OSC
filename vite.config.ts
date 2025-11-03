@@ -27,7 +27,6 @@ export default defineConfig( {
 			overlay: false,
 		},
 	},
-	logLevel: 'warn',
 	build: {
 		outDir: '../dist/',
 		rollupOptions: {

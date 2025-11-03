@@ -252,7 +252,6 @@ export const ResourceManager = (): Plugin => {
 		},
 		buildStart: () => {
 
-			console.log( `[ResourceManager] buildStart - isProduction: ${isProduction}` );
 			updateComponentList( isProduction );
 
 		},
