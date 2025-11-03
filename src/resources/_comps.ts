@@ -14,6 +14,9 @@ import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
 import { SushiMaguro } from './Components/Demo4/Common/sushi/index.ts';
 import { SushiSakana } from './Components/Demo4/Common/SushiSakana/index.ts';
+import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
+import { IkuraGunKan } from './Components/Demo4/Ikura/IkuraGunKan/index.ts';
+import { Kyuuri } from './Components/Demo4/Ikura/Kyuuri/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { WaterPillar } from './Components/Demo4/Maguro/WaterPillar/index.ts';
@@ -42,6 +45,11 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			SkyBox,
 			SushiMaguro,
 			SushiSakana,
+		},
+		Ikura: {
+			IkuraFluids,
+			IkuraGunKan,
+			Kyuuri,
 		},
 		Maguro: {
 			Maguro,

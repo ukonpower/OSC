@@ -111,6 +111,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneIkura/IkuraGunKan",
+			"components": [
+				{
+					"name": "IkuraGunKan"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneIkura/Kyuri",
 			"components": [
 				{
