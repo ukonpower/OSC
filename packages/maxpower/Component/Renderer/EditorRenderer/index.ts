@@ -1,4 +1,6 @@
 import { Renderer } from '../';
+import { Geometry } from '../../../Geometry';
+import { CubeGeometry } from '../../../Geometry/CubeGeometry';
 import { Material } from '../../../Material';
 import { Mesh } from '../../Mesh';
 
@@ -22,6 +24,7 @@ export class EditorRenderer extends Renderer {
 
 	private _wireframeMaterial?: Material;
 	private _wireframeMaterialSelected?: Material;
+	private _emptyWireframeGeometry?: Geometry;
 	public showWireframe: boolean = true;
 	public selectedEntityId: string | null = null;
 
@@ -37,6 +40,9 @@ export class EditorRenderer extends Renderer {
 
 			// 選択時のワイヤーフレーム（オレンジ色）
 			this._wireframeMaterialSelected = new WireframeMaterial( [ 1.0, 0.5, 0.0 ] );
+
+			// Empty用のワイヤーフレームジオメトリを作成（0.5サイズのキューブ）
+			this._emptyWireframeGeometry = new CubeGeometry( { width: 0.5, height: 0.5, depth: 0.5 } );
 
 		}
 
@@ -73,6 +79,9 @@ export class EditorRenderer extends Renderer {
 		// ワイヤーフレーム描画対象: deferredとforwardのメッシュ
 		const wireframeEntities = [ ...stack.deferred, ...stack.forward ];
 
+		// Meshを持たないエンティティも追加（Empty描画用）
+		const emptyEntities = [ ...stack.ui, ...stack.shadowMap ];
+
 		// ポリゴンオフセットでワイヤーフレームを手前に表示
 		this.gl.enable( this.gl.POLYGON_OFFSET_FILL );
 		this.gl.polygonOffset( - 1, - 1 );
@@ -108,6 +117,45 @@ export class EditorRenderer extends Renderer {
 					label: 'wireframe'
 				}
 			);
+
+		}
+
+		// Meshを持たないエンティティをEmpty用ワイヤーフレームで描画
+		if ( this._emptyWireframeGeometry ) {
+
+			for ( let i = 0; i < emptyEntities.length; i ++ ) {
+
+				const entity = emptyEntities[ i ];
+				const mesh = entity.getComponent( Mesh );
+
+				// Meshを持つエンティティはスキップ
+				if ( mesh ) continue;
+
+				console.log( "yaahhhho" );
+
+
+				// 選択されているエンティティはオレンジ色、それ以外は黒色
+				const isSelected = entity.uuid === this.selectedEntityId;
+				const material = isSelected ? this._wireframeMaterialSelected : this._wireframeMaterial;
+
+				// Empty用ワイヤーフレームで描画
+				this.draw(
+					entity.uuid + '_empty_wireframe',
+					'forward',
+					this._emptyWireframeGeometry,
+					material,
+					{
+						viewMatrix: camera.viewMatrix,
+						projectionMatrix: camera.projectionMatrix,
+						cameraMatrixWorld: cameraEntity.matrixWorld,
+						modelMatrixWorld: entity.matrixWorld,
+						cameraNear: camera.near,
+						cameraFar: camera.far,
+						label: 'empty_wireframe'
+					}
+				);
+
+			}
 
 		}
 
