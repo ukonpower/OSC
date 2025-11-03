@@ -95,7 +95,7 @@
 				{
 					"name": "ShaderMotionGraphics",
 					"props": {
-						"shaderName": "sample",
+						"shaderName": "ikuraBGScreen",
 						"layers": 3,
 						"layerSpacing": -0.09
 					}
@@ -107,6 +107,14 @@
 			"components": [
 				{
 					"name": "IkuraFluids"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneIkura/Kyuri",
+			"components": [
+				{
+					"name": "Kyuuri"
 				}
 			]
 		},

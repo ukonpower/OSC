@@ -1,6 +1,7 @@
 import * as MXP from 'maxpower';
 
 import basicVert from './shaders/basic.vs';
+import ikuraBGScreenFrag from './shaders/ikuraBGScreen.fs';
 import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
 import salmonBGScreenFrag from './shaders/salmonBGScreen.fs';
 import sampleFrag from './shaders/sample.fs';
@@ -28,6 +29,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 		// シェーダーリストを定義（名前をキーにしたMap）
 		this.shaders = new Map( [
 			[ "sample", { vert: basicVert, frag: sampleFrag } ],
+			[ "ikuraBGScreen", { vert: basicVert, frag: ikuraBGScreenFrag } ],
 			[ "maguroBGScreen", { vert: basicVert, frag: maguroBGScreenFrag } ],
 			[ "salmonBGScreen", { vert: basicVert, frag: salmonBGScreenFrag } ],
 		] );
@@ -56,6 +58,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 				type: "select",
 				list: [
 					{ label: "Sample", value: "sample" },
+					{ label: "Ikura BG Screen", value: "ikuraBGScreen" },
 					{ label: "Maguro BG Screen", value: "maguroBGScreen" },
 					{ label: "Salmon BG Screen", value: "salmonBGScreen" },
 				]
@@ -120,6 +123,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 
 			// 各シェーダーファイルのホットリロードを登録
 			import.meta.hot.accept( './shaders/sample.fs', createHotReloadHandler( 'sample', 'smgSampleFrag' ) );
+			import.meta.hot.accept( './shaders/ikuraBGScreen.fs', createHotReloadHandler( 'ikuraBGScreen', 'smgIkuraBGScreenFrag' ) );
 			import.meta.hot.accept( './shaders/maguroBGScreen.fs', createHotReloadHandler( 'maguroBGScreen', 'smgMaguroBGScreenFrag' ) );
 			import.meta.hot.accept( './shaders/salmonBGScreen.fs', createHotReloadHandler( 'salmonBGScreen', 'smgSalmonBGScreenFrag' ) );
 
