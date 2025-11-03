@@ -16,7 +16,9 @@ export class SalmonSushi extends MXP.Component {
 		// SushiSakanaエンティティを作成
 		this.sushiEntity = new MXP.Entity();
 		this.sushiEntity.name = "SushiSakana";
-		this.sushiEntity.addComponent( SushiSakana );
+		this.sushiEntity.euler.set( 0, Math.PI / 2, 0 );
+		const sushiSakana = this.sushiEntity.addComponent( SushiSakana );
+		sushiSakana.sashimiType = 'salmon';
 
 		this.entity.add( this.sushiEntity );
 

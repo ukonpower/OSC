@@ -1,5 +1,5 @@
 import * as MXP from 'maxpower';
-import { MouseEvent, useCallback, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { InputGroup } from '../../../../components/composites/InputGroup';
 import { Picker } from '../../../../components/composites/Picker';
@@ -32,6 +32,20 @@ export const HierarchyNode = ( props: HierarchyNodeProps ) => {
 	const offsetPx = depth * 20;
 
 	const noEditable = props.entity.initiator == "script";
+
+	// ref for scroll
+	const nodeRef = useRef<HTMLDivElement>( null );
+
+	// scroll to selected node
+	useEffect( () => {
+
+		if ( selectedEntity && selectedEntity.uuid == props.entity.uuid && nodeRef.current ) {
+
+			nodeRef.current.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
+
+		}
+
+	}, [ selectedEntity, props.entity.uuid ] );
 
 	// click fold controls
 
@@ -101,7 +115,7 @@ export const HierarchyNode = ( props: HierarchyNodeProps ) => {
 	}, [ editor, props.entity, pushContent, closeAll, noEditable ] );
 
 	return <div className={style.node} data-no_export={noEditable}>
-		<div className={style.self} style={{ paddingLeft: offsetPx }} onClick={onClickNode} onContextMenu={onRightClickNode} data-selected={selectedEntity && selectedEntity.uuid == props.entity.uuid}>
+		<div ref={nodeRef} className={style.self} style={{ paddingLeft: offsetPx }} onClick={onClickNode} onContextMenu={onRightClickNode} data-selected={selectedEntity && selectedEntity.uuid == props.entity.uuid}>
 			<div className={style.fold} data-hnode_open={open}>
 				{hasChild && <button className={style.fold_button} onClick={onClickFoldControls} ><ArrowIcon open={open}/></button> }
 			</div>

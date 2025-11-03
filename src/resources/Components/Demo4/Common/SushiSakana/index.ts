@@ -8,8 +8,9 @@ import { Shari } from '../Shari';
  */
 export class SushiSakana extends MXP.Component {
 
-	private shariEntity: MXP.Entity | null = null;
-	private sashimiEntity: MXP.Entity | null = null;
+	private shariEntity: MXP.Entity;
+	private sashimiEntity: MXP.Entity;
+	private sashimiComponent: Sashimi;
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -29,7 +30,7 @@ export class SushiSakana extends MXP.Component {
 		this.sashimiEntity = new MXP.Entity();
 		this.sashimiEntity.name = "Sashimi";
 
-		const sashimiComponent = this.sashimiEntity.addComponent( Sashimi );
+		this.sashimiComponent = this.sashimiEntity.addComponent( Sashimi );
 
 		// 刺身の位置調整（シャリの上に配置）
 		// Sashimiのheightは1.0なので、半分の0.0を上に配置
@@ -39,24 +40,20 @@ export class SushiSakana extends MXP.Component {
 
 	}
 
+	public set sashimiType( type: 'maguro' | 'salmon' ) {
+
+		this.sashimiComponent.setField( 'sashimiType', type );
+
+	}
+
+
 	protected disposeImpl( ): void {
 
-		// 子エンティティのクリーンアップ
-		if ( this.shariEntity ) {
+		this.entity.remove( this.shariEntity );
+		this.shariEntity.dispose();
 
-			this.entity.remove( this.shariEntity );
-			this.shariEntity.dispose();
-			this.shariEntity = null;
-
-		}
-
-		if ( this.sashimiEntity ) {
-
-			this.entity.remove( this.sashimiEntity );
-			this.sashimiEntity.dispose();
-			this.sashimiEntity = null;
-
-		}
+		this.entity.remove( this.sashimiEntity );
+		this.sashimiEntity.dispose();
 
 	}
 
