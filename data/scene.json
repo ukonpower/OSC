@@ -106,7 +106,7 @@
 			"path": "/root/blidgeRoot/SceneIkura/IkuraFluids",
 			"components": [
 				{
-					"name": "Particles"
+					"name": "IkuraFluids"
 				}
 			]
 		},
