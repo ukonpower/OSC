@@ -119,7 +119,7 @@ SDFResult D( vec3 p ) {
 	float slm = salmon( p );
 	slm = opSmoothSub( sdBox( p + vec3( 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), slm, 0.0 );
 
-	vec4 blk = salmonBlock( p * mix( 1.0 , 0.4, uState.y ) );
+	vec4 blk = salmonBlock( p );
 	blk.x = opSmoothSub( sdBox( p + vec3( -2.0 + 1.8 - uState.x * 2.1, 0.0, 0.0 ), vec3( 1.0, 0.5, 0.5 ) ), blk.x, 0.0 );
 
 	float d = opAdd( slm, blk.x );

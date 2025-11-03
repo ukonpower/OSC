@@ -41,9 +41,6 @@ export class Sashimi extends MXP.Component {
 
 			this.material.uniforms.uSashimiType.value = v === 'salmon' ? 1 : 0;
 
-			console.log( this.material.uniforms.uSashimiType.value );
-
-
 		}, {
 			format: {
 				type: "select",
