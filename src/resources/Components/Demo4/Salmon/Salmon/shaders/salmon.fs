@@ -93,36 +93,47 @@ vec4 salmonBlock( vec3 p ) {
 
 	vec3 blockP = p;
 	blockP *= 0.4;
-	blockP.x -= 0.05;
-	blockP.y += 0.05;
-	blockP.x += texture( uNoiseTex, (blockP.xz + blockP.x)  * 0.4).x * 0.05;
 
-	vec3 pp = blockP;
-	pp.y *= 1.0 + cos( pp.x * PI * 1.3 - 0.6 );
-	pp.yz *= rotate( HPI );
-	float d = sdCappedCylinder( pp, 0.2, 0.02 );
-	vec3 bodyP = pp;
+	vec3 pp;
+	vec3 bodyP;
+	float d = 0.0;
 
 	#ifdef BLOCK_KIRIMI
-		// Kirimiタイプの形状（現在のデフォルト形状）
-		d = opSmoothSub(  sdBox( blockP + vec3( 0.1, 0.5, 0.0 ), vec3( 0.5, 0.5, 0.5 ) ), d, 0.02 );
+	
+		blockP.x += texture( uNoiseTex, (blockP.xz + blockP.x)  * 0.4).x * 0.05;
+		blockP.x -= 0.05;
+		blockP.y += 0.05;
+
+		pp = blockP;
+		pp.y *= 1.0 + cos( pp.x * PI * 1.3 - 0.6 );
+		pp.yz *= rotate( HPI );
+		bodyP = pp;
+		d = sdCappedCylinder( pp, 0.2, 0.02 );
+		d = opSmoothSub( sdBox( blockP + vec3( 0.1, 0.5, 0.0 ), vec3( 0.5, 0.5, 0.5 ) ), d, 0.02 );
 
 		pp = blockP;
 		pp.y += 0.15;
 		pp.x -= 0.02;
 		pp.yz *= rotate( HPI );
 		d = opSmoothSub( sdCappedCylinder( pp, 0.18, 0.5 ), d, 0.01 );
+		
 	#endif
 
 	#ifdef BLOCK_SAKU
-		// Sakuタイプの形状（より長方形的な形状）
-		d = opSmoothSub(  sdBox( blockP + vec3( 0.1, 0.5, 0.0 ), vec3( 0.5, 0.5, 0.5 ) ), d, 0.02 );
+
+		blockP.yz *= rotate( 0.5 );
+		blockP.z += sin( - uTimeE * 6.0 + blockP.x * 8.0 ) * 0.03;
+		blockP.y += ( texture( uNoiseTex, (blockP.xz + blockP.x)  * 0.3).x - 0.3 ) * 0.03;
+		blockP.z += ( texture( uNoiseTex, (blockP.xy + blockP.x)  * 0.1).y - 0.3 ) * 0.03;
 
 		pp = blockP;
-		pp.y += 0.15;
-		pp.x -= 0.02;
-		pp.yz *= rotate( HPI );
-		d = opSmoothSub( sdCappedCylinder( pp, 0.18, 0.5 ), d, 0.01 );
+		bodyP = pp;
+
+
+		pp.y += pp.z * 0.3;
+
+		d = sdBox( pp, vec3( 0.15, 0.07, 0.03) );
+	
 	#endif
 
 	return vec4( d, bodyP );
@@ -187,7 +198,9 @@ void main( void ) {
 	#include <rm_out_obj>
 
 	// ノイズテクスチャを取得
-	vec2 noiseUV = rayPos.xy * 0.5 + 0.5;
+	vec3 rp = dist.matparam.yxz;
+	rp.yz *= rotate( 0.5 );
+	vec2 noiseUV = rp.yz * 0.5 + 0.5;
 	vec4 n1 = texture(uNoiseTex, noiseUV);
 	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0 );
 	vec4 n3 = texture(uNoiseTex, noiseUV * 1.0 + n1.xy);
@@ -199,7 +212,7 @@ void main( void ) {
 	if( dist.mat < 0.5 ) {
 		// サーモン本体 (mat=0.0)
 		outRoughness = smoothstep( 0.2, 1.0, n1.r );
-		outNormal = normalize( outNormal + n3.xyz * 0.3 );
+		outNormal = normalize( outNormal + n2.xyz * 0.3 );
 
 		vec3 c = vec3( 1.0 );
 		float kuro = smoothstep( 0.01 , 0.08, rayPos.y - cos( rayPos.x * PI + 0.15 ) * 0.06 - n2.x * 0.05 + 0.04 );
@@ -212,23 +225,23 @@ void main( void ) {
 		float sss = subsurface( rayPos, normalize( (vec4( 0.0, 1.0, 0.0, 0.0 ) * uModelViewMatrix).xyz ), 0.15);
 
 		outRoughness = 0.5;
-		outNormal = normalize( outNormal + n3.xyz * 0.1 );
+		outNormal = normalize( outNormal + n2.xyz * 0.5 );
 
 		float kawal = length( dist.matparam.yzw );
 		float kawa = smoothstep( 0.19, 0.2, kawal );
 
-		outColor.xyz = mix( vec3( 1.0, 0.5, 0.2 ), vec3( 0.9, 0.3, 0.1 ), 0.0 );
+		outColor.xyz = vec3( 1.0, 0.4, 0.2 );
 		outEmission.xyz += vec3( 1.0, 0.4, 0.1 ) * sss * 1.7 * ( 1.0 - kawa );
-		outMetalic = 0.0;
-		outRoughness = 0.1;
+		outMetalic = 0.1;
+		outRoughness = 0.2;
 
 		
 		vec3 bodyP = dist.matparam.yzw;
 		
-		float line = fract( length( bodyP * vec3( 2.0, 1.0, 1.0 ) + vec3( 0.05 + sin( bodyP.y ), 0.0, 0.0 ) + n1.x * 0.005 ) * 30.0 );
+		float line = fract( length( bodyP * vec3( 2.0, 1.0, 1.0 ) + vec3( 0.05 + sin( bodyP.y ), 0.0, 0.0 ) ) * 30.0 );
 		line = smoothstep( 0.5, 1.0, line );
 		outColor.xyz += line * 0.1;
-		outColor.xyz = mix( outColor.xyz, vec3( 0.9 + n4.x  ) * smoothstep( -0.4, 0.8, rayPos.x ), kawa );
+		outColor.xyz = mix( outColor.xyz, vec3( 0.9  ) * smoothstep( -0.4, 0.8, rayPos.x ), kawa );
 
 	}
 
