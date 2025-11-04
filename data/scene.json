@@ -96,8 +96,8 @@
 					"name": "ShaderMotionGraphics",
 					"props": {
 						"shaderName": "ikuraBGScreen",
-						"layers": 3,
-						"layerSpacing": -0.09
+						"layers": 5,
+						"layerSpacing": -0.01
 					}
 				}
 			]

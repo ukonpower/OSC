@@ -44,9 +44,9 @@ const getParsedBody = ( req: IncomingRequest ): string | null => {
 
 			return JSON.stringify( candidate );
 
-		} catch ( err ) {
+		} catch {
 
-			console.warn( '[FileWriter] Failed to stringify cached body:', err );
+			// Stringify failed, continue to next candidate
 
 		}
 
@@ -65,12 +65,9 @@ async function readBody( req: IncomingRequest ): Promise<string> {
 
 	if ( cached !== null ) {
 
-		console.log( '[FileWriter] Using cached request body' );
 		return cached;
 
 	}
-
-	console.log( '[FileWriter] readBody start, readable:', req.readable, 'readableEnded:', req.readableEnded );
 
 	return new Promise( ( resolve, reject ) => {
 
@@ -86,7 +83,6 @@ async function readBody( req: IncomingRequest ): Promise<string> {
 
 		const onData = ( chunk: Buffer ) => {
 
-			console.log( '[FileWriter] readBody data chunk:', chunk.length );
 			chunks.push( chunk );
 
 		};
@@ -95,7 +91,6 @@ async function readBody( req: IncomingRequest ): Promise<string> {
 
 			cleanup();
 			const body = Buffer.concat( chunks ).toString();
-			console.log( '[FileWriter] readBody end, total length:', body.length );
 			resolve( body );
 
 		};
@@ -103,7 +98,6 @@ async function readBody( req: IncomingRequest ): Promise<string> {
 		const onError = ( err: Error ) => {
 
 			cleanup();
-			console.error( '[FileWriter] readBody error:', err );
 			reject( err );
 
 		};
@@ -158,7 +152,6 @@ export const FileWriter = (): Plugin => {
 
 				}
 
-				console.log( '[FileWriter] Temporarily disabling watcher for scene.json' );
 				watcher.unwatch( SCENE_FILE_PATH );
 
 			};
@@ -181,7 +174,6 @@ export const FileWriter = (): Plugin => {
 
 					watcher.add( SCENE_FILE_PATH );
 					sceneRewatchTimeout = null;
-					console.log( '[FileWriter] Restored watcher for scene.json' );
 
 				}, SCENE_REWATCH_DELAY );
 
@@ -207,29 +199,20 @@ export const FileWriter = (): Plugin => {
 
 				}
 
-				console.log( `[FileWriter] Request: ${req.method} ${req.url}` );
-
 				try {
 
 					if ( req.url === '/api/writeScene' ) {
 
-						console.log( '[FileWriter] Handling writeScene request' );
-
 						const body = await readBody( req as IncomingRequest );
-						console.log( '[FileWriter] Body received, parsing JSON...' );
-
 						const { sceneData } = JSON.parse( body );
 
 						if ( ! sceneData || typeof sceneData !== 'object' ) {
 
-							console.error( '[FileWriter] Invalid sceneData' );
 							res.statusCode = 400;
 							res.end( 'Bad Request: sceneData is required' );
 							return;
 
 						}
-
-						console.log( '[FileWriter] Writing to:', SCENE_FILE_PATH );
 
 						temporarilyUnwatchScene();
 
@@ -244,8 +227,6 @@ export const FileWriter = (): Plugin => {
 
 						}
 
-						console.log( `[FileWriter] ✓ Saved: src/resources/scene.json` );
-
 						res.statusCode = 200;
 						res.end( 'OK' );
 						return;
@@ -254,14 +235,11 @@ export const FileWriter = (): Plugin => {
 
 					if ( req.url === '/api/writeShader' ) {
 
-						console.log( '[FileWriter] Handling writeShader request' );
-
 						const body = await readBody( req as IncomingRequest );
 						const { filePath, code } = JSON.parse( body );
 
 						if ( typeof filePath !== 'string' || typeof code !== 'string' ) {
 
-							console.error( '[FileWriter] Invalid payload for writeShader' );
 							res.statusCode = 400;
 							res.end( 'Bad Request: filePath and code are required' );
 							return;
@@ -272,7 +250,6 @@ export const FileWriter = (): Plugin => {
 
 						if ( ! fullPath.startsWith( COMPONENTS_DIR ) ) {
 
-							console.error( '[FileWriter] Forbidden writeShader path:', fullPath );
 							res.statusCode = 403;
 							res.end( 'Forbidden: Only files under src/resources/Components/ can be modified' );
 							return;
@@ -280,7 +257,6 @@ export const FileWriter = (): Plugin => {
 						}
 
 						await fs.writeFile( fullPath, code, 'utf-8' );
-						console.log( `[FileWriter] ✓ Saved shader: ${filePath}` );
 
 						res.statusCode = 200;
 						res.end( 'OK' );
@@ -290,7 +266,6 @@ export const FileWriter = (): Plugin => {
 
 				} catch ( error ) {
 
-					console.error( '[FileWriter] Error:', error );
 					res.statusCode = 500;
 					res.end( `Internal Server Error: ${error}` );
 					return;

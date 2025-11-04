@@ -26,7 +26,7 @@ void main( void ) {
 
 	vec4 noiseTex = texture( uNoiseTex, vUv );
 
-	float hole = length( (-cuv.x * 0.5 + cuv.y)  );
+	float hole = length( (-cuv.x * 0.5 + cuv.y) );
 
 	float line = length( vec2( 1.0 - uv.x, uv.y ) );
 
@@ -36,10 +36,19 @@ void main( void ) {
 	hole += noise1 * 0.1;
 	hole -= (1.0 - v) * 0.3;
 
+	float hide = max(0.0, uState.x - 1.0);
+
+
 	if( hole < 0.15 + (1.0 - vLayerIndex.y ) * 0.05 ) {
 
 		discard;
 
+	}
+
+	if( cuv.y - cuv.x * 0.4 < -0.7 + hide * 1.0 + + noise1 * 0.3 ) {
+
+		discard;
+		
 	}
 
 	// シンプルなマグロの赤身カラー - 正規化値で明るさを調整
