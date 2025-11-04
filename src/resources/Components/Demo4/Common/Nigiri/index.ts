@@ -4,9 +4,9 @@ import { Sashimi } from '../../Maguro/Sashimi';
 import { Shari } from '../Shari';
 
 /**
- * SushiSakana - ShariとSashimiを組み合わせた寿司の基本コンポーネント
+ * Nigiri - ShariとSashimiを組み合わせた寿司の基本コンポーネント
  */
-export class SushiSakana extends MXP.Component {
+export class Nigiri extends MXP.Component {
 
 	private shariEntity: MXP.Entity;
 	private sashimiEntity: MXP.Entity;

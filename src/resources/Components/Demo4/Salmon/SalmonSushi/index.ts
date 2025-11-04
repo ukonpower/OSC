@@ -1,9 +1,9 @@
 import * as MXP from 'maxpower';
 
-import { SushiSakana } from '../../Common/SushiSakana';
+import { Nigiri } from '../../Common/Nigiri';
 
 /**
- * SalmonSushi - Emptyを作成してSushiSakanaを追加するコンポーネント
+ * SalmonSushi - Emptyを作成してNigiriを追加するコンポーネント
  */
 export class SalmonSushi extends MXP.Component {
 
@@ -17,11 +17,11 @@ export class SalmonSushi extends MXP.Component {
 		// BLidgerコンポーネントを取得
 		this.blidger = this.entity.getComponent( MXP.BLidger ) || null;
 
-		// SushiSakanaエンティティを作成
+		// Nigiriエンティティを作成
 		this.sushiEntity = new MXP.Entity();
-		this.sushiEntity.name = "SushiSakana";
+		this.sushiEntity.name = "Nigiri";
 		this.sushiEntity.euler.set( 0, Math.PI / 2, 0 );
-		const sushiSakana = this.sushiEntity.addComponent( SushiSakana );
+		const sushiSakana = this.sushiEntity.addComponent( Nigiri );
 		sushiSakana.sashimiType = 'salmon';
 
 		this.entity.add( this.sushiEntity );

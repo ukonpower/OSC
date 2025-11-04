@@ -12,7 +12,7 @@ import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
-import { SushiSakana } from './Components/Demo4/Common/SushiSakana/index.ts';
+import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
 import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
 import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
@@ -42,10 +42,10 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		Common: {
 			DebaBouChou,
 			MizuBall,
+			Nigiri,
 			ShaderMotionGraphics,
 			Shari,
 			SkyBox,
-			SushiSakana,
 		},
 		Ikura: {
 			IkuraFluids,
