@@ -13,6 +13,10 @@ import { Nori } from './Nori';
  */
 export class IkuraGunKan extends MXP.Component {
 
+	private shariEntity: MXP.Entity;
+	private noriEntity: MXP.Entity;
+	private ikuraEntity: MXP.Entity;
+
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
@@ -20,19 +24,30 @@ export class IkuraGunKan extends MXP.Component {
 		// 子エンティティを作成して3つのコンポーネントを追加
 
 		// 1. シャリ（底部のご飯）
-		const shariEntity = new MXP.Entity();
-		shariEntity.addComponent( GunkanShari );
-		this._entity.add( shariEntity );
+		this.shariEntity = new MXP.Entity();
+		this.shariEntity.addComponent( GunkanShari );
+		this._entity.add( this.shariEntity );
 
 		// 2. 海苔（外側のシェル）
-		const noriEntity = new MXP.Entity();
-		noriEntity.addComponent( Nori );
-		this._entity.add( noriEntity );
+		this.noriEntity = new MXP.Entity();
+		this.noriEntity.addComponent( Nori );
+		this._entity.add( this.noriEntity );
 
 		// 3. イクラ（上部の粒）
-		const ikuraEntity = new MXP.Entity();
-		ikuraEntity.addComponent( Ikura );
-		this._entity.add( ikuraEntity );
+		this.ikuraEntity = new MXP.Entity();
+		this.ikuraEntity.addComponent( Ikura );
+		this._entity.add( this.ikuraEntity );
+
+	}
+
+	dispose(): void {
+
+		// 作成した子エンティティを破棄
+		this.shariEntity.dispose();
+		this.noriEntity.dispose();
+		this.ikuraEntity.dispose();
+
+		super.dispose();
 
 	}
 
