@@ -321,16 +321,44 @@ export class FrameDebugger extends GLP.EventEmitter {
 
 		if ( this._focus === null ) {
 
-			const tileSize = new GLP.Vector( this._elm.clientWidth / this._tile.x, this._elm.clientHeight / this._tile.y );
+			// canvasの実際の表示領域を取得（object-fit: contain考慮）
+			const rect = this._elm.getBoundingClientRect();
+			const canvasAspect = this._elm.width / this._elm.height;
+			const displayAspect = rect.width / rect.height;
 
-			const x = Math.floor( ( e.offsetX ) / tileSize.x );
-			const y = Math.floor( ( e.offsetY ) / tileSize.y );
+			let displayWidth = rect.width;
+			let displayHeight = rect.height;
+			let offsetX = 0;
+			let offsetY = 0;
+
+			// object-fit: containの挙動を再現
+			if ( canvasAspect > displayAspect ) {
+				// canvasの方が横長 → 上下に余白
+				displayHeight = rect.width / canvasAspect;
+				offsetY = ( rect.height - displayHeight ) / 2;
+			} else {
+				// canvasの方が縦長 → 左右に余白
+				displayWidth = rect.height * canvasAspect;
+				offsetX = ( rect.width - displayWidth ) / 2;
+			}
+
+			// クリック位置を実際の表示領域内の座標に変換
+			const clickX = e.offsetX - offsetX;
+			const clickY = e.offsetY - offsetY;
+
+			// 表示領域外のクリックは無視
+			if ( clickX < 0 || clickX > displayWidth || clickY < 0 || clickY > displayHeight ) {
+				return;
+			}
+
+			const tileSize = new GLP.Vector( displayWidth / this._tile.x, displayHeight / this._tile.y );
+
+			const x = Math.floor( clickX / tileSize.x );
+			const y = Math.floor( clickY / tileSize.y );
 
 			this._focus = x + y * this._tile.x;
 
 		}
-
-                this._clear();
 
 	}
 
