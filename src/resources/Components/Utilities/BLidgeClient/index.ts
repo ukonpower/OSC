@@ -49,6 +49,9 @@ export class BLidgeClient extends MXP.Component {
 	/** scene.json保存処理のデバウンス用タイマーID */
 	private saveSceneTimerId: number | null;
 
+	/** WebSocket接続失敗時のタイムアウトタイマーID */
+	private connectionTimeoutId: number | null;
+
 	/**
 	 * コンストラクタ
 	 * @param params コンポーネントのパラメータ
@@ -68,6 +71,7 @@ export class BLidgeClient extends MXP.Component {
 		this.gltfPath = BASE_PATH + "/scene.glb";
 		this.reloadTimerId = null;
 		this.saveSceneTimerId = null;
+		this.connectionTimeoutId = null;
 
 		// アニメーション状態を初期化
 		this.animationState = {
@@ -132,6 +136,14 @@ export class BLidgeClient extends MXP.Component {
 		 */
 		const reloadImmediate = async () => {
 
+			// タイムアウトタイマーをクリア
+			if ( this.connectionTimeoutId !== null ) {
+
+				clearTimeout( this.connectionTimeoutId );
+				this.connectionTimeoutId = null;
+
+			}
+
 			if ( this.type == "json" ) {
 
 				// JSONデータからシーンを読み込む
@@ -143,6 +155,21 @@ export class BLidgeClient extends MXP.Component {
 
 				// WebSocketで接続してシーンを読み込む
 				this.blidge.connect( this.connection.url, this.useGLTF ? this.gltfPath : undefined );
+
+				// WebSocket接続のタイムアウト処理(3秒)
+				// 接続失敗時はJSONへフォールバック
+				this.connectionTimeoutId = window.setTimeout( async () => {
+
+					console.warn( '[BLidgeClient] WebSocket connection timeout. Falling back to JSON...' );
+
+					// JSONからシーンを読み込む
+					await this.blidge.loadScene( SceneData as unknown as MXP.BLidgeScene, this.useGLTF ? this.gltfPath : undefined );
+
+					this.emit( "loaded" );
+
+					this.connectionTimeoutId = null;
+
+				}, 1000 );
 
 			}
 
@@ -292,6 +319,14 @@ export class BLidgeClient extends MXP.Component {
 	 */
 	private onSyncScene( blidge: MXP.BLidge ) {
 
+		// WebSocket接続成功時、タイムアウトタイマーをクリア
+		if ( this.connectionTimeoutId !== null ) {
+
+			clearTimeout( this.connectionTimeoutId );
+			this.connectionTimeoutId = null;
+
+		}
+
 		// 開発環境でWebSocket経由の場合、ローカルJSONを更新
 		if ( import.meta.env.DEV && this.type === "websocket" && blidge.currentScene ) {
 
@@ -431,6 +466,14 @@ export class BLidgeClient extends MXP.Component {
 
 			clearTimeout( this.saveSceneTimerId );
 			this.saveSceneTimerId = null;
+
+		}
+
+		// WebSocket接続タイムアウトタイマーをクリア
+		if ( this.connectionTimeoutId !== null ) {
+
+			clearTimeout( this.connectionTimeoutId );
+			this.connectionTimeoutId = null;
 
 		}
 
