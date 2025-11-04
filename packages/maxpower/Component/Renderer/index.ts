@@ -1254,7 +1254,7 @@ export class Renderer extends GLP.EventEmitter {
 
 						this.gl.beginQuery( this._extDisJointTimerQuery.TIME_ELAPSED_EXT, query );
 
-						queryLabel = `${renderType}/${param && param.label || "_"}/ [${drawId}]`;
+						queryLabel = `${param && param.label || "_"}/ [${drawId}]`;
 
 					}
 
@@ -1297,7 +1297,7 @@ export class Renderer extends GLP.EventEmitter {
 						this.gl.endQuery( this._extDisJointTimerQuery.TIME_ELAPSED_EXT );
 
 						this._queryListQueued.push( {
-							name: queryLabel || `${renderType}/${param && param.label || "_"}/ [${drawId}]`,
+							name: queryLabel || `${param && param.label || "_"}/ [${drawId}]`,
 							query: query,
 							frameQueued: this._queryFrameCount
 						} );

@@ -152,28 +152,18 @@ export const Timer = () => {
 	// 利用可能なrenderTypeリストを取得
 	const availableTypes = Array.from( new Set( statistics.map( ( s ) => s.renderType ) ) );
 
-	// renderTypeごとにグループ化
-	const groupedStats = filteredStats.reduce( ( acc, stat ) => {
+	// ソート
+	const sortedItems = [ ...filteredStats ].sort( ( a, b ) => {
 
-		if ( ! acc[ stat.renderType ] ) {
+		if ( sortBy === 'time' ) {
 
-			acc[ stat.renderType ] = [];
+			return b.avg - a.avg; // 平均時間の降順
+
+		} else {
+
+			return a.name.localeCompare( b.name ); // 名前の昇順
 
 		}
-
-		acc[ stat.renderType ].push( stat );
-
-		return acc;
-
-	}, {} as Record<string, TimerStatistics[]> );
-
-	// renderTypeを平均時間の合計でソート（時間がかかったグループから表示）
-	const sortedRenderTypes = Object.keys( groupedStats ).sort( ( a, b ) => {
-
-		const totalA = groupedStats[ a ].reduce( ( sum, item ) => sum + item.avg, 0 );
-		const totalB = groupedStats[ b ].reduce( ( sum, item ) => sum + item.avg, 0 );
-
-		return totalB - totalA; // 降順
 
 	} );
 
@@ -233,71 +223,40 @@ export const Timer = () => {
 				</div>
 			</div>
 
-			{/* renderTypeごとのグループ（時間がかかった順） */}
-			{sortedRenderTypes.map( ( renderType ) => {
+			{/* タイマーアイテムのリスト */}
+			<div className={style.group}>
+				{sortedItems.map( ( stat, index ) => {
 
-				const items = groupedStats[ renderType ];
+					const color = getColorForDuration( stat.avg );
+					const barWidth = totalTime > 0 ? ( stat.avg / totalTime ) * 100 : 0;
 
-				// グループ内の平均時間の合計と割合
-				const groupTotal = items.reduce( ( sum, item ) => sum + item.avg, 0 );
-				const groupPercentage = totalTime > 0 ? ( groupTotal / totalTime ) * 100 : 0;
-
-				// ソート
-				const sortedItems = [ ...items ].sort( ( a, b ) => {
-
-					if ( sortBy === 'time' ) {
-
-						return b.avg - a.avg; // 平均時間の降順
-
-					} else {
-
-						return a.name.localeCompare( b.name ); // 名前の昇順
-
-					}
-
-				} );
-
-				return (
-					<div key={renderType} className={style.group}>
-						<div className={style.groupHeader}>
-							{renderType} ({formatNumber( groupTotal )} ms, {groupPercentage.toFixed( 1 )}%)
+					return (
+						<div key={stat.name + index} className={style.item}>
+							<div>
+								<span className={style.itemName} title={stat.name}>
+									{stat.name}
+								</span>
+								<span className={style.itemTime} style={{ color }}>
+									{formatNumber( stat.avg )}ms
+								</span>
+								<span className={style.itemStats}>
+									max:{formatNumber( stat.max )}
+								</span>
+							</div>
+							<div className={style.progressBar}>
+								<div
+									className={style.progressFill}
+									style={{
+										width: `${barWidth}%`,
+										backgroundColor: color
+									}}
+								/>
+							</div>
 						</div>
+					);
 
-						{sortedItems.map( ( stat, index ) => {
-
-							const color = getColorForDuration( stat.avg );
-							const barWidth = totalTime > 0 ? ( stat.avg / totalTime ) * 100 : 0;
-
-							return (
-								<div key={stat.name + index} className={style.item}>
-									<div>
-										<span className={style.itemName} title={stat.name}>
-											{stat.name}
-										</span>
-										<span className={style.itemTime} style={{ color }}>
-											{formatNumber( stat.avg )}ms
-										</span>
-										<span className={style.itemStats}>
-											max:{formatNumber( stat.max )}
-										</span>
-									</div>
-									<div className={style.progressBar}>
-										<div
-											className={style.progressFill}
-											style={{
-												width: `${barWidth}%`,
-												backgroundColor: color
-											}}
-										/>
-									</div>
-								</div>
-							);
-
-						} )}
-					</div>
-				);
-
-			} )}
+				} )}
+			</div>
 		</div>
 	);
 
