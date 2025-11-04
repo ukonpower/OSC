@@ -308,6 +308,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneSea/Sea",
+			"components": [
+				{
+					"name": "Ocean"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneTako/TakoAshi",
 			"components": [
 				{
