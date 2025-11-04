@@ -183,12 +183,12 @@
 			"path": "/root/blidgeRoot/SceneMaguro/Sushi",
 			"components": [
 				{
-					"name": "SushiMaguro"
+					"name": "SushiSakana"
 				}
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/Sushi/SushiSakana/Sashimi",
+			"path": "/root/blidgeRoot/SceneMaguro/Sushi/Sashimi",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -202,12 +202,12 @@
 			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001",
 			"components": [
 				{
-					"name": "SushiMaguro"
+					"name": "SushiSakana"
 				}
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001/SushiSakana/Sashimi",
+			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001/Sashimi",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -312,6 +312,14 @@
 			"components": [
 				{
 					"name": "Octopus"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneTako/TakoNigiri",
+			"components": [
+				{
+					"name": "SashimiTako"
 				}
 			]
 		},

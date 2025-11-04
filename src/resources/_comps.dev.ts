@@ -13,7 +13,6 @@ import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGrap
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
 import { SushiSakana } from './Components/Demo4/Common/SushiSakana/index.ts';
-import { SushiMaguro } from './Components/Demo4/Common/sushi/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
 import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
 import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
@@ -28,6 +27,7 @@ import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
 import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
 import { Octopus } from './Components/Demo4/Tako/Octopus/index.ts';
+import { SashimiTako } from './Components/Demo4/Tako/SashimiTako/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
@@ -55,7 +55,6 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Shari,
 			SkyBox,
 			SushiSakana,
-			SushiMaguro,
 		},
 		Ikura: {
 			IkuraFluids,
@@ -75,6 +74,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		},
 		Tako: {
 			Octopus,
+			SashimiTako,
 		},
 		TruchetSushiLane,
 	},
