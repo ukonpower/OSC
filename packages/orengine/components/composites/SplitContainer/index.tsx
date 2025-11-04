@@ -5,7 +5,7 @@ import styles from './index.module.scss';
 export type SplitContainerProps = {
 	children: React.ReactNode;
 	direction: 'horizontal' | 'vertical'; // 分割方向
-	sizes?: number[]; // 各パネルの初期サイズ（flex値またはpx）
+	sizes?: ( number | string )[]; // 各パネルの初期サイズ（flex値、px、%など）
 	minSizes?: number[]; // 各パネルの最小サイズ（px）
 	storageKey?: string; // LocalStorage保存用キー
 	splitterSize?: number; // スプリッターの幅（デフォルト: 4px）
@@ -36,8 +36,8 @@ export const SplitContainer = ( props: SplitContainerProps ) => {
 	// ドラッグ状態 (どのスプリッターがドラッグされているか)
 	const [ draggingIndex, setDraggingIndex ] = useState<number | null>( null );
 
-	// 各パネルのサイズ（flex値）
-	const [ paneSizes, setPaneSizes ] = useState<number[]>( [] );
+	// 各パネルのサイズ（flex値、px、%など）
+	const [ paneSizes, setPaneSizes ] = useState<( number | string )[]>( [] );
 
 	// LocalStorageからサイズを復元、または初期サイズを設定
 	useEffect( () => {
@@ -82,7 +82,7 @@ export const SplitContainer = ( props: SplitContainerProps ) => {
 	}, [ storageKey, initialSizes, childCount ] );
 
 	// サイズ更新処理
-	const updateSizes = useCallback( ( newSizes: number[] ) => {
+	const updateSizes = useCallback( ( newSizes: ( number | string )[] ) => {
 
 		setPaneSizes( newSizes );
 
@@ -116,8 +116,36 @@ export const SplitContainer = ( props: SplitContainerProps ) => {
 		const contentSize = containerSize - totalSplitterSize;
 
 		// 各パネルの現在のピクセルサイズを計算
-		const totalFlex = paneSizes.reduce( ( sum, size ) => sum + size, 0 );
-		const pixelSizes = paneSizes.map( size => ( size / totalFlex ) * contentSize );
+		// 文字列の場合は数値に変換（'300px' → 300、'50%' → コンテナサイズの50%）
+		const pixelSizes = paneSizes.map( ( size, idx ) => {
+
+			if ( typeof size === 'string' ) {
+
+				// px指定
+				if ( size.endsWith( 'px' ) ) {
+
+					return parseFloat( size );
+
+				}
+
+				// %指定
+				if ( size.endsWith( '%' ) ) {
+
+					return ( parseFloat( size ) / 100 ) * contentSize;
+
+				}
+
+				// 数値文字列
+				return parseFloat( size ) || 0;
+
+			}
+
+			// 数値の場合、実際のパネルサイズを取得
+			const paneElement = containerRef.current && containerRef.current.children[ idx * 2 ] as HTMLElement;
+
+			return paneElement ? ( direction === 'horizontal' ? paneElement.clientWidth : paneElement.clientHeight ) : 0;
+
+		} );
 
 		// ドラッグ処理
 		const handlePointerMove = ( e: MouseEvent | TouchEvent ) => {
@@ -149,12 +177,12 @@ export const SplitContainer = ( props: SplitContainerProps ) => {
 
 			}
 
-			// ピクセルサイズをflex値に変換
-			const newFlexSizes = [ ...paneSizes ];
-			newFlexSizes[ splitterIndex ] = newPixelSizes[ splitterIndex ];
-			newFlexSizes[ splitterIndex + 1 ] = newPixelSizes[ splitterIndex + 1 ];
+			// ドラッグで変更されたサイズを更新（数値で保存）
+			const newSizes = [ ...paneSizes ];
+			newSizes[ splitterIndex ] = newPixelSizes[ splitterIndex ];
+			newSizes[ splitterIndex + 1 ] = newPixelSizes[ splitterIndex + 1 ];
 
-			updateSizes( newFlexSizes );
+			updateSizes( newSizes );
 
 		};
 
@@ -188,8 +216,13 @@ export const SplitContainer = ( props: SplitContainerProps ) => {
 	childArray.forEach( ( child, index ) => {
 
 		// パネル
+		const size = paneSizes[ index ] || 1;
 		const paneStyle: React.CSSProperties = {
-			flex: paneSizes[ index ] || 1,
+			// 文字列の場合はそのまま使用（'300px', '50%'など）
+			// 数値の場合はflex値として使用
+			flex: typeof size === 'string' ? undefined : size,
+			width: typeof size === 'string' && direction === 'horizontal' ? size : undefined,
+			height: typeof size === 'string' && direction === 'vertical' ? size : undefined,
 			minWidth: direction === 'horizontal' && minSizes[ index ] ? minSizes[ index ] + 'px' : undefined,
 			minHeight: direction === 'vertical' && minSizes[ index ] ? minSizes[ index ] + 'px' : undefined,
 		};

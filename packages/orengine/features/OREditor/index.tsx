@@ -87,21 +87,21 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 			<>
 				<SplitContainer
 					direction="vertical"
-					sizes={[ 1, 160 ]}
+					sizes={[ 1, "150px" ]}
 					minSizes={[ 300, 80 ]}
 					storageKey="orengine-pc-main"
 				>
 					{/* メインコンテンツエリア（水平3分割） */}
 					<SplitContainer
 						direction="horizontal"
-						sizes={[ 300, 1, 300 ]}
+						sizes={[ "300px", 1, "300px" ]}
 						minSizes={[ 200, 400, 200 ]}
 						storageKey="orengine-pc-horizontal"
 					>
 						{/* 左パネル（Scene/Project + Timer） */}
 						<SplitContainer
 							direction="vertical"
-							sizes={[ 1, 200 ]}
+							sizes={[ 1, "200px" ]}
 							minSizes={[ 200, 100 ]}
 							storageKey="orengine-pc-left"
 						>
