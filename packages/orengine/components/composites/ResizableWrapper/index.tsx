@@ -133,7 +133,7 @@ export const ResizableWrapper = ( props: ResizableWrapperProps ) => {
 	}, [ minSize, maxSize, storageKey, onResize ] );
 
 	// マウスダウン/タッチスタート時の処理
-	const handlePointerDown = useCallback( ( event: React.MouseEvent | React.TouchEvent, resizeDirection: 'horizontal' | 'vertical' | 'both' ) => {
+	const handlePointerDown = useCallback( ( event: React.MouseEvent | React.TouchEvent, resizeDirection: 'horizontal' | 'vertical' | 'both', edge?: 'top' | 'bottom' | 'left' | 'right' ) => {
 
 		event.preventDefault();
 		setIsDragging( true );
@@ -153,9 +153,46 @@ export const ResizableWrapper = ( props: ResizableWrapperProps ) => {
 			const deltaX = currentX - startX;
 			const deltaY = currentY - startY;
 
+			let newWidth = startWidth;
+			let newHeight = startHeight;
+
+			// 水平方向のリサイズ
+			if ( resizeDirection === 'horizontal' || resizeDirection === 'both' ) {
+
+				// 左端: 左に動かすと幅が増える（deltaXがマイナス）
+				// 右端: 右に動かすと幅が増える（deltaXがプラス）
+				if ( edge === 'left' ) {
+
+					newWidth = startWidth - deltaX;
+
+				} else {
+
+					newWidth = startWidth + deltaX;
+
+				}
+
+			}
+
+			// 垂直方向のリサイズ
+			if ( resizeDirection === 'vertical' || resizeDirection === 'both' ) {
+
+				// 上端: 上に動かすと高さが増える（deltaYがマイナス）
+				// 下端: 下に動かすと高さが増える（deltaYがプラス）
+				if ( edge === 'top' ) {
+
+					newHeight = startHeight - deltaY;
+
+				} else {
+
+					newHeight = startHeight + deltaY;
+
+				}
+
+			}
+
 			const newSize: Size = {
-				width: resizeDirection === 'vertical' ? startWidth : startWidth + deltaX,
-				height: resizeDirection === 'horizontal' ? startHeight : startHeight + deltaY,
+				width: newWidth,
+				height: newHeight,
 			};
 
 			updateSize( newSize );
@@ -218,34 +255,78 @@ export const ResizableWrapper = ( props: ResizableWrapperProps ) => {
 				{ children }
 			</div>
 
+			{/* 垂直リサイズハンドル（上端） */}
+			{ ( direction === 'vertical' || direction === 'both' ) && (
+				<div
+					className={ getSplitterClassName( 'vertical' ) + ' ' + styles.top }
+					style={ { height: splitterSize + 'px' } }
+					onMouseDown={ ( e ) => handlePointerDown( e, 'vertical', 'top' ) }
+					onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'vertical', 'top' ) : undefined }
+				/>
+			) }
+
 			{/* 垂直リサイズハンドル（下端） */}
 			{ ( direction === 'vertical' || direction === 'both' ) && (
 				<div
-					className={ getSplitterClassName( 'vertical' ) }
+					className={ getSplitterClassName( 'vertical' ) + ' ' + styles.bottom }
 					style={ { height: splitterSize + 'px' } }
-					onMouseDown={ ( e ) => handlePointerDown( e, 'vertical' ) }
-					onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'vertical' ) : undefined }
+					onMouseDown={ ( e ) => handlePointerDown( e, 'vertical', 'bottom' ) }
+					onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'vertical', 'bottom' ) : undefined }
+				/>
+			) }
+
+			{/* 水平リサイズハンドル（左端） */}
+			{ ( direction === 'horizontal' || direction === 'both' ) && (
+				<div
+					className={ getSplitterClassName( 'horizontal' ) + ' ' + styles.left }
+					style={ { width: splitterSize + 'px' } }
+					onMouseDown={ ( e ) => handlePointerDown( e, 'horizontal', 'left' ) }
+					onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'horizontal', 'left' ) : undefined }
 				/>
 			) }
 
 			{/* 水平リサイズハンドル（右端） */}
 			{ ( direction === 'horizontal' || direction === 'both' ) && (
 				<div
-					className={ getSplitterClassName( 'horizontal' ) }
+					className={ getSplitterClassName( 'horizontal' ) + ' ' + styles.right }
 					style={ { width: splitterSize + 'px' } }
-					onMouseDown={ ( e ) => handlePointerDown( e, 'horizontal' ) }
-					onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'horizontal' ) : undefined }
+					onMouseDown={ ( e ) => handlePointerDown( e, 'horizontal', 'right' ) }
+					onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'horizontal', 'right' ) : undefined }
 				/>
 			) }
 
 			{/* コーナーリサイズハンドル（bothモード時） */}
 			{ direction === 'both' && (
-				<div
-					className={ styles.splitter + ' ' + styles.corner }
-					style={ { width: splitterSize + 'px', height: splitterSize + 'px' } }
-					onMouseDown={ ( e ) => handlePointerDown( e, 'both' ) }
-					onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'both' ) : undefined }
-				/>
+				<>
+					{/* 左上 */}
+					<div
+						className={ styles.splitter + ' ' + styles.corner + ' ' + styles.topLeft }
+						style={ { width: splitterSize + 'px', height: splitterSize + 'px' } }
+						onMouseDown={ ( e ) => handlePointerDown( e, 'both', 'top' ) }
+						onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'both', 'top' ) : undefined }
+					/>
+					{/* 右上 */}
+					<div
+						className={ styles.splitter + ' ' + styles.corner + ' ' + styles.topRight }
+						style={ { width: splitterSize + 'px', height: splitterSize + 'px' } }
+						onMouseDown={ ( e ) => handlePointerDown( e, 'both', 'top' ) }
+						onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'both', 'top' ) : undefined }
+					/>
+					{/* 左下 */}
+					<div
+						className={ styles.splitter + ' ' + styles.corner + ' ' + styles.bottomLeft }
+						style={ { width: splitterSize + 'px', height: splitterSize + 'px' } }
+						onMouseDown={ ( e ) => handlePointerDown( e, 'both', 'bottom' ) }
+						onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'both', 'bottom' ) : undefined }
+					/>
+					{/* 右下 */}
+					<div
+						className={ styles.splitter + ' ' + styles.corner + ' ' + styles.bottomRight }
+						style={ { width: splitterSize + 'px', height: splitterSize + 'px' } }
+						onMouseDown={ ( e ) => handlePointerDown( e, 'both', 'bottom' ) }
+						onTouchStart={ enableTouch ? ( e ) => handlePointerDown( e, 'both', 'bottom' ) : undefined }
+					/>
+				</>
 			) }
 		</div>
 	);

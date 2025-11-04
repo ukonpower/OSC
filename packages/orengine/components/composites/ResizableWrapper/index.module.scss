@@ -36,47 +36,80 @@
 	}
 }
 
-// 垂直スプリッター（下端、上下にドラッグ）
+// 垂直スプリッター（上下にドラッグ）
 .splitter.vertical {
-	bottom: 0;
 	left: 0;
 	right: 0;
 	width: 100%;
 	cursor: row-resize;
-	background: linear-gradient(0deg, $bgCol2, transparent);
 
-	&:hover {
-		background: linear-gradient(0deg, $bgCol3, transparent);
+	// 上端
+	&.top {
+		top: 0;
+		background: linear-gradient(180deg, $bgCol2, transparent);
+
+		&:hover {
+			background: linear-gradient(180deg, $bgCol3, transparent);
+		}
+
+		&.dragging {
+			background: linear-gradient(180deg, $bgCol4, transparent);
+		}
 	}
 
-	&.dragging {
-		background: linear-gradient(0deg, $bgCol4, transparent);
+	// 下端
+	&.bottom {
+		bottom: 0;
+		background: linear-gradient(0deg, $bgCol2, transparent);
+
+		&:hover {
+			background: linear-gradient(0deg, $bgCol3, transparent);
+		}
+
+		&.dragging {
+			background: linear-gradient(0deg, $bgCol4, transparent);
+		}
 	}
 }
 
-// 水平スプリッター（右端、左右にドラッグ）
+// 水平スプリッター（左右にドラッグ）
 .splitter.horizontal {
 	top: 0;
-	right: 0;
 	bottom: 0;
 	height: 100%;
 	cursor: col-resize;
-	background: linear-gradient(90deg, transparent, $bgCol2);
 
-	&:hover {
-		background: linear-gradient(90deg, transparent, $bgCol3);
+	// 左端
+	&.left {
+		left: 0;
+		background: linear-gradient(270deg, transparent, $bgCol2);
+
+		&:hover {
+			background: linear-gradient(270deg, transparent, $bgCol3);
+		}
+
+		&.dragging {
+			background: linear-gradient(270deg, transparent, $bgCol4);
+		}
 	}
 
-	&.dragging {
-		background: linear-gradient(90deg, transparent, $bgCol4);
+	// 右端
+	&.right {
+		right: 0;
+		background: linear-gradient(90deg, transparent, $bgCol2);
+
+		&:hover {
+			background: linear-gradient(90deg, transparent, $bgCol3);
+		}
+
+		&.dragging {
+			background: linear-gradient(90deg, transparent, $bgCol4);
+		}
 	}
 }
 
-// コーナースプリッター（右下、両方向にドラッグ）
+// コーナースプリッター（両方向にドラッグ）
 .splitter.corner {
-	bottom: 0;
-	right: 0;
-	cursor: nwse-resize;
 	background: $bgCol2;
 
 	&:hover {
@@ -85,5 +118,33 @@
 
 	&.dragging {
 		background: $bgCol4;
+	}
+
+	// 左上
+	&.topLeft {
+		top: 0;
+		left: 0;
+		cursor: nwse-resize;
+	}
+
+	// 右上
+	&.topRight {
+		top: 0;
+		right: 0;
+		cursor: nesw-resize;
+	}
+
+	// 左下
+	&.bottomLeft {
+		bottom: 0;
+		left: 0;
+		cursor: nesw-resize;
+	}
+
+	// 右下
+	&.bottomRight {
+		bottom: 0;
+		right: 0;
+		cursor: nwse-resize;
 	}
 }
