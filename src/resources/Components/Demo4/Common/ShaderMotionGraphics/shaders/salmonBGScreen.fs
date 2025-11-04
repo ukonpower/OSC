@@ -36,7 +36,7 @@ void main( void ) {
 	hole += noise1 * 0.1;
 	hole -= (1.0 - v) * 0.3;
 
-	if( hole < 0.15 + (1.0 - vLayerIndex.y) * 0.05 ) {
+	if( hole < 0.15 + (1.0 - vLayerIndex.y ) * 0.05 ) {
 
 		discard;
 

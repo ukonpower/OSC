@@ -1,92 +1,304 @@
 import fs from 'fs/promises';
 import path from 'path';
+
 import { Plugin } from 'vite';
+
+type IncomingRequest = {
+	body?: unknown;
+	rawBody?: unknown;
+	readable: boolean;
+	readableEnded: boolean;
+	on: ( event: string, listener: ( ...args: any[] ) => void ) => void;
+	off: ( event: string, listener: ( ...args: any[] ) => void ) => void;
+	removeListener: ( event: string, listener: ( ...args: any[] ) => void ) => void;
+};
+
+/**
+ * 既に他のミドルウェアがパース済みのボディがあれば優先的に利用する
+ */
+const getParsedBody = ( req: IncomingRequest ): string | null => {
+
+	const candidates = [ req.body, req.rawBody ];
+
+	for ( const candidate of candidates ) {
+
+		if ( candidate === undefined || candidate === null ) {
+
+			continue;
+
+		}
+
+		if ( typeof candidate === 'string' ) {
+
+			return candidate;
+
+		}
+
+		if ( Buffer.isBuffer( candidate ) ) {
+
+			return candidate.toString();
+
+		}
+
+		try {
+
+			return JSON.stringify( candidate );
+
+		} catch ( err ) {
+
+			console.warn( '[FileWriter] Failed to stringify cached body:', err );
+
+		}
+
+	}
+
+	return null;
+
+};
+
+/**
+ * リクエストボディを読み取るヘルパー関数
+ */
+async function readBody( req: IncomingRequest ): Promise<string> {
+
+	const cached = getParsedBody( req );
+
+	if ( cached !== null ) {
+
+		console.log( '[FileWriter] Using cached request body' );
+		return cached;
+
+	}
+
+	console.log( '[FileWriter] readBody start, readable:', req.readable, 'readableEnded:', req.readableEnded );
+
+	return new Promise( ( resolve, reject ) => {
+
+		const chunks: Buffer[] = [];
+
+		const cleanup = () => {
+
+			req.removeListener( 'data', onData );
+			req.removeListener( 'end', onEnd );
+			req.removeListener( 'error', onError );
+
+		};
+
+		const onData = ( chunk: Buffer ) => {
+
+			console.log( '[FileWriter] readBody data chunk:', chunk.length );
+			chunks.push( chunk );
+
+		};
+
+		const onEnd = () => {
+
+			cleanup();
+			const body = Buffer.concat( chunks ).toString();
+			console.log( '[FileWriter] readBody end, total length:', body.length );
+			resolve( body );
+
+		};
+
+		const onError = ( err: Error ) => {
+
+			cleanup();
+			console.error( '[FileWriter] readBody error:', err );
+			reject( err );
+
+		};
+
+		req.on( 'data', onData );
+		req.on( 'end', onEnd );
+		req.on( 'error', onError );
+
+		// すでにストリームが終了している場合は即座に解決
+		if ( req.readableEnded ) {
+
+			onEnd();
+
+		}
+
+	} );
+
+}
+
+const ROOT_DIR = path.resolve( __dirname, '../..' );
+const SCENE_FILE_PATH = path.resolve( ROOT_DIR, 'src/resources/scene.json' );
+const COMPONENTS_DIR = path.resolve( ROOT_DIR, 'src/resources/Components' );
+
+const SCENE_REWATCH_DELAY = 200;
 
 /**
  * FileWriter Vite Plugin
- * シェーダーエディタからのファイル保存リクエストを処理する
+ * シーンデータ/シェーダー保存リクエストを処理する
  */
 export const FileWriter = (): Plugin => {
 
 	return {
 		name: 'file-writer',
+		enforce: 'pre',
 		configureServer( server ) {
+
+			const watcher = server.watcher;
+			let sceneRewatchTimeout: NodeJS.Timeout | null = null;
+
+			const temporarilyUnwatchScene = () => {
+
+				if ( ! watcher ) {
+
+					return;
+
+				}
+
+				if ( sceneRewatchTimeout ) {
+
+					clearTimeout( sceneRewatchTimeout );
+					sceneRewatchTimeout = null;
+
+				}
+
+				console.log( '[FileWriter] Temporarily disabling watcher for scene.json' );
+				watcher.unwatch( SCENE_FILE_PATH );
+
+			};
+
+			const scheduleSceneRewatch = () => {
+
+				if ( ! watcher ) {
+
+					return;
+
+				}
+
+				if ( sceneRewatchTimeout ) {
+
+					clearTimeout( sceneRewatchTimeout );
+
+				}
+
+				sceneRewatchTimeout = setTimeout( () => {
+
+					watcher.add( SCENE_FILE_PATH );
+					sceneRewatchTimeout = null;
+					console.log( '[FileWriter] Restored watcher for scene.json' );
+
+				}, SCENE_REWATCH_DELAY );
+
+			};
+
+			server.httpServer?.on( 'close', () => {
+
+				if ( sceneRewatchTimeout ) {
+
+					clearTimeout( sceneRewatchTimeout );
+					sceneRewatchTimeout = null;
+
+				}
+
+			} );
 
 			server.middlewares.use( async ( req, res, next ) => {
 
-				// /api/writeShader エンドポイント
-				if ( req.url === '/api/writeShader' && req.method === 'POST' ) {
+				if ( req.method !== 'POST' ) {
 
-					try {
+					next();
+					return;
 
-						// リクエストボディを読み取り
-						const chunks: Buffer[] = [];
+				}
 
-						req.on( 'data', ( chunk ) => {
+				console.log( `[FileWriter] Request: ${req.method} ${req.url}` );
 
-							chunks.push( chunk );
+				try {
 
-						} );
+					if ( req.url === '/api/writeScene' ) {
 
-						req.on( 'end', async () => {
+						console.log( '[FileWriter] Handling writeScene request' );
 
-							try {
+						const body = await readBody( req as IncomingRequest );
+						console.log( '[FileWriter] Body received, parsing JSON...' );
 
-								const body = Buffer.concat( chunks ).toString();
-								const { filePath, code } = JSON.parse( body );
+						const { sceneData } = JSON.parse( body );
 
-								if ( ! filePath || typeof code !== 'string' ) {
+						if ( ! sceneData || typeof sceneData !== 'object' ) {
 
-									res.statusCode = 400;
-									res.end( 'Bad Request: filePath and code are required' );
-									return;
+							console.error( '[FileWriter] Invalid sceneData' );
+							res.statusCode = 400;
+							res.end( 'Bad Request: sceneData is required' );
+							return;
 
-								}
+						}
 
-								// セキュリティチェック: src/resources/Components/ 配下のみ許可
-								const rootDir = path.resolve( __dirname, '../..' );
-								const fullPath = path.resolve( rootDir, 'src', filePath );
-								const allowedDir = path.resolve( rootDir, 'src/resources/Components' );
+						console.log( '[FileWriter] Writing to:', SCENE_FILE_PATH );
 
-								if ( ! fullPath.startsWith( allowedDir ) ) {
+						temporarilyUnwatchScene();
 
-									res.statusCode = 403;
-									res.end( 'Forbidden: Only files under src/resources/Components/ can be modified' );
-									return;
+						// JSON形式で保存（インデントあり）
+						try {
 
-								}
+							await fs.writeFile( SCENE_FILE_PATH, JSON.stringify( sceneData, null, 2 ), 'utf-8' );
 
-								// ファイル書き込み
-								await fs.writeFile( fullPath, code, 'utf-8' );
+						} finally {
 
-								console.log( `[FileWriter] Saved: ${filePath}` );
+							scheduleSceneRewatch();
 
-								res.statusCode = 200;
-								res.end( 'OK' );
+						}
 
-							} catch ( error ) {
+						console.log( `[FileWriter] ✓ Saved: src/resources/scene.json` );
 
-								console.error( '[FileWriter] Error:', error );
-								res.statusCode = 500;
-								res.end( `Internal Server Error: ${error}` );
-
-							}
-
-						} );
-
-					} catch ( error ) {
-
-						console.error( '[FileWriter] Error:', error );
-						res.statusCode = 500;
-						res.end( `Internal Server Error: ${error}` );
+						res.statusCode = 200;
+						res.end( 'OK' );
+						return;
 
 					}
 
-				} else {
+					if ( req.url === '/api/writeShader' ) {
 
-					next();
+						console.log( '[FileWriter] Handling writeShader request' );
+
+						const body = await readBody( req as IncomingRequest );
+						const { filePath, code } = JSON.parse( body );
+
+						if ( typeof filePath !== 'string' || typeof code !== 'string' ) {
+
+							console.error( '[FileWriter] Invalid payload for writeShader' );
+							res.statusCode = 400;
+							res.end( 'Bad Request: filePath and code are required' );
+							return;
+
+						}
+
+						const fullPath = path.resolve( ROOT_DIR, 'src', filePath );
+
+						if ( ! fullPath.startsWith( COMPONENTS_DIR ) ) {
+
+							console.error( '[FileWriter] Forbidden writeShader path:', fullPath );
+							res.statusCode = 403;
+							res.end( 'Forbidden: Only files under src/resources/Components/ can be modified' );
+							return;
+
+						}
+
+						await fs.writeFile( fullPath, code, 'utf-8' );
+						console.log( `[FileWriter] ✓ Saved shader: ${filePath}` );
+
+						res.statusCode = 200;
+						res.end( 'OK' );
+						return;
+
+					}
+
+				} catch ( error ) {
+
+					console.error( '[FileWriter] Error:', error );
+					res.statusCode = 500;
+					res.end( `Internal Server Error: ${error}` );
+					return;
 
 				}
+
+				// 他のリクエストは次のミドルウェアへ
+				next();
 
 			} );
 

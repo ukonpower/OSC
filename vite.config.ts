@@ -49,6 +49,7 @@ export default defineConfig( {
 		},
 	},
 	plugins: [
+		FileWriter(),
 		react(),
 		OREngineFileSystemPlugin(),
 		ShaderLoader( {
@@ -56,7 +57,6 @@ export default defineConfig( {
 		} ),
 		ResourceManager(),
 		ShaderComponentRegistry(),
-		FileWriter(),
 	],
 	define: {
 		BASE_PATH: `"${basePath}"`,

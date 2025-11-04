@@ -21,7 +21,7 @@ void main( void ) {
 	vec4 gpuPos = texture(uGPUSampler0, cuv );
 
 	// いくら粒のサイズ調整
-	outPos *= 0.05;
+	outPos *= 0.2;
 
 	// 密度に基づくサイズ変化
 	float density = gpuPos.w;

@@ -30,7 +30,7 @@ void main( void ) {
 	offset.y += sin(uTime * 2.0 + id.y * 10.0) * 0.02;
 
 	// イクラのサイズ（小さめの球体）
-	outPos *= 0.035;
+	outPos *= 0.05;
 	outPos += offset;
 
 	#include <vert_out>

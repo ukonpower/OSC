@@ -46,6 +46,9 @@ export class BLidgeClient extends MXP.Component {
 	/** reload処理のデバウンス用タイマーID */
 	private reloadTimerId: number | null;
 
+	/** scene.json保存処理のデバウンス用タイマーID */
+	private saveSceneTimerId: number | null;
+
 	/**
 	 * コンストラクタ
 	 * @param params コンポーネントのパラメータ
@@ -64,6 +67,7 @@ export class BLidgeClient extends MXP.Component {
 		this.useGLTF = false;
 		this.gltfPath = BASE_PATH + "/scene.glb";
 		this.reloadTimerId = null;
+		this.saveSceneTimerId = null;
 
 		// アニメーション状態を初期化
 		this.animationState = {
@@ -234,11 +238,66 @@ export class BLidgeClient extends MXP.Component {
 	}
 
 	/**
+	 * シーンデータをローカルJSONファイルに保存（デバウンス付き）
+	 * 開発環境でのみ使用される
+	 * @param sceneData 保存するシーンデータ
+	 */
+	private saveSceneToLocal( sceneData: MXP.BLidgeScene ): void {
+
+		// 既存のタイマーをキャンセル
+		if ( this.saveSceneTimerId !== null ) {
+
+			clearTimeout( this.saveSceneTimerId );
+
+		}
+
+		// 1秒後に保存を実行（複数回の更新をまとめる）
+		this.saveSceneTimerId = window.setTimeout( async () => {
+
+			this.saveSceneTimerId = null;
+
+			try {
+
+				const response = await fetch( '/api/writeScene', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify( { sceneData } ),
+				} );
+
+				if ( ! response.ok ) {
+
+					const text = await response.text();
+					throw new Error( `HTTP error! status: ${response.status}, body: ${text}` );
+
+				}
+
+				console.log( '[BLidgeClient] Scene saved to local JSON' );
+
+			} catch ( error ) {
+
+				console.error( '[BLidgeClient] Failed to save scene.json:', error );
+
+			}
+
+		}, 1000 );
+
+	}
+
+	/**
 	 * シーン同期イベントハンドラ
 	 * BLidgeからシーンデータを受け取った際に呼ばれる
 	 * @param blidge BLidgeインスタンス
 	 */
 	private onSyncScene( blidge: MXP.BLidge ) {
+
+		// 開発環境でWebSocket経由の場合、ローカルJSONを更新
+		if ( import.meta.env.DEV && this.type === "websocket" && blidge.currentScene ) {
+
+			this.saveSceneToLocal( blidge.currentScene );
+
+		}
 
 		// 現在のタイムスタンプを取得（更新されたエンティティを追跡するため）
 		const timeStamp = new Date().getTime();
@@ -364,6 +423,14 @@ export class BLidgeClient extends MXP.Component {
 
 			clearTimeout( this.reloadTimerId );
 			this.reloadTimerId = null;
+
+		}
+
+		// scene保存タイマーをクリア
+		if ( this.saveSceneTimerId !== null ) {
+
+			clearTimeout( this.saveSceneTimerId );
+			this.saveSceneTimerId = null;
 
 		}
 
