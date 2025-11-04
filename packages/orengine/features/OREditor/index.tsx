@@ -8,7 +8,7 @@ import { MouseMenuContext } from '../../components/composites/MouseMenu/Context/
 import { useMouseMenuContext } from '../../components/composites/MouseMenu/Hooks/useMouseMenuContext';
 import { Panel } from '../../components/composites/Panel';
 import { PanelContainer } from '../../components/composites/PanelContainer';
-import { ResizableWrapper } from '../../components/composites/ResizableWrapper';
+import { SplitContainer } from '../../components/composites/SplitContainer';
 import { EntityProperty } from '../../components/panels/EntityProperty';
 import { Timer } from '../../components/panels/GPUTimer';
 import { Hierarchy } from '../../components/panels/Hierarchy';
@@ -85,85 +85,81 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 
 		editorElm = (
 			<>
-				<div className={style.vert}>
-					<div className={`${style.horiz} ${style.flex}`}>
-						<ResizableWrapper
-							direction="horizontal"
-							defaultSize={{ width: 300 }}
-							minSize={{ width: 200 }}
-							maxSize={{ width: 600 }}
-							storageKey="orengine-leftPanel"
-						>
-							<div className={style.vert} style={{ width: '100%', height: '100%' }}>
-								<div className={style.flex}>
-									<PanelContainer>
-										<Panel title='Scene'>
-											<Hierarchy />
-										</Panel>
-										<Panel title='Project'>
-											<ProjectControl />
-										</Panel>
-									</PanelContainer>
-								</div>
-								<ResizableWrapper
-									direction="vertical"
-									defaultSize={{ height: '20vh' }}
-									minSize={{ height: 100 }}
-									maxSize={{ height: 400 }}
-									storageKey="orengine-timerPanel"
-								>
-									<PanelContainer>
-										<Panel title='Timer' noPadding>
-											<Timer />
-										</Panel>
-									</PanelContainer>
-								</ResizableWrapper>
-							</div>
-						</ResizableWrapper>
-						<div className={`${style.flex}`}>
-							<Screen />
-						</div>
-						<ResizableWrapper
-							direction="horizontal"
-							defaultSize={{ width: 300 }}
-							minSize={{ width: 200 }}
-							maxSize={{ width: 600 }}
-							storageKey="orengine-rightPanel"
-						>
-							<div className={style.vert} style={{ width: '100%', height: '100%' }}>
-								<div className={style.flex} style={hasShaderErrors ? { flex: '1 1 50%' } : undefined}>
-									<PanelContainer>
-										<Panel title='Property'>
-											<EntityProperty />
-										</Panel>
-									</PanelContainer>
-								</div>
-								{import.meta.env.DEV && hasShaderErrors && (
-									<div className={style.flex} style={{ flex: '1 1 50%' }}>
-										<PanelContainer>
-											<Panel title='Shader Errors'>
-												<ShaderErrors />
-											</Panel>
-										</PanelContainer>
-									</div>
-								)}
-							</div>
-						</ResizableWrapper>
-					</div>
-					<ResizableWrapper
-						direction="vertical"
-						defaultSize={{ height: 160 }}
-						minSize={{ height: 80 }}
-						maxSize={{ height: 400 }}
-						storageKey="orengine-timelinePanel"
+				<SplitContainer
+					direction="vertical"
+					sizes={[ 1, 160 ]}
+					minSizes={[ 300, 80 ]}
+					storageKey="orengine-pc-main"
+				>
+					{/* メインコンテンツエリア（水平3分割） */}
+					<SplitContainer
+						direction="horizontal"
+						sizes={[ 300, 1, 300 ]}
+						minSizes={[ 200, 400, 200 ]}
+						storageKey="orengine-pc-horizontal"
 					>
-						<PanelContainer>
-							<Panel title='Timeline' noPadding>
-								<Timeline />
-							</Panel>
-						</PanelContainer>
-					</ResizableWrapper>
-				</div>
+						{/* 左パネル（Scene/Project + Timer） */}
+						<SplitContainer
+							direction="vertical"
+							sizes={[ 1, 200 ]}
+							minSizes={[ 200, 100 ]}
+							storageKey="orengine-pc-left"
+						>
+							<PanelContainer>
+								<Panel title='Scene'>
+									<Hierarchy />
+								</Panel>
+								<Panel title='Project'>
+									<ProjectControl />
+								</Panel>
+							</PanelContainer>
+							<PanelContainer>
+								<Panel title='Timer' noPadding>
+									<Timer />
+								</Panel>
+							</PanelContainer>
+						</SplitContainer>
+
+						{/* 中央（Screen） */}
+						<Screen />
+
+						{/* 右パネル（Property + ShaderErrors） */}
+						{hasShaderErrors ? (
+							<SplitContainer
+								direction="vertical"
+								sizes={[ 1, 1 ]}
+								minSizes={[ 150, 150 ]}
+								storageKey="orengine-pc-right"
+							>
+								<PanelContainer>
+									<Panel title='Property'>
+										<EntityProperty />
+									</Panel>
+								</PanelContainer>
+								{import.meta.env.DEV && (
+									<PanelContainer>
+										<Panel title='Shader Errors'>
+											<ShaderErrors />
+										</Panel>
+									</PanelContainer>
+								)}
+							</SplitContainer>
+						) : (
+							<PanelContainer>
+								<Panel title='Property'>
+									<EntityProperty />
+								</Panel>
+							</PanelContainer>
+						)}
+					</SplitContainer>
+
+					{/* タイムライン */}
+					<PanelContainer>
+						<Panel title='Timeline' noPadding>
+							<Timeline />
+						</Panel>
+					</PanelContainer>
+				</SplitContainer>
 				<MouseMenu />
 			</>
 		);
@@ -171,94 +167,86 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 	} else {
 
 		editorElm = (
-			<div className={style.editor}>
-				<div className={style.vert}>
-					<ResizableWrapper
-						direction="vertical"
-						defaultSize={{ height: '25vh' }}
-						minSize={{ height: 150 }}
-						maxSize={{ height: 600 }}
-						storageKey="orengine-tablet-screen"
-					>
-						<Screen />
-					</ResizableWrapper>
-					<ResizableWrapper
-						direction="vertical"
-						defaultSize={{ height: '45vh' }}
-						minSize={{ height: 200 }}
+			<>
+				<SplitContainer
+					direction="vertical"
+					sizes={[ 250, 450, 300 ]}
+					minSizes={[ 150, 200, 100 ]}
+					storageKey="orengine-tablet-main"
+				>
+					{/* Screen */}
+					<Screen />
+
+					{/* 中央エリア（Scene/Project/Timer + Property/Errors） */}
+					<SplitContainer
+						direction="horizontal"
+						sizes={[ 450, 1 ]}
+						minSizes={[ 200, 300 ]}
 						storageKey="orengine-tablet-middle"
 					>
-						<div className={style.horiz} style={{ width: '100%', height: '100%' }}>
-							<ResizableWrapper
-								direction="horizontal"
-								defaultSize={{ width: '45vw' }}
-								minSize={{ width: 200 }}
-								storageKey="orengine-tablet-leftPanel"
+						{/* 左パネル（Scene/Project + Timer） */}
+						<SplitContainer
+							direction="vertical"
+							sizes={[ 1, 120 ]}
+							minSizes={[ 200, 80 ]}
+							storageKey="orengine-tablet-left"
+						>
+							<PanelContainer>
+								<Panel title='Scene'>
+									<Hierarchy />
+								</Panel>
+								<Panel title='Project'>
+									<ProjectControl />
+								</Panel>
+							</PanelContainer>
+							<PanelContainer>
+								<Panel title='Timer' noPadding>
+									<Timer />
+								</Panel>
+							</PanelContainer>
+						</SplitContainer>
+
+						{/* 右パネル（Property + ShaderErrors） */}
+						{hasShaderErrors ? (
+							<SplitContainer
+								direction="vertical"
+								sizes={[ 1, 1 ]}
+								minSizes={[ 150, 150 ]}
+								storageKey="orengine-tablet-right"
 							>
-								<div className={style.vert} style={{ width: '100%', height: '100%' }}>
-									<div style={{ flex: '1' }}>
-										<PanelContainer>
-											<Panel title='Scene'>
-												<Hierarchy />
-											</Panel>
-											<Panel title='Project'>
-												<ProjectControl />
-											</Panel>
-										</PanelContainer>
-									</div>
-									<ResizableWrapper
-										direction="vertical"
-										defaultSize={{ height: '12vh' }}
-										minSize={{ height: 80 }}
-										maxSize={{ height: 300 }}
-										storageKey="orengine-tablet-timerPanel"
-									>
-										<PanelContainer>
-											<Panel title='Timer' noPadding>
-												<Timer />
-											</Panel>
-										</PanelContainer>
-									</ResizableWrapper>
-								</div>
-							</ResizableWrapper>
-							<div className={`${style.flex} ${style.vert}`}>
-								<div className={style.flex} style={hasShaderErrors ? { flex: '1 1 50%' } : undefined}>
+								<PanelContainer>
+									<Panel title='Property'>
+										<EntityProperty />
+									</Panel>
+								</PanelContainer>
+								{import.meta.env.DEV && (
 									<PanelContainer>
-										<Panel title='Property'>
-											<EntityProperty />
+										<Panel title='Shader Errors'>
+											<ShaderErrors />
 										</Panel>
 									</PanelContainer>
-								</div>
-								{import.meta.env.DEV && hasShaderErrors && (
-									<div className={style.flex} style={{ flex: '1 1 50%' }}>
-										<PanelContainer>
-											<Panel title='Shader Errors'>
-												<ShaderErrors />
-											</Panel>
-										</PanelContainer>
-									</div>
 								)}
-							</div>
-						</div>
-					</ResizableWrapper>
-					<ResizableWrapper
-						direction="vertical"
-						defaultSize={{ height: '30vh' }}
-						minSize={{ height: 100 }}
-						maxSize={{ height: 400 }}
-						storageKey="orengine-tablet-timeline"
-					>
-						<PanelContainer>
-							<Panel title='Timeline' noPadding>
-								<ErrorBoundary fallback={<div>エラーだよ</div>}>
-									<Timeline />
-								</ErrorBoundary>
-							</Panel>
-						</PanelContainer>
-					</ResizableWrapper>
-				</div>
+							</SplitContainer>
+						) : (
+							<PanelContainer>
+								<Panel title='Property'>
+									<EntityProperty />
+								</Panel>
+							</PanelContainer>
+						)}
+					</SplitContainer>
+
+					{/* Timeline */}
+					<PanelContainer>
+						<Panel title='Timeline' noPadding>
+							<ErrorBoundary fallback={<div>エラーだよ</div>}>
+								<Timeline />
+							</ErrorBoundary>
+						</Panel>
+					</PanelContainer>
+				</SplitContainer>
 				<MouseMenu />
-			</div>
+			</>
 		);
 
 	}
