@@ -126,18 +126,12 @@ export class TimerDataBuffer {
 	private buffers: Map<string, CircularBuffer>;
 	private windowSize: number;
 	private currentData: Map<string, TimerSample>;
-	private frameCount: number;
-	private logInterval: number; // ログ出力間隔（フレーム数）
-	private lastSampleCount: number; // 前回のサンプル数
 
 	constructor( windowSize: number = 30 ) {
 
 		this.windowSize = windowSize;
 		this.buffers = new Map();
 		this.currentData = new Map();
-		this.frameCount = 0;
-		this.logInterval = 60; // 60フレームごと（約1秒）
-		this.lastSampleCount = 0;
 
 	}
 
@@ -147,23 +141,6 @@ export class TimerDataBuffer {
 	update( samples: TimerDuration[] ) {
 
 		const timestamp = performance.now();
-		this.frameCount ++;
-
-		// デバッグログ: 60フレームごとに出力
-		const shouldLog = this.frameCount % this.logInterval === 0;
-
-		if ( shouldLog ) {
-
-			console.group( `[GPUTimer] Frame ${this.frameCount} - ${new Date().toLocaleTimeString()}.${timestamp.toFixed( 0 ).slice( - 3 )}` );
-			console.log( `受信サンプル数: ${samples.length}` );
-
-			if ( samples.length === 0 ) {
-
-				console.warn( "⚠️ GPU計測結果が0件です。クエリがまだ完了していない可能性があります" );
-
-			}
-
-		}
 
 		// 既存データをクリアせず累積的に更新
 		// これによりフレーム間でのサンプル数変動の影響を受けにくくなる
@@ -191,46 +168,12 @@ export class TimerDataBuffer {
 				buffer = new CircularBuffer( this.windowSize );
 				this.buffers.set( sample.name, buffer );
 
-				if ( shouldLog ) {
-
-					console.log( `🆕 新規タイマー登録: ${sample.name}` );
-
-				}
-
 			}
 
 			buffer.push( sample.duration );
 
 			// 現在のデータとして保存
 			this.currentData.set( sample.name, timerSample );
-
-			// 個別サンプルのログ（最初の3つのみ）
-			if ( shouldLog && i < 3 ) {
-
-				console.log( `  [${i}] ${sample.name}: ${sample.duration.toFixed( 3 )}ms` );
-
-			}
-
-		}
-
-		if ( shouldLog ) {
-
-			if ( samples.length > 3 ) {
-
-				console.log( `  ... 他 ${samples.length - 3} 件` );
-
-			}
-
-			// サンプル数の変動チェック
-			if ( this.lastSampleCount > 0 && Math.abs( samples.length - this.lastSampleCount ) > 5 ) {
-
-				console.warn( `⚠️ サンプル数が大きく変動: ${this.lastSampleCount} → ${samples.length}` );
-
-			}
-
-			this.lastSampleCount = samples.length;
-
-			console.groupEnd();
 
 		}
 
