@@ -8,6 +8,7 @@ import { MouseMenuContext } from '../../components/composites/MouseMenu/Context/
 import { useMouseMenuContext } from '../../components/composites/MouseMenu/Hooks/useMouseMenuContext';
 import { Panel } from '../../components/composites/Panel';
 import { PanelContainer } from '../../components/composites/PanelContainer';
+import { ResizableWrapper } from '../../components/composites/ResizableWrapper';
 import { EntityProperty } from '../../components/panels/EntityProperty';
 import { Timer } from '../../components/panels/GPUTimer';
 import { Hierarchy } from '../../components/panels/Hierarchy';
@@ -86,54 +87,82 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 			<>
 				<div className={style.vert}>
 					<div className={`${style.horiz} ${style.flex}`}>
-						<div className={style.vert} style={{ width: '300px' }}>
-							<div className={style.flex}>
-								<PanelContainer>
-									<Panel title='Scene'>
-										<Hierarchy />
-									</Panel>
-									<Panel title='Project'>
-										<ProjectControl />
-									</Panel>
-								</PanelContainer>
-							</div>
-							<div style={{ height: '20vh' }}>
-								<PanelContainer>
-									<Panel title='Timer' noPadding>
-										<Timer />
-									</Panel>
-								</PanelContainer>
-							</div>
-						</div>
-						<div className={`${style.flex}`}>
-							<Screen />
-						</div>
-						<div className={style.vert} style={{ width: '300px' }}>
-							<div className={style.flex} style={hasShaderErrors ? { flex: '1 1 50%' } : undefined}>
-								<PanelContainer>
-									<Panel title='Property'>
-										<EntityProperty />
-									</Panel>
-								</PanelContainer>
-							</div>
-							{import.meta.env.DEV && hasShaderErrors && (
-								<div className={style.flex} style={{ flex: '1 1 50%' }}>
+						<ResizableWrapper
+							direction="horizontal"
+							defaultSize={{ width: 300 }}
+							minSize={{ width: 200 }}
+							maxSize={{ width: 600 }}
+							storageKey="orengine-leftPanel"
+						>
+							<div className={style.vert} style={{ width: '100%', height: '100%' }}>
+								<div className={style.flex}>
 									<PanelContainer>
-										<Panel title='Shader Errors'>
-											<ShaderErrors />
+										<Panel title='Scene'>
+											<Hierarchy />
+										</Panel>
+										<Panel title='Project'>
+											<ProjectControl />
 										</Panel>
 									</PanelContainer>
 								</div>
-							)}
+								<ResizableWrapper
+									direction="vertical"
+									defaultSize={{ height: '20vh' }}
+									minSize={{ height: 100 }}
+									maxSize={{ height: 400 }}
+									storageKey="orengine-timerPanel"
+								>
+									<PanelContainer>
+										<Panel title='Timer' noPadding>
+											<Timer />
+										</Panel>
+									</PanelContainer>
+								</ResizableWrapper>
+							</div>
+						</ResizableWrapper>
+						<div className={`${style.flex}`}>
+							<Screen />
 						</div>
+						<ResizableWrapper
+							direction="horizontal"
+							defaultSize={{ width: 300 }}
+							minSize={{ width: 200 }}
+							maxSize={{ width: 600 }}
+							storageKey="orengine-rightPanel"
+						>
+							<div className={style.vert} style={{ width: '100%', height: '100%' }}>
+								<div className={style.flex} style={hasShaderErrors ? { flex: '1 1 50%' } : undefined}>
+									<PanelContainer>
+										<Panel title='Property'>
+											<EntityProperty />
+										</Panel>
+									</PanelContainer>
+								</div>
+								{import.meta.env.DEV && hasShaderErrors && (
+									<div className={style.flex} style={{ flex: '1 1 50%' }}>
+										<PanelContainer>
+											<Panel title='Shader Errors'>
+												<ShaderErrors />
+											</Panel>
+										</PanelContainer>
+									</div>
+								)}
+							</div>
+						</ResizableWrapper>
 					</div>
-					<div style={{ height: '160px' }}>
+					<ResizableWrapper
+						direction="vertical"
+						defaultSize={{ height: 160 }}
+						minSize={{ height: 80 }}
+						maxSize={{ height: 400 }}
+						storageKey="orengine-timelinePanel"
+					>
 						<PanelContainer>
 							<Panel title='Timeline' noPadding>
 								<Timeline />
 							</Panel>
 						</PanelContainer>
-					</div>
+					</ResizableWrapper>
 				</div>
 				<MouseMenu />
 			</>
@@ -144,49 +173,81 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 		editorElm = (
 			<div className={style.editor}>
 				<div className={style.vert}>
-					<div style={{ height: '25vh' }}>
+					<ResizableWrapper
+						direction="vertical"
+						defaultSize={{ height: '25vh' }}
+						minSize={{ height: 150 }}
+						maxSize={{ height: 600 }}
+						storageKey="orengine-tablet-screen"
+					>
 						<Screen />
-					</div>
-					<div className={style.horiz} style={{ height: '45vh' }}>
-						<div className={style.vert} style={{ width: '45vw' }}>
-							<div style={{ flex: '1' }}>
-								<PanelContainer>
-									<Panel title='Scene'>
-										<Hierarchy />
-									</Panel>
-									<Panel title='Project'>
-										<ProjectControl />
-									</Panel>
-								</PanelContainer>
-							</div>
-							<div style={{ height: '12vh' }}>
-								<PanelContainer>
-									<Panel title='Timer' noPadding>
-										<Timer />
-									</Panel>
-								</PanelContainer>
-							</div>
-						</div>
-						<div className={`${style.flex} ${style.vert}`}>
-							<div className={style.flex} style={hasShaderErrors ? { flex: '1 1 50%' } : undefined}>
-								<PanelContainer>
-									<Panel title='Property'>
-										<EntityProperty />
-									</Panel>
-								</PanelContainer>
-							</div>
-							{import.meta.env.DEV && hasShaderErrors && (
-								<div className={style.flex} style={{ flex: '1 1 50%' }}>
+					</ResizableWrapper>
+					<ResizableWrapper
+						direction="vertical"
+						defaultSize={{ height: '45vh' }}
+						minSize={{ height: 200 }}
+						storageKey="orengine-tablet-middle"
+					>
+						<div className={style.horiz} style={{ width: '100%', height: '100%' }}>
+							<ResizableWrapper
+								direction="horizontal"
+								defaultSize={{ width: '45vw' }}
+								minSize={{ width: 200 }}
+								storageKey="orengine-tablet-leftPanel"
+							>
+								<div className={style.vert} style={{ width: '100%', height: '100%' }}>
+									<div style={{ flex: '1' }}>
+										<PanelContainer>
+											<Panel title='Scene'>
+												<Hierarchy />
+											</Panel>
+											<Panel title='Project'>
+												<ProjectControl />
+											</Panel>
+										</PanelContainer>
+									</div>
+									<ResizableWrapper
+										direction="vertical"
+										defaultSize={{ height: '12vh' }}
+										minSize={{ height: 80 }}
+										maxSize={{ height: 300 }}
+										storageKey="orengine-tablet-timerPanel"
+									>
+										<PanelContainer>
+											<Panel title='Timer' noPadding>
+												<Timer />
+											</Panel>
+										</PanelContainer>
+									</ResizableWrapper>
+								</div>
+							</ResizableWrapper>
+							<div className={`${style.flex} ${style.vert}`}>
+								<div className={style.flex} style={hasShaderErrors ? { flex: '1 1 50%' } : undefined}>
 									<PanelContainer>
-										<Panel title='Shader Errors'>
-											<ShaderErrors />
+										<Panel title='Property'>
+											<EntityProperty />
 										</Panel>
 									</PanelContainer>
 								</div>
-							)}
+								{import.meta.env.DEV && hasShaderErrors && (
+									<div className={style.flex} style={{ flex: '1 1 50%' }}>
+										<PanelContainer>
+											<Panel title='Shader Errors'>
+												<ShaderErrors />
+											</Panel>
+										</PanelContainer>
+									</div>
+								)}
+							</div>
 						</div>
-					</div>
-					<div style={{ height: '30vh' }}>
+					</ResizableWrapper>
+					<ResizableWrapper
+						direction="vertical"
+						defaultSize={{ height: '30vh' }}
+						minSize={{ height: 100 }}
+						maxSize={{ height: 400 }}
+						storageKey="orengine-tablet-timeline"
+					>
 						<PanelContainer>
 							<Panel title='Timeline' noPadding>
 								<ErrorBoundary fallback={<div>エラーだよ</div>}>
@@ -194,7 +255,7 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 								</ErrorBoundary>
 							</Panel>
 						</PanelContainer>
-					</div>
+					</ResizableWrapper>
 				</div>
 				<MouseMenu />
 			</div>
