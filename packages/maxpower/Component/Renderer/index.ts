@@ -141,7 +141,9 @@ export class Renderer extends GLP.EventEmitter {
 	// render query
 
 	private _queryList: WebGLQuery[];
-	private _queryListQueued: {name: string, query: WebGLQuery}[];
+	private _queryListQueued: {name: string, query: WebGLQuery, frameQueued: number}[];
+	private _queryFrameCount: number; // デバッグ用フレームカウンタ
+	private _queryLogInterval: number; // ログ出力間隔
 
 	// compile
 
@@ -252,6 +254,29 @@ export class Renderer extends GLP.EventEmitter {
 
 		this._queryList = [];
 		this._queryListQueued = [];
+		this._queryFrameCount = 0;
+		this._queryLogInterval = 60; // 60フレームごと（約1秒）
+
+		// クエリプールを事前初期化（毎フレーム新規作成のオーバーヘッドを削減）
+		if ( this._extDisJointTimerQuery ) {
+
+			const initialPoolSize = 200; // 推定最大ドロー数
+
+			for ( let i = 0; i < initialPoolSize; i ++ ) {
+
+				const query = this.gl.createQuery();
+
+				if ( query ) {
+
+					this._queryList.push( query );
+
+				}
+
+			}
+
+			console.log( `[Renderer] クエリプールを ${this._queryList.length} 個のクエリで初期化しました` );
+
+		}
 
 		// tmp
 
@@ -344,25 +369,75 @@ export class Renderer extends GLP.EventEmitter {
 
 		if ( import.meta.env.DEV && this._extDisJointTimerQuery ) {
 
+			this._queryFrameCount ++;
+			const shouldLog = this._queryFrameCount % this._queryLogInterval === 0;
+
 			const disjoint = this.gl.getParameter( this._extDisJointTimerQuery.GPU_DISJOINT_EXT );
 
 			if ( disjoint ) {
 
-				this._queryList.forEach( q => this.gl.deleteQuery( q ) );
+				if ( shouldLog ) {
 
+					console.error( "[Renderer] ⚠️ GPU_DISJOINT検出: GPUタイマー結果が無効です。全クエリをリセットします" );
+
+				}
+
+				// 既存クエリを削除
+				this._queryList.forEach( q => this.gl.deleteQuery( q ) );
 				this._queryList.length = 0;
+
+				// クエリプールを再構築
+				const initialPoolSize = 200;
+
+				for ( let i = 0; i < initialPoolSize; i ++ ) {
+
+					const query = this.gl.createQuery();
+
+					if ( query ) {
+
+						this._queryList.push( query );
+
+					}
+
+				}
+
+				if ( shouldLog ) {
+
+					console.log( `[Renderer] クエリプールを ${this._queryList.length} 個のクエリで再構築しました` );
+
+				}
 
 			} else {
 
 				const updatedList = [];
 
+				if ( shouldLog && this._queryListQueued.length > 0 ) {
+
+					console.group( `[Renderer] Frame ${this._queryFrameCount} - クエリ結果チェック` );
+					console.log( `キュー内クエリ数: ${this._queryListQueued.length}` );
+					console.log( `プール内クエリ数: ${this._queryList.length}` );
+
+				}
+
 				if ( this._queryListQueued.length > 0 ) {
 
 					const l = this._queryListQueued.length;
+					let availableCount = 0;
+					let skippedCount = 0; // まだフレームが経過していないクエリ数
 
 					for ( let i = l - 1; i >= 0; i -- ) {
 
 						const q = this._queryListQueued[ i ];
+
+						// 最低1フレームは待機してから結果をチェック（GPU処理完了のため）
+						const framesSinceQueued = this._queryFrameCount - q.frameQueued;
+
+						if ( framesSinceQueued < 1 ) {
+
+							skippedCount ++;
+							continue;
+
+						}
 
 						const resultAvailable = this.gl.getQueryParameter( q.query, this.gl.QUERY_RESULT_AVAILABLE );
 
@@ -379,9 +454,40 @@ export class Renderer extends GLP.EventEmitter {
 
 							this._queryListQueued.splice( i, 1 );
 
+							availableCount ++;
+
+							// 最初の3件のみログ出力
+							if ( shouldLog && availableCount <= 3 ) {
+
+								console.log( `  ✓ ${q.name}: ${( result / 1000 / 1000 ).toFixed( 3 )}ms` );
+
+							}
+
 						}
 
 					}
+
+					if ( shouldLog ) {
+
+						const checkedCount = l - skippedCount;
+						console.log( `完了したクエリ: ${availableCount}/${checkedCount} (スキップ: ${skippedCount}件)` );
+
+						// 未完了クエリが多い場合のみ警告
+						const pendingCount = l - availableCount - skippedCount;
+
+						if ( pendingCount > 10 ) {
+
+							console.warn( `⚠️ 未完了のクエリが ${pendingCount} 件残っています（GPU負荷が高い可能性）` );
+
+						}
+
+					}
+
+				}
+
+				if ( shouldLog && this._queryListQueued.length > 0 ) {
+
+					console.groupEnd();
 
 				}
 
@@ -1189,12 +1295,15 @@ export class Renderer extends GLP.EventEmitter {
 				// query ------------------------
 
 				let query: WebGLQuery | null = null;
+				let queryLabel = "";
 
 				if ( import.meta.env.DEV && this._extDisJointTimerQuery ) {
 
 					query = this._queryList.pop() || null;
 
-					if ( query == null ) {
+					const isNewQuery = query == null;
+
+					if ( isNewQuery ) {
 
 						query = this.gl.createQuery();
 
@@ -1203,6 +1312,17 @@ export class Renderer extends GLP.EventEmitter {
 					if ( query ) {
 
 						this.gl.beginQuery( this._extDisJointTimerQuery.TIME_ELAPSED_EXT, query );
+
+						queryLabel = `${renderType}/${param && param.label || "_"}/ [${drawId}]`;
+
+						// 60フレームごと、かつ最初の数件のみログ
+						const shouldLog = this._queryFrameCount % this._queryLogInterval === 0 && this._queryListQueued.length < 3;
+
+						if ( shouldLog ) {
+
+							console.log( `[Renderer] ${isNewQuery ? '🆕' : '♻️'} クエリ開始: ${queryLabel}` );
+
+						}
 
 					}
 
@@ -1243,10 +1363,11 @@ export class Renderer extends GLP.EventEmitter {
 					if ( query ) {
 
 						this.gl.endQuery( this._extDisJointTimerQuery.TIME_ELAPSED_EXT );
-						const label = param && param.label || "_";
+
 						this._queryListQueued.push( {
-							name: `${renderType}/${label}/ [${drawId}]`,
-							query: query
+							name: queryLabel || `${renderType}/${param && param.label || "_"}/ [${drawId}]`,
+							query: query,
+							frameQueued: this._queryFrameCount
 						} );
 
 					}
