@@ -22,6 +22,8 @@ export interface TimerStatistics {
 	name: string;
 	/** レンダリングタイプ */
 	renderType: string;
+	/** エンティティID（描画対象がある場合） */
+	entityId?: string;
 	/** 最新値（ms） */
 	current: number;
 	/** 移動平均（ms） */

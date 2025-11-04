@@ -23,7 +23,6 @@
 	background: $bgCol2;
 	user-select: none;
 	transition: background-color 0.1s ease;
-	z-index: 10;
 
 	// ホバー時の強調表示
 	&:hover {

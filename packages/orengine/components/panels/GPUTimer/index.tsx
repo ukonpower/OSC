@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 
+import { useOREditor } from '../../../features/OREditor/Hooks/useOREditor';
 import { useOREngine } from '../../../features/OREngine/Hooks/useOREngine';
 import { TimerDataBuffer } from './TimerDataBuffer';
 import { TimerDuration, TimerStatistics } from './types';
@@ -74,6 +75,7 @@ const formatNumber = ( value: number ): string => {
 
 export const Timer = () => {
 
+	const { editor } = useOREditor();
 	const { engine } = useOREngine();
 	const [ statistics, setStatistics ] = useState<TimerStatistics[]>( [] );
 	const [ totalTime, setTotalTime ] = useState<number>( 0 );
@@ -84,6 +86,22 @@ export const Timer = () => {
 	const rafIdRef = useRef<number>( 0 );
 	const dirtyRef = useRef<boolean>( false );
 	const lastUpdateTimeRef = useRef<number>( 0 );
+
+	// GPUタイマーアイテムのクリックハンドラー
+	const handleItemClick = ( entityId?: string ) => {
+
+		if ( ! entityId ) return;
+
+		// entityIdからエンティティを検索して選択
+		const entity = engine.root.findEntityByUUID( entityId );
+
+		if ( entity ) {
+
+			editor.selectEntity( entity );
+
+		}
+
+	};
 
 	useEffect( () => {
 
@@ -230,8 +248,14 @@ export const Timer = () => {
 					const color = getColorForDuration( stat.avg );
 					const barWidth = totalTime > 0 ? ( stat.avg / totalTime ) * 100 : 0;
 
+					const isClickable = !! stat.entityId;
+
 					return (
-						<div key={stat.name + index} className={style.item}>
+						<div
+							key={stat.name + index}
+							className={`${style.item} ${isClickable ? style.clickable : ''}`}
+							onClick={() => handleItemClick( stat.entityId )}
+						>
 							<div>
 								<span className={style.itemName} title={stat.name}>
 									{stat.name}

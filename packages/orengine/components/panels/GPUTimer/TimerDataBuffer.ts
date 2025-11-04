@@ -125,7 +125,7 @@ export class TimerDataBuffer {
 
 	private buffers: Map<string, CircularBuffer>;
 	private windowSize: number;
-	private currentData: Map<string, TimerSample>;
+	private currentData: Map<string, TimerSample & { entityId?: string }>;
 
 	constructor( windowSize: number = 30 ) {
 
@@ -149,9 +149,17 @@ export class TimerDataBuffer {
 
 			const sample = samples[ i ];
 
-			// nameから renderType を抽出（例: "deferred/cam[xxx]/Mesh_1/[drawId]"）
+			// nameから renderType と entityId を抽出（例: "deferred/cam[xxx]/Mesh_1/[drawId]"）
 			const parts = sample.name.split( '/' );
 			const renderType = parts[ 0 ] || 'unknown';
+
+			// drawId部分からentityIdを抽出 (例: "[uuid-string]")
+			let entityId: string | undefined;
+			const lastPart = parts[ parts.length - 1 ];
+			const match = lastPart && lastPart.match( /\[([^\]]+)\]/ );
+			if ( match ) {
+				entityId = match[ 1 ];
+			}
 
 			const timerSample: TimerSample = {
 				name: sample.name,
@@ -172,8 +180,8 @@ export class TimerDataBuffer {
 
 			buffer.push( sample.duration );
 
-			// 現在のデータとして保存
-			this.currentData.set( sample.name, timerSample );
+			// 現在のデータとして保存（entityIdも含める）
+			this.currentData.set( sample.name, { ...timerSample, entityId } );
 
 		}
 
@@ -224,6 +232,7 @@ export class TimerDataBuffer {
 				stats.push( {
 					name: sample.name,
 					renderType: sample.renderType,
+					entityId: sample.entityId,
 					current: sample.duration,
 					avg: buffer.getAverage(),
 					max: buffer.getMax(),

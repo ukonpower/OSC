@@ -27,6 +27,7 @@ import { Music } from './Components/Demo4/Music/index.ts';
 import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
 import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
+import { Octopus } from './Components/Demo4/Tako/Octopus/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
@@ -71,6 +72,9 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Onigiri,
 			Salmon,
 			SalmonSushi,
+		},
+		Tako: {
+			Octopus,
 		},
 		TruchetSushiLane,
 	},

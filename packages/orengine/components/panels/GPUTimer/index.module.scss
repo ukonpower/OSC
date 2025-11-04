@@ -101,6 +101,15 @@
 .item {
 	padding: 0.25em 0;
 	font-size: 0.95em;
+
+	&.clickable {
+		cursor: pointer;
+		transition: background-color 0.15s ease;
+
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.05);
+		}
+	}
 }
 
 .itemName {
@@ -137,5 +146,5 @@
 
 .progressFill {
 	height: 100%;
-	transition: width 0.2s ease;
+	transition: width 0.4s ease;
 }

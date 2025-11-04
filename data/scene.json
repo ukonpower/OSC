@@ -308,6 +308,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneTako/TakoAshi",
+			"components": [
+				{
+					"name": "Octopus"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SkyBox",
 			"components": [
 				{
