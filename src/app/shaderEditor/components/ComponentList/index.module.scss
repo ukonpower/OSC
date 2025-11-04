@@ -17,6 +17,11 @@
 		opacity: 1;
 		pointer-events: auto;
 	}
+
+	// PC画面ではオーバーレイを非表示
+	@media (min-width: 769px) {
+		display: none;
+	}
 }
 
 .componentList {
@@ -38,10 +43,25 @@
 		height: 100%;
 		z-index: 999;
 		box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+
+		// PC画面ではオーバーレイモードを無効化
+		@media (min-width: 769px) {
+			position: relative;
+			width: 100%;
+			max-width: none;
+			z-index: auto;
+			box-shadow: none;
+			transform: translateX(0);
+		}
 	}
 
 	&.closed {
 		transform: translateX(-100%);
+
+		// PC画面では非表示にして幅を0にする
+		@media (min-width: 769px) {
+			display: none;
+		}
 	}
 
 	&.open {

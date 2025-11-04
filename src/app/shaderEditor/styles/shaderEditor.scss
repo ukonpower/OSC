@@ -113,7 +113,9 @@
 
 
 	&__menu-toggle {
-		display: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		background: #3c3c3c;
 		border: 1px solid #555;
 		color: #ccc;
@@ -131,13 +133,6 @@
 
 		&:active {
 			background: #333;
-		}
-
-		// モバイルでのみ表示
-		@media (max-width: 768px) {
-			display: flex;
-			align-items: center;
-			justify-content: center;
 		}
 	}
 
