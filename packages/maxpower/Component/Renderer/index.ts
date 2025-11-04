@@ -141,7 +141,8 @@ export class Renderer extends GLP.EventEmitter {
 	// render query
 
 	private _queryList: WebGLQuery[];
-	private _queryListQueued: {name: string, query: WebGLQuery}[];
+	private _queryListQueued: {name: string, query: WebGLQuery, frameQueued: number}[];
+	private _queryFrameCount: number;
 
 	// compile
 
@@ -252,6 +253,26 @@ export class Renderer extends GLP.EventEmitter {
 
 		this._queryList = [];
 		this._queryListQueued = [];
+		this._queryFrameCount = 0;
+
+		// クエリプールを事前初期化（毎フレーム新規作成のオーバーヘッドを削減）
+		if ( this._extDisJointTimerQuery ) {
+
+			const initialPoolSize = 200; // 推定最大ドロー数
+
+			for ( let i = 0; i < initialPoolSize; i ++ ) {
+
+				const query = this.gl.createQuery();
+
+				if ( query ) {
+
+					this._queryList.push( query );
+
+				}
+
+			}
+
+		}
 
 		// tmp
 
@@ -344,13 +365,30 @@ export class Renderer extends GLP.EventEmitter {
 
 		if ( import.meta.env.DEV && this._extDisJointTimerQuery ) {
 
+			this._queryFrameCount ++;
+
 			const disjoint = this.gl.getParameter( this._extDisJointTimerQuery.GPU_DISJOINT_EXT );
 
 			if ( disjoint ) {
 
+				// 既存クエリを削除
 				this._queryList.forEach( q => this.gl.deleteQuery( q ) );
-
 				this._queryList.length = 0;
+
+				// クエリプールを再構築
+				const initialPoolSize = 200;
+
+				for ( let i = 0; i < initialPoolSize; i ++ ) {
+
+					const query = this.gl.createQuery();
+
+					if ( query ) {
+
+						this._queryList.push( query );
+
+					}
+
+				}
 
 			} else {
 
@@ -363,6 +401,15 @@ export class Renderer extends GLP.EventEmitter {
 					for ( let i = l - 1; i >= 0; i -- ) {
 
 						const q = this._queryListQueued[ i ];
+
+						// 最低1フレームは待機してから結果をチェック（GPU処理完了のため）
+						const framesSinceQueued = this._queryFrameCount - q.frameQueued;
+
+						if ( framesSinceQueued < 1 ) {
+
+							continue;
+
+						}
 
 						const resultAvailable = this.gl.getQueryParameter( q.query, this.gl.QUERY_RESULT_AVAILABLE );
 
@@ -1189,12 +1236,15 @@ export class Renderer extends GLP.EventEmitter {
 				// query ------------------------
 
 				let query: WebGLQuery | null = null;
+				let queryLabel = "";
 
 				if ( import.meta.env.DEV && this._extDisJointTimerQuery ) {
 
 					query = this._queryList.pop() || null;
 
-					if ( query == null ) {
+					const isNewQuery = query == null;
+
+					if ( isNewQuery ) {
 
 						query = this.gl.createQuery();
 
@@ -1203,6 +1253,8 @@ export class Renderer extends GLP.EventEmitter {
 					if ( query ) {
 
 						this.gl.beginQuery( this._extDisJointTimerQuery.TIME_ELAPSED_EXT, query );
+
+						queryLabel = `${renderType}/${param && param.label || "_"}/ [${drawId}]`;
 
 					}
 
@@ -1243,10 +1295,11 @@ export class Renderer extends GLP.EventEmitter {
 					if ( query ) {
 
 						this.gl.endQuery( this._extDisJointTimerQuery.TIME_ELAPSED_EXT );
-						const label = param && param.label || "_";
+
 						this._queryListQueued.push( {
-							name: `${renderType}/${label}/ [${drawId}]`,
-							query: query
+							name: queryLabel || `${renderType}/${param && param.label || "_"}/ [${drawId}]`,
+							query: query,
+							frameQueued: this._queryFrameCount
 						} );
 
 					}

@@ -12,9 +12,12 @@ import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
-import { SushiMaguro } from './Components/Demo4/Common/sushi/index.ts';
 import { SushiSakana } from './Components/Demo4/Common/SushiSakana/index.ts';
+import { SushiMaguro } from './Components/Demo4/Common/sushi/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
+import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
+import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
+import { Nori } from './Components/Demo4/Ikura/IkuraGunKan/Nori/index.ts';
 import { IkuraGunKan } from './Components/Demo4/Ikura/IkuraGunKan/index.ts';
 import { Kyuuri } from './Components/Demo4/Ikura/Kyuuri/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
@@ -43,8 +46,8 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			ShaderMotionGraphics,
 			Shari,
 			SkyBox,
-			SushiMaguro,
 			SushiSakana,
+			SushiMaguro,
 		},
 		Ikura: {
 			IkuraFluids,
