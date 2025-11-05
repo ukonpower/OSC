@@ -9,10 +9,11 @@ import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
+import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
-import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
+import { Ukopower } from './Components/Demo4/Common/Ukopower/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
 import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
 import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
@@ -26,7 +27,11 @@ import { Music } from './Components/Demo4/Music/index.ts';
 import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
 import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
+import { Octopus } from './Components/Demo4/Tako/Octopus/index.ts';
+import { SashimiTako } from './Components/Demo4/Tako/SashimiTako/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
+import { Ocean } from './Components/Demo4/Tsuri/Ocean/index.ts';
+import { Taiyaki } from './Components/Demo4/Tsuri/Taiyaki/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
 import { ObjectRotate } from './Components/ObjectControls/ObjectRotate/index.ts';
@@ -46,6 +51,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			ShaderMotionGraphics,
 			Shari,
 			SkyBox,
+			Ukopower,
 		},
 		Ikura: {
 			IkuraFluids,
@@ -63,7 +69,15 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Salmon,
 			SalmonSushi,
 		},
+		Tako: {
+			Octopus,
+			SashimiTako,
+		},
 		TruchetSushiLane,
+		Tsuri: {
+			Ocean,
+			Taiyaki,
+		},
 	},
 	ObjectControls: {
 		ShakeViewer,

@@ -14,28 +14,8 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	// 魚の胴体部分（楕円体）
-	vec3 bodyScale = vec3( 0.6, 0.35, 0.2 );
-	float body = sdEllipsoid( pp, bodyScale );
-
-	// 尾びれ部分（尾の方向に伸びる三角形的な形状）
-	vec3 tailPos = pp - vec3( -0.5, 0.0, 0.0 );
-	float tail = sdCone( tailPos, vec2( 0.3, 0.15 ), 0.5 );
-
-	// 頭部分（少し丸みを持たせる）
-	vec3 headPos = pp - vec3( 0.5, 0.0, 0.0 );
-	float head = sdSphere( headPos, 0.25 );
-
-	// 各パーツを合成
-	float d = smin( body, tail, 0.15 );
-	d = smin( d, head, 0.1 );
-
-	// 表面の焼き目模様（ノイズで凹凸を表現）
-	float pattern = noise( pp * 8.0 ) * 0.015;
-	d += pattern;
-
-	// 少し丸みをつける
-	d -= 0.02;
+	// 一旦シンプルな球体で配置
+	float d = sdSphere( pp, 0.5 );
 
 	return SDFResult(
 		d,
