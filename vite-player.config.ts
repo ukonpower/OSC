@@ -112,7 +112,13 @@ export default defineConfig( {
 			skipMinifier: false
 		} ),
 		visualizer( {
-			template: "treemap",
+			template: 'list',
+			filename: 'dist/stats-list.yaml',
+			gzipSize: true,
+		} ),
+		visualizer( {
+			template: 'treemap',
+			filename: 'dist/stats-treemap.html',
 			gzipSize: true,
 		} ),
 	],
