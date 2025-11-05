@@ -138,11 +138,11 @@ export class Renderer extends GLP.EventEmitter {
 
 	private _glStateCahce: GPUState;
 
-	// render query
+	// render query (DEV専用)
 
-	private _queryList: WebGLQuery[];
-	private _queryListQueued: {name: string, query: WebGLQuery, frameQueued: number}[];
-	private _queryFrameCount: number;
+	private _queryList: WebGLQuery[] = [];
+	private _queryListQueued: {name: string, query: WebGLQuery, frameQueued: number}[] = [];
+	private _queryFrameCount: number = 0;
 
 	// compile
 
@@ -157,6 +157,7 @@ export class Renderer extends GLP.EventEmitter {
 	private _tmpLightDirection: GLP.Vector;
 	private _tmpModelMatrixInverse: GLP.Matrix;
 	private _tmpProjectionMatrixInverse: GLP.Matrix;
+	private _tmpResolution: GLP.Vector;
 
 	// hooks
 
@@ -249,24 +250,28 @@ export class Renderer extends GLP.EventEmitter {
 
 		this._glStateCahce = {};
 
-		// query
+		// query (DEV専用)
 
-		this._queryList = [];
-		this._queryListQueued = [];
-		this._queryFrameCount = 0;
+		if ( import.meta.env.DEV ) {
 
-		// クエリプールを事前初期化（毎フレーム新規作成のオーバーヘッドを削減）
-		if ( this._extDisJointTimerQuery ) {
+			this._queryList = [];
+			this._queryListQueued = [];
+			this._queryFrameCount = 0;
 
-			const initialPoolSize = 200; // 推定最大ドロー数
+			// クエリプールを事前初期化（毎フレーム新規作成のオーバーヘッドを削減）
+			if ( this._extDisJointTimerQuery ) {
 
-			for ( let i = 0; i < initialPoolSize; i ++ ) {
+				const initialPoolSize = 200; // 推定最大ドロー数
 
-				const query = this.gl.createQuery();
+				for ( let i = 0; i < initialPoolSize; i ++ ) {
 
-				if ( query ) {
+					const query = this.gl.createQuery();
 
-					this._queryList.push( query );
+					if ( query ) {
+
+						this._queryList.push( query );
+
+					}
 
 				}
 
@@ -282,6 +287,7 @@ export class Renderer extends GLP.EventEmitter {
 		this._tmpProjectionMatrixInverse = new GLP.Matrix();
 		this._tmpModelViewMatrix = new GLP.Matrix();
 		this._tmpNormalMatrix = new GLP.Matrix();
+		this._tmpResolution = new GLP.Vector();
 
 		this.gl.blendFunc( this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA );
 
@@ -730,7 +736,7 @@ export class Renderer extends GLP.EventEmitter {
 
 		}
 
-		const resolution = new GLP.Vector();
+		const resolution = this._tmpResolution;
 
 		if ( renderTarget ) {
 
