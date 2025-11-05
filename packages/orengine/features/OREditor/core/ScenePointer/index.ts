@@ -13,6 +13,12 @@ export class ScenePointer {
 	private _editor: Editor;
 	private _raycaster: MXP.Raycaster;
 
+	// 順番選択のための状態管理
+	private _lastClickNDC: { x: number, y: number } | null = null;
+	private _lastHits: MXP.RaycastHit[] = [];
+	private _currentHitIndex: number = 0;
+	private _clickThreshold: number = 0.01; // NDC空間での近接判定閾値
+
 	constructor( engine: Engine, editor: Editor ) {
 
 		this._engine = engine;
@@ -64,31 +70,86 @@ export class ScenePointer {
 		console.log( `Camera: ${camera.entity && camera.entity.name || 'unnamed'}` );
 		console.log( `Camera displayOut: ${camera.displayOut}` );
 
-		// レイキャストを実行
-		const hit = this._raycaster.raycast( ndcX, ndcY, camera, this._engine.root );
+		// 同じ位置をクリックしたかどうかを判定
+		const isSameLocation = this._isSameClickLocation( ndcX, ndcY );
+
+		// 全ヒット情報を取得
+		const allHits = this._raycaster.raycastAll( ndcX, ndcY, camera, this._engine.root );
 
 		// ログ: レイキャスト結果
-		if ( hit ) {
+		console.log( `✓ Total hits: ${allHits.length}` );
 
-			console.log( `✓ Raycast HIT: entity="${hit.entity.name}", distance=${hit.distance.toFixed( 3 )}` );
+		if ( allHits.length > 0 ) {
 
-			// ヒットしたエンティティを選択
-			this._editor.selectEntity( hit.entity );
+			allHits.forEach( ( hit, index ) => {
 
-			console.log( `→ Selected entity: ${hit.entity.name}` );
+				console.log( `  [${index}] "${hit.entity.name}" (distance: ${hit.distance.toFixed( 3 )})` );
+
+			} );
+
+		}
+
+		let selectedEntity: MXP.Entity | null = null;
+
+		if ( allHits.length > 0 ) {
+
+			if ( isSameLocation && this._lastHits.length > 0 ) {
+
+				// 同じ場所をクリック：次のオブジェクトを選択
+				this._currentHitIndex = ( this._currentHitIndex + 1 ) % allHits.length;
+				selectedEntity = allHits[ this._currentHitIndex ].entity;
+
+				console.log( `🔄 Same location click: cycling to index ${this._currentHitIndex}` );
+
+			} else {
+
+				// 新しい場所をクリック：最も近いオブジェクトを選択
+				this._currentHitIndex = 0;
+				selectedEntity = allHits[ 0 ].entity;
+
+				console.log( `🆕 New location click: selecting closest object` );
+
+			}
+
+			// 状態を保存
+			this._lastClickNDC = { x: ndcX, y: ndcY };
+			this._lastHits = allHits;
+
+			// エンティティを選択
+			this._editor.selectEntity( selectedEntity );
+
+			console.log( `→ Selected entity: "${selectedEntity.name}" (${this._currentHitIndex + 1}/${allHits.length})` );
 
 		} else {
 
 			console.log( '✗ Raycast MISS: No objects hit' );
 
-			// ヒットしなかった場合は選択解除
+			// ヒットしなかった場合は選択解除と状態リセット
 			this._editor.selectEntity( null );
+			this._lastClickNDC = null;
+			this._lastHits = [];
+			this._currentHitIndex = 0;
 
 			console.log( '→ Selection cleared' );
 
 		}
 
 		console.log( '--------------------------------' );
+
+	}
+
+	/**
+	 * 前回のクリック位置と今回のクリック位置が近いかどうかを判定
+	 */
+	private _isSameClickLocation( ndcX: number, ndcY: number ): boolean {
+
+		if ( ! this._lastClickNDC ) return false;
+
+		const dx = ndcX - this._lastClickNDC.x;
+		const dy = ndcY - this._lastClickNDC.y;
+		const distance = Math.sqrt( dx * dx + dy * dy );
+
+		return distance < this._clickThreshold;
 
 	}
 

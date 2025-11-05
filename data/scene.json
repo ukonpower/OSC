@@ -332,6 +332,14 @@
 			]
 		},
 		{
+			"path": "/root/blidgeRoot/SceneTsuri/Taiyaki",
+			"components": [
+				{
+					"name": "Taiyaki"
+				}
+			]
+		},
+		{
 			"path": "/root/blidgeRoot/SceneTsuri/ukonpower",
 			"components": [
 				{

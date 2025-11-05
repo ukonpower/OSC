@@ -58,6 +58,31 @@ export class Raycaster {
 	 */
 	public raycast( ndcX: number, ndcY: number, camera: Camera, rootEntity: Entity ): RaycastHit | null {
 
+		const hits = this.raycastAll( ndcX, ndcY, camera, rootEntity );
+
+		// 最も近いヒットを返す
+		if ( hits.length === 0 ) return null;
+
+		if ( this._debug ) {
+
+			console.log( `[Raycaster] Closest hit: entity="${hits[ 0 ].entity.name}", distance=${hits[ 0 ].distance.toFixed( 3 )}` );
+
+		}
+
+		return hits[ 0 ];
+
+	}
+
+	/**
+	 * マウス座標とカメラから交差判定を実行し、全てのヒットを返す
+	 * @param ndcX 正規化デバイス座標X (-1〜1)
+	 * @param ndcY 正規化デバイス座標Y (-1〜1)
+	 * @param camera カメラコンポーネント
+	 * @param rootEntity ルートエンティティ（シーン）
+	 * @returns ヒット情報の配列（距離順にソート済み）
+	 */
+	public raycastAll( ndcX: number, ndcY: number, camera: Camera, rootEntity: Entity ): RaycastHit[] {
+
 		if ( this._debug ) {
 
 			console.log( '[Raycaster] Starting raycast...' );
@@ -84,18 +109,10 @@ export class Raycaster {
 
 		}
 
-		// 最も近いヒットを返す
-		if ( hits.length === 0 ) return null;
-
+		// 距離順にソート
 		hits.sort( ( a, b ) => a.distance - b.distance );
 
-		if ( this._debug ) {
-
-			console.log( `[Raycaster] Closest hit: entity="${hits[ 0 ].entity.name}", distance=${hits[ 0 ].distance.toFixed( 3 )}` );
-
-		}
-
-		return hits[ 0 ];
+		return hits;
 
 	}
 
