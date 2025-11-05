@@ -25,9 +25,6 @@ export class ScenePointer {
 		this._editor = editor;
 		this._raycaster = new MXP.Raycaster();
 
-		// デバッグモードを有効化（詳細なレイキャストログを出力）
-		this._raycaster.setDebug( true );
-
 	}
 
 	/**
@@ -49,45 +46,16 @@ export class ScenePointer {
 		const ndcX = ( x / rect.width ) * 2 - 1;
 		const ndcY = - ( y / rect.height ) * 2 + 1; // Y軸は反転
 
-		// ログ: クリック座標情報
-		console.log( '--- ScenePointer: Click Event ---' );
-		console.log( `Client coordinates: (${clientX}, ${clientY})` );
-		console.log( `Canvas relative: (${x.toFixed( 2 )}, ${y.toFixed( 2 )})` );
-		console.log( `NDC coordinates: (${ndcX.toFixed( 3 )}, ${ndcY.toFixed( 3 )})` );
-		console.log( `Canvas rect: width=${rect.width}, height=${rect.height}` );
-
 		// レンダリングカメラを取得
 		const camera = this._findMainCamera();
 
-		if ( ! camera ) {
-
-			console.warn( 'ScenePointer: No camera found for raycasting' );
-			return;
-
-		}
-
-		// ログ: カメラ情報
-		console.log( `Camera: ${camera.entity && camera.entity.name || 'unnamed'}` );
-		console.log( `Camera displayOut: ${camera.displayOut}` );
+		if ( ! camera ) return;
 
 		// 同じ位置をクリックしたかどうかを判定
 		const isSameLocation = this._isSameClickLocation( ndcX, ndcY );
 
 		// 全ヒット情報を取得
 		const allHits = this._raycaster.raycastAll( ndcX, ndcY, camera, this._engine.root );
-
-		// ログ: レイキャスト結果
-		console.log( `✓ Total hits: ${allHits.length}` );
-
-		if ( allHits.length > 0 ) {
-
-			allHits.forEach( ( hit, index ) => {
-
-				console.log( `  [${index}] "${hit.entity.name}" (distance: ${hit.distance.toFixed( 3 )})` );
-
-			} );
-
-		}
 
 		let selectedEntity: MXP.Entity | null = null;
 
@@ -99,15 +67,11 @@ export class ScenePointer {
 				this._currentHitIndex = ( this._currentHitIndex + 1 ) % allHits.length;
 				selectedEntity = allHits[ this._currentHitIndex ].entity;
 
-				console.log( `🔄 Same location click: cycling to index ${this._currentHitIndex}` );
-
 			} else {
 
 				// 新しい場所をクリック：最も近いオブジェクトを選択
 				this._currentHitIndex = 0;
 				selectedEntity = allHits[ 0 ].entity;
-
-				console.log( `🆕 New location click: selecting closest object` );
 
 			}
 
@@ -118,11 +82,7 @@ export class ScenePointer {
 			// エンティティを選択
 			this._editor.selectEntity( selectedEntity );
 
-			console.log( `→ Selected entity: "${selectedEntity.name}" (${this._currentHitIndex + 1}/${allHits.length})` );
-
 		} else {
-
-			console.log( '✗ Raycast MISS: No objects hit' );
 
 			// ヒットしなかった場合は選択解除と状態リセット
 			this._editor.selectEntity( null );
@@ -130,11 +90,7 @@ export class ScenePointer {
 			this._lastHits = [];
 			this._currentHitIndex = 0;
 
-			console.log( '→ Selection cleared' );
-
 		}
-
-		console.log( '--------------------------------' );
 
 	}
 

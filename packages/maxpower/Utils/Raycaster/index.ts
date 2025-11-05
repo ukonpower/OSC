@@ -25,7 +25,6 @@ export class Raycaster {
 
 	private _ray: Ray;
 	private _invMatrix: GLP.Matrix;
-	private _debug: boolean;
 
 	constructor() {
 
@@ -35,16 +34,6 @@ export class Raycaster {
 		};
 
 		this._invMatrix = new GLP.Matrix();
-		this._debug = false; // デバッグモード（詳細ログ出力）
-
-	}
-
-	/**
-	 * デバッグモードの設定
-	 */
-	public setDebug( debug: boolean ): void {
-
-		this._debug = debug;
 
 	}
 
@@ -63,12 +52,6 @@ export class Raycaster {
 		// 最も近いヒットを返す
 		if ( hits.length === 0 ) return null;
 
-		if ( this._debug ) {
-
-			console.log( `[Raycaster] Closest hit: entity="${hits[ 0 ].entity.name}", distance=${hits[ 0 ].distance.toFixed( 3 )}` );
-
-		}
-
 		return hits[ 0 ];
 
 	}
@@ -83,31 +66,12 @@ export class Raycaster {
 	 */
 	public raycastAll( ndcX: number, ndcY: number, camera: Camera, rootEntity: Entity ): RaycastHit[] {
 
-		if ( this._debug ) {
-
-			console.log( '[Raycaster] Starting raycast...' );
-
-		}
-
 		// レイの生成
 		this._generateRay( ndcX, ndcY, camera );
-
-		if ( this._debug ) {
-
-			console.log( `[Raycaster] Ray origin: (${this._ray.origin.x.toFixed( 3 )}, ${this._ray.origin.y.toFixed( 3 )}, ${this._ray.origin.z.toFixed( 3 )})` );
-			console.log( `[Raycaster] Ray direction: (${this._ray.direction.x.toFixed( 3 )}, ${this._ray.direction.y.toFixed( 3 )}, ${this._ray.direction.z.toFixed( 3 )})` );
-
-		}
 
 		// 全エンティティを走査して交差判定
 		const hits: RaycastHit[] = [];
 		this._traverseEntities( rootEntity, hits );
-
-		if ( this._debug ) {
-
-			console.log( `[Raycaster] Total hits found: ${hits.length}` );
-
-		}
 
 		// 距離順にソート
 		hits.sort( ( a, b ) => a.distance - b.distance );
@@ -161,54 +125,22 @@ export class Raycaster {
 
 		if ( mesh && mesh.geometry ) {
 
-			if ( this._debug ) {
-
-				console.log( `[Raycaster] Checking Mesh entity: "${entity.name}"` );
-
-			}
-
 			const hit = this._intersectMesh( entity, mesh );
 
 			if ( hit ) {
 
-				if ( this._debug ) {
-
-					console.log( `[Raycaster]   ✓ HIT Mesh: "${entity.name}", distance=${hit.distance.toFixed( 3 )}` );
-
-				}
-
 				hits.push( hit );
-
-			} else if ( this._debug ) {
-
-				console.log( `[Raycaster]   ✗ No hit on Mesh: "${entity.name}"` );
 
 			}
 
 		} else if ( entity.visible ) {
 
 			// Meshを持たないEmpty判定：レイと原点の距離で判定
-			if ( this._debug ) {
-
-				console.log( `[Raycaster] Checking Empty entity: "${entity.name}"` );
-
-			}
-
 			const hit = this._intersectEmpty( entity );
 
 			if ( hit ) {
 
-				if ( this._debug ) {
-
-					console.log( `[Raycaster]   ✓ HIT Empty: "${entity.name}", distance=${hit.distance.toFixed( 3 )}` );
-
-				}
-
 				hits.push( hit );
-
-			} else if ( this._debug ) {
-
-				console.log( `[Raycaster]   ✗ No hit on Empty: "${entity.name}"` );
 
 			}
 
