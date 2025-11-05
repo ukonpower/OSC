@@ -7,6 +7,7 @@ export type BLidgeNodeType = 'empty' | 'cube' | 'sphere' | 'cylinder' | 'mesh' |
 // scene
 
 export type BLidgeScene = {
+	version?: number;
 	fcurves: BLidgeCurveParam[];
     animations: number[][];
 	root: BLidgeNodeParam;
@@ -18,7 +19,7 @@ export type BLidgeScene = {
 export type BLidgeNodeParam = {
 	name: string,
 	class: string,
-	type: BLidgeNodeType,
+	type?: BLidgeNodeType,
 	uuid?: string,
 	param?: BLidgeCameraParam | BLidgeMeshParamRaw | BLidgeLightParamCommon
 	children?: BLidgeNodeParam[],
@@ -27,7 +28,7 @@ export type BLidgeNodeParam = {
 	rotation?: number[],
 	scale?: number[],
 	uniforms?: BLidgeAnimationAccessor,
-	visible: boolean,
+	visible?: boolean,
 }
 
 export type BLidgeNode = {
@@ -96,7 +97,7 @@ export type BLidgeAnimationAccessor = { [key: string]: number }
 export type BLidgeCurveAxis = 'x' | 'y' | 'z' | 'w'
 
 export type BLidgeCurveParam = {
-    k: [string, [number, number, number, number, number, number]][];
+    k: [number, [number, number, number, number, number, number]][];
 	axis: BLidgeCurveAxis
 }
 
@@ -310,6 +311,7 @@ export class BLidge extends GLP.EventEmitter {
 		// actions
 
 		const fcurveGroupNames = Object.keys( data.animations );
+		const isV2 = data.version === 2;
 
 		for ( let i = 0; i < fcurveGroupNames.length; i ++ ) {
 
@@ -321,15 +323,20 @@ export class BLidge extends GLP.EventEmitter {
 
 				const fcurveData = data.fcurves[ fcurveIndex ];
 
+				// 差分エンコーディングされたフレーム番号を絶対値に復元
+				if ( isV2 ) {
+
+					for ( let j = 1; j < fcurveData.k.length; j ++ ) {
+
+						fcurveData.k[ j ][ 1 ][ 0 ] += fcurveData.k[ j - 1 ][ 1 ][ 0 ];
+
+					}
+
+				}
+
 				const curve = new GLP.FCurve();
 
 				curve.set( fcurveData.k.map( keyframe => {
-
-					const interpolation = {
-						"B": "BEZIER",
-						"C": "CONSTANT",
-						"L": "LINEAR",
-					}[ keyframe[ 0 ] ];
 
 					const frames = keyframe[ 1 ];
 
@@ -337,7 +344,7 @@ export class BLidge extends GLP.EventEmitter {
 						{ x: frames[ 0 ], y: frames[ 1 ] },
 						frames[ 2 ] !== undefined && { x: frames[ 2 ], y: frames[ 3 ] } || undefined,
 						frames[ 4 ] !== undefined && { x: frames[ 4 ], y: frames[ 5 ] } || undefined,
-					interpolation as GLP.FCurveInterpolation );
+						[ "LINEAR", "CONSTANT", "BEZIER" ][ keyframe[ 0 ] ] as GLP.FCurveInterpolation );
 
 				} ) );
 
@@ -365,8 +372,8 @@ export class BLidge extends GLP.EventEmitter {
 				rotation: nodeParam.rotation || [ 0, 0, 0 ],
 				scale: nodeParam.scale || [ 1, 1, 1 ],
 				uniforms: nodeParam.uniforms || {},
-				type: nodeParam.type,
-				visible: nodeParam.visible,
+				type: nodeParam.type || 'empty',
+				visible: nodeParam.visible !== undefined ? nodeParam.visible : true,
 			};
 
 			const param = nodeParam.param;
@@ -422,7 +429,7 @@ export class BLidge extends GLP.EventEmitter {
 		WS Events
 	-------------------------------*/
 
-	private onOpen( event: Event ) {
+	private onOpen() {
 	}
 
 	private onMessage( e: MessageEvent ) {
@@ -449,7 +456,7 @@ export class BLidge extends GLP.EventEmitter {
 
 	}
 
-	private onClose( e:CloseEvent ) {
+	private onClose() {
 
 		this.disconnect();
 
