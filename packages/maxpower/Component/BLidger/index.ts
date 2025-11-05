@@ -82,6 +82,14 @@ export class BLidger extends Component {
 
 		const entity = this.entity;
 
+		// BLidgeから受信したuuidがあればEntityのuuidを上書き
+		if ( this.node.uuid ) {
+
+			// @ts-ignore (readonlyだが、BLidgeから受信したuuidで上書きする必要がある)
+			entity.uuid = this.node.uuid;
+
+		}
+
 		entity.name = this.node.name;
 
 		// transform
@@ -220,6 +228,11 @@ export class BLidger extends Component {
 		// fields
 
 		if ( import.meta.env.DEV ) {
+
+			this.field( "uuid", () => this.node.uuid || "", undefined, {
+				noExport: true,
+				readOnly: true,
+			} );
 
 			this.field( "type", () => this.node.type, undefined, {
 				noExport: true,

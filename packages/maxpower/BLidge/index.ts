@@ -19,6 +19,7 @@ export type BLidgeNodeParam = {
 	name: string,
 	class: string,
 	type: BLidgeNodeType,
+	uuid?: string,
 	param?: BLidgeCameraParam | BLidgeMeshParamRaw | BLidgeLightParamCommon
 	children?: BLidgeNodeParam[],
 	animation?: BLidgeAnimationAccessor,
@@ -33,6 +34,7 @@ export type BLidgeNode = {
 	name: string,
 	class: string,
 	type: BLidgeNodeType,
+	uuid?: string,
 	param?: BLidgeCameraParam | BLidgeMeshParam | BLidgeLightParamCommon
 	children: BLidgeNode[],
 	animations: BLidgeAnimationAccessor,
@@ -356,6 +358,7 @@ export class BLidge extends GLP.EventEmitter {
 			const node: BLidgeNode = {
 				name: nodeParam.name,
 				class: nodeParam.class,
+				uuid: nodeParam.uuid,
 				children: [],
 				animations: nodeParam.animation || {},
 				position: nodeParam.position || [ 0, 0, 0 ],

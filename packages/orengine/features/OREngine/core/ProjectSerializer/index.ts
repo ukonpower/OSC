@@ -13,6 +13,7 @@ export interface OREngineDataEntityOverrideComponent {
 
 export interface OREngineDataEntityOverride {
 	path: string,
+	uuid?: string,
 	components?: OREngineDataEntityOverrideComponent[]
 }
 
@@ -84,6 +85,7 @@ export class ProjectSerializer {
 
 			const entityOverrideData: OREngineDataEntityOverride = {
 				path: path_,
+				uuid: e.uuid,
 			};
 
 			const components: OREngineDataEntityOverrideComponent[] = [];
@@ -141,9 +143,21 @@ export class ProjectSerializer {
 
 		targetRoot.traverse( entity => {
 
-			const path = entity.getScenePath( projectRoot );
+			// uuid優先、なければpathで照合（後方互換性）
+			const overrideDataItem = overrideData.find( o => {
 
-			const overrideDataItem = overrideData.find( o => o.path == path );
+				if ( o.uuid && entity.uuid ) {
+
+					return o.uuid === entity.uuid;
+
+				}
+
+				// フォールバック: pathで照合
+				const path = entity.getScenePath( projectRoot );
+
+				return o.path === path;
+
+			} );
 
 			if ( overrideDataItem ) {
 

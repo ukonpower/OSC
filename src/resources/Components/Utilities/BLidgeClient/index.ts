@@ -20,7 +20,7 @@ export class BLidgeClient extends MXP.Component {
 
 	/** BLidgeルートエンティティ */
 	private blidgeRoot: MXP.Entity | null;
-	/** 名前をキーとするエンティティのマップ */
+	/** uuid/名前をキーとするエンティティのマップ（uuidが優先される） */
 	private entities: Map<string, MXP.Entity>;
 
 	/** アニメーション再生状態 */
@@ -344,8 +344,26 @@ export class BLidgeClient extends MXP.Component {
 		 */
 		const createEntityFromNode = ( node: MXP.BLidgeNode ): MXP.Entity => {
 
-			// 既存のエンティティがあれば取得、なければ新規作成
-			const entity: MXP.Entity = ( this.entities.get( node.name ) || new MXP.Entity() );
+			// uuid優先でエンティティを検索、なければnameで検索、それでもなければ新規作成
+			let entity: MXP.Entity | undefined;
+
+			if ( node.uuid ) {
+
+				entity = this.entities.get( node.uuid );
+
+			}
+
+			if ( ! entity ) {
+
+				entity = this.entities.get( node.name );
+
+			}
+
+			if ( ! entity ) {
+
+				entity = new MXP.Entity();
+
+			}
 
 			// カメラノードの場合、カメラパラメータを設定
 			if ( node.type == 'camera' ) {
@@ -368,8 +386,9 @@ export class BLidgeClient extends MXP.Component {
 
 			} );
 
-			// エンティティをマップに保存し、タイムスタンプを更新
-			this.entities.set( entity.name, entity );
+			// エンティティをマップに保存（uuidがあればuuidで、なければnameで）
+			const key = node.uuid || entity.name;
+			this.entities.set( key, entity );
 			entity.userData.updateTime = timeStamp;
 
 			return entity;

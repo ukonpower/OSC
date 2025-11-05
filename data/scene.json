@@ -26,6 +26,7 @@
 	"overrides": [
 		{
 			"path": "/root",
+			"uuid": "30",
 			"components": [
 				{
 					"name": "BLidgeClient",
@@ -49,6 +50,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/Camera",
+			"uuid": "d7b3bbdf",
 			"components": [
 				{
 					"name": "ShakeViewer",
@@ -75,6 +77,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/Dummy/Cube",
+			"uuid": "e5d5be0e",
 			"components": [
 				{
 					"name": "ShaderMesh"
@@ -83,6 +86,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneHome/Lane",
+			"uuid": "0f3c0a1f",
 			"components": [
 				{
 					"name": "TruchetSushiLane"
@@ -91,6 +95,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneIkura/IBG",
+			"uuid": "cebe8ad4",
 			"components": [
 				{
 					"name": "ShaderMotionGraphics",
@@ -104,6 +109,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneIkura/IkuraFluids",
+			"uuid": "058d95c2",
 			"components": [
 				{
 					"name": "IkuraFluids"
@@ -112,6 +118,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneIkura/IkuraGunKan",
+			"uuid": "2b281283",
 			"components": [
 				{
 					"name": "IkuraGunKan"
@@ -120,6 +127,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneIkura/Kyuri",
+			"uuid": "24df161a",
 			"components": [
 				{
 					"name": "Kyuuri"
@@ -128,6 +136,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/DebaBouChou",
+			"uuid": "989f5be8",
 			"components": [
 				{
 					"name": "DebaBouChou"
@@ -136,6 +145,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/Maguro",
+			"uuid": "29549b03",
 			"components": [
 				{
 					"name": "Maguro"
@@ -144,6 +154,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/MBG",
+			"uuid": "c21a6cf1",
 			"components": [
 				{
 					"name": "ShaderMotionGraphics",
@@ -157,6 +168,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/MizuBall",
+			"uuid": "32dd0971",
 			"components": [
 				{
 					"name": "MizuBall"
@@ -165,6 +177,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/MizuBall.001",
+			"uuid": "ef136354",
 			"components": [
 				{
 					"name": "MizuBall"
@@ -173,6 +186,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/MizuBall.002",
+			"uuid": "cc506154",
 			"components": [
 				{
 					"name": "MizuBall"
@@ -181,6 +195,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/Sushi",
+			"uuid": "b6c68e95",
 			"components": [
 				{
 					"name": "Nigiri"
@@ -189,6 +204,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/Sushi/Sashimi",
+			"uuid": "15d",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -200,6 +216,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001",
+			"uuid": "f2985235",
 			"components": [
 				{
 					"name": "Nigiri"
@@ -208,6 +225,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/Sushi.001/Sashimi",
+			"uuid": "16c",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -219,6 +237,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneMaguro/WaterPillar",
+			"uuid": "36a0e8da",
 			"components": [
 				{
 					"name": "WaterPillar"
@@ -227,6 +246,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneSalmon/Onigiri",
+			"uuid": "768002b3",
 			"components": [
 				{
 					"name": "Onigiri"
@@ -235,6 +255,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon",
+			"uuid": "c51ba9ef",
 			"components": [
 				{
 					"name": "Salmon",
@@ -249,6 +270,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon/Nigiri/Sashimi",
+			"uuid": "189",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -260,6 +282,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub1",
+			"uuid": "0dd05673",
 			"components": [
 				{
 					"name": "Salmon",
@@ -271,6 +294,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2",
+			"uuid": "78014334",
 			"components": [
 				{
 					"name": "Salmon",
@@ -285,6 +309,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneSalmon/Salmon_sub2/Nigiri/Sashimi",
+			"uuid": "1a2",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -296,6 +321,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneSalmon/SBG",
+			"uuid": "cc48dd93",
 			"components": [
 				{
 					"name": "ShaderMotionGraphics",
@@ -309,6 +335,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneTako/TakoAshi",
+			"uuid": "26b24f0a",
 			"components": [
 				{
 					"name": "Octopus"
@@ -317,6 +344,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneTako/TakoNigiri",
+			"uuid": "b9479e4a",
 			"components": [
 				{
 					"name": "SashimiTako"
@@ -325,6 +353,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneTsuri/Ocean",
+			"uuid": "727525da",
 			"components": [
 				{
 					"name": "Ocean"
@@ -333,6 +362,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneTsuri/Taiyaki",
+			"uuid": "d454a187",
 			"components": [
 				{
 					"name": "Taiyaki"
@@ -341,6 +371,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SceneTsuri/ukonpower",
+			"uuid": "5fe0ec15",
 			"components": [
 				{
 					"name": "Ukopower"
@@ -349,14 +380,19 @@
 		},
 		{
 			"path": "/root/blidgeRoot/SkyBox",
+			"uuid": "60382d7c",
 			"components": [
 				{
-					"name": "SkyBox"
+					"name": "SkyBox",
+					"props": {
+						"type": "default"
+					}
 				}
 			]
 		},
 		{
 			"path": "/root/blidgeRoot/Spot",
+			"uuid": "d9fff7dc",
 			"components": [
 				{
 					"name": "Light",
@@ -368,6 +404,7 @@
 		},
 		{
 			"path": "/root/blidgeRoot/Sun",
+			"uuid": "130e1f31",
 			"components": [
 				{
 					"name": "Light",
