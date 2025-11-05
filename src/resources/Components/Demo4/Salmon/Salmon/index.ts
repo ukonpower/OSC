@@ -104,6 +104,10 @@ export class Salmon extends MXP.Component {
 
 	}
 
+	protected updateImpl( _event: MXP.ComponentUpdateEvent ): void {
+
+	}
+
 	// マテリアルのdefinesを更新
 	private updateMaterialDefines(): void {
 

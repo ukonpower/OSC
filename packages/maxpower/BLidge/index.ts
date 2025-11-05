@@ -313,6 +313,23 @@ export class BLidge extends GLP.EventEmitter {
 		const fcurveGroupNames = Object.keys( data.animations );
 		const isV2 = data.version === 2;
 
+		// 差分エンコーディングされたフレーム番号を絶対値に復元
+		// すべてのfcurveに対して先に処理を行う
+		if ( isV2 ) {
+
+			data.fcurves.forEach( fcurveData => {
+
+				for ( let j = 1; j < fcurveData.k.length; j ++ ) {
+
+					fcurveData.k[ j ][ 1 ][ 0 ] += fcurveData.k[ j - 1 ][ 1 ][ 0 ];
+
+				}
+
+			} );
+
+
+		}
+
 		for ( let i = 0; i < fcurveGroupNames.length; i ++ ) {
 
 			const fcurveGroupName = fcurveGroupNames[ i ];
@@ -322,17 +339,6 @@ export class BLidge extends GLP.EventEmitter {
 			data.animations[ i ].forEach( fcurveIndex => {
 
 				const fcurveData = data.fcurves[ fcurveIndex ];
-
-				// 差分エンコーディングされたフレーム番号を絶対値に復元
-				if ( isV2 ) {
-
-					for ( let j = 1; j < fcurveData.k.length; j ++ ) {
-
-						fcurveData.k[ j ][ 1 ][ 0 ] += fcurveData.k[ j - 1 ][ 1 ][ 0 ];
-
-					}
-
-				}
 
 				const curve = new GLP.FCurve();
 
