@@ -308,14 +308,6 @@
 			]
 		},
 		{
-			"path": "/root/blidgeRoot/SceneSea/Sea",
-			"components": [
-				{
-					"name": "Ocean"
-				}
-			]
-		},
-		{
 			"path": "/root/blidgeRoot/SceneTako/TakoAshi",
 			"components": [
 				{
@@ -328,6 +320,22 @@
 			"components": [
 				{
 					"name": "SashimiTako"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneTsuri/Ocean",
+			"components": [
+				{
+					"name": "Ocean"
+				}
+			]
+		},
+		{
+			"path": "/root/blidgeRoot/SceneTsuri/ukonpower",
+			"components": [
+				{
+					"name": "Ukopower"
 				}
 			]
 		},
