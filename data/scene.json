@@ -188,7 +188,7 @@
 			]
 		},
 		{
-			"uuid": "15d",
+			"uuid": "38b",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -207,7 +207,7 @@
 			]
 		},
 		{
-			"uuid": "16c",
+			"uuid": "396",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -248,7 +248,7 @@
 			]
 		},
 		{
-			"uuid": "189",
+			"uuid": "3af",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -284,7 +284,7 @@
 			]
 		},
 		{
-			"uuid": "1a2",
+			"uuid": "3c4",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -328,6 +328,17 @@
 			"components": [
 				{
 					"name": "Ocean"
+				}
+			]
+		},
+		{
+			"uuid": "4afddbe4",
+			"components": [
+				{
+					"name": "SkyBox",
+					"props": {
+						"type": "default"
+					}
 				}
 			]
 		},

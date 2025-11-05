@@ -17,7 +17,7 @@ float oceanNoise( vec3 p ) {
 	float freq = 1.0;
 
 	for( int i = 0; i < 4; i++ ) {
-		vec3 noise = noiseCyc( p * freq + vec3( uTimeE * 0.5, 0.0, uTimeE * 0.3 ) );
+		vec3 noise = noiseCyc( p * freq * 0.5 + vec3( uTimeE * 0.2, 0.0, uTimeE * 0.3  ) );
 		n += amp * noise.x;
 		amp *= 0.5;
 		freq *= 2.0;
@@ -30,10 +30,18 @@ float oceanNoise( vec3 p ) {
 SDFResult D( vec3 p ) {
 
 	// Y座標を波の高さとして変調
-	float wave = oceanNoise( p * 0.5 ) * 0.5;
+	float wave = 0.0;
+	float wh = 0.1;
 
-	// 水平面との距離（Y軸方向）
-	float d = p.y + wave;
+	if( p.y < wh ) {
+
+		wave = oceanNoise( p * 0.5 ) * wh;
+
+	}
+
+	// 水平面との距離（sdPlane関数を使用）
+	// 法線は上向き(0,1,0)、オフセットはwaveで変調
+	float d = sdPlane( p, vec3(0.0, 1.0, 0.0), wave );
 
 	return SDFResult(
 		d,
@@ -57,7 +65,7 @@ void main( void ) {
 	bool hit = false;
 
 	// レイマーチング
-	for( int i = 0; i < 64; i++ ) {
+	for( int i = 0; i < 128; i++ ) {
 
 		dist = D( rayPos );
 		rayPos += dist.d * rayDir;
@@ -68,9 +76,6 @@ void main( void ) {
 			break;
 
 		}
-
-		// 遠すぎる場合は打ち切り（レイの長さで判定）
-		if( float(i) * dist.d > 100.0 ) break;
 
 	}
 
@@ -87,11 +92,12 @@ void main( void ) {
 
 	// 深度に応じて色を変化（ワールド座標のY値で判定）
 	float depth = abs( rayPos.y );
-	oceanColor = mix( oceanColor, vec3( 0.0, 0.1, 0.2 ), clamp( depth / 10.0, 0.0, 1.0 ) );
+	oceanColor = mix( oceanColor, vec3( 0.0, 0.1, 0.2 ), clamp( depth / 1.0, 0.0, 1.0 ) );
 
 	outColor = vec4( oceanColor, 1.0 );
 	outEmission = vec3( 0.0 );
-	outRoughness = 0.2; // 水面なので低いラフネス
+	outRoughness = 0.1; // 水面なので低いラフネス
+	outGradient = 1.0;
 
 	#include <frag_out>
 
