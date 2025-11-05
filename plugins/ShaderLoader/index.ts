@@ -45,11 +45,41 @@ export const ShaderLoader = ( userOptions?: ShaderLoaderOptions ): Plugin => {
 			}
 
 		},
-		buildEnd() {
+		// buildEndの代わりにcloseBundleを使用（全てのファイル処理完了後）
+		async closeBundle() {
 
 			if ( fs.existsSync( "./tmp" ) ) {
 
-				return fs.promises.rm( "./tmp", { recursive: true, force: true, } );
+				try {
+
+					// まず、tmpディレクトリ内の全ファイルを列挙して削除
+					const files = await fs.promises.readdir( "./tmp" );
+
+					for ( const file of files ) {
+
+						const filePath = `./tmp/${file}`;
+
+						try {
+
+							await fs.promises.unlink( filePath );
+
+						} catch ( e ) {
+
+							console.warn( `[shaderLoader] Failed to remove file ${filePath}:`, e );
+
+						}
+
+					}
+
+					// ディレクトリを削除
+					await fs.promises.rmdir( "./tmp" );
+
+				} catch ( e ) {
+
+					// エラーが発生してもビルドは継続
+					console.warn( '[shaderLoader] Failed to remove tmp directory:', e );
+
+				}
 
 			}
 
@@ -134,19 +164,30 @@ export const ShaderLoader = ( userOptions?: ShaderLoaderOptions ): Plugin => {
 			// MINIFIER!!
 			try {
 
-				if ( process.platform == "darwin" ) {
+				// macOSまたはLinux（WSL含む）の場合はmonoを使用
+				if ( process.platform == "darwin" || process.platform == "linux" ) {
 
-					await exec( `mono ~/Documents/application/shader_minifier/shader_minifier.exe ${inputFilePath} -o ${outputFilePath} ${args}` );
+					await exec( `mono ~/application/shader_minifier/shader_minifier.exe ${inputFilePath} -o ${outputFilePath} ${args}` );
 
 				} else {
 
+					// Windowsの場合は直接実行
 					await exec( `shader_minifier.exe ${inputFilePath} -o ${outputFilePath} ${args}` );
 
 				}
 
-			} catch ( e ) {
+			} catch ( e: any ) {
 
-				this.error( `ShaderLoader: ${e.stdout}` );
+				// エラー詳細を出力
+				const errorMsg = [
+					'ShaderMinifier error:',
+					`File: ${id}`,
+					e.stdout ? `stdout: ${e.stdout}` : '',
+					e.stderr ? `stderr: ${e.stderr}` : '',
+					e.message ? `message: ${e.message}` : ''
+				].filter( Boolean ).join( '\n' );
+
+				this.error( errorMsg );
 
 			}
 

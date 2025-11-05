@@ -108,7 +108,9 @@ export default defineConfig( {
 	},
 	plugins: [
 		ResourceManager(),
-		ShaderLoader(),
+		ShaderLoader( {
+			skipMinifier: false
+		} ),
 		visualizer( {
 			template: "treemap",
 			gzipSize: true,
