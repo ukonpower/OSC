@@ -173,7 +173,7 @@ export class Engine extends MXP.Entity {
 
 		}, ( v ) => {
 
-			ProjectSerializer.deserializeOverride( v as any, this._root, this._root );
+			ProjectSerializer.deserializeOverride( v as any, this._root );
 
 		} );
 
@@ -329,7 +329,6 @@ export class Engine extends MXP.Entity {
 
 			ProjectSerializer.deserializeOverride(
 				this._projectCache.overrides,
-				this._root,
 				targetRoot
 			);
 

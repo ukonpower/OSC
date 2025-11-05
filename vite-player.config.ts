@@ -4,7 +4,7 @@ import terser from '@rollup/plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
-import playerJson from './data/scene.json';
+import playerJson from './data/project.json';
 import { ResourceManager } from './plugins/ResourceManager';
 import { ShaderLoader } from './plugins/ShaderLoader';
 

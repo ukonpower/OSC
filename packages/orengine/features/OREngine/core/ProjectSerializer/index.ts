@@ -18,6 +18,7 @@ export interface OREngineDataEntityOverride {
 
 interface OREngineDataEntity {
 	name: string,
+	uuid?: string,
 	pos?: number[],
 	rot?: number[],
 	scale?: number[],
@@ -62,6 +63,7 @@ export class ProjectSerializer {
 
 			return {
 				name: entity.name,
+				uuid: entity.uuid,
 				pos: entity.position.x == 0 && entity.position.y == 0 && entity.position.z == 0 ? undefined : entity.position.getElm( "vec3" ),
 				rot: entity.euler.x == 0 && entity.euler.y == 0 && entity.euler.z == 0 ? undefined : entity.euler.getElm( "vec3" ),
 				scale: entity.scale.x == 1 && entity.scale.y == 1 && entity.scale.z == 1 ? undefined : entity.scale.getElm( "vec3" ),
@@ -135,12 +137,13 @@ export class ProjectSerializer {
 		Deserialize
 	-------------------------------*/
 
-	public static deserializeOverride( overrideData: OREngineDataEntityOverride[], projectRoot: MXP.Entity, targetRoot: MXP.Entity ) {
+	public static deserializeOverride( overrideData: OREngineDataEntityOverride[], targetRoot: MXP.Entity ) {
 
 		targetRoot.traverse( entity => {
 
 			// uuidで照合
 			const overrideDataItem = overrideData.find( o => o.uuid === entity.uuid );
+
 
 			if ( overrideDataItem ) {
 
@@ -176,6 +179,13 @@ export class ProjectSerializer {
 			const entity = target || new MXP.Entity();
 			entity.initiator = "user";
 			entity.name = node.name;
+
+			// uuidを復元（readonlyプロパティのため型アサーションを使用）
+			if ( node.uuid ) {
+
+				( entity as any ).uuid = node.uuid;
+
+			}
 
 			const pos = node.pos || [ 0, 0, 0 ];
 			entity.position.x = pos[ 0 ];

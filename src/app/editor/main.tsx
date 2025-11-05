@@ -4,7 +4,7 @@ import { OREngineProjectData } from "packages/orengine/features/OREngine/core/Pr
 import { useEffect, useState } from "react";
 import ReactDOM from 'react-dom/client';
 
-import ProjectData from "~/../data/scene.json";
+import ProjectData from "~/../data/project.json";
 import { gl } from "~/globals";
 import { initResouces } from "~/resources";
 import { FileSystem } from "~/utils/FileSystem";
@@ -22,7 +22,7 @@ const EditorPage = () => {
 
 	useEffect( () => {
 
-		fileSystem.get<OREngineProjectData>( "scene.json" ).then( ( data ) => {
+		fileSystem.get<OREngineProjectData>( "project.json" ).then( ( data ) => {
 
 			if ( ! data ) return;
 
@@ -50,7 +50,7 @@ const EditorPage = () => {
 		<OREngine gl={gl} project={projectData} >
 			<OREditor editorData={editorData} onSave={( projectData, editorData ) => {
 
-				fileSystem.set( "scene.json", projectData );
+				fileSystem.set( "project.json", projectData );
 				fileSystem.set( "editor.json", editorData );
 
 			}} />

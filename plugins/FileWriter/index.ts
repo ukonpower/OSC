@@ -118,7 +118,7 @@ async function readBody( req: IncomingRequest ): Promise<string> {
 }
 
 const ROOT_DIR = path.resolve( __dirname, '../..' );
-const SCENE_FILE_PATH = path.resolve( ROOT_DIR, 'src/resources/scene.json' );
+const SCENE_FILE_PATH = path.resolve( ROOT_DIR, 'src/resources/blidge-data.json' );
 const COMPONENTS_DIR = path.resolve( ROOT_DIR, 'src/resources/Components' );
 
 const SCENE_REWATCH_DELAY = 200;

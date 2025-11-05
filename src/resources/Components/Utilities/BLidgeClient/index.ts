@@ -2,7 +2,7 @@ import * as MXP from 'maxpower';
 import { Engine } from 'orengine';
 
 import { gl } from '~/globals';
-import SceneData from '~/resources/scene.json';
+import SceneData from '~/resources/blidge-data.json';
 
 const BASE_PATH = import.meta.env.BASE_URL || "/";
 
@@ -46,7 +46,7 @@ export class BLidgeClient extends MXP.Component {
 	/** reload処理のデバウンス用タイマーID */
 	private reloadTimerId: number | null;
 
-	/** scene.json保存処理のデバウンス用タイマーID */
+	/** blidge-data.json保存処理のデバウンス用タイマーID */
 	private saveSceneTimerId: number | null;
 
 	/** WebSocket接続失敗時のタイムアウトタイマーID */
@@ -304,7 +304,7 @@ export class BLidgeClient extends MXP.Component {
 
 			} catch ( error ) {
 
-				console.error( '[BLidgeClient] Failed to save scene.json:', error );
+				console.error( '[BLidgeClient] Failed to save blidge-data.json:', error );
 
 			}
 
