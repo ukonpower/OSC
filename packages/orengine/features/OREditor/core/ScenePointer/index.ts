@@ -19,6 +19,9 @@ export class ScenePointer {
 		this._editor = editor;
 		this._raycaster = new MXP.Raycaster();
 
+		// デバッグモードを有効化（詳細なレイキャストログを出力）
+		this._raycaster.setDebug( true );
+
 	}
 
 	/**
@@ -40,25 +43,52 @@ export class ScenePointer {
 		const ndcX = ( x / rect.width ) * 2 - 1;
 		const ndcY = - ( y / rect.height ) * 2 + 1; // Y軸は反転
 
+		// ログ: クリック座標情報
+		console.log( '--- ScenePointer: Click Event ---' );
+		console.log( `Client coordinates: (${clientX}, ${clientY})` );
+		console.log( `Canvas relative: (${x.toFixed( 2 )}, ${y.toFixed( 2 )})` );
+		console.log( `NDC coordinates: (${ndcX.toFixed( 3 )}, ${ndcY.toFixed( 3 )})` );
+		console.log( `Canvas rect: width=${rect.width}, height=${rect.height}` );
+
 		// レンダリングカメラを取得
 		const camera = this._findMainCamera();
 
-		if ( ! camera ) return;
+		if ( ! camera ) {
+
+			console.warn( 'ScenePointer: No camera found for raycasting' );
+			return;
+
+		}
+
+		// ログ: カメラ情報
+		console.log( `Camera: ${camera.entity && camera.entity.name || 'unnamed'}` );
+		console.log( `Camera displayOut: ${camera.displayOut}` );
 
 		// レイキャストを実行
 		const hit = this._raycaster.raycast( ndcX, ndcY, camera, this._engine.root );
 
+		// ログ: レイキャスト結果
 		if ( hit ) {
+
+			console.log( `✓ Raycast HIT: entity="${hit.entity.name}", distance=${hit.distance.toFixed( 3 )}` );
 
 			// ヒットしたエンティティを選択
 			this._editor.selectEntity( hit.entity );
 
+			console.log( `→ Selected entity: ${hit.entity.name}` );
+
 		} else {
+
+			console.log( '✗ Raycast MISS: No objects hit' );
 
 			// ヒットしなかった場合は選択解除
 			this._editor.selectEntity( null );
 
+			console.log( '→ Selection cleared' );
+
 		}
+
+		console.log( '--------------------------------' );
 
 	}
 
