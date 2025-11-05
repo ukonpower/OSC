@@ -57,19 +57,9 @@ void main( void ) {
 
 	#include <rm_out_obj>
 
-	// たいやきの焼き色（茶色から黄金色のグラデーション）
-	vec3 taiyakiColor = mix(
-		vec3( 0.8, 0.5, 0.2 ),  // 濃い茶色
-		vec3( 1.0, 0.8, 0.3 ),   // 黄金色
-		noise( rayPos * 5.0 ) * 0.5 + 0.5
-	);
-
-	outColor.xyz = taiyakiColor;
+	// たいやきの焼き色
+	outColor.xyz = vec3( 0.9, 0.6, 0.3 );
 	outRoughness = 0.6;
-
-	// 焼き目の濃淡
-	float burn = smoothstep( 0.3, 0.7, noise( rayPos * 10.0 ) );
-	outColor.xyz *= mix( 0.7, 1.0, burn );
 
 	// 距離に応じた減衰
 	outColor.xyz *= smoothstep( 1.5, 0.4, length( rayPos ) );
