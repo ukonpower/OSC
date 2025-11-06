@@ -25,7 +25,7 @@ void main( void ) {
 	float v = smoothstep(0.0, 1.0, - ((1.0 - vLayerIndex.y) * 0.5 + line * 0.5 ) * 0.3 + (uState.x) * 1.3 );
 	v = easeOut(v, 2.5);
 
-	float noise1 = noiseSimplex( vec3( p * 1.5 - vLayerIndex.x * 0.1 + 0.4, uTime * 0.1  ) ) * 0.5 + 0.5;
+	float noise1 = noiseSimplex( vec3( p * 1.5 - vLayerIndex.x * vec2(0.1, -0.1) + vec2( 0.85, -0.04 ), uTime * 0.098  ) ) * 0.5 + 0.5;
 	float hole = noise1 - ( v - 1.0 );
 
 	if( hole > 0.5 - (1.0 - vLayerIndex.y) * 0.2 ) {
