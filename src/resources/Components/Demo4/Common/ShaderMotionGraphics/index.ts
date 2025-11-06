@@ -5,6 +5,7 @@ import ikuraBGScreenFrag from './shaders/ikuraBGScreen.fs';
 import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
 import salmonBGScreenFrag from './shaders/salmonBGScreen.fs';
 import sampleFrag from './shaders/sample.fs';
+import takoBGScreenFrag from './shaders/takoBGScreen.fs';
 
 import { globalUniforms } from '~/globals';
 import { bindBlidgeUniform } from '~/shortcuts';
@@ -32,6 +33,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 			[ "ikuraBGScreen", { vert: basicVert, frag: ikuraBGScreenFrag } ],
 			[ "maguroBGScreen", { vert: basicVert, frag: maguroBGScreenFrag } ],
 			[ "salmonBGScreen", { vert: basicVert, frag: salmonBGScreenFrag } ],
+			[ "takoBGScreen", { vert: basicVert, frag: takoBGScreenFrag } ],
 		] );
 
 		this.shaderName = "sample";
@@ -61,6 +63,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 					{ label: "Ikura BG Screen", value: "ikuraBGScreen" },
 					{ label: "Maguro BG Screen", value: "maguroBGScreen" },
 					{ label: "Salmon BG Screen", value: "salmonBGScreen" },
+					{ label: "Tako BG Screen", value: "takoBGScreen" },
 				]
 			}
 		} );
@@ -126,6 +129,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 			import.meta.hot.accept( './shaders/ikuraBGScreen.fs', createHotReloadHandler( 'ikuraBGScreen', 'smgIkuraBGScreenFrag' ) );
 			import.meta.hot.accept( './shaders/maguroBGScreen.fs', createHotReloadHandler( 'maguroBGScreen', 'smgMaguroBGScreenFrag' ) );
 			import.meta.hot.accept( './shaders/salmonBGScreen.fs', createHotReloadHandler( 'salmonBGScreen', 'smgSalmonBGScreenFrag' ) );
+			import.meta.hot.accept( './shaders/takoBGScreen.fs', createHotReloadHandler( 'takoBGScreen', 'smgTakoBGScreenFrag' ) );
 
 		}
 

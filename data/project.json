@@ -189,7 +189,7 @@
 			]
 		},
 		{
-			"uuid": "6856c323",
+			"uuid": "c0641a56",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -208,7 +208,7 @@
 			]
 		},
 		{
-			"uuid": "68572da3",
+			"uuid": "c06479b2",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -249,7 +249,7 @@
 			]
 		},
 		{
-			"uuid": "68576bd0",
+			"uuid": "c065e217",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -285,7 +285,7 @@
 			]
 		},
 		{
-			"uuid": "6858cb81",
+			"uuid": "c0657ee7",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -304,6 +304,19 @@
 						"shaderName": "salmonBGScreen",
 						"layers": 3,
 						"layerSpacing": -0.09
+					}
+				}
+			]
+		},
+		{
+			"uuid": "5e9cf8ad",
+			"components": [
+				{
+					"name": "ShaderMotionGraphics",
+					"props": {
+						"shaderName": "takoBGScreen",
+						"layers": 3,
+						"layerSpacing": -0.04000000000000001
 					}
 				}
 			]
