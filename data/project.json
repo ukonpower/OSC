@@ -91,6 +91,14 @@
 			]
 		},
 		{
+			"uuid": "f4a7a7e8",
+			"components": [
+				{
+					"name": "TableStage"
+				}
+			]
+		},
+		{
 			"uuid": "cebe8ad4",
 			"components": [
 				{
@@ -189,7 +197,7 @@
 			]
 		},
 		{
-			"uuid": "c0641a56",
+			"uuid": "57307008",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -208,7 +216,7 @@
 			]
 		},
 		{
-			"uuid": "c06479b2",
+			"uuid": "57306fa3",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -249,7 +257,7 @@
 			]
 		},
 		{
-			"uuid": "c065e217",
+			"uuid": "5731f0a7",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -285,7 +293,7 @@
 			]
 		},
 		{
-			"uuid": "c0657ee7",
+			"uuid": "5731781f",
 			"components": [
 				{
 					"name": "Sashimi",

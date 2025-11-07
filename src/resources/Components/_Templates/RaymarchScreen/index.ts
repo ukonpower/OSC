@@ -21,7 +21,7 @@ export class RaymarchScreen extends MXP.Component {
 		this.mesh = this._entity.addComponent( MXP.Mesh );
 
 		// Planeジオメトリを作成（XY平面）
-		this.mesh.geometry = new MXP.CubeGeometry( { width: 2, height: 2 } );
+		this.mesh.geometry = new MXP.PlaneGeometry( { width: 2, height: 2 } );
 
 		// マテリアルを作成
 		this.mesh.material = new MXP.Material( {
