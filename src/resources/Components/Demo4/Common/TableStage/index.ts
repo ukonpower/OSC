@@ -20,7 +20,7 @@ export class TableStage extends MXP.Component {
 		// Meshコンポーネントを追加
 		this.mesh = this._entity.addComponent( MXP.Mesh );
 
-		// Planeジオメトリを作成（XY平面）
+		// Planeジオメトリを作成(XY平面)
 		this.mesh.geometry = new MXP.PlaneGeometry( { width: 2, height: 2 } );
 
 		// マテリアルを作成
@@ -31,7 +31,23 @@ export class TableStage extends MXP.Component {
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
 		} );
 
-		// ホットリロード対応（開発時のみ）
+		// 子entityを作成
+		const cubeEntity = new MXP.Entity();
+		this._entity.add( cubeEntity );
+
+		// 子entityにMeshコンポーネントを追加
+		const cubeMesh = cubeEntity.addComponent( MXP.Mesh );
+
+		// サイズ1のCubeジオメトリを設定
+		cubeMesh.geometry = new MXP.CubeGeometry( { width: 1, height: 1, depth: 1 } );
+
+		// シンプルなマテリアルを設定
+		cubeMesh.material = new MXP.Material( {
+			phase: [ "deferred" ],
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+		} );
+
+		// ホットリロード対応(開発時のみ)
 		if ( import.meta.hot ) {
 
 			import.meta.hot.accept( './shaders/tableStage.vs', ( module ) => {
