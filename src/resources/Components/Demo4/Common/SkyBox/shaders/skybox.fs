@@ -7,6 +7,7 @@
 uniform float uTimeE;
 uniform float uAspectRatio;
 uniform sampler2D uNoiseTex;
+uniform vec4 uState;
 
 void main( void ) {
 
@@ -16,6 +17,7 @@ void main( void ) {
 	outRoughness = 1.0;
 	outColor *= 0.0;
 	outEmission = vec3( 1.0 );
+	outEmission *= uState.x;
 
 	#ifdef IS_FORWARD
 

@@ -4,6 +4,7 @@ import skyboxDefaultFrag from './shaders/skybox.fs';
 import skyboxTsuriFrag from './shaders/skybox_tsuri.fs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 export class SkyBox extends MXP.Component {
 
@@ -34,6 +35,8 @@ export class SkyBox extends MXP.Component {
 			cullFace: false,
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.tex )
 		} );
+
+		bindBlidgeUniform( mesh );
 
 		if ( import.meta.hot ) {
 

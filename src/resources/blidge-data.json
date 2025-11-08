@@ -128,6 +128,9 @@
     ],
     [
       64
+    ],
+    [
+      65
     ]
   ],
   "fcurves": [
@@ -2936,6 +2939,33 @@
       "axis": "x",
       "k": [
         [
+          2,
+          [
+            150,
+            0,
+            120,
+            0,
+            180,
+            0
+          ]
+        ],
+        [
+          2,
+          [
+            240,
+            2,
+            210,
+            2,
+            270,
+            2
+          ]
+        ]
+      ]
+    },
+    {
+      "axis": "x",
+      "k": [
+        [
           1,
           [
             878,
@@ -2993,7 +3023,7 @@
         "position": [
           0,
           3.894,
-          283.434
+          326.536
         ],
         "type": "camera",
         "rotation": [
@@ -3004,7 +3034,7 @@
         "custom_properties": {
           "master": {
             "type": "float",
-            "value": 1
+            "value": 0.065
           }
         },
         "animation": {
@@ -3124,7 +3154,7 @@
               29.83
             ],
             "animation": {
-              "hide": 33
+              "hide": 34
             },
             "children": [
               {
@@ -3645,7 +3675,7 @@
             ],
             "visible": false,
             "animation": {
-              "hide": 32
+              "hide": 33
             }
           },
           {
@@ -3668,7 +3698,7 @@
             ],
             "visible": false,
             "animation": {
-              "hide": 31
+              "hide": 32
             }
           },
           {
@@ -4018,7 +4048,19 @@
           1.235,
           1.235,
           1.235
-        ]
+        ],
+        "custom_properties": {
+          "yoake": {
+            "type": "float",
+            "value": 0
+          }
+        },
+        "animation": {
+          "uState": 31
+        },
+        "uniforms": {
+          "uState": 31
+        }
       },
       {
         "name": "Spot",
