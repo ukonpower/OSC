@@ -79,10 +79,11 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			renderCamera.needsUpdateProjectionMatrix = true;
 			renderCamera.resize( resolution );
 
-			// DOF設定（カメラから原点への距離をfocusDistanceに設定）
-			const distanceToOrigin = camera.position.length();
-			renderCamera.dofParams.focusDistance = distanceToOrigin;
-			renderCamera.dofParams.kFilmHeight = 0.008;
+				// シェーダーエディターではDOFを無効化（パフォーマンス向上のため）
+			const renderer = engine.renderer as any;
+			renderer._pipelinePostProcess.dofCoc.enabled = false;
+			renderer._pipelinePostProcess.dofBokeh.enabled = false;
+			renderer._pipelinePostProcess.dofComposite.enabled = false;
 
 			// Light作成
 			const light = new MXP.Entity();
@@ -265,11 +266,6 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 					renderCamera.needsUpdateProjectionMatrix = true;
 					renderCamera.resize( resolution );
 
-					// DOF設定（カメラから原点への距離をfocusDistanceに設定）
-					const distanceToOrigin = cameraEntity.position.length();
-					renderCamera.dofParams.focusDistance = distanceToOrigin;
-					renderCamera.dofParams.kFilmHeight = 0.008;
-
 				}
 
 			}
@@ -292,20 +288,6 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 		let animationId: number;
 
 		const animate = () => {
-
-			// DOF設定を毎フレーム更新（カメラがOrbitControlsで動くため）
-			const cameraEntity = engine.root.findEntityByName( "Camera" );
-			if ( cameraEntity ) {
-
-				const renderCamera = cameraEntity.getComponent( MXP.RenderCamera );
-				if ( renderCamera ) {
-
-					const distanceToOrigin = cameraEntity.position.length();
-					renderCamera.dofParams.focusDistance = distanceToOrigin;
-
-				}
-
-			}
 
 			engine.update();
 			animationId = requestAnimationFrame( animate );
