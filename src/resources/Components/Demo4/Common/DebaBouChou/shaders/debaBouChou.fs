@@ -12,6 +12,7 @@
 
 uniform float uTimeE;
 uniform sampler2D uNoiseTex;
+uniform float uTest;
 
 SDFResult D( vec3 p ) {
 

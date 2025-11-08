@@ -277,11 +277,6 @@ export const ShaderEditorApp = () => {
 					onWireframeChange={setShowWireframe}
 				/>
 
-				<UniformEditor
-					uniforms={currentUniforms}
-					onUniformChange={handleUniformChange}
-				/>
-
 				<div className="shader-editor__content">
 					<ComponentList
 						components={SHADER_COMPONENTS}
@@ -314,10 +309,16 @@ export const ShaderEditorApp = () => {
 								onUniformsChange={handleUniformsChange}
 							/>
 
-							<CodePane
-								code={currentShaderCode}
-								onChange={handleCodeChange}
-							/>
+							<div className="shader-editor__code-wrapper">
+								<UniformEditor
+									uniforms={currentUniforms}
+									onUniformChange={handleUniformChange}
+								/>
+								<CodePane
+									code={currentShaderCode}
+									onChange={handleCodeChange}
+								/>
+							</div>
 						</SplitContainer>
 					) : (
 						// モバイル時: 従来通りの縦並び
@@ -337,10 +338,16 @@ export const ShaderEditorApp = () => {
 								onUniformsChange={handleUniformsChange}
 							/>
 
-							<CodePane
-								code={currentShaderCode}
-								onChange={handleCodeChange}
-							/>
+							<div className="shader-editor__code-wrapper">
+								<UniformEditor
+									uniforms={currentUniforms}
+									onUniformChange={handleUniformChange}
+								/>
+								<CodePane
+									code={currentShaderCode}
+									onChange={handleCodeChange}
+								/>
+							</div>
 						</>
 					)}
 				</div>

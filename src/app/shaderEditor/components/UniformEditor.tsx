@@ -1,6 +1,8 @@
 import * as GLP from 'glpower';
 import { useCallback, useMemo } from 'react';
 
+import { Slider } from './Slider';
+
 interface UniformEditorProps {
 	uniforms: GLP.Uniforms | null;
 	onUniformChange: ( key: string, value: any ) => void;
@@ -28,17 +30,26 @@ const UniformInput = ( { uniformKey, uniform, onChange }: { uniformKey: string; 
 
 	}, [ uniform.value, onChange ] );
 
-	// スカラー値（1f, 1i）
-	if ( uniform.type === '1f' || uniform.type === '1i' ) {
+	// スカラー値（1f）
+	if ( uniform.type === '1f' ) {
 
 		return (
-			<input
-				type="number"
-				step={uniform.type === '1i' ? '1' : '0.01'}
-				value={uniform.value}
-				onChange={( e ) => handleChange( e )}
-				className="shader-editor__uniform-input"
-			/>
+			<div className="shader-editor__uniform-control">
+				<Slider
+					value={uniform.value}
+					onChange={onChange}
+					min={0}
+					max={1}
+					step={0.01}
+				/>
+				<input
+					type="number"
+					step="0.01"
+					value={uniform.value}
+					onChange={( e ) => handleChange( e )}
+					className="shader-editor__uniform-input"
+				/>
+			</div>
 		);
 
 	}
@@ -50,16 +61,30 @@ const UniformInput = ( { uniformKey, uniform, onChange }: { uniformKey: string; 
 		const values = Array.isArray( uniform.value ) ? uniform.value : [];
 
 		return (
-			<div className="shader-editor__uniform-vector">
+			<div className="shader-editor__uniform-vector-list">
 				{Array.from( { length: componentCount }, ( _, i ) => (
-					<input
-						key={i}
-						type="number"
-						step="0.01"
-						value={values[ i ] || 0}
-						onChange={( e ) => handleChange( e, i )}
-						className="shader-editor__uniform-input shader-editor__uniform-input--vector"
-					/>
+					<div key={i} className="shader-editor__uniform-vector-item">
+						<Slider
+							value={values[ i ] || 0}
+							onChange={( val ) => {
+
+								const newArray = [ ...values ];
+								newArray[ i ] = val;
+								onChange( newArray );
+
+							}}
+							min={0}
+							max={1}
+							step={0.01}
+						/>
+						<input
+							type="number"
+							step="0.01"
+							value={values[ i ] || 0}
+							onChange={( e ) => handleChange( e, i )}
+							className="shader-editor__uniform-input shader-editor__uniform-input--vector"
+						/>
+					</div>
 				) )}
 			</div>
 		);
