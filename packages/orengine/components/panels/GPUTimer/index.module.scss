@@ -17,11 +17,36 @@
 	padding-bottom: 0.5em;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	font-weight: bold;
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
 }
 
 .totalTime {
 	font-size: 1.1em;
-	margin-bottom: 0.5em;
+	flex: 1;
+}
+
+// 開始/停止ボタン
+.toggleButton {
+	background-color: rgba(255, 255, 255, 0.05);
+	color: $fontCol2;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	padding: 0.25em 0.5em;
+	border-radius: 3px;
+	font-size: 1em;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+	min-width: 2em;
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+
+	&:focus {
+		outline: none;
+		border-color: rgba(255, 255, 255, 0.3);
+	}
 }
 
 // コントロール：フィルタとソート

@@ -82,6 +82,7 @@ export const Timer = () => {
 	const [ filterType, setFilterType ] = useState<string>( 'all' );
 	const [ threshold, setThreshold ] = useState<number>( 0 );
 	const [ sortBy, setSortBy ] = useState<'time' | 'name'>( 'time' );
+	const [ isRunning, setIsRunning ] = useState<boolean>( false );
 	const dataBufferRef = useRef<TimerDataBuffer>( new TimerDataBuffer( 30 ) );
 	const rafIdRef = useRef<number>( 0 );
 	const dirtyRef = useRef<boolean>( false );
@@ -111,6 +112,9 @@ export const Timer = () => {
 
 		// Rendererからのタイマーイベントを受信
 		const onTimerUpdate = ( samples: TimerDuration[] ) => {
+
+			// 停止中は更新しない
+			if ( ! isRunning ) return;
 
 			dataBuffer.update( samples );
 			dirtyRef.current = true;
@@ -144,7 +148,7 @@ export const Timer = () => {
 
 		};
 
-	}, [ engine ] );
+	}, [ engine, isRunning ] );
 
 	// フィルタリング
 	const filteredStats = statistics.filter( ( stat ) => {
@@ -195,6 +199,15 @@ export const Timer = () => {
 				<div className={style.totalTime}>
 					Total: {formatNumber( totalTime )} ms ({fps} fps)
 				</div>
+
+				{/* 開始/停止ボタン */}
+				<button
+					className={style.toggleButton}
+					onClick={() => setIsRunning( ! isRunning )}
+					title={isRunning ? 'Stop timer' : 'Start timer'}
+				>
+					{isRunning ? '⏸' : '▶'}
+				</button>
 
 				{/* コントロール：フィルタとソート */}
 				<div className={style.controls}>
