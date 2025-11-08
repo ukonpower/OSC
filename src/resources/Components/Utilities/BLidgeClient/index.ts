@@ -114,15 +114,42 @@ export class BLidgeClient extends MXP.Component {
 
 		};
 
+		// 選択同期イベントハンドラ
+		const onSyncSelection = ( selection: MXP.BLidgeSelection ) => {
+
+			if ( this.entity ) {
+
+				// 選択の最初のオブジェクトをイベントとして通知
+				const firstSelected = selection.selected[ 0 ];
+
+				if ( firstSelected && firstSelected.uuid ) {
+
+					const targetEntity = this.entities.get( firstSelected.uuid );
+
+					if ( targetEntity ) {
+
+						// BLidgeClientからselectionイベントを発火
+						this.emit( "update/blidge/selection", [ targetEntity ] );
+
+					}
+
+				}
+
+			}
+
+		};
+
 		// イベントリスナー登録
 		this.blidge.on( 'sync/scene', onSyncScene );
 		this.blidge.on( 'sync/timeline', onSyncTimeline );
+		this.blidge.on( 'sync/selection', onSyncSelection );
 
 		// コンポーネント破棄時のイベントリスナー削除
 		this.once( "dispose", () => {
 
 			this.blidge.off( 'sync/scene', onSyncScene );
 			this.blidge.off( 'sync/timeline', onSyncTimeline );
+			this.blidge.off( 'sync/selection', onSyncSelection );
 
 		} );
 

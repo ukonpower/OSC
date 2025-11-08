@@ -115,6 +115,17 @@ export class Editor extends MXP.Serializable {
 		}
 
 		/*-------------------------------
+			BLidge Selection
+		-------------------------------*/
+
+		// BLidgeからの選択イベントをリッスン
+		engine.on( "update/blidge/selection", ( entity: MXP.Entity ) => {
+
+			this.selectEntity( entity );
+
+		} );
+
+		/*-------------------------------
 			Loop
 		-------------------------------*/
 

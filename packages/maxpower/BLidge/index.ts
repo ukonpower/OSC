@@ -103,7 +103,7 @@ export type BLidgeCurveParam = {
 
 // message
 
-export type BLidgeMessage = BLidgeSyncSceneMessage | BLidgeSyncTimelineMessage | BLidgeEventMessage
+export type BLidgeMessage = BLidgeSyncSceneMessage | BLidgeSyncTimelineMessage | BLidgeSyncSelectionMessage | BLidgeEventMessage
 
 export type BLidgeSyncSceneMessage = {
 	type: "sync/scene",
@@ -113,6 +113,11 @@ export type BLidgeSyncSceneMessage = {
 export type BLidgeSyncTimelineMessage = {
 	type: "sync/timeline";
 	data: BLidgeFrame;
+}
+
+export type BLidgeSyncSelectionMessage = {
+	type: "sync/selection";
+	data: BLidgeSelection;
 }
 
 export type BLidgeEventMessage = {
@@ -132,6 +137,19 @@ export type BLidgeFrame = {
 	playing: boolean;
 	/** タイムラインをドラッグ中かどうか */
 	scrubbing?: boolean;
+}
+
+// selection
+
+export type BLidgeSelectionObject = {
+	uuid: string;
+	name: string;
+	type?: string;
+}
+
+export type BLidgeSelection = {
+	active: BLidgeSelectionObject | null;
+	selected: BLidgeSelectionObject[];
 }
 
 type BLidgeConnection = {
@@ -451,6 +469,10 @@ export class BLidge extends GLP.EventEmitter {
 			} else if ( msg.type == "sync/timeline" ) {
 
 				this.onSyncTimeline( msg.data );
+
+			} else if ( msg.type == "sync/selection" ) {
+
+				this.emit( "sync/selection", [ msg.data ] );
 
 			} else if ( msg.type == "event" ) {
 

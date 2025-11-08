@@ -402,6 +402,14 @@ export class Engine extends MXP.Entity {
 
 		} );
 
+		// BLidgeClientからの選択イベントを受け取り、Engine経由で再発火
+		blidgeClient.on( "update/blidge/selection", ( entity: MXP.Entity ) => {
+
+			// Engineから選択イベントを発火してEditor側に伝達
+			this.emit( "update/blidge/selection", [ entity ] );
+
+		} );
+
 		// 登録されたことを通知
 		this.emit( "register/blidgeClient", [ blidgeClient ] );
 
