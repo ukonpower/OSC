@@ -59,7 +59,7 @@ void main( void ) {
 	#include <frag_in>
 
 	// カメラ位置からワールド空間でレイを初期化
-	#include <rm_ray_world>
+	#include <rm_ray_screen>
 
 	SDFResult dist;
 	bool hit = false;

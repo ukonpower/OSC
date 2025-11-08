@@ -23,7 +23,7 @@ import lighting_light from './shaderParts/lighting_light.part.glsl';
 import raymarch_h from './shaderParts/raymarch_h.part.glsl';
 import raymarch_out_obj from './shaderParts/raymarch_out_obj.part.glsl';
 import raymarch_ray_object from './shaderParts/raymarch_ray_object.part.glsl';
-import raymarch_ray_world from './shaderParts/raymarch_ray_world.part.glsl';
+import raymarch_ray_screen from './shaderParts/raymarch_ray_screen.part.glsl';
 import uniformTime from './shaderParts/uniform_time.part.glsl';
 import vert_h from './shaderParts/vert_h.part.glsl';
 import vert_in from './shaderParts/vert_in.part.glsl';
@@ -76,7 +76,7 @@ export const shaderInclude = ( shader: string ) => {
 		[ "rm_h", raymarch_h ],
 		[ "rm_normal", raymarch_normal ],
 		[ "rm_ray_obj", raymarch_ray_object ],
-		[ "rm_ray_world", raymarch_ray_world ],
+		[ "rm_ray_screen", raymarch_ray_screen ],
 		[ "rm_out_obj", raymarch_out_obj ],
 		[ "uni_time", uniformTime ],
 		[ "pmrem", pmrem ],

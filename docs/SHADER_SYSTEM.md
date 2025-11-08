@@ -48,7 +48,7 @@
 | `frag_out` | `frag_out.part.glsl` | フラグメントシェーダー出力 |
 | `rm_h` | `raymarch_h.part.glsl` | レイマーチングヘッダー |
 | `rm_ray_obj` | `raymarch_ray_object.part.glsl` | レイマーチングレイ生成（オブジェクト空間） |
-| `rm_ray_world` | `raymarch_ray_world.part.glsl` | レイマーチングレイ生成（ワールド空間） |
+| `rm_ray_screen` | `raymarch_ray_screen.part.glsl` | レイマーチングレイ生成（スクリーン空間） |
 | `rm_out_obj` | `raymarch_out_obj.part.glsl` | レイマーチング出力（オブジェクト空間） |
 | `uni_time` | `uniform_time.part.glsl` | 時間ユニフォーム |
 | `lighting_light` | `lighting_light.part.glsl` | ライトユニフォーム |
