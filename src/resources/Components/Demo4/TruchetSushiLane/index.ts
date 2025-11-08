@@ -17,17 +17,14 @@ export class TruchetSushiLane extends MXP.Component {
 		super( params );
 
 		// Meshコンポーネントを追加
-		const mesh = this._entity.addComponent( MXP.Mesh );
-
-		// Cubeジオメトリを作成（レイマーチング用のボリューム）
-		mesh.geometry = new MXP.CubeGeometry( { width: 2, height: 2, depth: 2 } );
-
-		// マテリアルを作成
-		mesh.material = new MXP.Material( {
-			phase: [ "deferred", "shadowMap" ], // Deferredレンダリングパイプラインを使用
-			vert: MXP.hotGet( "truchetSushiLaneVert", raymarchVert ),
-			frag: MXP.hotGet( "truchetSushiLaneFrag", raymarchFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution, globalUniforms.tex )
+		const mesh = this._entity.addComponent( MXP.Mesh, {
+			geometry: new MXP.CubeGeometry( { width: 2, height: 2, depth: 2 } ),
+			material: new MXP.Material( {
+				phase: [ "deferred", "shadowMap" ], // Deferredレンダリングパイプラインを使用
+				vert: MXP.hotGet( "truchetSushiLaneVert", raymarchVert ),
+				frag: MXP.hotGet( "truchetSushiLaneFrag", raymarchFrag ),
+				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution, globalUniforms.tex )
+			} )
 		} );
 
 		// ホットリロード対応（開発時のみ）

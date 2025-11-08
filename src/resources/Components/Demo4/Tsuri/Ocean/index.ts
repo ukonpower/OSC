@@ -18,17 +18,14 @@ export class Ocean extends MXP.Component {
 		super( params );
 
 		// Meshコンポーネントを追加
-		this.mesh = this._entity.addComponent( MXP.Mesh );
-
-		// Planeジオメトリを作成（XY平面）
-		this.mesh.geometry = new MXP.CubeGeometry( { width: 2, height: 2 } );
-
-		// マテリアルを作成
-		this.mesh.material = new MXP.Material( {
-			phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
-			vert: MXP.hotGet( "oceanVert", oceanVert ),
-			frag: MXP.hotGet( "oceanFrag", oceanFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+		this.mesh = this._entity.addComponent( MXP.Mesh, {
+			geometry: new MXP.CubeGeometry( { width: 2, height: 2 } ),
+			material: new MXP.Material( {
+				phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
+				vert: MXP.hotGet( "oceanVert", oceanVert ),
+				frag: MXP.hotGet( "oceanFrag", oceanFrag ),
+				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+			} )
 		} );
 
 		// ホットリロード対応（開発時のみ）

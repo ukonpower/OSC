@@ -15,9 +15,6 @@ export class Shari extends MXP.Component {
 
 		super( params );
 
-		// Meshコンポーネントを追加
-		const mesh = this._entity.addComponent( MXP.Mesh );
-
 		// ジオメトリを作成（シャリ形状用のキューブ）
 		const instanceCount = 128;
 		const geo = new MXP.CubeGeometry( {
@@ -42,14 +39,15 @@ export class Shari extends MXP.Component {
 		geo.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
 		geo.setAttribute( 'id2', new Float32Array( id2Array ), 4, { instanceDivisor: 1 } );
 
-		mesh.geometry = geo;
-
-		// マテリアルを作成
-		mesh.material = new MXP.Material( {
-			phase: [ "deferred", "shadowMap" ], // deferred + shadowMapで描画
-			vert: MXP.hotGet( "shariVert", shariVert ),
-			frag: MXP.hotGet( "shariFrag", shariFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+		// Meshコンポーネントを追加
+		const mesh = this._entity.addComponent( MXP.Mesh, {
+			geometry: geo,
+			material: new MXP.Material( {
+				phase: [ "deferred", "shadowMap" ], // deferred + shadowMapで描画
+				vert: MXP.hotGet( "shariVert", shariVert ),
+				frag: MXP.hotGet( "shariFrag", shariFrag ),
+				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+			} )
 		} );
 
 		// ホットリロード対応（開発時のみ）

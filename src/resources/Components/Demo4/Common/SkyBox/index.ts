@@ -22,18 +22,18 @@ export class SkyBox extends MXP.Component {
 
 		}
 
-		const mesh = this._entity.addComponent( MXP.Mesh );
-		mesh.geometry = new MXP.SphereGeometry( { radius: 500, widthSegments: 32, heightSegments: 32 } );
-
 		// typeに応じてシェーダーを切り替え
 		const frag = this.type === "tsuri" ? skyboxTsuriFrag : skyboxDefaultFrag;
 		const hotKey = this.type === "tsuri" ? "skybox_tsuri" : "skybox_default";
 
-		mesh.material = new MXP.Material( {
-			phase: [ "deferred", "envMap" ],
-			frag: MXP.hotGet( hotKey, frag ),
-			cullFace: false,
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.tex )
+		const mesh = this._entity.addComponent( MXP.Mesh, {
+			geometry: new MXP.SphereGeometry( { radius: 500, widthSegments: 32, heightSegments: 32 } ),
+			material: new MXP.Material( {
+				phase: [ "deferred", "envMap" ],
+				frag: MXP.hotGet( hotKey, frag ),
+				cullFace: false,
+				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.tex )
+			} )
 		} );
 
 		bindBlidgeUniform( mesh );

@@ -19,9 +19,6 @@ export class Ikura extends MXP.Component {
 
 		super( params );
 
-		// Meshコンポーネントを追加
-		this.mesh = this._entity.addComponent( MXP.Mesh );
-
 		// インスタンス数
 		const instanceCount = 9;
 
@@ -40,14 +37,15 @@ export class Ikura extends MXP.Component {
 
 		geo.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
 
-		this.mesh.geometry = geo;
-
-		// マテリアルを作成
-		this.mesh.material = new MXP.Material( {
-			phase: [ "deferred", "shadowMap" ],
-			vert: MXP.hotGet( "ikuraVert", ikuraVert ),
-			frag: MXP.hotGet( "ikuraFrag", ikuraFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+		// Meshコンポーネントを追加
+		this.mesh = this._entity.addComponent( MXP.Mesh, {
+			geometry: geo,
+			material: new MXP.Material( {
+				phase: [ "deferred", "shadowMap" ],
+				vert: MXP.hotGet( "ikuraVert", ikuraVert ),
+				frag: MXP.hotGet( "ikuraFrag", ikuraFrag ),
+				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+			} )
 		} );
 
 		// BLidgerのuniformsをマテリアルにバインド

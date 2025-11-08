@@ -18,17 +18,14 @@ export class TableStage extends MXP.Component {
 		super( params );
 
 		// Meshコンポーネントを追加
-		this.mesh = this._entity.addComponent( MXP.Mesh );
-
-		// Planeジオメトリを作成(XY平面)
-		this.mesh.geometry = new MXP.PlaneGeometry( { width: 2, height: 2 } );
-
-		// マテリアルを作成
-		this.mesh.material = new MXP.Material( {
-			phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
-			vert: MXP.hotGet( "tableStageVert", raymarchVert ),
-			frag: MXP.hotGet( "tableStageFrag", raymarchFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+		this.mesh = this._entity.addComponent( MXP.Mesh, {
+			geometry: new MXP.PlaneGeometry( { width: 2, height: 2 } ),
+			material: new MXP.Material( {
+				phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
+				vert: MXP.hotGet( "tableStageVert", raymarchVert ),
+				frag: MXP.hotGet( "tableStageFrag", raymarchFrag ),
+				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+			} )
 		} );
 
 		// 子entityを作成
@@ -36,16 +33,13 @@ export class TableStage extends MXP.Component {
 		this._entity.add( cubeEntity );
 
 		// 子entityにMeshコンポーネントを追加
-		const cubeMesh = cubeEntity.addComponent( MXP.Mesh );
-
-		// サイズ1のCubeジオメトリを設定
-		cubeMesh.geometry = new MXP.CubeGeometry( { width: 1, height: 1, depth: 1 } );
-
-		// シンプルなマテリアルを設定
-		cubeMesh.material = new MXP.Material( {
-			phase: [ "deferred" ],
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution ),
-			drawType: "LINES"
+		const cubeMesh = cubeEntity.addComponent( MXP.Mesh, {
+			geometry: new MXP.CubeGeometry( { width: 1, height: 1, depth: 1 } ),
+			material: new MXP.Material( {
+				phase: [ "deferred" ],
+				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution ),
+				drawType: "LINES"
+			} )
 		} );
 
 		// ホットリロード対応(開発時のみ)

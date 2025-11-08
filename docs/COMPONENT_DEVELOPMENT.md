@@ -76,8 +76,27 @@ export class YourComponent extends MXP.Component {
 - `this.entity.matrixWorld`: ワールド変換行列
 - `this.entity.position`, `this.entity.quaternion`, `this.entity.scale`: トランスフォーム
 - `this.entity.getComponent<T>()`: 他のコンポーネントの取得
-- `this.entity.addComponent()`: コンポーネントの追加
+- `this.entity.addComponent()`: コンポーネントの追加（第二引数でコンストラクタ引数を渡せる）
 - `this.entity.findEntityByName()`: 名前でエンティティ検索
+
+**コンポーネントの追加:**
+
+`addComponent`の第二引数を使用して、追加するコンポーネントのコンストラクタに引数を渡すことができます。これにより、コンポーネント追加後の個別設定を省略できます。
+
+```typescript
+// 悪い例: 追加後に個別設定
+const mesh = this.entity.addComponent( MXP.Mesh );
+mesh.geometry = new MXP.SphereGeometry( { radius: 500 } );
+mesh.material = new MXP.Material( { frag: shaderFrag } );
+
+// 良い例: addComponentの第二引数で設定を渡す
+const mesh = this.entity.addComponent( MXP.Mesh, {
+    geometry: new MXP.SphereGeometry( { radius: 500 } ),
+    material: new MXP.Material( { frag: shaderFrag } )
+} );
+```
+
+第二引数で渡されたオブジェクトは、コンポーネントのコンストラクタ内で`params.args`として受け取れます。
 
 **ライフサイクルメソッドの実行順序:**
 1. `updateImpl()` - 全エンティティの更新
