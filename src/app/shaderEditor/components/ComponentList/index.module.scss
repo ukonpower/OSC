@@ -17,11 +17,6 @@
 		opacity: 1;
 		pointer-events: auto;
 	}
-
-	// PC画面ではオーバーレイを非表示
-	@media (min-width: 769px) {
-		display: none;
-	}
 }
 
 .componentList {
@@ -32,7 +27,7 @@
 	border-right: 1px solid $bgCol3;
 	transition: transform 0.2s ease;
 
-	// モバイル: オーバーレイモード
+	// オーバーレイモード（PC・モバイル共通）
 	&.open,
 	&.closed {
 		position: fixed;
@@ -44,24 +39,14 @@
 		z-index: 999;
 		box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
 
-		// PC画面ではオーバーレイモードを無効化
+		// PC画面では少し幅を広げる
 		@media (min-width: 769px) {
-			position: relative;
-			width: 100%;
-			max-width: none;
-			z-index: auto;
-			box-shadow: none;
-			transform: translateX(0);
+			width: 350px;
 		}
 	}
 
 	&.closed {
 		transform: translateX(-100%);
-
-		// PC画面では非表示にして幅を0にする
-		@media (min-width: 769px) {
-			display: none;
-		}
 	}
 
 	&.open {
@@ -87,16 +72,9 @@
 	cursor: pointer;
 	padding: 0 8px;
 	line-height: 1;
-	display: none;
 
 	&:hover {
 		color: #fff;
-	}
-
-	// モバイルでのみ表示
-	.componentList.open &,
-	.componentList.closed & {
-		display: block;
 	}
 }
 

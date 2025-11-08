@@ -147,21 +147,6 @@
 		}
 	}
 
-	// ComponentList
-	&__component-list {
-		display: none;
-
-		@media (min-width: 769px) {
-			display: flex;
-			flex: 0 0 250px;
-			border-right: 1px solid #3e3e42;
-		}
-
-		@media (min-width: 769px) and (max-width: 1024px) {
-			flex: 0 0 200px;
-		}
-	}
-
 	// PreviewPane全体
 	&__pane--preview {
 		// モバイル: 画面の40%、最低300px
