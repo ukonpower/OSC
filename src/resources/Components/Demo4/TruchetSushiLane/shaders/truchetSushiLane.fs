@@ -177,6 +177,8 @@ SDFResult D( vec3 p ) {
     vec2 w = vec2( dist2D, abs(op.y) - laneHeight );
     float d =  min(max(w.x,w.y),0.0) + length(max(w,0.0));
 
+
+
 	return SDFResult(
 		d,
 		p,
@@ -208,6 +210,9 @@ void main( void ) {
 			hit = true;
 			break;
 		}
+
+		
+		if( rayPos.y < 0.0 ) break;
 
         float limitD = gridTraversal(rayPos.xz, rayDir.xz);
 		float d = min( dist.d, limitD );

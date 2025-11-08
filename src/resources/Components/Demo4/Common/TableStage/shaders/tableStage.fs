@@ -39,13 +39,12 @@ SDFResult seat( vec3 p  ) {
 
 SDFResult D( vec3 p ) {
 
-	vec3 plx = p;
-	plx.x = mod( plx.x - 0.5, 1.0 ) - 0.5;
+	vec3 pl = p;
 
-	SDFResult distTable = table( plx );
+	SDFResult distTable = table( pl );
 	float d = distTable.d;
 
-	SDFResult distSeat = seat( plx );
+	SDFResult distSeat = seat( pl );
 	d = min( d, distSeat.d );
 
 
@@ -94,7 +93,7 @@ void main( void ) {
 	#include <rm_out_obj>
 
 	// 木目調の茶色を設定（テーブルステージらしい色）
-	outColor = vec4( 1.0 );
+	outColor = vec4( 1.0, 0.0, 0.0, 1.0 );
 	outEmission = vec3( 0.0 );
 	outRoughness = 0.7;
 
