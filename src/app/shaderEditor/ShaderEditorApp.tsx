@@ -40,6 +40,8 @@ export const ShaderEditorApp = () => {
 	// ローカルストレージのキー
 	const STORAGE_KEY_RESOLUTION = 'shaderEditor.resolutionScale';
 	const STORAGE_KEY_WIREFRAME = 'shaderEditor.showWireframe';
+	const STORAGE_KEY_SELECTED_COMPONENT = 'shaderEditor.selectedComponent';
+	const STORAGE_KEY_SELECTED_SHADER = 'shaderEditor.selectedShader';
 
 	// 解像度スケールの状態管理（ローカルストレージから初期値を読み込み）
 	const [ resolutionScale, setResolutionScale ] = useState<number>( () => {
@@ -70,6 +72,74 @@ export const ShaderEditorApp = () => {
 		localStorage.setItem( STORAGE_KEY_WIREFRAME, showWireframe.toString() );
 
 	}, [ showWireframe, STORAGE_KEY_WIREFRAME ] );
+
+	// 選択中のコンポーネントが変更されたらローカルストレージに保存
+	useEffect( () => {
+
+		if ( selectedComponent ) {
+
+			localStorage.setItem( STORAGE_KEY_SELECTED_COMPONENT, selectedComponent.path );
+
+		}
+
+	}, [ selectedComponent, STORAGE_KEY_SELECTED_COMPONENT ] );
+
+	// 選択中のシェーダーが変更されたらローカルストレージに保存
+	useEffect( () => {
+
+		if ( selectedShader ) {
+
+			localStorage.setItem( STORAGE_KEY_SELECTED_SHADER, selectedShader.path );
+
+		}
+
+	}, [ selectedShader, STORAGE_KEY_SELECTED_SHADER ] );
+
+	// 起動時にローカルストレージから前回選択していたコンポーネントを復元
+	useEffect( () => {
+
+		const savedComponentPath = localStorage.getItem( STORAGE_KEY_SELECTED_COMPONENT );
+		const savedShaderPath = localStorage.getItem( STORAGE_KEY_SELECTED_SHADER );
+
+		if ( savedComponentPath ) {
+
+			// コンポーネントリストから該当するコンポーネントを検索
+			const component = SHADER_COMPONENTS.find( c => c.path === savedComponentPath );
+
+			if ( component ) {
+
+				setSelectedComponent( component );
+
+				// シェーダーも復元を試みる
+				if ( savedShaderPath ) {
+
+					const shader = component.shaders.find( s => s.path === savedShaderPath );
+
+					if ( shader ) {
+
+						setSelectedShader( shader );
+
+					} else {
+
+						// 保存されていたシェーダーが見つからない場合はデフォルト選択
+						const defaultShader = component.shaders.find( s => s.type === 'fs' ) || component.shaders[ 0 ];
+						setSelectedShader( defaultShader );
+
+					}
+
+				} else {
+
+					// シェーダーが保存されていない場合はデフォルト選択
+					const defaultShader = component.shaders.find( s => s.type === 'fs' ) || component.shaders[ 0 ];
+					setSelectedShader( defaultShader );
+
+				}
+
+			}
+
+		}
+
+	}, [ STORAGE_KEY_SELECTED_COMPONENT, STORAGE_KEY_SELECTED_SHADER ] );
 
 	// コンポーネント選択時の処理
 	useEffect( () => {
@@ -158,10 +228,14 @@ export const ShaderEditorApp = () => {
 
 	}, [ currentShaderCode, selectedComponent, selectedShader ] );
 
-	// Save処理
+	// Save処理（保存前に自動的にApplyも実行）
 	const handleSave = useCallback( async () => {
 
 		if ( ! selectedComponent || ! selectedShader ) return;
+
+		// 保存前にApplyを実行してシェーダーコードを適用
+		setAppliedShaderCode( currentShaderCode );
+		setCompileStatus( 'idle' );
 
 		setIsSaving( true );
 
@@ -262,6 +336,39 @@ export const ShaderEditorApp = () => {
 		setCurrentUniforms( { ...currentUniforms } );
 
 	}, [ currentUniforms ] );
+
+	// キーボードショートカット: Alt+Enter でApply, Ctrl+S でSave
+	useEffect( () => {
+
+		const handleKeyDown = ( e: KeyboardEvent ) => {
+
+			// Alt+Enter でApply
+			if ( e.altKey && e.key === 'Enter' ) {
+
+				e.preventDefault();
+				handleApply();
+
+			}
+
+			// Ctrl+S または Cmd+S でSave（Saveは自動的にApplyも実行）
+			if ( ( e.ctrlKey || e.metaKey ) && e.key === 's' ) {
+
+				e.preventDefault();
+				handleSave();
+
+			}
+
+		};
+
+		window.addEventListener( 'keydown', handleKeyDown );
+
+		return () => {
+
+			window.removeEventListener( 'keydown', handleKeyDown );
+
+		};
+
+	}, [ handleApply, handleSave ] );
 
 	return (
 		<MouseMenuContext.Provider value={mouseMenuContext}>
