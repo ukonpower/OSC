@@ -6,6 +6,7 @@
 
 uniform float uTimeE;
 
+
 SDFResult table( vec3 p  ) {
 
 	float d = sdBox( p, vec3( 0.2, 0.02, 0.3 ) );
@@ -39,10 +40,14 @@ SDFResult seat( vec3 p  ) {
 }
 
 vec2 gridCenter = vec2( 0.0, 0.0 );
-vec2 gridSize = vec2( 1.0, 1.6 );
+const vec2 gridSize = vec2( 1.0, 1.6 );
+const vec2 offsetPos = vec2( gridSize / 2.0 );
+
 
 // https://kinakomoti321.hatenablog.com/entry/2024/12/10/023309
 float gridTraversal( vec2 ro, vec2 rd) {
+
+	ro -= offsetPos;
 
    gridCenter = (floor( ( ro + rd * 1E-3 ) / gridSize) + 0.5)*gridSize;
    vec2 src = -( ro - gridCenter ) / rd;
@@ -56,6 +61,7 @@ SDFResult D( vec3 p ) {
 
 	vec3 pl = p;
 
+	pl.xy -= offsetPos;
 	pl.xy -= gridCenter;
 
 	SDFResult distTable = table( pl );
@@ -85,7 +91,6 @@ void main( void ) {
 	SDFResult dist;
 	bool hit = false;
 
-	rayPos.xy -= gridSize / 2.0;
 
 	// レイマーチング
 	for( int i = 0; i < 128; i++ ) {
@@ -108,6 +113,7 @@ void main( void ) {
 	}
 
 	if( !hit ) discard;
+
 
 	// 法線を計算
 	outNormal = N( rayPos, 0.001 );
