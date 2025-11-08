@@ -2,8 +2,9 @@
 #include <packing>
 #include <frag_h>
 #include <sdf>
-
 #include <rm_h>
+
+uniform float uTimeE;
 
 SDFResult table( vec3 p  ) {
 
@@ -37,16 +38,31 @@ SDFResult seat( vec3 p  ) {
 
 }
 
+vec2 gridCenter = vec2( 0.0, 0.0 );
+vec2 gridSize = vec2( 1.0, 1.6 );
+
+// https://kinakomoti321.hatenablog.com/entry/2024/12/10/023309
+float gridTraversal( vec2 ro, vec2 rd) {
+
+   gridCenter = (floor( ( ro + rd * 1E-3 ) / gridSize) + 0.5)*gridSize;
+   vec2 src = -( ro - gridCenter ) / rd;
+   vec2 dst = abs( 0.5 * gridSize / rd );
+   vec2 bv = src + dst;
+
+   return  min( bv.x, bv.y );
+}
+
 SDFResult D( vec3 p ) {
 
 	vec3 pl = p;
+
+	pl.xy -= gridCenter;
 
 	SDFResult distTable = table( pl );
 	float d = distTable.d;
 
 	SDFResult distSeat = seat( pl );
 	d = min( d, distSeat.d );
-
 
 	return SDFResult(
 		d,
@@ -69,11 +85,15 @@ void main( void ) {
 	SDFResult dist;
 	bool hit = false;
 
+	rayPos.xy -= gridSize / 2.0;
+
 	// レイマーチング
 	for( int i = 0; i < 128; i++ ) {
 
+		// グリッドトラバーサルで最適化
+		float limitD = gridTraversal(rayPos.xy, rayDir.xy);
+
 		dist = D( rayPos );
-		rayPos += dist.d * rayDir;
 
 		if( dist.d < 0.001 ) {
 
@@ -82,18 +102,21 @@ void main( void ) {
 
 		}
 
+		float d = min( dist.d, limitD );
+		rayPos += rayDir * d;
+
 	}
 
 	if( !hit ) discard;
 
 	// 法線を計算
-	outNormal = N( rayPos, 0.01 );
+	outNormal = N( rayPos, 0.001 );
 
 	// オブジェクト空間からワールド空間への変換、位置・法線・深度を出力
 	#include <rm_out_obj>
 
 	// 木目調の茶色を設定（テーブルステージらしい色）
-	outColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+	outColor = vec4( 1.0, 1.0, 1.0, 1.0 );
 	outEmission = vec3( 0.0 );
 	outRoughness = 0.7;
 
