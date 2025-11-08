@@ -10,6 +10,7 @@ import { TextureGenerator } from '~/resources/Components/Texture/TextureGenerato
 import { UniformControls } from '~/resources/Components/Utilities/UniformsControls';
 
 import { Button } from 'orengine/components/primitives/Button';
+import { parseShaderUniforms, toGLPUniforms } from '../utils/shaderUniformParser';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -175,10 +176,16 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			// プログラムキャッシュをクリアして再コンパイルを強制
 			material.requestUpdate();
 
-			// uniformsを親に通知
+			// シェーダーから自動検出したuniformsと既存のuniformsをマージして親に通知
 			if ( onUniformsChange ) {
 
-				onUniformsChange( material.uniforms );
+				// シェーダーコードを解析してuniformを検出
+				const parsedUniforms = parseShaderUniforms( shaderCode );
+				const detectedUniforms = toGLPUniforms( parsedUniforms );
+
+				// 既存のuniformsを優先してマージ
+				const mergedUniforms = { ...detectedUniforms, ...material.uniforms };
+				onUniformsChange( mergedUniforms );
 
 			}
 
