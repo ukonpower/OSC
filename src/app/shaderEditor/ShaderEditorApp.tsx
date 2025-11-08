@@ -253,10 +253,13 @@ export const ShaderEditorApp = () => {
 	// uniformの値を更新
 	const handleUniformChange = useCallback( ( key: string, value: any ) => {
 
-		if ( ! currentUniforms ) return;
+		if ( ! currentUniforms || ! currentUniforms[ key ] ) return;
 
-		// uniformの値を直接更新（参照を保持して即座に反映）
+		// currentUniformsは material.uniforms への参照なので、直接変更することでリアルタイム反映
 		currentUniforms[ key ].value = value;
+
+		// React側のUIを更新するため、新しいオブジェクトを作成して状態更新をトリガー
+		setCurrentUniforms( { ...currentUniforms } );
 
 	}, [ currentUniforms ] );
 

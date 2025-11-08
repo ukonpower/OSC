@@ -170,22 +170,31 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 			}
 
+			// シェーダーから自動検出したuniformsをmaterialに追加（既存のuniformsは保持）
+			const parsedUniforms = parseShaderUniforms( shaderCode );
+			const detectedUniforms = toGLPUniforms( parsedUniforms );
+
+			// 検出されたuniformsのうち、まだ存在しないものだけをmaterialに追加
+			Object.keys( detectedUniforms ).forEach( key => {
+
+				if ( ! material.uniforms[ key ] ) {
+
+					material.uniforms[ key ] = detectedUniforms[ key ];
+
+				}
+
+			} );
+
 			// シェーダーコードを更新
 			material.frag = shaderCode;
 
 			// プログラムキャッシュをクリアして再コンパイルを強制
 			material.requestUpdate();
 
-			// シェーダーから自動検出したuniformsと既存のuniformsをマージして親に通知
+			// materialのuniformsを直接参照として親に通知（参照を保持して変更が即座に反映されるようにする）
 			if ( onUniformsChange ) {
 
-				// シェーダーコードを解析してuniformを検出
-				const parsedUniforms = parseShaderUniforms( shaderCode );
-				const detectedUniforms = toGLPUniforms( parsedUniforms );
-
-				// 既存のuniformsを優先してマージ
-				const mergedUniforms = { ...detectedUniforms, ...material.uniforms };
-				onUniformsChange( mergedUniforms );
+				onUniformsChange( material.uniforms );
 
 			}
 
