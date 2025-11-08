@@ -2953,11 +2953,11 @@
           2,
           [
             240,
-            2,
+            1,
             210,
-            2,
+            1,
             270,
-            2
+            1
           ]
         ]
       ]
@@ -3023,7 +3023,7 @@
         "position": [
           0,
           3.894,
-          297.425
+          289.527
         ],
         "type": "camera",
         "rotation": [
@@ -3034,7 +3034,7 @@
         "custom_properties": {
           "master": {
             "type": "float",
-            "value": 0.953
+            "value": 1
           }
         },
         "animation": {
@@ -4052,7 +4052,7 @@
         "custom_properties": {
           "yoake": {
             "type": "float",
-            "value": 1.724
+            "value": 1
           }
         },
         "animation": {

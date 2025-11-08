@@ -170,11 +170,11 @@
 		border-bottom: 1px solid #3e3e42;
 
 		@media (min-width: 769px) {
-			// デスクトップ: 固定幅600px、高さ100%
-			flex: 0 0 600px;
+			// PC時: SplitContainerが管理するため、フレキシブルに
+			flex: 1;
 			max-height: none;
 			border-bottom: none;
-			border-right: 1px solid #3e3e42;
+			border-right: none; // SplitContainerのスプリッターが境界線になる
 		}
 	}
 
@@ -183,6 +183,11 @@
 		flex: 1;
 		min-height: 0;
 		min-width: 0;
+
+		@media (min-width: 769px) {
+			// PC時: SplitContainerが管理
+			border-left: none; // SplitContainerのスプリッターが境界線になる
+		}
 	}
 
 	// キャンバスコンテナ（PreviewPane内）

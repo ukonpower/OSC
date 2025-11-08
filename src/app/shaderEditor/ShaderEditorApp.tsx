@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { MouseMenu } from 'orengine/components/composites/MouseMenu';
 import { MouseMenuContext } from 'orengine/components/composites/MouseMenu/Context/MouseMenuContext';
 import { useMouseMenuContext } from 'orengine/components/composites/MouseMenu/Hooks/useMouseMenuContext';
+import { SplitContainer } from 'orengine/components/composites/SplitContainer';
+import { useLayout } from 'orengine/hooks/useLayout';
 
 import { CodePane } from './components/CodePane';
 import { ComponentList } from './components/ComponentList';
@@ -17,6 +19,7 @@ import './styles/shaderEditor.scss';
 export const ShaderEditorApp = () => {
 
 	const mouseMenuContext = useMouseMenuContext();
+	const layout = useLayout();
 
 	const [ selectedComponent, setSelectedComponent ] = useState<ShaderComponent>();
 	const [ selectedShader, setSelectedShader ] = useState<ShaderFile>();
@@ -266,24 +269,56 @@ export const ShaderEditorApp = () => {
 						onClose={handleCloseComponentList}
 					/>
 
-					<PreviewPane
-						componentClass={componentClass}
-						componentName={selectedComponent?.name}
-						shaderCode={appliedShaderCode}
-						onCompileError={handleCompileError}
-						onCompileSuccess={handleCompileSuccess}
-						onApply={handleApply}
-						onSave={handleSave}
-						isSaving={isSaving}
-						hasUnsavedChanges={hasUnsavedChanges}
-						resolutionScale={resolutionScale}
-						showWireframe={showWireframe}
-					/>
+					{layout.isPC ? (
+						// PC時: SplitContainerで分割してリサイズ可能に
+						<SplitContainer
+							direction="horizontal"
+							sizes={[ 1, 1 ]}
+							minSizes={[ 300, 300 ]}
+							storageKey="shader-editor-split"
+						>
+							<PreviewPane
+								componentClass={componentClass}
+								componentName={selectedComponent?.name}
+								shaderCode={appliedShaderCode}
+								onCompileError={handleCompileError}
+								onCompileSuccess={handleCompileSuccess}
+								onApply={handleApply}
+								onSave={handleSave}
+								isSaving={isSaving}
+								hasUnsavedChanges={hasUnsavedChanges}
+								resolutionScale={resolutionScale}
+								showWireframe={showWireframe}
+							/>
 
-					<CodePane
-						code={currentShaderCode}
-						onChange={handleCodeChange}
-					/>
+							<CodePane
+								code={currentShaderCode}
+								onChange={handleCodeChange}
+							/>
+						</SplitContainer>
+					) : (
+						// モバイル時: 従来通りの縦並び
+						<>
+							<PreviewPane
+								componentClass={componentClass}
+								componentName={selectedComponent?.name}
+								shaderCode={appliedShaderCode}
+								onCompileError={handleCompileError}
+								onCompileSuccess={handleCompileSuccess}
+								onApply={handleApply}
+								onSave={handleSave}
+								isSaving={isSaving}
+								hasUnsavedChanges={hasUnsavedChanges}
+								resolutionScale={resolutionScale}
+								showWireframe={showWireframe}
+							/>
+
+							<CodePane
+								code={currentShaderCode}
+								onChange={handleCodeChange}
+							/>
+						</>
+					)}
 				</div>
 
 				<MouseMenu />
