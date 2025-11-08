@@ -219,17 +219,14 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 	// ワイヤーフレーム表示の切り替え
 	useEffect( () => {
 
-		const previewObject = engine.root.findEntityByName( "PreviewObject" );
-		if ( ! previewObject ) return;
+		// EditorRendererのshowWireframeプロパティを設定
+		const renderer = engine.renderer as any;
 
-		const meshComponent = previewObject.getComponent( MXP.Mesh );
-		if ( ! meshComponent ) return;
+		if ( renderer && renderer.showWireframe !== undefined ) {
 
-		const material = meshComponent.material;
-		if ( ! material ) return;
+			renderer.showWireframe = showWireframe;
 
-		// ワイヤーフレーム表示の設定
-		material.drawType = showWireframe ? 'LINES' : 'TRIANGLES';
+		}
 
 	}, [ engine, showWireframe ] );
 
