@@ -302,4 +302,113 @@
 		height: 100%;
 		overflow: hidden;
 	}
+
+	// Uniform Editor
+	&__uniform-editor {
+		background: #252526;
+		border-top: 1px solid #3e3e42;
+		display: flex;
+		flex-direction: column;
+		max-height: 300px;
+		overflow-y: auto;
+
+		&--empty {
+			padding: 12px 16px;
+		}
+	}
+
+	&__uniform-header {
+		padding: 8px 16px;
+		border-bottom: 1px solid #3e3e42;
+		flex-shrink: 0;
+
+		h3 {
+			margin: 0;
+			font-size: 12px;
+			font-weight: 600;
+			color: #cccccc;
+			text-transform: uppercase;
+		}
+	}
+
+	&__uniform-list {
+		padding: 8px 16px;
+		flex: 1;
+		overflow-y: auto;
+	}
+
+	&__uniform-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 6px 0;
+		gap: 12px;
+		border-bottom: 1px solid #3e3e42;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	&__uniform-label {
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__uniform-name {
+		font-size: 12px;
+		color: #dcdcdc;
+		font-family: 'Courier New', monospace;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	&__uniform-type {
+		font-size: 10px;
+		color: #858585;
+		font-family: 'Courier New', monospace;
+		flex-shrink: 0;
+	}
+
+	&__uniform-input {
+		width: 80px;
+		padding: 4px 8px;
+		background: #3c3c3c;
+		border: 1px solid #3e3e42;
+		border-radius: 2px;
+		color: #dcdcdc;
+		font-size: 12px;
+		font-family: 'Courier New', monospace;
+
+		&:focus {
+			outline: none;
+			border-color: #007acc;
+		}
+
+		&--vector {
+			width: 60px;
+		}
+	}
+
+	&__uniform-vector {
+		display: flex;
+		gap: 4px;
+	}
+
+	&__uniform-readonly {
+		font-size: 11px;
+		color: #858585;
+		font-family: 'Courier New', monospace;
+		word-break: break-all;
+	}
+
+	&__uniform-empty-message {
+		font-size: 12px;
+		color: #6e6e6e;
+		text-align: center;
+	}
 }

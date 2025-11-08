@@ -1,3 +1,4 @@
+import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -12,6 +13,7 @@ import { ComponentList } from './components/ComponentList';
 import { PreviewPane } from './components/PreviewPane';
 import { SettingsBar } from './components/SettingsBar';
 import { Toolbar } from './components/Toolbar';
+import { UniformEditor } from './components/UniformEditor';
 import { loadComponent, loadShader, SHADER_COMPONENTS, ShaderComponent, ShaderFile } from './componentList';
 
 import './styles/shaderEditor.scss';
@@ -32,6 +34,8 @@ export const ShaderEditorApp = () => {
 	const [ isSaving, setIsSaving ] = useState( false );
 	// ComponentListはデフォルトで閉じる（オーバーレイ表示）
 	const [ isComponentListOpen, setIsComponentListOpen ] = useState( false );
+	// uniformsの状態管理
+	const [ currentUniforms, setCurrentUniforms ] = useState<GLP.Uniforms | null>( null );
 
 	// ローカルストレージのキー
 	const STORAGE_KEY_RESOLUTION = 'shaderEditor.resolutionScale';
@@ -239,6 +243,23 @@ export const ShaderEditorApp = () => {
 
 	}, [] );
 
+	// uniformsの変更を受け取る
+	const handleUniformsChange = useCallback( ( uniforms: GLP.Uniforms | null ) => {
+
+		setCurrentUniforms( uniforms );
+
+	}, [] );
+
+	// uniformの値を更新
+	const handleUniformChange = useCallback( ( key: string, value: any ) => {
+
+		if ( ! currentUniforms ) return;
+
+		// uniformの値を直接更新（参照を保持して即座に反映）
+		currentUniforms[ key ].value = value;
+
+	}, [ currentUniforms ] );
+
 	return (
 		<MouseMenuContext.Provider value={mouseMenuContext}>
 			<div className="shader-editor">
@@ -254,6 +275,11 @@ export const ShaderEditorApp = () => {
 					onResolutionScaleChange={setResolutionScale}
 					showWireframe={showWireframe}
 					onWireframeChange={setShowWireframe}
+				/>
+
+				<UniformEditor
+					uniforms={currentUniforms}
+					onUniformChange={handleUniformChange}
 				/>
 
 				<div className="shader-editor__content">
@@ -285,6 +311,7 @@ export const ShaderEditorApp = () => {
 								hasUnsavedChanges={hasUnsavedChanges}
 								resolutionScale={resolutionScale}
 								showWireframe={showWireframe}
+								onUniformsChange={handleUniformsChange}
 							/>
 
 							<CodePane
@@ -307,6 +334,7 @@ export const ShaderEditorApp = () => {
 								hasUnsavedChanges={hasUnsavedChanges}
 								resolutionScale={resolutionScale}
 								showWireframe={showWireframe}
+								onUniformsChange={handleUniformsChange}
 							/>
 
 							<CodePane

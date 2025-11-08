@@ -23,10 +23,11 @@ interface PreviewPaneProps {
 	hasUnsavedChanges?: boolean;
 	resolutionScale: number;
 	showWireframe: boolean;
+	onUniformsChange?: ( uniforms: GLP.Uniforms | null ) => void;
 }
 
 // 内部コンポーネント: OREngineContextの中で動作し、シーンを構築・シェーダー更新を行う
-const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, resolutionScale, showWireframe }: Pick<PreviewPaneProps, 'componentClass' | 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess'> & { resolutionScale: number; showWireframe: boolean } ) => {
+const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, resolutionScale, showWireframe, onUniformsChange }: Pick<PreviewPaneProps, 'componentClass' | 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess' | 'onUniformsChange'> & { resolutionScale: number; showWireframe: boolean } ) => {
 
 	const { engine } = useOREngine();
 
@@ -174,6 +175,13 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			// プログラムキャッシュをクリアして再コンパイルを強制
 			material.requestUpdate();
 
+			// uniformsを親に通知
+			if ( onUniformsChange ) {
+
+				onUniformsChange( material.uniforms );
+
+			}
+
 			// コンパイル成功を通知
 			if ( onCompileSuccess ) onCompileSuccess();
 
@@ -189,7 +197,7 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 		}
 
-	}, [ engine, componentName, shaderCode, onCompileError, onCompileSuccess ] );
+	}, [ engine, componentName, shaderCode, onCompileError, onCompileSuccess, onUniformsChange ] );
 
 	// ワイヤーフレーム表示の切り替え
 	useEffect( () => {
@@ -302,7 +310,7 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 };
 
-export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, onApply, onSave, isSaving, hasUnsavedChanges, resolutionScale, showWireframe }: PreviewPaneProps ) => {
+export const PreviewPane = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, onApply, onSave, isSaving, hasUnsavedChanges, resolutionScale, showWireframe, onUniformsChange }: PreviewPaneProps ) => {
 
 	const canvasWrapperRef = useRef<HTMLDivElement>( null );
 
@@ -362,6 +370,7 @@ export const PreviewPane = ( { componentClass, componentName, shaderCode, onComp
 						onCompileSuccess={onCompileSuccess}
 						resolutionScale={resolutionScale}
 						showWireframe={showWireframe}
+						onUniformsChange={onUniformsChange}
 					/>
 				)}
 			</OREngine>
