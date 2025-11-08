@@ -95,7 +95,7 @@ export const ShaderEditorApp = () => {
 
 	}, [ selectedShader, STORAGE_KEY_SELECTED_SHADER ] );
 
-	// 起動時にローカルストレージから前回選択していたコンポーネントを復元
+	// 起動時にローカルストレージから前回選択していたコンポーネントを復元（マウント時に一度だけ実行）
 	useEffect( () => {
 
 		const savedComponentPath = localStorage.getItem( STORAGE_KEY_SELECTED_COMPONENT );
@@ -139,7 +139,8 @@ export const ShaderEditorApp = () => {
 
 		}
 
-	}, [ STORAGE_KEY_SELECTED_COMPONENT, STORAGE_KEY_SELECTED_SHADER ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// コンポーネント選択時の処理
 	useEffect( () => {
@@ -258,7 +259,6 @@ export const ShaderEditorApp = () => {
 
 			}
 
-			alert( '✓ Shader saved successfully!' );
 			setOriginalShaderCode( currentShaderCode );
 
 		} catch ( error ) {

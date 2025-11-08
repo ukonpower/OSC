@@ -39,6 +39,19 @@ SDFResult seat( vec3 p  ) {
 
 }
 
+SDFResult sdFloor( vec3 p ) {
+
+	float depth = 0.4;
+
+	vec3 floorP = p;
+	floorP.x = abs( floorP.x );
+	floorP += vec3( 0.0, 0.45, 0.0 );
+	float d = sdBox( floorP, vec3( 0.5, 0.05, depth ) );
+
+	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+
+}
+
 vec2 gridCenter = vec2( 0.0, 0.0 );
 const vec2 gridSize = vec2( 1.0, 1.6 );
 const vec2 offsetPos = vec2( gridSize / 2.0 );
@@ -49,12 +62,12 @@ float gridTraversal( vec2 ro, vec2 rd) {
 
 	ro -= offsetPos;
 
-   gridCenter = (floor( ( ro + rd * 1E-3 ) / gridSize) + 0.5)*gridSize;
-   vec2 src = -( ro - gridCenter ) / rd;
-   vec2 dst = abs( 0.5 * gridSize / rd );
-   vec2 bv = src + dst;
+  gridCenter = (floor( ( ro + rd * 1E-3 ) / gridSize) + 0.5)*gridSize;
+  vec2 src = -( ro - gridCenter ) / rd;
+  vec2 dst = abs( 0.5 * gridSize / rd );
+  vec2 bv = src + dst;
 
-   return  min( bv.x, bv.y );
+  return  min( bv.x, bv.y );
 }
 
 SDFResult D( vec3 p ) {
@@ -69,6 +82,9 @@ SDFResult D( vec3 p ) {
 
 	SDFResult distSeat = seat( pl );
 	d = min( d, distSeat.d );
+
+  SDFResult distFloor = sdFloor( pl );
+	d = min( d, distFloor.d );
 
 	return SDFResult(
 		d,
