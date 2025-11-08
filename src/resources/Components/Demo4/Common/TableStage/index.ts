@@ -44,7 +44,8 @@ export class TableStage extends MXP.Component {
 		// シンプルなマテリアルを設定
 		cubeMesh.material = new MXP.Material( {
 			phase: [ "deferred" ],
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution ),
+			drawType: "LINES"
 		} );
 
 		// ホットリロード対応(開発時のみ)

@@ -106,7 +106,7 @@ vec2 tci(vec2 uv)
   return round(uv*2.)*.5;
 }
 
-const float loopY = 20.0;
+const float loopY = 10.0;
 
 // SDF（Signed Distance Function）
 SDFResult D( vec3 p ) {

@@ -8,34 +8,39 @@
 SDFResult table( vec3 p  ) {
 
 	float d = sdBox( p, vec3( 0.2, 0.02, 0.3 ) );
-	d = min( d, sdBox( p, vec3( 0.01, 0.1, 0.01 ) ) );
 
+	vec3 poleP = p;
+	poleP += vec3( 0.0, 0.25, 0.0 );
+	d = min( d, sdCappedCylinder( poleP, 0.03, 0.25 ) );
 	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
 
 }
 
 SDFResult seat( vec3 p  ) {
 
-	float depth = 0.2;
+	float depth = 0.4;
 
 	vec3 seatP = p;
 	seatP.x = abs( seatP.x );
-	seatP += vec3( - 0.4, 0.5, 0.0 );
-	float d = sdBox( seatP, vec3( 0.2, 0.2, depth ) );
+	seatP += vec3( - 0.4, 0.2, 0.0 );
+	float d = sdBox( seatP, vec3( 0.2, 0.06, depth ) );
 
 	vec3 semotareP = seatP;
-	semotareP += vec3( -0.15, -0.4, 0.0 );
-	d = min( d, sdBox( semotareP, vec3( 0.08, 0.2, depth ) ) );
+	semotareP += vec3( -0.12, -0.27, 0.0 );
+	d = min( d, sdBox( semotareP, vec3( 0.08, 0.20, depth ) ) );
+
+	vec3 ashiP = semotareP;
+	ashiP += vec3( 0.0, 0.4, 0.0 );
+	d = min( d, sdBox( ashiP, vec3( 0.25, 0.1, 0.35 ) ) );
 
 	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
 
 }
 
-// SDF（Signed Distance Function）- テーブルステージの形状
 SDFResult D( vec3 p ) {
 
 	vec3 plx = p;
-	plx.x = mod( plx.x - 0.6, 1.2 ) - 0.6;
+	plx.x = mod( plx.x - 0.5, 1.0 ) - 0.5;
 
 	SDFResult distTable = table( plx );
 	float d = distTable.d;
