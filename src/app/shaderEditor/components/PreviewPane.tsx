@@ -246,26 +246,28 @@ export const PreviewPane = ( { componentClass, shaderCode, onCompileError, onCom
 	}, [] );
 
 	return (
-		<div className="shader-editor__pane shader-editor__pane--preview">
-			<div className="shader-editor__canvas-container">
-				<div ref={canvasWrapperRef} className="shader-editor__canvas-wrapper" />
-				{! componentClass && (
-					<div className="shader-editor__empty">
-						コンポーネントを選択してください
-					</div>
-				)}
-			</div>
-
-			<div className="shader-editor__preview-controls">
-				<div className="shader-editor__control-group">
-					<Button onClick={onApply} disabled={! componentClass}>
-						Apply
-					</Button>
+		<>
+			<div className="shader-editor__pane shader-editor__pane--preview">
+				<div className="shader-editor__canvas-container">
+					<div ref={canvasWrapperRef} className="shader-editor__canvas-wrapper" />
+					{! componentClass && (
+						<div className="shader-editor__empty">
+							コンポーネントを選択してください
+						</div>
+					)}
 				</div>
-				<div className="shader-editor__control-group">
-					<Button onClick={onSave} disabled={! componentClass || isSaving}>
-						{isSaving ? 'Saving...' : hasUnsavedChanges ? 'Save *' : 'Save'}
-					</Button>
+
+				<div className="shader-editor__preview-controls">
+					<div className="shader-editor__control-group">
+						<Button onClick={onApply} disabled={! componentClass}>
+							Apply
+						</Button>
+					</div>
+					<div className="shader-editor__control-group">
+						<Button onClick={onSave} disabled={! componentClass || isSaving}>
+							{isSaving ? 'Saving...' : hasUnsavedChanges ? 'Save *' : 'Save'}
+						</Button>
+					</div>
 				</div>
 			</div>
 
@@ -283,7 +285,7 @@ export const PreviewPane = ( { componentClass, shaderCode, onCompileError, onCom
 					/>
 				)}
 			</OREngine>
-		</div>
+		</>
 	);
 
 };
