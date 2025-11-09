@@ -44,13 +44,6 @@ export const ComponentView = ( { component }: ComponentViewProps ) => {
 		// nameフィールドでマッチングする
 		const shaderComp = SHADER_COMPONENTS.find( c => c.name === className );
 
-		console.log( '[ComponentView] Checking shader editability:', {
-			className,
-			found: !! shaderComp,
-			shaderComponent: shaderComp,
-			availableNames: SHADER_COMPONENTS.map( c => c.name ).slice( 0, 10 ),
-		} );
-
 		return shaderComp;
 
 	}, [ component ] );
