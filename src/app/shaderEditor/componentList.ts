@@ -53,3 +53,17 @@ export const loadShader = async ( component: ShaderComponent, shaderFile: Shader
 	return module.default;
 
 };
+
+// コンポーネントがShaderEditorで編集可能かどうかを判定する
+export const isShaderEditable = ( componentPath: string ): boolean => {
+
+	return SHADER_COMPONENTS.some( c => c.path === componentPath );
+
+};
+
+// コンポーネントパスからShaderComponent情報を取得する
+export const getShaderComponent = ( componentPath: string ): ShaderComponent | undefined => {
+
+	return SHADER_COMPONENTS.find( c => c.path === componentPath );
+
+};

@@ -23,6 +23,17 @@
 	transform: scale(0.8);
 }
 
+.shaderEditor {
+	margin-left: 5px;
+	width: 10px;
+	height: 10px;
+
+	button {
+		font-size: 0;
+		display: block;
+	}
+}
+
 .delete {
 	margin-left: auto;
 	width: 10px;

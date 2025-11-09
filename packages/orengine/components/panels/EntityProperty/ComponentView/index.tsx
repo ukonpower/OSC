@@ -1,11 +1,13 @@
 
 import * as MXP from 'maxpower';
-import { MouseEvent, useCallback } from 'react';
+import { MouseEvent, useCallback, useMemo } from 'react';
 
-import { useSerializableField } from '../../../../hooks/useSerializableProps';
 import { Block } from '../../../../components/composites/Block';
-import { CrossIcon } from '../../../../components/primitives/Icons/CrossIcon';
 import { SerializeFieldView } from '../../../../components/composites/SerializeFieldView';
+import { CrossIcon } from '../../../../components/primitives/Icons/CrossIcon';
+import { EditIcon } from '../../../../components/primitives/Icons/EditIcon';
+
+import { SHADER_COMPONENTS } from '~/app/shaderEditor/componentList';
 
 import style from './index.module.scss';
 
@@ -15,7 +17,7 @@ type ComponentViewProps = {
 
 export const ComponentView = ( { component }: ComponentViewProps ) => {
 
-	const [ enabled, setEnabled ] = useSerializableField<boolean>( component, "enabled" );
+	// const [ enabled, setEnabled ] = useSerializableField<boolean>( component, "enabled" );
 
 	const disableEdit = component.initiator !== "user";
 
@@ -33,6 +35,40 @@ export const ComponentView = ( { component }: ComponentViewProps ) => {
 
 	}, [ component ] );
 
+	// コンポーネントがShaderEditorで編集可能かチェック
+	const shaderComponentInfo = useMemo( () => {
+
+		// コンポーネントクラス名から対応するShaderComponentを検索
+		const className = component.constructor.name;
+
+		// nameフィールドでマッチングする
+		const shaderComp = SHADER_COMPONENTS.find( c => c.name === className );
+
+		console.log( '[ComponentView] Checking shader editability:', {
+			className,
+			found: !! shaderComp,
+			shaderComponent: shaderComp,
+			availableNames: SHADER_COMPONENTS.map( c => c.name ).slice( 0, 10 ),
+		} );
+
+		return shaderComp;
+
+	}, [ component ] );
+
+	const onClickOpenShaderEditor = useCallback( ( e: MouseEvent ) => {
+
+		e.stopPropagation();
+
+		if ( shaderComponentInfo ) {
+
+			// ShaderEditorをURLパラメータ付きで新しいタブで開く
+			const url = `/shaderEditor?component=${encodeURIComponent( shaderComponentInfo.path )}`;
+			window.open( url, '_blank' );
+
+		}
+
+	}, [ shaderComponentInfo ] );
+
 	const labelElm = <div className={style.head}>
 		{/* <div className={style.check}>
 			<InputBoolean checked={enabled || false} onChange={setEnabled} readOnly={disableEdit} />
@@ -40,6 +76,13 @@ export const ComponentView = ( { component }: ComponentViewProps ) => {
 		<div className={style.name}>
 			{component.constructor.name}
 		</div>
+		{shaderComponentInfo && (
+			<div className={style.shaderEditor}>
+				<button onClick={onClickOpenShaderEditor} title="ShaderEditorで開く">
+					<EditIcon />
+				</button>
+			</div>
+		)}
 		<div className={style.delete}>
 			<button onClick={onClickDelete}><CrossIcon /></button>
 		</div>

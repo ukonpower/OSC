@@ -95,45 +95,80 @@ export const ShaderEditorApp = () => {
 
 	}, [ selectedShader, STORAGE_KEY_SELECTED_SHADER ] );
 
-	// 起動時にローカルストレージから前回選択していたコンポーネントを復元（マウント時に一度だけ実行）
+	// 起動時にURLパラメータまたはローカルストレージから前回選択していたコンポーネントを復元（マウント時に一度だけ実行）
 	useEffect( () => {
 
-		const savedComponentPath = localStorage.getItem( STORAGE_KEY_SELECTED_COMPONENT );
-		const savedShaderPath = localStorage.getItem( STORAGE_KEY_SELECTED_SHADER );
+		// URLパラメータを確認（優先度高）
+		const urlParams = new URLSearchParams( window.location.search );
+		const urlComponentPath = urlParams.get( 'component' );
+		const urlShaderType = urlParams.get( 'shader' );
 
-		if ( savedComponentPath ) {
+		let componentToLoad: ShaderComponent | undefined;
+		let shaderToLoad: ShaderFile | undefined;
 
-			// コンポーネントリストから該当するコンポーネントを検索
-			const component = SHADER_COMPONENTS.find( c => c.path === savedComponentPath );
+		// URLパラメータでコンポーネントが指定されている場合
+		if ( urlComponentPath ) {
 
-			if ( component ) {
+			componentToLoad = SHADER_COMPONENTS.find( c => c.path === urlComponentPath );
 
-				setSelectedComponent( component );
+			if ( componentToLoad ) {
 
-				// シェーダーも復元を試みる
-				if ( savedShaderPath ) {
+				// URLでシェーダータイプが指定されている場合
+				if ( urlShaderType ) {
 
-					const shader = component.shaders.find( s => s.path === savedShaderPath );
+					shaderToLoad = componentToLoad.shaders.find( s => s.type === urlShaderType );
 
-					if ( shader ) {
+				}
 
-						setSelectedShader( shader );
+				// シェーダーが見つからない場合はデフォルト選択
+				if ( ! shaderToLoad ) {
 
-					} else {
+					shaderToLoad = componentToLoad.shaders.find( s => s.type === 'fs' ) || componentToLoad.shaders[ 0 ];
 
-						// 保存されていたシェーダーが見つからない場合はデフォルト選択
-						const defaultShader = component.shaders.find( s => s.type === 'fs' ) || component.shaders[ 0 ];
-						setSelectedShader( defaultShader );
+				}
+
+			}
+
+		} else {
+
+			// URLパラメータがない場合はローカルストレージから復元
+			const savedComponentPath = localStorage.getItem( STORAGE_KEY_SELECTED_COMPONENT );
+			const savedShaderPath = localStorage.getItem( STORAGE_KEY_SELECTED_SHADER );
+
+			if ( savedComponentPath ) {
+
+				componentToLoad = SHADER_COMPONENTS.find( c => c.path === savedComponentPath );
+
+				if ( componentToLoad && savedShaderPath ) {
+
+					shaderToLoad = componentToLoad.shaders.find( s => s.path === savedShaderPath );
+
+					// 保存されていたシェーダーが見つからない場合はデフォルト選択
+					if ( ! shaderToLoad ) {
+
+						shaderToLoad = componentToLoad.shaders.find( s => s.type === 'fs' ) || componentToLoad.shaders[ 0 ];
 
 					}
 
-				} else {
+				} else if ( componentToLoad ) {
 
 					// シェーダーが保存されていない場合はデフォルト選択
-					const defaultShader = component.shaders.find( s => s.type === 'fs' ) || component.shaders[ 0 ];
-					setSelectedShader( defaultShader );
+					shaderToLoad = componentToLoad.shaders.find( s => s.type === 'fs' ) || componentToLoad.shaders[ 0 ];
 
 				}
+
+			}
+
+		}
+
+		// コンポーネントとシェーダーをセット
+		if ( componentToLoad ) {
+
+			setSelectedComponent( componentToLoad );
+
+			if ( shaderToLoad ) {
+
+				setSelectedShader( shaderToLoad );
 
 			}
 
