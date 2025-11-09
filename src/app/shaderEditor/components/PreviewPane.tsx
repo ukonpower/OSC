@@ -1,7 +1,10 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
+import { Button } from 'orengine/components/primitives/Button';
 import { OREngine, useOREngine } from 'orengine/react';
 import { useEffect, useRef, useState } from 'react';
+
+import { parseShaderUniforms, toGLPUniforms } from '../utils/shaderUniformParser';
 
 import { gl, canvas } from '~/globals';
 import { OrbitControls } from '~/resources/Components/_DevOnly/OrbitControls';
@@ -9,8 +12,6 @@ import { SkyBox } from '~/resources/Components/Demo4/Common/SkyBox';
 import { TextureGenerator } from '~/resources/Components/Texture/TextureGenerator';
 import { UniformControls } from '~/resources/Components/Utilities/UniformsControls';
 
-import { Button } from 'orengine/components/primitives/Button';
-import { parseShaderUniforms, toGLPUniforms } from '../utils/shaderUniformParser';
 
 interface PreviewPaneProps {
 	componentClass?: typeof MXP.Component;
@@ -31,6 +32,9 @@ interface PreviewPaneProps {
 const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCompileError, onCompileSuccess, resolutionScale, showWireframe, onUniformsChange }: Pick<PreviewPaneProps, 'componentClass' | 'componentName' | 'shaderCode' | 'onCompileError' | 'onCompileSuccess' | 'onUniformsChange'> & { resolutionScale: number; showWireframe: boolean } ) => {
 
 	const { engine } = useOREngine();
+
+	// カメラ状態の保存用キー
+	const STORAGE_KEY_CAMERA = 'shaderEditor.camera';
 
 	// シーン構築
 	useEffect( () => {
@@ -53,7 +57,30 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			// Camera作成
 			const camera = new MXP.Entity();
 			camera.name = "Camera";
-			camera.position.set( 0, 0, 3 );
+
+			// カメラ位置をlocalStorageから復元（保存されていればそれを使用、なければデフォルト）
+			const savedCamera = localStorage.getItem( STORAGE_KEY_CAMERA );
+			if ( savedCamera ) {
+
+				try {
+
+					const { position, quaternion } = JSON.parse( savedCamera );
+					camera.position.copy( position );
+					camera.quaternion.copy( quaternion );
+
+				} catch ( e ) {
+
+					// パースエラー時はデフォルト位置
+					camera.position.set( 0, 0, 3 );
+
+				}
+
+			} else {
+
+				camera.position.set( 0, 0, 3 );
+
+			}
+
 			const renderCamera = camera.addComponent( MXP.RenderCamera, { gl: gl } );
 			const orbitControls = camera.addComponent( OrbitControls );
 
@@ -79,7 +106,7 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 			renderCamera.needsUpdateProjectionMatrix = true;
 			renderCamera.resize( resolution );
 
-				// シェーダーエディターではDOFを無効化（パフォーマンス向上のため）
+			// シェーダーエディターではDOFを無効化（パフォーマンス向上のため）
 			const renderer = engine.renderer as any;
 			renderer._pipelinePostProcess.dofCoc.enabled = false;
 			renderer._pipelinePostProcess.dofBokeh.enabled = false;
@@ -133,7 +160,43 @@ const PreviewSceneManager = ( { componentClass, componentName, shaderCode, onCom
 
 		}
 
-	}, [ engine, componentClass, componentName, onCompileSuccess, onCompileError ] );
+	}, [ engine, componentClass, componentName, onCompileSuccess, onCompileError, STORAGE_KEY_CAMERA ] );
+
+	// カメラ状態の定期保存
+	useEffect( () => {
+
+		const saveInterval = setInterval( () => {
+
+			const cameraEntity = engine.root.findEntityByName( "Camera" );
+			if ( cameraEntity ) {
+
+				const cameraState = {
+					position: {
+						x: cameraEntity.position.x,
+						y: cameraEntity.position.y,
+						z: cameraEntity.position.z
+					},
+					quaternion: {
+						x: cameraEntity.quaternion.x,
+						y: cameraEntity.quaternion.y,
+						z: cameraEntity.quaternion.z,
+						w: cameraEntity.quaternion.w
+					}
+				};
+
+				localStorage.setItem( STORAGE_KEY_CAMERA, JSON.stringify( cameraState ) );
+
+			}
+
+		}, 500 ); // 500msごとに保存
+
+		return () => {
+
+			clearInterval( saveInterval );
+
+		};
+
+	}, [ engine, STORAGE_KEY_CAMERA ] );
 
 	// シェーダーコード適用
 	useEffect( () => {

@@ -122,6 +122,7 @@ const SCENE_FILE_PATH = path.resolve( ROOT_DIR, 'src/resources/blidge-data.json'
 const COMPONENTS_DIR = path.resolve( ROOT_DIR, 'src/resources/Components' );
 
 const SCENE_REWATCH_DELAY = 200;
+const SHADER_REWATCH_DELAY = 200;
 
 /**
  * FileWriter Vite Plugin
@@ -136,6 +137,7 @@ export const FileWriter = (): Plugin => {
 
 			const watcher = server.watcher;
 			let sceneRewatchTimeout: NodeJS.Timeout | null = null;
+			const shaderRewatchTimeouts = new Map<string, NodeJS.Timeout>();
 
 			const temporarilyUnwatchScene = () => {
 
@@ -179,6 +181,54 @@ export const FileWriter = (): Plugin => {
 
 			};
 
+			const temporarilyUnwatchShader = ( shaderPath: string ) => {
+
+				if ( ! watcher ) {
+
+					return;
+
+				}
+
+				const existingTimeout = shaderRewatchTimeouts.get( shaderPath );
+
+				if ( existingTimeout ) {
+
+					clearTimeout( existingTimeout );
+					shaderRewatchTimeouts.delete( shaderPath );
+
+				}
+
+				watcher.unwatch( shaderPath );
+
+			};
+
+			const scheduleShaderRewatch = ( shaderPath: string ) => {
+
+				if ( ! watcher ) {
+
+					return;
+
+				}
+
+				const existingTimeout = shaderRewatchTimeouts.get( shaderPath );
+
+				if ( existingTimeout ) {
+
+					clearTimeout( existingTimeout );
+
+				}
+
+				const timeout = setTimeout( () => {
+
+					watcher.add( shaderPath );
+					shaderRewatchTimeouts.delete( shaderPath );
+
+				}, SHADER_REWATCH_DELAY );
+
+				shaderRewatchTimeouts.set( shaderPath, timeout );
+
+			};
+
 			server.httpServer?.on( 'close', () => {
 
 				if ( sceneRewatchTimeout ) {
@@ -187,6 +237,14 @@ export const FileWriter = (): Plugin => {
 					sceneRewatchTimeout = null;
 
 				}
+
+				for ( const timeout of shaderRewatchTimeouts.values() ) {
+
+					clearTimeout( timeout );
+
+				}
+
+				shaderRewatchTimeouts.clear();
 
 			} );
 
@@ -256,7 +314,19 @@ export const FileWriter = (): Plugin => {
 
 						}
 
-						await fs.writeFile( fullPath, code, 'utf-8' );
+						// シェーダーファイルの監視を一時的に解除してから保存
+						temporarilyUnwatchShader( fullPath );
+
+						try {
+
+							await fs.writeFile( fullPath, code, 'utf-8' );
+
+						} finally {
+
+							// 保存後、遅延して監視を再開
+							scheduleShaderRewatch( fullPath );
+
+						}
 
 						res.statusCode = 200;
 						res.end( 'OK' );
