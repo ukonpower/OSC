@@ -51,11 +51,11 @@ SDFResult jaguchi( vec3 p ) {
 	jaguchi2P += vec3( 0.0, 0.0054, -0.01 );
 	d = opSmoothAdd( d, sdCappedCylinder( jaguchi2P, 0.009, 0.015 ), 0.01 );
 
-	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+	return SDFResult( d, p, 4.0, vec4( 0.0 ) );
 }
 
 SDFResult laneConveyor( vec3 p ) {
-	
+
 	vec3 laneConveyorP = p;
 	laneConveyorP += vec3( 0.0, 0.0, 0.0 );
 	laneConveyorP.x = mod( laneConveyorP.x + uTimeE * 0.2, 0.1 ) - 0.05;
@@ -136,26 +136,21 @@ SDFResult D( vec3 p ) {
 	pl.xy -= gridCenter;
 
 	SDFResult distTable = table( pl );
-	float d = distTable.d;
+	SDFResult result = distTable;
 
 	SDFResult distSeat = seat( pl );
-	d = min( d, distSeat.d );
+	if( distSeat.d < result.d ) result = distSeat;
 
   	SDFResult distFloor = sdFloor( pl );
-	d = min( d, distFloor.d );
+	if( distFloor.d < result.d ) result = distFloor;
 
 	SDFResult distLane = lane( pl );
-	d = min( d, distLane.d );
+	if( distLane.d < result.d ) result = distLane;
 
 	SDFResult distJaguchi = jaguchi( pl );
-	d = min( d, distJaguchi.d );
+	if( distJaguchi.d < result.d ) result = distJaguchi;
 
-	return SDFResult(
-		d,
-		p,
-		0.0,
-		vec4(0.0)
-	);
+	return result;
 
 }
 
@@ -201,10 +196,24 @@ void main( void ) {
 	// オブジェクト空間からワールド空間への変換、位置・法線・深度を出力
 	#include <rm_out_obj>
 
-	// 木目調の茶色を設定（テーブルステージらしい色）
+	// マテリアルベースの色設定（色は後で実装するので白で設定）
 	outColor = vec4( 1.0, 1.0, 1.0, 1.0 );
 	outEmission = vec3( 0.0 );
 	outRoughness = 0.7;
+	outMetalic = 0.0;
+
+	if( dist.mat == 0.0 ) {
+
+		// 床
+		outRoughness = 0.8;
+
+	} else if( dist.mat == 4.0 ) {
+
+		// 蛇口（メタリック）
+		outRoughness = 0.1;
+		outMetalic = 0.8;
+
+	}
 
 	#include <frag_out>
 
