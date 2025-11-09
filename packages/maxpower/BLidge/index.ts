@@ -184,7 +184,7 @@ export class BLidge extends GLP.EventEmitter {
 
 	// scene
 
-	public currentScene: BLidgeScene | null;
+	public currentData: BLidgeScene | null;
 
 	constructor( gl: WebGL2RenderingContext, url?: string ) {
 
@@ -196,7 +196,7 @@ export class BLidge extends GLP.EventEmitter {
 		this.nodes = [];
 		this.curveGroups = [];
 
-		this.currentScene = null;
+		this.currentData = null;
 
 		this.frame = {
 			start: 0,
@@ -283,7 +283,10 @@ export class BLidge extends GLP.EventEmitter {
 
 	public async loadScene( data: BLidgeScene, gltfPath?: string ) {
 
-		this.currentScene = data;
+		const newData: BLidgeScene = JSON.parse( JSON.stringify( data ) );
+
+		console.log( data );
+
 
 		// gltf
 
@@ -317,25 +320,23 @@ export class BLidge extends GLP.EventEmitter {
 
 		// frame
 
-		this.frame.start = data.frame.start;
-		this.frame.end = data.frame.end;
+		this.frame.start = newData.frame.start;
+		this.frame.end = newData.frame.end;
 		// currentはOREngine側で管理されるため、ここでは設定しない
-		// this.frame.current = data.frame.current;
-		this.frame.fps = data.frame.fps;
+		// this.frame.current = currentData.frame.current;
+		this.frame.fps = newData.frame.fps;
 
 		this.curveGroups = [];
 		this.nodes = [];
 
 		// actions
 
-		const fcurveGroupNames = Object.keys( data.animations );
-		const isV2 = data.version === 2;
+		const fcurveGroupNames = Object.keys( newData.animations );
+		const isV2 = newData.version === 2;
 
-		// 差分エンコーディングされたフレーム番号を絶対値に復元
-		// すべてのfcurveに対して先に処理を行う
 		if ( isV2 ) {
 
-			data.fcurves.forEach( fcurveData => {
+			newData.fcurves.forEach( fcurveData => {
 
 				for ( let j = 1; j < fcurveData.k.length; j ++ ) {
 
@@ -353,10 +354,9 @@ export class BLidge extends GLP.EventEmitter {
 			const fcurveGroupName = fcurveGroupNames[ i ];
 			const fcurveGroup = new GLP.FCurveGroup( fcurveGroupName );
 
-			// fcurvesからインデックスを使って参照
-			data.animations[ i ].forEach( fcurveIndex => {
+			newData.animations[ i ].forEach( fcurveIndex => {
 
-				const fcurveData = data.fcurves[ fcurveIndex ];
+				const fcurveData = newData.fcurves[ fcurveIndex ];
 
 				const curve = new GLP.FCurve();
 
@@ -433,7 +433,9 @@ export class BLidge extends GLP.EventEmitter {
 
 		};
 
-		this.root = _( data.root );
+		this.root = _( newData.root );
+
+		this.currentData = newData;
 
 		// dispatch event
 
