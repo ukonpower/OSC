@@ -3,6 +3,7 @@
 #include <frag_h>
 #include <sdf>
 #include <rm_h>
+#include <rotate>
 
 const float seatDepth = 0.4;
 
@@ -27,9 +28,28 @@ float gridTraversal( vec2 ro, vec2 rd) {
 
 SDFResult jaguchi( vec3 p ) {
 
-	vec3 jaguchiP = p;
-	jaguchiP += vec3( -0.05, -0.05, 0.35 );
-	float d = sdBox( jaguchiP, vec3( 0.05, 0.05, 0.05 ) );
+	vec3 baseP = p;
+	baseP += vec3( -0.05, -0.08, 0.38 );
+
+	vec3 baseRotP = baseP;
+	baseRotP.yz *= rotate( HPI );
+	float d = sdCappedCylinder( baseRotP, 0.01, 0.05 );
+
+	vec3 buttonP = baseP;
+	buttonP += vec3( 0.0, 0.0, -0.05);
+	buttonP.yz *= rotate( HPI );
+	d = opSmoothAdd( d, sdCappedCylinder( buttonP, 0.013, 0.003 ), 0.004 );
+
+	vec3 jaguchiP = baseP;
+	jaguchiP += vec3( 0.0, -0.03, -0.025 );
+	jaguchiP.yz *= rotate( 0.6 );
+	d = opSmoothAdd( d, sdCappedCylinder( jaguchiP, 0.01, 0.035 ), 0.004 );
+
+	vec3 jaguchi2P = baseP;
+	jaguchi2P += vec3( 0.0, -0.059, -0.06 );
+	jaguchi2P.yz *= rotate( HPI + 0.6 );
+	jaguchi2P += vec3( 0.0, 0.0054, -0.01 );
+	d = opSmoothAdd( d, sdCappedCylinder( jaguchi2P, 0.009, 0.015 ), 0.01 );
 
 	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
 }
@@ -47,7 +67,7 @@ SDFResult laneConveyor( vec3 p ) {
 SDFResult lane( vec3 p ) {
 
 	vec3 laneP = p;
-	laneP += vec3( 0.0, 0.15, 0.5 );
+	laneP += vec3( 0.0, 0.05, 0.5 );
 	float d = sdBox( laneP, vec3( 0.5, 0.2, 0.1) );
 	d = min( d, laneConveyor( laneP + vec3( 0.0, -0.2, -0.015 ) ).d );
 
