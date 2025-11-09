@@ -25,6 +25,7 @@ export const ShaderEditorApp = () => {
 
 	const [ selectedComponent, setSelectedComponent ] = useState<ShaderComponent>();
 	const [ selectedShader, setSelectedShader ] = useState<ShaderFile>();
+	const [ isInitializing, setIsInitializing ] = useState( true );
 	const [ componentClass, setComponentClass ] = useState<typeof MXP.Component>();
 	const [ originalShaderCode, setOriginalShaderCode ] = useState<string>( '' );
 	const [ currentShaderCode, setCurrentShaderCode ] = useState<string>( '' );
@@ -103,6 +104,8 @@ export const ShaderEditorApp = () => {
 		const urlComponentPath = urlParams.get( 'component' );
 		const urlShaderType = urlParams.get( 'shader' );
 
+		console.log( '[ShaderEditorApp] Initializing with URL params:', { urlComponentPath, urlShaderType } );
+
 		let componentToLoad: ShaderComponent | undefined;
 		let shaderToLoad: ShaderFile | undefined;
 
@@ -110,6 +113,8 @@ export const ShaderEditorApp = () => {
 		if ( urlComponentPath ) {
 
 			componentToLoad = SHADER_COMPONENTS.find( c => c.path === urlComponentPath );
+
+			console.log( '[ShaderEditorApp] Component found:', componentToLoad );
 
 			if ( componentToLoad ) {
 
@@ -126,6 +131,8 @@ export const ShaderEditorApp = () => {
 					shaderToLoad = componentToLoad.shaders.find( s => s.type === 'fs' ) || componentToLoad.shaders[ 0 ];
 
 				}
+
+				console.log( '[ShaderEditorApp] Shader to load:', shaderToLoad );
 
 			}
 
@@ -164,13 +171,30 @@ export const ShaderEditorApp = () => {
 		// コンポーネントとシェーダーをセット
 		if ( componentToLoad ) {
 
-			setSelectedComponent( componentToLoad );
+			console.log( '[ShaderEditorApp] Setting component and shader:', { componentToLoad, shaderToLoad } );
 
-			if ( shaderToLoad ) {
+			// React 18のバッチ更新を使用して、両方を同時に更新
+			// setTimeoutを使って次のイベントループで実行することで、
+			// 両方の状態が同時に更新されるようにする
+			setTimeout( () => {
 
-				setSelectedShader( shaderToLoad );
+				setSelectedComponent( componentToLoad );
 
-			}
+				if ( shaderToLoad ) {
+
+					setSelectedShader( shaderToLoad );
+
+				}
+
+				// 両方の設定が完了してから初期化フラグを下ろす
+				setIsInitializing( false );
+
+			}, 0 );
+
+		} else {
+
+			console.log( '[ShaderEditorApp] No component to load' );
+			setIsInitializing( false );
 
 		}
 
@@ -212,8 +236,19 @@ export const ShaderEditorApp = () => {
 	// シェーダー選択時の処理
 	useEffect( () => {
 
+		console.log( '[ShaderEditorApp] Shader selection changed:', { selectedComponent, selectedShader, isInitializing } );
+
+		// 初期化中は処理をスキップ
+		if ( isInitializing ) {
+
+			console.log( '[ShaderEditorApp] Still initializing, skipping shader load' );
+			return;
+
+		}
+
 		if ( ! selectedComponent || ! selectedShader ) {
 
+			console.log( '[ShaderEditorApp] No component or shader selected, clearing code' );
 			setOriginalShaderCode( '' );
 			setCurrentShaderCode( '' );
 			setAppliedShaderCode( undefined );
@@ -226,8 +261,10 @@ export const ShaderEditorApp = () => {
 
 			try {
 
+				console.log( '[ShaderEditorApp] Loading shader code...' );
 				// シェーダーファイルを読み込み
 				const shaderCode = await loadShader( selectedComponent, selectedShader );
+				console.log( '[ShaderEditorApp] Shader code loaded, length:', shaderCode.length );
 				setOriginalShaderCode( shaderCode );
 				setCurrentShaderCode( shaderCode );
 				setAppliedShaderCode( shaderCode );
@@ -235,7 +272,7 @@ export const ShaderEditorApp = () => {
 
 			} catch ( error ) {
 
-				console.error( 'Failed to load shader:', error );
+				console.error( '[ShaderEditorApp] Failed to load shader:', error );
 				alert( `Failed to load shader: ${error}` );
 
 			}
@@ -244,7 +281,7 @@ export const ShaderEditorApp = () => {
 
 		loadShaderCode();
 
-	}, [ selectedComponent, selectedShader ] );
+	}, [ selectedComponent, selectedShader, isInitializing ] );
 
 	// コード変更ハンドラ
 	const handleCodeChange = useCallback( ( value: string | undefined ) => {
