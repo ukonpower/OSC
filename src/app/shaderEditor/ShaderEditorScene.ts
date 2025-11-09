@@ -15,13 +15,17 @@ import { UniformControls } from '~/resources/Components/Utilities/UniformsContro
  */
 export class ShaderEditorScene {
 
+	private static readonly STORAGE_KEY_CAMERA = 'shaderEditor.camera';
+
 	private engine: Engine;
 	private camera: MXP.Entity;
+	private orbitControls: OrbitControls | null = null;
 	private light: MXP.Entity;
 	private skybox: MXP.Entity;
 	private textureGenerator: MXP.Entity;
 	private uniformControls: MXP.Entity;
 	private previewObject: MXP.Entity | null = null;
+	private cameraSaveInterval: number | null = null;
 
 	constructor( engine: Engine ) {
 
@@ -41,18 +45,26 @@ export class ShaderEditorScene {
 		// Camera作成
 		this.camera = new MXP.Entity();
 		this.camera.name = "Camera";
-		this.camera.position.set( 0, 0, 3 );
+
+		// カメラ位置とクォータニオンをlocalStorageから復元（OrbitControls追加前）
+		this.restoreCameraPositionAndRotation();
 
 		const renderCamera = this.camera.addComponent( MXP.RenderCamera, { gl: gl } );
-		const orbitControls = this.camera.addComponent( OrbitControls );
+		this.orbitControls = this.camera.addComponent( OrbitControls );
+
+		// OrbitControlsのtargetをlocalStorageから復元
+		this.restoreCameraTarget();
 
 		// グローバルcanvasがHTMLCanvasElementの場合のみOrbitControlsを有効化
 		if ( canvas instanceof HTMLCanvasElement ) {
 
-			orbitControls.setElm( canvas );
-			orbitControls.enabled = true;
+			this.orbitControls.setElm( canvas );
+			this.orbitControls.enabled = true;
 
 		}
+
+		// カメラ状態の定期保存を開始
+		this.startCameraSaving();
 
 		this.engine.root.add( this.camera );
 
@@ -184,8 +196,124 @@ export class ShaderEditorScene {
 
 	}
 
+	// カメラ位置と回転の復元（OrbitControls追加前に実行）
+	private restoreCameraPositionAndRotation(): void {
+
+		const savedCamera = localStorage.getItem( ShaderEditorScene.STORAGE_KEY_CAMERA );
+
+		if ( savedCamera ) {
+
+			try {
+
+				const { position, quaternion } = JSON.parse( savedCamera );
+				this.camera.position.copy( position );
+				this.camera.quaternion.copy( quaternion );
+
+			} catch ( e ) {
+
+				// パースエラー時はデフォルト位置
+				this.camera.position.set( 0, 0, 3 );
+
+			}
+
+		} else {
+
+			this.camera.position.set( 0, 0, 3 );
+
+		}
+
+	}
+
+	// OrbitControlsのtarget復元（OrbitControls追加後に実行）
+	private restoreCameraTarget(): void {
+
+		const savedCamera = localStorage.getItem( ShaderEditorScene.STORAGE_KEY_CAMERA );
+
+		if ( savedCamera && this.orbitControls ) {
+
+			try {
+
+				const { target } = JSON.parse( savedCamera );
+
+				if ( target ) {
+
+					// targetを復元した後、setPositionを呼び出してorbit_とdistance_を再計算
+					const targetVec = new GLP.Vector( target.x, target.y, target.z );
+					this.orbitControls.setPosition( this.camera.position, targetVec );
+
+				}
+
+			} catch ( e ) {
+
+				// エラー時は何もしない（デフォルトのtargetを使用）
+
+			}
+
+		}
+
+	}
+
+	// カメラ状態の保存
+	private saveCameraState(): void {
+
+		const cameraState: any = {
+			position: {
+				x: this.camera.position.x,
+				y: this.camera.position.y,
+				z: this.camera.position.z
+			},
+			quaternion: {
+				x: this.camera.quaternion.x,
+				y: this.camera.quaternion.y,
+				z: this.camera.quaternion.z,
+				w: this.camera.quaternion.w
+			}
+		};
+
+		// OrbitControlsのtargetも保存
+		if ( this.orbitControls ) {
+
+			const target = ( this.orbitControls as any ).target_;
+			cameraState.target = {
+				x: target.x,
+				y: target.y,
+				z: target.z
+			};
+
+		}
+
+		localStorage.setItem( ShaderEditorScene.STORAGE_KEY_CAMERA, JSON.stringify( cameraState ) );
+
+	}
+
+	// カメラ状態の定期保存を開始
+	private startCameraSaving(): void {
+
+		this.cameraSaveInterval = window.setInterval( () => {
+
+			this.saveCameraState();
+
+		}, 500 ); // 500msごとに保存
+
+	}
+
+	// カメラ状態の定期保存を停止
+	private stopCameraSaving(): void {
+
+		if ( this.cameraSaveInterval !== null ) {
+
+			clearInterval( this.cameraSaveInterval );
+			this.cameraSaveInterval = null;
+
+		}
+
+	}
+
 	// クリーンアップ
 	dispose(): void {
+
+		// カメラ状態の定期保存を停止
+		this.stopCameraSaving();
 
 		this.engine.setCamera( null );
 		this.engine.root.remove( this.camera );
