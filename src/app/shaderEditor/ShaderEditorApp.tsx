@@ -37,6 +37,8 @@ export const ShaderEditorApp = () => {
 	const [ isComponentListOpen, setIsComponentListOpen ] = useState( false );
 	// uniformsの状態管理
 	const [ currentUniforms, setCurrentUniforms ] = useState<GLP.Uniforms | null>( null );
+	// シーンの参照を保持
+	const [ currentScene, setCurrentScene ] = useState<any>( null );
 
 	// ローカルストレージのキー
 	const STORAGE_KEY_RESOLUTION = 'shaderEditor.resolutionScale';
@@ -409,7 +411,25 @@ export const ShaderEditorApp = () => {
 
 	}, [ currentUniforms ] );
 
-	// キーボードショートカット: Alt+Enter でApply, Ctrl+S でSave
+	// カメラリセットハンドラ
+	const handleResetCamera = useCallback( () => {
+
+		if ( currentScene && currentScene.resetCamera ) {
+
+			currentScene.resetCamera();
+
+		}
+
+	}, [ currentScene ] );
+
+	// シーンの準備完了時のハンドラ
+	const handleSceneReady = useCallback( ( scene: any ) => {
+
+		setCurrentScene( scene );
+
+	}, [] );
+
+	// キーボードショートカット: Alt+Enter でApply, Ctrl+S でSave, Esc でカメラリセット
 	useEffect( () => {
 
 		const handleKeyDown = ( e: KeyboardEvent ) => {
@@ -430,6 +450,14 @@ export const ShaderEditorApp = () => {
 
 			}
 
+			// Esc でカメラリセット
+			if ( e.key === 'Escape' ) {
+
+				e.preventDefault();
+				handleResetCamera();
+
+			}
+
 		};
 
 		window.addEventListener( 'keydown', handleKeyDown );
@@ -440,7 +468,7 @@ export const ShaderEditorApp = () => {
 
 		};
 
-	}, [ handleApply, handleSave ] );
+	}, [ handleApply, handleSave, handleResetCamera ] );
 
 	return (
 		<MouseMenuContext.Provider value={mouseMenuContext}>
@@ -457,6 +485,7 @@ export const ShaderEditorApp = () => {
 					onResolutionScaleChange={setResolutionScale}
 					showWireframe={showWireframe}
 					onWireframeChange={setShowWireframe}
+					onResetCamera={handleResetCamera}
 				/>
 
 				<div className="shader-editor__content">
@@ -488,6 +517,7 @@ export const ShaderEditorApp = () => {
 								resolutionScale={resolutionScale}
 								showWireframe={showWireframe}
 								onUniformsChange={handleUniformsChange}
+								onSceneReady={handleSceneReady}
 							/>
 
 							<div className="shader-editor__code-wrapper">
@@ -516,6 +546,7 @@ export const ShaderEditorApp = () => {
 								resolutionScale={resolutionScale}
 								showWireframe={showWireframe}
 								onUniformsChange={handleUniformsChange}
+								onSceneReady={handleSceneReady}
 							/>
 
 							<div className="shader-editor__code-wrapper">

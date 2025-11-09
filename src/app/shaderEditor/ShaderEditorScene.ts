@@ -253,6 +253,26 @@ export class ShaderEditorScene {
 
 	}
 
+	// カメラ位置とターゲットをデフォルト値にリセット
+	resetCamera(): void {
+
+		// デフォルト位置にリセット
+		this.camera.position.set( 0, 0, 3 );
+		this.camera.quaternion.set( 0, 0, 0, 1 );
+
+		// OrbitControlsのターゲットをリセット
+		if ( this.orbitControls ) {
+
+			const defaultTarget = new GLP.Vector( 0, 0, 0 );
+			this.orbitControls.setPosition( this.camera.position, defaultTarget );
+
+		}
+
+		// カメラ状態を保存
+		this.saveCameraState();
+
+	}
+
 	// カメラ状態の保存
 	private saveCameraState(): void {
 
