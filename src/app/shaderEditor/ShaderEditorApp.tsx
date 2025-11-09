@@ -478,7 +478,6 @@ export const ShaderEditorApp = () => {
 						>
 							<PreviewPane
 								componentClass={componentClass}
-								componentName={selectedComponent?.name}
 								shaderCode={appliedShaderCode}
 								onCompileError={handleCompileError}
 								onCompileSuccess={handleCompileSuccess}
@@ -507,7 +506,6 @@ export const ShaderEditorApp = () => {
 						<>
 							<PreviewPane
 								componentClass={componentClass}
-								componentName={selectedComponent?.name}
 								shaderCode={appliedShaderCode}
 								onCompileError={handleCompileError}
 								onCompileSuccess={handleCompileSuccess}
