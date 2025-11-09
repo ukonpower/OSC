@@ -4,53 +4,10 @@
 #include <sdf>
 #include <rm_h>
 
+const float seatDepth = 0.4;
+
+
 uniform float uTimeE;
-
-
-SDFResult table( vec3 p  ) {
-
-	float d = sdBox( p, vec3( 0.2, 0.02, 0.3 ) );
-
-	vec3 poleP = p;
-	poleP += vec3( 0.0, 0.25, 0.0 );
-	d = min( d, sdCappedCylinder( poleP, 0.03, 0.25 ) );
-	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
-
-}
-
-SDFResult seat( vec3 p  ) {
-
-	float depth = 0.4;
-
-	vec3 seatP = p;
-	seatP.x = abs( seatP.x );
-	seatP += vec3( - 0.4, 0.2, 0.0 );
-	float d = sdBox( seatP, vec3( 0.2, 0.06, depth ) );
-
-	vec3 semotareP = seatP;
-	semotareP += vec3( -0.12, -0.27, 0.0 );
-	d = min( d, sdBox( semotareP, vec3( 0.08, 0.20, depth ) ) );
-
-	vec3 ashiP = semotareP;
-	ashiP += vec3( 0.0, 0.4, 0.0 );
-	d = min( d, sdBox( ashiP, vec3( 0.25, 0.1, 0.35 ) ) );
-
-	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
-
-}
-
-SDFResult sdFloor( vec3 p ) {
-
-	float depth = 0.4;
-
-	vec3 floorP = p;
-	floorP.x = abs( floorP.x );
-	floorP += vec3( 0.0, 0.45, 0.0 );
-	float d = sdBox( floorP, vec3( 0.5, 0.05, depth ) );
-
-	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
-
-}
 
 vec2 gridCenter = vec2( 0.0, 0.0 );
 const vec2 gridSize = vec2( 1.0, 1.6 );
@@ -70,6 +27,76 @@ float gridTraversal( vec2 ro, vec2 rd) {
   return  min( bv.x, bv.y );
 }
 
+SDFResult jaguchi( vec3 p ) {
+
+	vec3 jaguchiP = p;
+	jaguchiP += vec3( -0.05, -0.05, 0.35 );
+	float d = sdBox( jaguchiP, vec3( 0.05, 0.05, 0.05 ) );
+
+	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+}
+
+SDFResult lane( vec3 p ) {
+
+	vec3 laneP = p;
+	laneP += vec3( 0.0, 0.15, 0.5 );
+	float d = sdBox( laneP, vec3( 0.5, 0.28, 0.1) );
+
+	vec3 topLaneP = laneP;
+	topLaneP += vec3( 0.0, -0.45, 0.0  );
+	d = min( d, sdBox( topLaneP, vec3( 0.5, 0.013, 0.1) ) );
+
+	vec3 laneWallP = topLaneP;
+	laneWallP += vec3( 0.0, 0.0, 0.1 );
+	d = min( d, sdBox( laneWallP, vec3( 0.5, 2.0, 0.03) ) );
+
+	return SDFResult( d, laneP, 0.0, vec4( 0.0 ) );
+
+}
+
+SDFResult table( vec3 p  ) {
+
+	float d = sdBox( p, vec3( 0.2, 0.02, seatDepth ) );
+
+	vec3 poleP = p;
+	poleP += vec3( 0.0, 0.25, 0.0 );
+	d = min( d, sdCappedCylinder( poleP, 0.03, 0.25 ) );
+	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+
+}
+
+SDFResult seat( vec3 p  ) {
+
+	vec3 seatP = p;
+	seatP.x = abs( seatP.x );
+	seatP += vec3( - 0.4, 0.2, 0.0 );
+	float d = sdBox( seatP, vec3( 0.2, 0.06, seatDepth ) );
+
+	vec3 semotareP = seatP;
+	semotareP += vec3( -0.12, -0.27, 0.0 );
+	d = min( d, sdBox( semotareP, vec3( 0.08, 0.20, seatDepth ) ) );
+
+	vec3 ashiP = semotareP;
+	ashiP += vec3( 0.0, 0.4, 0.0 );
+	d = min( d, sdBox( ashiP, vec3( 0.25, 0.1, 0.35 ) ) );
+
+	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+
+}
+
+SDFResult sdFloor( vec3 p ) {
+
+	float seatDepth = 0.4;
+
+	vec3 floorP = p;
+	floorP.x = abs( floorP.x );
+	floorP += vec3( 0.0, 0.45, 0.0 );
+	float d = sdBox( floorP, vec3( 0.5, 0.05, seatDepth ) );
+
+	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+
+}
+
 SDFResult D( vec3 p ) {
 
 	vec3 pl = p;
@@ -83,8 +110,14 @@ SDFResult D( vec3 p ) {
 	SDFResult distSeat = seat( pl );
 	d = min( d, distSeat.d );
 
-  SDFResult distFloor = sdFloor( pl );
+  	SDFResult distFloor = sdFloor( pl );
 	d = min( d, distFloor.d );
+
+	SDFResult distLane = lane( pl );
+	d = min( d, distLane.d );
+
+	SDFResult distJaguchi = jaguchi( pl );
+	d = min( d, distJaguchi.d );
 
 	return SDFResult(
 		d,
