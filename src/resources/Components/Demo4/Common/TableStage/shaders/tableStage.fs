@@ -33,25 +33,31 @@ SDFResult jaguchi( vec3 p ) {
 
 	vec3 baseRotP = baseP;
 	baseRotP.yz *= rotate( HPI );
-	float d = sdCappedCylinder( baseRotP, 0.01, 0.05 );
+	vec2 d = vec2( sdCappedCylinder( baseRotP, 0.01, 0.05 ), 0.0 );
 
 	vec3 buttonP = baseP;
 	buttonP += vec3( 0.0, 0.0, -0.05);
 	buttonP.yz *= rotate( HPI );
-	d = opSmoothAdd( d, sdCappedCylinder( buttonP, 0.013, 0.003 ), 0.004 );
+	d = opAdd( d, vec2( sdCappedCylinder( buttonP, 0.013, 0.003 ), 1.0 ) );
 
 	vec3 jaguchiP = baseP;
 	jaguchiP += vec3( 0.0, -0.03, -0.025 );
 	jaguchiP.yz *= rotate( 0.6 );
-	d = opSmoothAdd( d, sdCappedCylinder( jaguchiP, 0.01, 0.035 ), 0.004 );
+	d = opAdd( d, vec2( sdCappedCylinder( jaguchiP, 0.01, 0.035 ), 0.0 ) );
 
 	vec3 jaguchi2P = baseP;
 	jaguchi2P += vec3( 0.0, -0.059, -0.06 );
 	jaguchi2P.yz *= rotate( HPI + 0.6 );
 	jaguchi2P += vec3( 0.0, 0.0054, -0.01 );
-	d = opSmoothAdd( d, sdCappedCylinder( jaguchi2P, 0.009, 0.015 ), 0.01 );
+	d = opAdd( d, vec2( sdCappedCylinder( jaguchi2P, 0.009, 0.015 ), 0.0 ) );
 
-	return SDFResult( d, p, 4.0, vec4( 0.0 ) );
+	vec4 color = vec4( 0.8, 0.8, 0.82, 1.0 );
+	if( d.y == 1.0 ) {
+		// ボタン部分（青色）
+		color = vec4( 0.2, 0.4, 0.8, 1.0 );
+	}
+
+	return SDFResult( d.x, p, 4.0, color );
 }
 
 SDFResult laneConveyor( vec3 p ) {
@@ -61,7 +67,7 @@ SDFResult laneConveyor( vec3 p ) {
 	laneConveyorP.x = mod( laneConveyorP.x + uTimeE * 0.2, 0.1 ) - 0.05;
 	float d = sdBox( laneConveyorP, vec3( 0.045, 0.01, 0.06 ) );
 
-	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+	return SDFResult( d, p, 3.0, vec4( 0.15, 0.15, 0.15, 1.0 ) );
 }
 
 SDFResult lane( vec3 p ) {
@@ -81,7 +87,7 @@ SDFResult lane( vec3 p ) {
 	laneWallP += vec3( 0.0, 0.0, 0.1 );
 	d = min( d, sdBox( laneWallP, vec3( 0.5, 2.0, 0.03) ) );
 
-	return SDFResult( d, laneP, 0.0, vec4( 0.0 ) );
+	return SDFResult( d, laneP, 2.0, vec4( 0.95, 0.95, 0.95, 1.0 ) );
 
 }
 
@@ -92,7 +98,7 @@ SDFResult table( vec3 p  ) {
 	vec3 poleP = p;
 	poleP += vec3( 0.0, 0.25, 0.0 );
 	d = min( d, sdCappedCylinder( poleP, 0.03, 0.25 ) );
-	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+	return SDFResult( d, p, 1.0, vec4( 0.65, 0.45, 0.30, 1.0 ) );
 
 }
 
@@ -111,7 +117,7 @@ SDFResult seat( vec3 p  ) {
 	ashiP += vec3( 0.0, 0.4, 0.0 );
 	d = min( d, sdBox( ashiP, vec3( 0.25, 0.1, 0.35 ) ) );
 
-	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+	return SDFResult( d, p, 1.0, vec4( 0.65, 0.45, 0.30, 1.0 ) );
 
 }
 
@@ -124,7 +130,7 @@ SDFResult sdFloor( vec3 p ) {
 	floorP += vec3( 0.0, 0.45, 0.0 );
 	float d = sdBox( floorP, vec3( 0.5, 0.05, seatDepth ) );
 
-	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+	return SDFResult( d, p, 0.0, vec4( 0.85, 0.85, 0.88, 1.0 ) );
 
 }
 
@@ -196,22 +202,37 @@ void main( void ) {
 	// オブジェクト空間からワールド空間への変換、位置・法線・深度を出力
 	#include <rm_out_obj>
 
-	// マテリアルベースの色設定（色は後で実装するので白で設定）
-	outColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+	// SDFResultから渡された色を使用
+	outColor.xyz = dist.matparam.xyz;
 	outEmission = vec3( 0.0 );
 	outRoughness = 0.7;
 	outMetalic = 0.0;
 
 	if( dist.mat == 0.0 ) {
 
-		// 床
+		// 床（タイル風の明るいグレー）
+		outRoughness = 0.4;
+
+	} else if( dist.mat == 1.0 ) {
+
+		// テーブル・椅子（木材風の温かみのあるブラウン）
+		outRoughness = 0.6;
+
+	} else if( dist.mat == 2.0 ) {
+
+		// レーン（プラスチック風の白）
+		outRoughness = 0.3;
+
+	} else if( dist.mat == 3.0 ) {
+
+		// コンベア（ゴム風の濃いグレー）
 		outRoughness = 0.8;
 
 	} else if( dist.mat == 4.0 ) {
 
-		// 蛇口（メタリック）
-		outRoughness = 0.1;
-		outMetalic = 0.8;
+		// 蛇口（ステンレス風のメタリック）
+		outRoughness = 0.15;
+		outMetalic = 0.85;
 
 	}
 
