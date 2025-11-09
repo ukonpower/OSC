@@ -6,13 +6,11 @@
 
 const float seatDepth = 0.4;
 
-
 uniform float uTimeE;
 
 vec2 gridCenter = vec2( 0.0, 0.0 );
 const vec2 gridSize = vec2( 1.0, 1.6 );
 const vec2 offsetPos = vec2( gridSize / 2.0 );
-
 
 // https://kinakomoti321.hatenablog.com/entry/2024/12/10/023309
 float gridTraversal( vec2 ro, vec2 rd) {
@@ -36,15 +34,28 @@ SDFResult jaguchi( vec3 p ) {
 	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
 }
 
+SDFResult laneConveyor( vec3 p ) {
+	
+	vec3 laneConveyorP = p;
+	laneConveyorP += vec3( 0.0, 0.0, 0.0 );
+	laneConveyorP.x = mod( laneConveyorP.x + uTimeE * 0.2, 0.1 ) - 0.05;
+	float d = sdBox( laneConveyorP, vec3( 0.045, 0.01, 0.06 ) );
+
+	return SDFResult( d, p, 0.0, vec4( 0.0 ) );
+}
+
 SDFResult lane( vec3 p ) {
 
 	vec3 laneP = p;
 	laneP += vec3( 0.0, 0.15, 0.5 );
-	float d = sdBox( laneP, vec3( 0.5, 0.28, 0.1) );
+	float d = sdBox( laneP, vec3( 0.5, 0.2, 0.1) );
+	d = min( d, laneConveyor( laneP + vec3( 0.0, -0.2, -0.015 ) ).d );
 
 	vec3 topLaneP = laneP;
 	topLaneP += vec3( 0.0, -0.45, 0.0  );
 	d = min( d, sdBox( topLaneP, vec3( 0.5, 0.013, 0.1) ) );
+	// d = min( d, laneConveyor( topLaneP + vec3( 0.0, -0.015, -0.015 ) ).d );
+
 
 	vec3 laneWallP = topLaneP;
 	laneWallP += vec3( 0.0, 0.0, 0.1 );
