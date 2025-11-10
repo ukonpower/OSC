@@ -17,8 +17,13 @@ export class GunkanShari extends MXP.Component {
 
 		super( params );
 
-		const geo = new MXP.SphereGeometry( {
-			radius: 0.5
+		const geo = new MXP.CubeGeometry( {
+			width: 1,
+			depth: 1.3,
+			height: 1,
+			segmentsDepth: 4,
+			segmentsHeight: 4,
+			segmentsWidth: 4,
 		} );
 
 		const mat = new MXP.Material( {
