@@ -33,14 +33,14 @@ export class TableStage extends MXP.Component {
 		this._entity.add( cubeEntity );
 
 		// 子entityにMeshコンポーネントを追加
-		const cubeMesh = cubeEntity.addComponent( MXP.Mesh, {
-			geometry: new MXP.CubeGeometry( { width: 1, height: 1, depth: 1 } ),
-			material: new MXP.Material( {
-				phase: [ "deferred" ],
-				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution ),
-				drawType: "LINES"
-			} )
-		} );
+		// const cubeMesh = cubeEntity.addComponent( MXP.Mesh, {
+		// 	geometry: new MXP.CubeGeometry( { width: 1, height: 1, depth: 1 } ),
+		// 	material: new MXP.Material( {
+		// 		phase: [ "deferred" ],
+		// 		uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution ),
+		// 		drawType: "LINES"
+		// 	} )
+		// } );
 
 		// ホットリロード対応(開発時のみ)
 		if ( import.meta.hot ) {

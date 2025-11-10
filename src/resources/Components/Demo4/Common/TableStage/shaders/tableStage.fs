@@ -54,7 +54,7 @@ SDFResult jaguchi( vec3 p ) {
 	vec4 color = vec4( 0.8, 0.8, 0.82, 1.0 );
 	if( d.y == 1.0 ) {
 		// ボタン部分（青色）
-		color = vec4( 0.2, 0.4, 0.8, 1.0 );
+		color = vec4( vec3( 0.4), 1.0 );
 	}
 
 	return SDFResult( d.x, p, 4.0, color );
@@ -135,6 +135,8 @@ SDFResult sdFloor( vec3 p ) {
 }
 
 SDFResult D( vec3 p ) {
+
+	p.z += pow( p.x, 2.0 ) * 0.03;
 
 	vec3 pl = p;
 

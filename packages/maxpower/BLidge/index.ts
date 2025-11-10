@@ -285,9 +285,6 @@ export class BLidge extends GLP.EventEmitter {
 
 		const newData: BLidgeScene = JSON.parse( JSON.stringify( data ) );
 
-		console.log( data );
-
-
 		// gltf
 
 		if ( gltfPath ) {
