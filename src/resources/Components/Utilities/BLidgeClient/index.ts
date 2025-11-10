@@ -327,8 +327,6 @@ export class BLidgeClient extends MXP.Component {
 
 				}
 
-				console.log( '[BLidgeClient] Scene saved to local JSON' );
-
 			} catch ( error ) {
 
 				console.error( '[BLidgeClient] Failed to save blidge-data.json:', error );

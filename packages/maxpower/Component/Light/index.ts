@@ -84,6 +84,66 @@ export class Light extends ShadowMapCamera {
 			}
 		);
 
+		this.field(
+			"blend",
+			() => this.blend,
+			( value: number ) => this.blend = value,
+			{
+				noExport: true
+			}
+		);
+
+		this.field(
+			"angle",
+			() => this.angle,
+			( value: number ) => {
+
+				this.angle = value;
+
+				this.updateProjectionMatrix();
+
+			},
+			{
+				noExport: true
+			}
+		);
+
+		this.field(
+			"color",
+			() => this.color.getElm( "vec3" ),
+			( value: number[] ) => this.color.setFromArray( value ),
+			{
+				noExport: true
+			}
+		);
+
+		this.field(
+			"castShadow",
+			() => this.castShadow,
+			( value: boolean ) => this.castShadow = value,
+			{
+				noExport: true
+			}
+		);
+
+		this.field(
+			"distance",
+			() => this.distance,
+			( value: number ) => this.distance = value,
+			{
+				noExport: true
+			}
+		);
+
+		this.field(
+			"decay",
+			() => this.decay,
+			( value: number ) => this.decay = value,
+			{
+				noExport: true
+			}
+		);
+
 		this.updateProjectionMatrix();
 
 	}

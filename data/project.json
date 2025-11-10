@@ -31,7 +31,7 @@
 				{
 					"name": "BLidgeClient",
 					"props": {
-						"mode": "json",
+						"mode": "websocket",
 						"gltf": false,
 						"gltfPath": "/scene.glb",
 						"websocket/url": "ws://localhost:3100"
@@ -197,7 +197,7 @@
 			]
 		},
 		{
-			"uuid": "826e3e68",
+			"uuid": "95ed9021",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -216,7 +216,7 @@
 			]
 		},
 		{
-			"uuid": "826fd283",
+			"uuid": "95edb9fa",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -257,7 +257,7 @@
 			]
 		},
 		{
-			"uuid": "826fcbf4",
+			"uuid": "95ed51d0",
 			"components": [
 				{
 					"name": "Sashimi",
@@ -293,7 +293,7 @@
 			]
 		},
 		{
-			"uuid": "826f8855",
+			"uuid": "95ed5562",
 			"components": [
 				{
 					"name": "Sashimi",

@@ -98,7 +98,7 @@ SDFResult table( vec3 p  ) {
 	vec3 poleP = p;
 	poleP += vec3( 0.0, 0.25, 0.0 );
 	d = min( d, sdCappedCylinder( poleP, 0.03, 0.25 ) );
-	return SDFResult( d, p, 1.0, vec4( 0.65, 0.45, 0.30, 1.0 ) );
+	return SDFResult( d, p, 1.0, vec4( 1.0, 1.0, 1.0, 1.0 ) );
 
 }
 
@@ -117,7 +117,7 @@ SDFResult seat( vec3 p  ) {
 	ashiP += vec3( 0.0, 0.4, 0.0 );
 	d = min( d, sdBox( ashiP, vec3( 0.25, 0.1, 0.35 ) ) );
 
-	return SDFResult( d, p, 1.0, vec4( 0.65, 0.45, 0.30, 1.0 ) );
+	return SDFResult( d, p, 1.0, vec4( 1.0, 1.0, 1.0, 1.0 ) );
 
 }
 

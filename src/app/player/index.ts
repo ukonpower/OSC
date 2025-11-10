@@ -115,6 +115,9 @@ playButton.onclick = () => {
 	rootElm.style.cursor = 'none';
 	engine.play();
 
+	console.log( engine.frameSetting.duration );
+
+
 	// アニメーション関数
 	function animate() {
 
