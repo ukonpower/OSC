@@ -7,34 +7,56 @@
 
 #include <rm_h>
 
+uniform sampler2D uNoiseTex;
 uniform float uTime;
+
+float daenScale = 0.7;
+
+// シャリ部分
+SDFResult shari( vec3 p ) {
+
+	vec3 shariP = p;
+	shariP.z *= daenScale;
+
+	vec4 noise = texture( uNoiseTex, shariP.xz * 0.5 + 0.5 );
+	shariP.y -= noise.y * 0.05 - 0.1;
+
+	float d = sdCappedCylinder(shariP, 0.25, 0.08);
+
+
+	return SDFResult( d, p, 0.0, vec4( 0.95, 0.93, 0.88, 1.0 ) );
+
+}
+
+// 海苔部分
+SDFResult nori( vec3 p ) {
+
+	vec3 noriPos = p - vec3(0.0, 0.0, 0.0);
+	noriPos.z *= daenScale;
+	
+	// 海苔の表面テクスチャ（ノイズで凹凸）
+	vec3 noise = noiseCyc(p * 30.0);
+	float heightMap = noise.x * 0.003;
+
+	// 海苔のシェル形状 - 外側の円柱
+	float noriOuter = sdCappedCylinder(noriPos, heightMap + 0.26, 0.15);
+	float noriInner = sdCappedCylinder(noriPos, heightMap + 0.255, 0.16);
+	float d = max(noriOuter, -noriInner);
+
+
+	return SDFResult( d, p, 1.0, vec4( 0.05, 0.08, 0.05, 1.0 ) );
+
+}
 
 SDFResult D( vec3 p ) {
 
-	vec3 pp = p;
+	SDFResult distShari = shari( p );
+	SDFResult result = distShari;
 
-	// シャリ部分 - 円柱形状
-	float shari = sdCappedCylinder(pp, 0.25, 0.08);
+	SDFResult distNori = nori( p );
+	if( distNori.d < result.d ) result = distNori;
 
-	// 海苔のシェル形状 - 外側の円柱
-	vec3 noriPos = pp - vec3(0.0, 0.05, 0.0);
-	float noriOuter = sdCappedCylinder(noriPos, 0.26, 0.15);
-	float noriInner = sdCappedCylinder(noriPos, 0.24, 0.16);
-	float nori = max(noriOuter, -noriInner);
-
-	// 海苔の表面テクスチャ（ノイズで凹凸）
-	float noriTexture = noiseCyc(pp * 30.0).x * 0.005;
-	nori += noriTexture;
-
-	// シャリと海苔を統合
-	float d = min(shari, nori);
-
-	return SDFResult(
-		d,
-		p,
-		nori < shari ? 1.0 : 0.0, // 海苔かシャリかを識別
-		vec4(0.0)
-	);
+	return result;
 
 }
 
@@ -68,26 +90,25 @@ void main( void ) {
 
 	#include <rm_out_obj>
 
-	vec3 color;
+	// SDFResultから渡された色を使用
+	outColor.xyz = dist.matparam.xyz;
+	outEmission = vec3( 0.0 );
+	outRoughness = 0.8;
+	outMetalic = 0.0;
 
-	if( dist.emission > 0.5 ) {
+	if( dist.mat == 0.0 ) {
 
-		// 海苔の色 - 黒緑色
-		color = vec3(0.05, 0.08, 0.05);
-		float variation = noiseCyc(rayPos * 20.0).x * 0.05;
-		color += variation;
-		outRoughness = 0.9;
-
-	} else {
-
-		// シャリの色 - 白いご飯
-		color = vec3(0.95, 0.93, 0.88);
+		// シャリ（白いご飯）
 		outRoughness = 0.8;
 
-	}
+	} else if( dist.mat == 1.0 ) {
 
-	outColor.xyz = color;
-	outMetalic = 0.0;
+		// 海苔（黒緑色）
+		float variation = noiseCyc(rayPos * 20.0).x * 0.05;
+		outColor.xyz += variation;
+		outRoughness = 0.9;
+
+	}
 
 	// 距離に応じたフェードアウト
 	outColor.xyz *= smoothstep( 2.0, 0.5, length( rayPos ) );

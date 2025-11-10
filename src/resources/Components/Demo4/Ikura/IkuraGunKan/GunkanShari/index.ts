@@ -23,7 +23,7 @@ export class GunkanShari extends MXP.Component {
 
 		const mat = new MXP.Material( {
 			frag: MXP.hotGet( 'gunkanShariFrag', gunkanShariFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, globalUniforms.tex )
 		} );
 
 		this.mesh = this.entity.addComponent( MXP.Mesh, {
