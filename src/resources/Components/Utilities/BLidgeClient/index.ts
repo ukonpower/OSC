@@ -355,7 +355,7 @@ export class BLidgeClient extends MXP.Component {
 		// 開発環境でWebSocket経由の場合、ローカルJSONを更新
 		if ( import.meta.env.DEV && this.type === "websocket" && blidge.currentData ) {
 
-			this.saveSceneToLocal( blidge.currentData );
+			// this.saveSceneToLocal( blidge.currentData );
 
 		}
 

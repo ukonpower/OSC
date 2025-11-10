@@ -391,7 +391,32 @@ export class BLidger extends Component {
 
 			if ( curveColor ) {
 
-				this._lightComponent.color.copy( curveColor.setFrame( frame ).value );
+				const colorValue = curveColor.setFrame( frame ).value;
+
+				if ( curveColor.getFCurve( 'x' ) ) {
+
+					this._lightComponent.color.x = colorValue.x;
+
+				}
+
+				if ( curveColor.getFCurve( 'y' ) ) {
+
+					this._lightComponent.color.y = colorValue.y;
+
+				}
+
+				if ( curveColor.getFCurve( 'z' ) ) {
+
+					this._lightComponent.color.z = colorValue.z;
+
+				}
+
+				if ( curveColor.getFCurve( 'w' ) ) {
+
+
+					this._lightComponent.intensity = colorValue.w;
+
+				}
 
 			}
 
