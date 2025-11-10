@@ -20,18 +20,25 @@ export class Ikura extends MXP.Component {
 		super( params );
 
 		// インスタンス数
-		const instanceCount = 30;
+		const instanceCount = 150;
 
-		// ジオメトリを作成（球体）
+		// ジオメトリを作成(球体)
 		const geo = new MXP.SphereGeometry( { radius: 1.0, widthSegments: 16, heightSegments: 12 } );
 
 		// インスタンスごとのID属性を追加
+		// id.x: インスタンスのインデックス (0~1)
+		// id.yzw: 球のボリューム内に均一分布する3D座標
 		const random = GLP.MathUtils.randomSeed( 1 );
 		const idArray = [];
 
 		for ( let i = 0; i < instanceCount; i ++ ) {
 
-			idArray.push( i / instanceCount, random(), random(), random() );
+			// 球の内部に均一分布する座標を生成
+			const pos = GLP.MathUtils.randomInSphere( 2.0, random );
+			pos.z *= 1.5;
+			pos.y = Math.abs( pos.y ) * 1.5;
+
+			idArray.push( i / instanceCount, pos.x, pos.y, pos.z );
 
 		}
 
@@ -51,7 +58,7 @@ export class Ikura extends MXP.Component {
 		// BLidgerのuniformsをマテリアルにバインド
 		bindBlidgeUniform( this.mesh );
 
-		// HMR（ホットモジュールリロード）
+		// HMR(ホットモジュールリロード)
 		if ( import.meta.hot ) {
 
 			import.meta.hot.accept( './shaders/ikura.vs', ( module ) => {
