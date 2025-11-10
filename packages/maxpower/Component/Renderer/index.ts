@@ -1169,7 +1169,7 @@ export class Renderer extends GLP.EventEmitter {
 					program.setUniform( sc + '.viewMatrix', 'Matrix4fv', sLight.component.viewMatrix.elm );
 					program.setUniform( sc + '.projectionMatrix', 'Matrix4fv', sLight.component.projectionMatrix.elm );
 					program.setUniform( sc + '.resolution', '2fv', texture.size.getElm( "vec2" ) );
-					program.setUniform( 'spotLightShadowMap[' + i + ']', '1i', [ texture.unit ] );
+					program.setUniform( 'uSpotLightShadowMap[' + i + ']', '1i', [ texture.unit ] );
 
 				}
 
