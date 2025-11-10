@@ -52,24 +52,6 @@
 			"uuid": "d7b3bbdf",
 			"components": [
 				{
-					"name": "ShakeViewer",
-					"props": {
-						"power": 0.15,
-						"speed": 1
-					}
-				},
-				{
-					"name": "PostProcessPipeline",
-					"props": {
-						"postprocess": [
-							true,
-							true,
-							true,
-							true
-						]
-					}
-				},
-				{
 					"name": "MainCamera"
 				}
 			]
@@ -197,32 +179,10 @@
 			]
 		},
 		{
-			"uuid": "95ed9021",
-			"components": [
-				{
-					"name": "Sashimi",
-					"props": {
-						"sashimiType": "maguro"
-					}
-				}
-			]
-		},
-		{
 			"uuid": "f2985235",
 			"components": [
 				{
 					"name": "Nigiri"
-				}
-			]
-		},
-		{
-			"uuid": "95edb9fa",
-			"components": [
-				{
-					"name": "Sashimi",
-					"props": {
-						"sashimiType": "maguro"
-					}
 				}
 			]
 		},
@@ -257,17 +217,6 @@
 			]
 		},
 		{
-			"uuid": "95ed51d0",
-			"components": [
-				{
-					"name": "Sashimi",
-					"props": {
-						"sashimiType": "salmon"
-					}
-				}
-			]
-		},
-		{
 			"uuid": "0dd05673",
 			"components": [
 				{
@@ -289,17 +238,6 @@
 				},
 				{
 					"name": "SalmonSushi"
-				}
-			]
-		},
-		{
-			"uuid": "95ed5562",
-			"components": [
-				{
-					"name": "Sashimi",
-					"props": {
-						"sashimiType": "salmon"
-					}
 				}
 			]
 		},
@@ -387,28 +325,6 @@
 					"name": "SkyBox",
 					"props": {
 						"type": "default"
-					}
-				}
-			]
-		},
-		{
-			"uuid": "d9fff7dc",
-			"components": [
-				{
-					"name": "Light",
-					"props": {
-						"type": "spot"
-					}
-				}
-			]
-		},
-		{
-			"uuid": "130e1f31",
-			"components": [
-				{
-					"name": "Light",
-					"props": {
-						"type": "directional"
 					}
 				}
 			]

@@ -97,7 +97,7 @@ export class ProjectSerializer {
 					name: c.constructor.name
 				};
 
-				if ( ! hasFields && c.initiator !== "user" ) {
+				if ( c.initiator !== "user" ) {
 
 					return;
 

@@ -203,6 +203,9 @@ export class BLidger extends Component {
 				color: new GLP.Vector().copy( lightParam.color ).getElm( "vec3" ),
 			} );
 
+			console.log( this._lightComponent );
+
+
 		}
 
 		// camera
