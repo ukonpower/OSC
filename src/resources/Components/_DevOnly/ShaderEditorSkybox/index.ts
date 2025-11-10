@@ -21,7 +21,7 @@ export class ShaderEditorSkybox extends MXP.Component {
 			} )
 		} );
 
-		bindBlidgeUniform( mesh.material.uniforms, mesh.entity );
+		bindBlidgeUniform( mesh.entity, mesh );
 
 		if ( import.meta.hot ) {
 

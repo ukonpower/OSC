@@ -3,54 +3,31 @@ import * as MXP from 'maxpower';
 
 /**
  * BLidgerのuniformsをバインドする
- * @param meshOrUniforms 対象のMeshまたはuniforms
- * @param entityOrMaterial Entityまたはmaterial（uniformsを指定した場合に使用）
+ * @param entity BLidgerコンポーネントを持つEntity
+ * @param target バインド先（Mesh、Material、またはUniforms）
  */
-export function bindBlidgeUniform( meshOrUniforms: MXP.Mesh | GLP.Uniforms, entityOrMaterial?: MXP.Entity | MXP.Material ): void {
+export function bindBlidgeUniform( entity: MXP.Entity, target: MXP.Mesh | MXP.Material | GLP.Uniforms ): void {
 
-	if ( meshOrUniforms instanceof MXP.Mesh ) {
+	const blidger = entity.getComponent( MXP.BLidger );
 
-		// Meshが渡された場合
-		const mesh = meshOrUniforms;
-		const blidger = mesh.entity.getComponent( MXP.BLidger );
+	if ( ! blidger ) return;
 
-		if ( mesh.material && blidger ) {
+	let uniforms: GLP.Uniforms;
 
-			blidger.bindUniforms( mesh.material.uniforms );
+	if ( target instanceof MXP.Mesh ) {
 
-		}
+		uniforms = target.material.uniforms;
+
+	} else if ( target instanceof MXP.Material ) {
+
+		uniforms = target.uniforms;
 
 	} else {
 
-		// uniformsが渡された場合
-		const uniforms = meshOrUniforms;
-
-		if ( entityOrMaterial ) {
-
-			let entity: MXP.Entity | undefined;
-
-			if ( entityOrMaterial instanceof MXP.Material ) {
-
-				// Materialが渡された場合、entityは不明なのでスキップ
-				return;
-
-			} else {
-
-				// Entityが渡された場合
-				entity = entityOrMaterial;
-
-			}
-
-			const blidger = entity.getComponent( MXP.BLidger );
-
-			if ( blidger ) {
-
-				blidger.bindUniforms( uniforms );
-
-			}
-
-		}
+		uniforms = target;
 
 	}
+
+	blidger.bindUniforms( uniforms );
 
 }

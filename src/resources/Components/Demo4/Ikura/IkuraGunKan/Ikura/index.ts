@@ -56,7 +56,7 @@ export class Ikura extends MXP.Component {
 		} );
 
 		// BLidgerのuniformsをマテリアルにバインド
-		bindBlidgeUniform( this.mesh.material.uniforms, this.mesh.entity );
+		bindBlidgeUniform( this.mesh.entity, this.mesh );
 
 		// HMR(ホットモジュールリロード)
 		if ( import.meta.hot ) {
