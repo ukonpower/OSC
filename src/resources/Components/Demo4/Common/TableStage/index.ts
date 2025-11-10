@@ -21,7 +21,7 @@ export class TableStage extends MXP.Component {
 		this.mesh = this._entity.addComponent( MXP.Mesh, {
 			geometry: new MXP.PlaneGeometry( { width: 2, height: 2 } ),
 			material: new MXP.Material( {
-				phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
+				phase: [ "deferred", "shadowMap" ], // Deferredレンダリングパイプラインを使用
 				vert: MXP.hotGet( "tableStageVert", raymarchVert ),
 				frag: MXP.hotGet( "tableStageFrag", raymarchFrag ),
 				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
