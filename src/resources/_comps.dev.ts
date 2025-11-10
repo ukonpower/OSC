@@ -18,7 +18,6 @@ import { Ukopower } from './Components/Demo4/Common/Ukopower/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
 import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
 import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
-import { Nori } from './Components/Demo4/Ikura/IkuraGunKan/Nori/index.ts';
 import { IkuraGunKan } from './Components/Demo4/Ikura/IkuraGunKan/index.ts';
 import { Kyuuri } from './Components/Demo4/Ikura/Kyuuri/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
@@ -40,6 +39,7 @@ import { TextureGenerator } from './Components/Texture/TextureGenerator/index.ts
 import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
 import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
+import { ShaderEditorSkybox } from './Components/_DevOnly/ShaderEditorSkybox/index.ts';
 import { InstancedMesh } from './Components/_Templates/InstancedMesh/index.ts';
 import { Particles } from './Components/_Templates/Particles/index.ts';
 import { RaymarchCube } from './Components/_Templates/RaymarchCube/index.ts';
@@ -102,6 +102,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	_DevOnly: {
 		OrbitControls,
+		ShaderEditorSkybox,
 	},
 	_Templates: {
 		InstancedMesh,

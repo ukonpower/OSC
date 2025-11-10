@@ -21,7 +21,7 @@ export class TableStage extends MXP.Component {
 		this.mesh = this._entity.addComponent( MXP.Mesh, {
 			geometry: new MXP.PlaneGeometry( { width: 2, height: 2 } ),
 			material: new MXP.Material( {
-				phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
+				phase: [ "deferred", "shadowMap" ], // Deferredレンダリングパイプラインを使用
 				vert: MXP.hotGet( "tableStageVert", raymarchVert ),
 				frag: MXP.hotGet( "tableStageFrag", raymarchFrag ),
 				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
@@ -33,14 +33,14 @@ export class TableStage extends MXP.Component {
 		this._entity.add( cubeEntity );
 
 		// 子entityにMeshコンポーネントを追加
-		const cubeMesh = cubeEntity.addComponent( MXP.Mesh, {
-			geometry: new MXP.CubeGeometry( { width: 1, height: 1, depth: 1 } ),
-			material: new MXP.Material( {
-				phase: [ "deferred" ],
-				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution ),
-				drawType: "LINES"
-			} )
-		} );
+		// const cubeMesh = cubeEntity.addComponent( MXP.Mesh, {
+		// 	geometry: new MXP.CubeGeometry( { width: 1, height: 1, depth: 1 } ),
+		// 	material: new MXP.Material( {
+		// 		phase: [ "deferred" ],
+		// 		uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution ),
+		// 		drawType: "LINES"
+		// 	} )
+		// } );
 
 		// ホットリロード対応(開発時のみ)
 		if ( import.meta.hot ) {

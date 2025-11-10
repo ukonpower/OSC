@@ -13,24 +13,17 @@ void main( void ) {
 
 	#include <vert_in>
 
-	// インスタンスIDに基づいた配置
-	vec3 offset = vec3(0.0);
+	// 球のボリューム内のランダム座標を使用
+	vec3 offset = id.yzw;
 
-	// 格子状に配置
-	float gridSize = 3.0;
-	float index = id.x * 9.0; // 9個のイクラを配置
-	offset.x = mod(index, gridSize) - 1.0;
-	offset.z = floor(index / gridSize) - 1.0;
-	offset *= 0.08; // 間隔調整
+	// スケール調整（球のサイズ）
+	offset *= 0.1;
 
 	// 上部に配置
-	offset.y = 0.15;
-
-	// 軽い揺れアニメーション
-	offset.y += sin(uTime * 2.0 + id.y * 10.0) * 0.02;
+	// offset.y += 0.15;
 
 	// イクラのサイズ（小さめの球体）
-	outPos *= 0.05;
+	outPos *= 0.06;
 	outPos += offset;
 
 	#include <vert_out>

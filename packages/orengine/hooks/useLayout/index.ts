@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
 
-const SPWIDTH = 900;
+const SPWIDTH = 768;
 
 export const useLayout = () => {
 
-	const [ isSP, setIsSP ] = useState<boolean>( false );
+	const [ isSP, setIsSP ] = useState<boolean>( () => {
+
+		// 初期値をwindow.innerWidthから判定（SSR対応のためtypeof windowチェック）
+		if ( typeof window !== 'undefined' ) {
+
+			return window.innerWidth <= SPWIDTH;
+
+		}
+
+		return false;
+
+	} );
 
 	useEffect( () => {
 

@@ -167,7 +167,7 @@ export const ShaderLoader = ( userOptions?: ShaderLoaderOptions ): Plugin => {
 				// macOSまたはLinux（WSL含む）の場合はmonoを使用
 				if ( process.platform == "darwin" || process.platform == "linux" ) {
 
-					await exec( `mono ~/application/shader_minifier/shader_minifier.exe ${inputFilePath} -o ${outputFilePath} ${args}` );
+					await exec( `mono ~/shader_minifier/shader_minifier.exe ${inputFilePath} -o ${outputFilePath} ${args}` );
 
 				} else {
 

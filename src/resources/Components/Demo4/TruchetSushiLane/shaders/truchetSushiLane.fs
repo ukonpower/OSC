@@ -6,6 +6,7 @@
 #include <rm_h>
 #include <rotate>
 
+uniform float uTime;
 uniform sampler2D uNoiseTex;
 
 float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
@@ -224,12 +225,13 @@ void main( void ) {
 	if( !hit ) discard;
 
 	// 法線を計算
-	outNormal = N( rayPos, 0.01 );
-
+	outNormal = N( rayPos, 0.001 );
+	vec3 edgeNormal = N( rayPos, 0.05 );
+	float edge = (length(outNormal - edgeNormal));
 	#include <rm_out_obj>
 
 	outColor = vec4( vec3( 0.85 ), 1.0 );
-	outEmission = vec3( 0.0 );
+	outEmission = vec3( edge * 5.0 * smoothstep( 0.3, 0.7, texture( uNoiseTex, rayPos.xz * 0.05 + uTime * 0.05 ).y) );
 	outRoughness = texture( uNoiseTex, rayPos.xz * 0.05 ).r;
 	outColor *= 1.0 - outRoughness * 0.1;
 

@@ -108,6 +108,7 @@ npm run build:storybook # Storybookビルド
 - **開発サーバー**: ユーザーは通常`localhost:3000`で開発サーバーを起動しているため、**新たにサーバーを立ち上げないこと**
 - **型チェック**: コード変更後は必ず最後に`npm run type-check`を実行してTypeScriptの型エラーがないことを確認すること
 - **ビルドサイズ**: 変更によるファイルサイズへの影響を常に意識し、必要に応じて`npm run build`で確認すること
+- **実装時のコメント**: 実装の差分を説明するコメント（「ここで〜を変更」「〜に対応するため」など）は残さないこと。コードそのものが自明であるべき
 - **BLidger uniformsのバインド**: BLidgerコンポーネントのuniformsをバインドする際は、以下の優先順位で使用すること
   1. `src/shortcuts.ts`の`bindBlidgeUniform()`が使える場合（Mesh向け）: それを使用
   2. それ以外の場合: `blidger.bindUniforms(targetUniforms)`を直接使用

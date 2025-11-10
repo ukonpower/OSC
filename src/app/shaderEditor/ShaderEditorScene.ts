@@ -1,11 +1,10 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
-
 import { Engine } from 'orengine/features/OREngine/core';
 
 import { gl, canvas } from '~/globals';
 import { OrbitControls } from '~/resources/Components/_DevOnly/OrbitControls';
-import { SkyBox } from '~/resources/Components/Demo4/Common/SkyBox';
+import { ShaderEditorSkybox } from '~/resources/Components/_DevOnly/ShaderEditorSkybox';
 import { TextureGenerator } from '~/resources/Components/Texture/TextureGenerator';
 import { UniformControls } from '~/resources/Components/Utilities/UniformsControls';
 
@@ -89,7 +88,8 @@ export class ShaderEditorScene {
 		// Light作成
 		this.light = new MXP.Entity();
 		this.light.name = "Light";
-		this.light.position.set( 2, 2, 2 );
+		this.light.position.set( 2, 2, - 2 );
+		this.light.lookAt( new GLP.Vector( 0, 0, 0 ) );
 		const lightComp = this.light.addComponent( MXP.Light );
 		lightComp.lightType = "directional";
 		this.engine.root.add( this.light );
@@ -97,7 +97,7 @@ export class ShaderEditorScene {
 		// Skybox作成
 		this.skybox = new MXP.Entity();
 		this.skybox.name = "Skybox";
-		this.skybox.addComponent( SkyBox );
+		this.skybox.addComponent( ShaderEditorSkybox );
 		this.engine.root.add( this.skybox );
 
 	}
@@ -250,6 +250,26 @@ export class ShaderEditorScene {
 			}
 
 		}
+
+	}
+
+	// カメラ位置とターゲットをデフォルト値にリセット
+	resetCamera(): void {
+
+		// デフォルト位置にリセット
+		this.camera.position.set( 0, 0, 3 );
+		this.camera.quaternion.set( 0, 0, 0, 1 );
+
+		// OrbitControlsのターゲットをリセット
+		if ( this.orbitControls ) {
+
+			const defaultTarget = new GLP.Vector( 0, 0, 0 );
+			this.orbitControls.setPosition( this.camera.position, defaultTarget );
+
+		}
+
+		// カメラ状態を保存
+		this.saveCameraState();
 
 	}
 

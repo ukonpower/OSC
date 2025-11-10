@@ -1,6 +1,10 @@
 #include <common>
 #include <packing>
 #include <frag_h>
+#include <light>
+#include <pmrem>
+
+uniform sampler2D uEnvMap;
 
 // 頂点シェーダーから受け取るインスタンスID
 in vec4 vId;
@@ -9,18 +13,51 @@ void main( void ) {
 
 	#include <frag_in>
 
-	// イクラの色 - オレンジ色
-	vec3 color = vec3(1.0, 0.4, 0.2);
-
-	// フレネル効果で半透明感を演出
-	vec3 viewDir = normalize(-vPos);
-	float fresnel = pow(1.0 - abs(dot(viewDir, vNormal)), 2.0);
-	color += fresnel * 0.3;
-
-	outColor = vec4(color, 1.0);
-	outRoughness = 0.2;
+	// イクラの基本色 - 透明なオレンジ色
+	outColor.xyz = vec3(0.0);
+	outRoughness = 0.15;
 	outMetalic = 0.0;
 
+	#ifdef IS_FORWARD
+
+		vec3 viewNormal = normalize( vViewNormal );
+
+		#include <lighting_forwardIn>
+
+		vec2 uv = gl_FragCoord.xy / uResolution;
+
+		// フレネル効果
+		float dnv = dot( geo.normal, geo.viewDir );
+		float ef = fresnel( dnv );
+
+		// 屈折効果によるシーンテクスチャのサンプリング
+		float nf = 1.0;
+
+		for( int i = 0; i < 16; i++ ) {
+
+			// 法線に基づいて屈折オフセットを計算
+			vec2 v = -( viewNormal.xy ) * ( float( i + 1 ) / 4.0 * 0.015 + 0.05 );
+			outColor.x += nf * texture( uDeferredTexture, uv + v * 1.0 ).x;
+			outColor.y += nf * texture( uDeferredTexture, uv + v * 1.3 ).y;
+			outColor.z += nf * texture( uDeferredTexture, uv + v * 1.6 ).z;
+
+		}
+
+		outColor.xyz /= 16.0;
+
+		// イクラの色味を加える（オレンジ系）
+		outColor.xyz *= vec3( 0.7, 0.1, 0.0 );
+		outColor.w = 1.0;
+
+		// フレネル効果でハイライト追加
+		outColor.xyz += ef * 1.5;
+
+		#include <lighting_light>
+		#include <lighting_env>
+
+	#endif
+
 	#include <frag_out>
+
 
 }

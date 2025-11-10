@@ -13,8 +13,20 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	// 球体を描画
-	vec2 d = vec2( sdSphere( pp, 0.5 ), 0.0 );
+	// たこ焼き風の球体を描画
+	float baseRadius = 0.40 + noiseValue( pp * 5.0 ) * 0.055;
+	float bodyRadius = baseRadius + fbm( pp * 20.0 ) * 0.01;
+
+	vec2 d = vec2( sdSphere( pp, bodyRadius ), 0.0 );
+
+	// ソース部分
+	float sauceRadius = baseRadius * 0.95;
+
+	float round = atan( pp.x, pp.z );
+	float wave = ( noiseValue( vec3( round * 2.0 ) ) ) * sin( round );
+
+	sauceRadius += smoothstep( 0.0, 0.4, pp.y * 1.3 + wave * 0.3 ) * 0.05 + smoothstep( 0.2, 0.8, noiseValue( pp * 7.0 ) ) * 0.001;
+	d = opAdd( d, vec2( sdSphere( pp, sauceRadius ), 1.0 ) );
 
 	return SDFResult(
 		d.x,
@@ -56,10 +68,26 @@ void main( void ) {
 
 	#include <rm_out_obj>
 
-	outColor.xyz = vec3( 1.0 );
-	outRoughness = 0.5;
+	outRoughness = 1.0;
+	outMetalic = 0.0;
 
-	outColor.xyz *= smoothstep( 1.5, 0.4,  length( rayPos ) );
+	if( dist.mat == 0.0 ) {
+
+		// たこ焼き本体
+		outColor.xyz = mix( vec3( 0.8, 0.6, 0.4 ), vec3( 0.3, 0.15, 0.05 ), smoothstep( 0.3, 0.7, fbm( dist.pos * 3.0 ) ) );
+		outRoughness = 0.3;
+
+	} else if( dist.mat == 1.0 ) {
+
+		// ソース
+		outColor.xyz = vec3( 0.15, 0.03, 0.00 );
+		outRoughness = 0.1;
+
+	}
+
+	// リムライト効果
+	float limLight = ( 1.0 - dot( outNormal.xyz, -rayDir ) ) * 0.8;
+	outEmission += limLight * 0.3;
 
 	#include <frag_out>
 

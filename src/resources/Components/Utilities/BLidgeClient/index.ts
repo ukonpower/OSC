@@ -2,7 +2,7 @@ import * as MXP from 'maxpower';
 import { Engine } from 'orengine';
 
 import { gl } from '~/globals';
-import SceneData from '~/resources/blidge-data.json';
+import blidgeData from '~/resources/blidge-data.json';
 
 const BASE_PATH = import.meta.env.BASE_URL || "/";
 
@@ -174,7 +174,7 @@ export class BLidgeClient extends MXP.Component {
 			if ( this.type == "json" ) {
 
 				// JSONデータからシーンを読み込む
-				await this.blidge.loadScene( SceneData as unknown as MXP.BLidgeScene, this.useGLTF ? this.gltfPath : undefined );
+				await this.blidge.loadScene( blidgeData as unknown as MXP.BLidgeScene, this.useGLTF ? this.gltfPath : undefined );
 
 				this.emit( "loaded" );
 
@@ -190,7 +190,7 @@ export class BLidgeClient extends MXP.Component {
 					console.warn( '[BLidgeClient] WebSocket connection timeout. Falling back to JSON...' );
 
 					// JSONからシーンを読み込む
-					await this.blidge.loadScene( SceneData as unknown as MXP.BLidgeScene, this.useGLTF ? this.gltfPath : undefined );
+					await this.blidge.loadScene( blidgeData as unknown as MXP.BLidgeScene, this.useGLTF ? this.gltfPath : undefined );
 
 					this.emit( "loaded" );
 
@@ -327,8 +327,6 @@ export class BLidgeClient extends MXP.Component {
 
 				}
 
-				console.log( '[BLidgeClient] Scene saved to local JSON' );
-
 			} catch ( error ) {
 
 				console.error( '[BLidgeClient] Failed to save blidge-data.json:', error );
@@ -355,9 +353,9 @@ export class BLidgeClient extends MXP.Component {
 		}
 
 		// 開発環境でWebSocket経由の場合、ローカルJSONを更新
-		if ( import.meta.env.DEV && this.type === "websocket" && blidge.currentScene ) {
+		if ( import.meta.env.DEV && this.type === "websocket" && blidge.currentData ) {
 
-			this.saveSceneToLocal( blidge.currentScene );
+			// this.saveSceneToLocal( blidge.currentData );
 
 		}
 

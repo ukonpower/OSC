@@ -24,8 +24,7 @@ export class IkuraFluids extends MXP.Component {
 
 		super( params );
 
-		// パーティクル数の設定（256x256 = 65536個）
-		const particleSize = new GLP.Vector( 256, 256 );
+		const particleSize = new GLP.Vector( 64, 64 );
 
 		// GPUコンピュート初期化
 		this.gpu = new MXP.GPUCompute( {

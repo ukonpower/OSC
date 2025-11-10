@@ -53,7 +53,7 @@ LightCamera lightCamera;
 
 		#if LOOP_INDEX < NUM_SHADOWMAP_SPOT
 
-			shadow = getShadowSmooth( geo.position, uSpotLightCamera[ LOOP_INDEX ], uSpotLightShadowMap[ LOOP_INDEX ], 0.001 );
+			shadow = getShadowSmooth( geo.position, uSpotLightCamera[ LOOP_INDEX ], uSpotLightShadowMap[ LOOP_INDEX ], 0.01 );
 
 		#else
 

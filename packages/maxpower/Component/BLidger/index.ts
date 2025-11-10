@@ -387,11 +387,14 @@ export class BLidger extends Component {
 
 		if ( this._lightComponent ) {
 
-			const curveColor = this.animations.get( 'color' );
+			const curveColor = this.animations.get( 'light' );
 
 			if ( curveColor ) {
 
-				this._lightComponent.color.copy( curveColor.setFrame( frame ).value );
+				const colorValue = curveColor.setFrame( frame ).value;
+
+				this._lightComponent.intensity = colorValue.x;
+
 
 			}
 

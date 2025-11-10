@@ -122,7 +122,7 @@ export const CodePane = ( { code, onChange }: CodePaneProps ) => {
 				onMount={handleEditorMount}
 				options={{
 					minimap: { enabled: ! isMobile },
-					fontSize: 16, // Safari iOS zoom防止のため16px以上
+					fontSize: 10,
 					lineNumbers: 'off',
 					renderWhitespace: 'selection',
 					tabSize: 2,
