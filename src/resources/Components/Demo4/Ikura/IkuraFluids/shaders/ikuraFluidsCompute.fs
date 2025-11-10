@@ -1,12 +1,12 @@
 #include <common>
 #include <noise_cyclic>
+#include <rotate>
 
 layout (location = 0) out vec4 outColor0;
 layout (location = 1) out vec4 outColor1;
 
 uniform sampler2D uGPUSampler0;
 uniform sampler2D uGPUSampler1;
-uniform vec2 uGPUResolution;
 uniform float uTimeE;
 uniform float uDeltaTime;
 
@@ -14,77 +14,74 @@ in vec2 vUv;
 
 #include <random>
 
-// 流体シミュレーション定数
-const float GRAVITY = -0.5;
-const float VISCOSITY = 0.98;
-const float SURFACE_TENSION = 0.02;
-const float BOUNDARY_RADIUS = 3.0;
-const float BOUNDARY_DAMPING = 0.7;
+const float LIFE_TIME = 8.0; // パーティクルの寿命（秒）
 
 void main( void ) {
 
 	vec4 position = texture( uGPUSampler0, vUv );
 	vec4 velocity = texture( uGPUSampler1, vUv );
 
-	// 近傍パーティクルとの相互作用
-	vec3 pressureForce = vec3(0.0);
-	float densitySum = 0.0;
+	// velocity.wを時間として使用
+	float time = velocity.w;
+	time += uDeltaTime / (LIFE_TIME + vUv.y * 1.0);
 
-	// サンプリング近傍（簡易SPH）
-	for(int i = -1; i <= 1; i++) {
-		for(int j = -1; j <= 1; j++) {
-			vec2 offset = vec2(float(i), float(j)) / uGPUResolution;
-			vec4 neighborPos = texture(uGPUSampler0, vUv + offset);
+	// 一定時間経ったらリセット
+	if(time > 1.0) {
 
-			vec3 diff = position.xyz - neighborPos.xyz;
-			float dist = length(diff);
+		
+		// 位置をランダムにリセット
+		float r = random(vUv + uTimeE) * 2.0;
+		float theta = random(vUv * 2.0 + uTimeE) * 6.28318;
+		float phi = random(vUv * 3.0 + uTimeE) * 3.14159;
 
-			if(dist > 0.001 && dist < 0.2) {
-				// 圧力による反発
-				pressureForce += normalize(diff) * (0.2 - dist) * 0.1;
-				densitySum += 1.0 - dist / 0.2;
-			}
+		
+		if( vUv.x < 0.1  ) {
+
+			position.xyz = vec3(
+				r * sin(phi) * cos(theta),
+				r * sin(phi) * sin(theta),
+				r * cos(phi)
+			);
+			
+		} else {
+
+			position.xyz = vec3(
+				r * sin(phi) * cos(theta),
+				r * sin(phi) * sin(theta),
+				r * cos(phi)
+			) * 0.03 + vec3( 
+				0.7,
+				0.5,
+				-0.5
+			);
+
 		}
+
+
+		velocity.xyz = vec3(0.0);
+		time = 0.0;
 	}
 
-	// 外力
-	vec3 force = vec3(0.0);
+	// simplex noiseをvelocityに足す
+	velocity.xyz *= 0.998;
 
-	// 重力
-	force.y += GRAVITY * uDeltaTime;
+	
+	vec3 noiseForce = noiseCyc(position.xyz * 5.0 + vec3(0.0, 0.0, uTimeE * 0.5 + time + vUv.x * 0.0));
+	velocity.xyz += noiseForce * 0.01;
 
-	// 圧力
-	force += pressureForce;
+	float dir = atan2( position.z, position.x ) - 1.0;
+	vec3 rotateVec = vec3( sin( dir ), 0.0, -cos( dir ) );
+	velocity.xz = mix( velocity.xz, rotateVec.xz, 0.01 );
 
-	// 表面張力（中心に向かう力）
-	vec3 toCenter = -position.xyz;
-	float distToCenter = length(toCenter);
-	if(distToCenter > BOUNDARY_RADIUS * 0.5) {
-		force += normalize(toCenter) * SURFACE_TENSION;
-	}
+	velocity.xyz += normalize(-position.xyz) * length( position.xyz ) * 0.005 * vec3( 1.4, 0.4, 1.0);
 
-	// 境界からの斥力（ノイズベース）
-	vec3 noiseField = noiseCyc(position.xyz * 0.5 + vec3(0.0, uTimeE * 0.1, 0.0)) * 0.5;
-	force += noiseField * 0.05;
-
-	// velocity update
-	velocity.xyz += force;
-	velocity.xyz *= VISCOSITY; // 粘性による減衰
+	
 
 	// position update
 	position.xyz += velocity.xyz * uDeltaTime;
 
-	// 境界条件（球状）
-	if(distToCenter > BOUNDARY_RADIUS) {
-		position.xyz = normalize(position.xyz) * BOUNDARY_RADIUS;
-		velocity.xyz *= BOUNDARY_DAMPING;
-		// 境界での反射
-		vec3 normal = normalize(position.xyz);
-		velocity.xyz = reflect(velocity.xyz, normal) * 0.5;
-	}
-
-	// 密度更新
-	position.w = clamp(densitySum * 0.1, 0.5, 2.0);
+	// 時間を保存
+	velocity.w = time;
 
 	// output
 	outColor0 = position;

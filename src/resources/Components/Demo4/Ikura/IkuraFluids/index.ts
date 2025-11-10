@@ -61,8 +61,8 @@ export class IkuraFluids extends MXP.Component {
 
 			} else {
 
-				// レイヤー1: 速度 (xyz) + 予備 (w)
-				return [ 0.0, 0.0, 0.0, 0.0 ];
+				// レイヤー1: 速度 (xyz) + 時間 (w)
+				return [ 0.0, 0.0, 0.0, Math.random() * 5.0 ];
 
 			}
 
@@ -71,8 +71,8 @@ export class IkuraFluids extends MXP.Component {
 		// パーティクルのジオメトリ（小さな球体）
 		const geometry = new MXP.SphereGeometry( {
 			radius: 0.5,
-			widthSegments: 4,
-			heightSegments: 3
+			widthSegments: 16,
+			heightSegments: 12
 		} );
 
 		// インスタンス属性の準備
@@ -101,7 +101,7 @@ export class IkuraFluids extends MXP.Component {
 			geometry,
 			material: new MXP.Material( {
 				name: 'ikuraFluids',
-				phase: [ 'deferred', 'shadowMap' ],
+				phase: [ 'shadowMap', 'forward' ],
 				vert: MXP.hotGet( 'ikuraFluidsVert', ikuraFluidsVert ),
 				frag: MXP.hotGet( 'ikuraFluidsFrag', ikuraFluidsFrag ),
 				uniforms: MXP.UniformsUtils.merge(

@@ -21,7 +21,8 @@ void main( void ) {
 	vec4 gpuPos = texture(uGPUSampler0, cuv );
 
 	// いくら粒のサイズ調整
-	outPos *= 0.2;
+	outPos *= 0.06 * (0.7 + id.z * 0.3);
+	outPos *= smoothstep( 0.0, 0.5, sin(vGPUVel.w * PI) );
 
 	// 密度に基づくサイズ変化
 	float density = gpuPos.w;
@@ -30,7 +31,7 @@ void main( void ) {
 	// 速度に基づく引き伸ばし
 	float speed = length(vGPUVel.xyz);
 	vec3 stretchDir = normalize(vGPUVel.xyz + vec3(0.001));
-	outPos += stretchDir * dot(outPos, stretchDir) * speed * 0.5;
+	outPos += stretchDir * dot(outPos, stretchDir) * speed * .2;
 
 	// apply GPU position
 	outPos += gpuPos.xyz;
@@ -43,6 +44,6 @@ void main( void ) {
 
 	#include <vert_out>
 
-	vVelocity += vel.xy * 0.002;
+	vVelocity += vel.xy * 0.001;
 
 }
