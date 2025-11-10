@@ -33,7 +33,7 @@ export class Maguro extends MXP.Component {
 			geometry: geo, material: mat
 		} );
 
-		bindBlidgeUniform( mesh );
+		bindBlidgeUniform( mesh.material.uniforms, mesh.entity );
 
 		// HMR
 

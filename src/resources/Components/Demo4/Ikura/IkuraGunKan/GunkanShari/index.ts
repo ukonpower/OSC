@@ -36,7 +36,7 @@ export class GunkanShari extends MXP.Component {
 			material: mat
 		} );
 
-		bindBlidgeUniform( this.mesh );
+		bindBlidgeUniform( this.mesh.material.uniforms, this.mesh.entity );
 
 		if ( import.meta.hot ) {
 

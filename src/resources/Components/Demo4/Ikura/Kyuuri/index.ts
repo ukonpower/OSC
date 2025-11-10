@@ -37,7 +37,7 @@ export class Kyuuri extends MXP.Component {
 		} );
 
 		// BLidgerのuniformsをマテリアルにバインド
-		bindBlidgeUniform( this.mesh );
+		bindBlidgeUniform( this.mesh.material.uniforms, this.mesh.entity );
 
 		// HMR（ホットモジュールリロード）
 		if ( import.meta.hot ) {

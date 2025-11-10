@@ -36,7 +36,7 @@ export class SkyBox extends MXP.Component {
 			} )
 		} );
 
-		bindBlidgeUniform( mesh );
+		bindBlidgeUniform( mesh.material.uniforms, mesh.entity );
 
 		if ( import.meta.hot ) {
 
