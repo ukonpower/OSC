@@ -14,7 +14,7 @@ SDFResult D( vec3 p ) {
 	vec3 pp = p;
 
 	vec2 d = vec2( udTriangle( pp, vec3( 0.0, 0.5, 0.0 ), vec3( -0.5, -0.35, 0.0 ), vec3( 0.5, -0.35, 0.0 ) ), 0.0 );
-	d -= 0.2;
+	d -= 0.3;
 
 	return SDFResult(
 		d.x,
