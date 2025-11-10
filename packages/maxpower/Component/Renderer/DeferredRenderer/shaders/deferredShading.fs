@@ -103,8 +103,8 @@ void main( void ) {
 	float rnd = random( vUv );
 	vec3 noise = texture( uNoiseSimpleTex, vUv * 0.3 * vec2( 1.0, 0.5 ) ).xyz;
 	vec3 hsv = rgb2hsv( outColor.xyz );
-	hsv.x += noise.x * gradient * rnd * 0.08;
-	hsv.z -= noise.y * abs(gradient) * rnd * 0.5;
+	hsv.x += noise.x * gradient * rnd * 0.11;
+	hsv.z -= noise.y * (gradient) * rnd * 0.25;
 	outColor.xyz = hsv2rgb( hsv );
 
 	// -----------------------
