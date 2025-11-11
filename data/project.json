@@ -110,6 +110,14 @@
 			]
 		},
 		{
+			"uuid": "c85f4ed4",
+			"components": [
+				{
+					"name": "IkuraGunKan"
+				}
+			]
+		},
+		{
 			"uuid": "24df161a",
 			"components": [
 				{

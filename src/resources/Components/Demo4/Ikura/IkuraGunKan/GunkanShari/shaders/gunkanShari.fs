@@ -9,6 +9,7 @@
 
 uniform sampler2D uNoiseTex;
 uniform float uTime;
+uniform vec4 uState;
 
 float daenScale = 0.7;
 
@@ -51,9 +52,16 @@ SDFResult nori( vec3 p ) {
 // スライスきゅうり部分
 SDFResult kyuuri( vec3 p ) {
 
+	float comp = uState.x;
+
 	vec3 kyuuriP = p;
+	// kyuuriP.x += uState.x * 0.1;
 	kyuuriP += vec3(0.0, -0.14, 0.2);
-	kyuuriP.yz *= rotate( 0.3 );
+	kyuuriP.y += -uState.x * 0.4;
+	kyuuriP.xz *= rotate( comp * 0.5 );
+	kyuuriP.yz *= rotate( 0.3 + comp * 1.0 );
+	kyuuriP.xy *= rotate( 0.3 + comp * 1.0 );
+
 	kyuuriP.y -= sin( kyuuriP.z * 4.0 + HPI ) * 0.05 - 0.04;
 	kyuuriP.z *= 0.8;
 
@@ -69,7 +77,7 @@ SDFResult kyuuri( vec3 p ) {
 	color = mix( color, vec3( 0.05, 0.08, 0.05 ), smoothstep( 0.00, 0.3, length( kyuuriP.xz ) ) );
 	color = mix( color, vec3( 0.05, 0.08, 0.05 ), smoothstep( 0.19, 0.205, length( kyuuriP.xz ) ) );
 
-	return SDFResult( d, p, 2.0, vec4( color, 1.0 ) );
+	return SDFResult( d, kyuuriP, 2.0, vec4( color, 1.0 ) );
 
 }
 
@@ -139,7 +147,7 @@ void main( void ) {
 	} else if( dist.mat == 2.0 ) {
 
 		// きゅうり（緑色）
-		float variation = noiseCyc(rayPos * 25.0).x * 0.08;
+		float variation = noiseCyc(dist.pos * 25.0).x * 0.08;
 		outColor.xyz += variation;
 		outRoughness = 0.7;
 

@@ -6,6 +6,7 @@ import ikuraFluidsVert from './shaders/ikuraFluids.vs';
 import ikuraFluidsCompute from './shaders/ikuraFluidsCompute.fs';
 
 import { gl, globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 /**
  * IkuraFluids - GPUComputeベースの流体シミュレーション（いくらのようなプチプチした液体）
@@ -41,6 +42,8 @@ export class IkuraFluids extends MXP.Component {
 				)
 			]
 		} );
+
+		bindBlidgeUniform( this.entity, this.gpu.passes[ 0 ] );
 
 		// GPUテクスチャの初期化
 		this.gpu.passes[ 0 ].initTexture( ( layerIndex ) => {
@@ -97,7 +100,7 @@ export class IkuraFluids extends MXP.Component {
 		geometry.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
 
 		// Meshコンポーネント作成
-		this.mesh = this._entity.addComponent( MXP.Mesh, {
+		this.mesh = this.entity.addComponent( MXP.Mesh, {
 			geometry,
 			material: new MXP.Material( {
 				name: 'ikuraFluids',
@@ -110,6 +113,9 @@ export class IkuraFluids extends MXP.Component {
 				),
 			} )
 		} );
+
+		bindBlidgeUniform( this.entity, this.mesh );
+
 
 		// ホットリロード対応
 		if ( import.meta.hot ) {
@@ -160,7 +166,7 @@ export class IkuraFluids extends MXP.Component {
 
 	protected disposeImpl(): void {
 
-		this._entity.removeComponent( MXP.Mesh );
+		this.entity.removeComponent( MXP.Mesh );
 		this.gpu.dispose();
 
 	}

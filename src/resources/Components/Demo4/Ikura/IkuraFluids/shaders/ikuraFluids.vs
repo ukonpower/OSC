@@ -8,6 +8,7 @@ layout (location = 4) in vec4 id;
 
 uniform sampler2D uGPUSampler0;
 uniform sampler2D uGPUSampler1;
+uniform vec4 uState;
 
 out vec4 vGPUVel;
 out vec4 vGPUPos;
@@ -21,7 +22,7 @@ void main( void ) {
 	vec4 gpuPos = texture(uGPUSampler0, cuv );
 
 	// いくら粒のサイズ調整
-	outPos *= 0.06 * (0.7 + id.z * 0.3);
+	outPos *= 0.06 * (0.7 + id.z * 0.3) * uState.y;
 	outPos *= smoothstep( 0.0, 0.5, sin(vGPUVel.w * PI) );
 
 	// 密度に基づくサイズ変化

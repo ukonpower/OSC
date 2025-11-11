@@ -1,3 +1,4 @@
+import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
 import gunkanShariFrag from './shaders/gunkanShari.fs';
@@ -20,11 +21,13 @@ export class GunkanShari extends MXP.Component {
 		const geo = new MXP.CubeGeometry( {
 			width: 1,
 			depth: 1.3,
-			height: 1,
+			height: 0.8,
 			segmentsDepth: 4,
 			segmentsHeight: 4,
 			segmentsWidth: 4,
 		} );
+
+		geo.applyMatrix( new GLP.Matrix().setFromTransform( new GLP.Vector( 0, 0.2, 0 ) ) );
 
 		const mat = new MXP.Material( {
 			frag: MXP.hotGet( 'gunkanShariFrag', gunkanShariFrag ),

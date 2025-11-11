@@ -9,12 +9,13 @@ uniform sampler2D uGPUSampler0;
 uniform sampler2D uGPUSampler1;
 uniform float uTimeE;
 uniform float uDeltaTime;
+uniform vec4 uState;
 
 in vec2 vUv;
 
 #include <random>
 
-const float LIFE_TIME = 8.0; // パーティクルの寿命（秒）
+const float LIFE_TIME = 5.0; // パーティクルの寿命（秒）
 
 void main( void ) {
 
@@ -26,7 +27,7 @@ void main( void ) {
 	time += uDeltaTime / (LIFE_TIME + vUv.y * 1.0);
 
 	// 一定時間経ったらリセット
-	if(time > 1.0) {
+	if(time > 1.0 || uState.x < 0.5) {
 
 		
 		// 位置をランダムにリセット
@@ -35,7 +36,7 @@ void main( void ) {
 		float phi = random(vUv * 3.0 + uTimeE) * 3.14159;
 
 		
-		if( vUv.x < 0.1  ) {
+		if( vUv.x < 0.05  ) {
 
 			position.xyz = vec3(
 				r * sin(phi) * cos(theta),
