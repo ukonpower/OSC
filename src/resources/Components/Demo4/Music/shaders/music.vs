@@ -988,6 +988,7 @@ void main( void ) {
 	float time = (aTime / uSampleRate ) + uTimeOffset;
 
 	vec2 o = music( time );
+	
 
 	o_left = o.x;
 	o_right = o.y;
