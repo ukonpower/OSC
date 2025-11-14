@@ -1,14 +1,14 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import octopusFrag from './shaders/octopus.fs';
+import takoAshiFrag from './shaders/takoashi.fs';
 
 import { globalUniforms } from '~/globals';
 
 /**
- * Octopus - タコの触手のようなレイマーチングコンポーネント
+ * TakoAshi - タコの触手のようなレイマーチングコンポーネント
  */
-export class Octopus extends MXP.Component {
+export class TakoAshi extends MXP.Component {
 
 	private mesh: MXP.Mesh;
 
@@ -31,7 +31,7 @@ export class Octopus extends MXP.Component {
 		// material
 
 		const mat = new MXP.Material( {
-			frag: MXP.hotGet( 'octopusFrag', octopusFrag ),
+			frag: MXP.hotGet( 'takoAshiFrag', takoAshiFrag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
 		} );
 
@@ -72,11 +72,11 @@ export class Octopus extends MXP.Component {
 
 		if ( import.meta.hot ) {
 
-			import.meta.hot.accept( './shaders/octopus.fs', ( module ) => {
+			import.meta.hot.accept( './shaders/takoashi.fs', ( module ) => {
 
 				if ( module ) {
 
-					mat.frag = MXP.hotUpdate( 'octopusFrag', module.default );
+					mat.frag = MXP.hotUpdate( 'takoAshiFrag', module.default );
 
 					mat.requestUpdate();
 

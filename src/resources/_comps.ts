@@ -27,7 +27,7 @@ import { Music } from './Components/Demo4/Music/index.ts';
 import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
 import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
-import { Octopus } from './Components/Demo4/Tako/Octopus/index.ts';
+import { TakoAshi } from './Components/Demo4/Tako/TakoAshi/index.ts';
 import { SashimiTako } from './Components/Demo4/Tako/SashimiTako/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { Ocean } from './Components/Demo4/Tsuri/Ocean/index.ts';
@@ -71,7 +71,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			SalmonSushi,
 		},
 		Tako: {
-			Octopus,
+			TakoAshi,
 			SashimiTako,
 		},
 		TruchetSushiLane,
