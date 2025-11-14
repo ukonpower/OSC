@@ -8,21 +8,33 @@
 #include <noise_value>
 
 uniform float uTime;
+uniform float uTimeE;
 
 // SDF関数 - TakoAshiを参考にしたゲート形状
 SDFResult D( vec3 p ) {
+
+
+
+	p.xy = pmod( p.xy, 8.0 );
+
+	p.xz *= rotate( sin( p.y + uTimeE ) * 0.5 * smoothstep( 0.0, 1.0, p.y ) );
+	// p.yz *= rotate( sin( p.y + uTimeE ) * 0.1 + 0.2 );
+	p.z += sin( p.y + uTimeE ) * 0.3 - p.y * 0.2;
+
 
 	// ノイズによる形状の変化
 	p.xz *= 1.0 + noiseValue( vec3( p.y * 1.5 ) ) * 0.15;
 
 	vec3 n1 = noiseCyc( p * 0.6 );
 
-	float radius = 1.0 + 1.0 / linearstep( 2.3, -2.3, p.y );
+	float radius = 1.0 + 1.0 / (linearstep( 2.3, -2.3, p.y ) + 0.01);
 
 	p.xz *= radius;
-	p.y *= 1.0 + pow(radius, 2.0 ) * 0.1;
 
-	float d = sdInfinityCylinder( p, vec3( 0.0, 0.0, (0.55 + n1 * 0.1)  ) );
+	float r = (0.55 + n1.x * 0.1) * 0.5;
+	float d = sdRoundedCylinder( p, r, r, 10.0 );
+
+	p.y *= 1.0 + pow(radius, 1.0 ) * 0.3;
 
 	// 吸盤の作成
 	vec3 suckerP = p;
