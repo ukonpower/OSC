@@ -11,32 +11,17 @@ uniform float uTime;
 // SDF関数 - タコの触手を描画
 SDFResult D( vec3 p ) {
 
-	#ifdef IS_SCROLLING
-		// スクロール効果
-		p.y += uTime * 0.2;
-	#endif
-
-	#ifdef IS_WAVING
-		// 波打つ動き
-		p.x += sin( uTime * 0.6 + p.y * 1.15 ) * 0.2;
-	#endif
-
-	#ifdef IS_SINWAVING
-		// サイン波による揺れと回転
-		p.x += sin( uTime * 0.6 + p.y * 1.15 ) * 0.2;
-		p.xz *= rotate( sin( p.y * 0.3 + uTime * 0.7 ) * 1.1 );
-	#endif
-
-	#ifdef IS_ROLLING
-		// 回転する動き
-		p.xz *= rotate( -uTime * 0.7 - p.y * 0.45 );
-	#endif
-
 	// ノイズによる形状の変化
 	p.xz *= 1.0 + noiseValue( vec3( p.y * 1.5 ) ) * 0.15;
 
 	vec3 n1 = noiseCyc( p * 0.6 );
-	float d = sdInfinityCylinder( p, vec3( 0.0, 0.0, 0.55 + n1 * 0.1 ) );
+
+	float radius = 1.0 + 1.0 / linearstep( 2.3, -2.3, p.y );
+
+	p.xz *= radius;
+	p.y *= 1.0 + pow(radius, 2.0 ) * 0.1;
+	
+	float d = sdInfinityCylinder( p, vec3( 0.0, 0.0, (0.55 + n1 * 0.1)  ) );
 
 	// 吸盤の作成
 	vec3 suckerP = p;
@@ -50,6 +35,8 @@ SDFResult D( vec3 p ) {
 	// 吸盤のディテール
 	d = opSmoothSub( sdSphere( suckerP - vec3( 0.0, 0.2, 0.0 ), 0.05 ), d, 0.05 );
 	d = opSmoothAdd( sdSphere( suckerP - vec3( 0.0, 0.13, 0.0 ), 0.06 ), d, 0.02 );
+
+	d /= radius;
 
 	return SDFResult(
 		d,
