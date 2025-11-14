@@ -284,6 +284,14 @@
 			]
 		},
 		{
+			"uuid": "27599264",
+			"components": [
+				{
+					"name": "TakoGate"
+				}
+			]
+		},
+		{
 			"uuid": "b9479e4a",
 			"components": [
 				{
