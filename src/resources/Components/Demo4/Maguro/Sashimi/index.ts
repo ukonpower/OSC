@@ -8,8 +8,8 @@ import { globalUniforms } from '~/globals';
 
 export class Sashimi extends MXP.Component {
 
-	// 刺身の種類（マグロ or サーモン）
-	private sashimiType: 'maguro' | 'salmon';
+	// 刺身の種類（マグロ or サーモン or タコ）
+	private sashimiType: 'maguro' | 'salmon' | 'tako';
 	private material: MXP.Material;
 
 	constructor( param: MXP.ComponentParams ) {
@@ -28,7 +28,7 @@ export class Sashimi extends MXP.Component {
 				globalUniforms.time,
 				globalUniforms.tex,
 				{
-					// 刺身の種類（0: マグロ, 1: サーモン）
+					// 刺身の種類（0: マグロ, 1: サーモン, 2: タコ）
 					uSashimiType: { type: '1f', value: 0 }
 				}
 			)
@@ -39,14 +39,28 @@ export class Sashimi extends MXP.Component {
 
 			this.sashimiType = v;
 
-			this.material.uniforms.uSashimiType.value = v === 'salmon' ? 1 : 0;
+			// タイプに応じてuniformの値を設定
+			if ( v === 'salmon' ) {
+
+				this.material.uniforms.uSashimiType.value = 1;
+
+			} else if ( v === 'tako' ) {
+
+				this.material.uniforms.uSashimiType.value = 2;
+
+			} else {
+
+				this.material.uniforms.uSashimiType.value = 0;
+
+			}
 
 		}, {
 			format: {
 				type: "select",
 				list: [
 					{ label: "マグロ", value: "maguro" },
-					{ label: "サーモン", value: "salmon" }
+					{ label: "サーモン", value: "salmon" },
+					{ label: "タコ", value: "tako" }
 				]
 			}
 		} );

@@ -182,7 +182,10 @@
 			"uuid": "b6c68e95",
 			"components": [
 				{
-					"name": "Nigiri"
+					"name": "Nigiri",
+					"props": {
+						"sashimiType": "maguro"
+					}
 				}
 			]
 		},
@@ -190,7 +193,10 @@
 			"uuid": "f2985235",
 			"components": [
 				{
-					"name": "Nigiri"
+					"name": "Nigiri",
+					"props": {
+						"sashimiType": "maguro"
+					}
 				}
 			]
 		},
@@ -276,14 +282,6 @@
 			]
 		},
 		{
-			"uuid": "1ef72225",
-			"components": [
-				{
-					"name": "TakoAshi"
-				}
-			]
-		},
-		{
 			"uuid": "27599264",
 			"components": [
 				{
@@ -295,7 +293,10 @@
 			"uuid": "b9479e4a",
 			"components": [
 				{
-					"name": "SashimiTako"
+					"name": "Nigiri",
+					"props": {
+						"sashimiType": "tako"
+					}
 				}
 			]
 		},

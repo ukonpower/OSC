@@ -8,6 +8,8 @@ import { Shari } from '../Shari';
  */
 export class Nigiri extends MXP.Component {
 
+	private sashimiTypeValue: 'maguro' | 'salmon' | 'tako' = 'maguro';
+
 	private shariEntity: MXP.Entity;
 	private sashimiEntity: MXP.Entity;
 	private sashimiComponent: Sashimi;
@@ -30,19 +32,39 @@ export class Nigiri extends MXP.Component {
 		this.sashimiEntity = new MXP.Entity();
 		this.sashimiEntity.name = "Sashimi";
 
-		this.sashimiComponent = this.sashimiEntity.addComponent( Sashimi );
-
 		// 刺身の位置調整（シャリの上に配置）
-		// Sashimiのheightは1.0なので、半分の0.0を上に配置
 		this.sashimiEntity.position.set( 0, 0.0, 0 );
 
 		this.entity.add( this.sashimiEntity );
 
+		// Sashimiコンポーネントを追加
+		this.sashimiComponent = this.sashimiEntity.addComponent( Sashimi );
+
+		// field設定（setterでSashimiのタイプを更新）
+		this.field( "sashimiType", () => this.sashimiTypeValue, ( v ) => {
+
+			this.sashimiTypeValue = v;
+			this.sashimiComponent.setField( 'sashimiType', v );
+
+		}, {
+			format: {
+				type: "select",
+				list: [
+					{ label: "マグロ", value: "maguro" },
+					{ label: "サーモン", value: "salmon" },
+					{ label: "タコ", value: "tako" }
+				]
+			}
+		} );
+
+		// 初期タイプを設定
+		this.sashimiComponent.setField( 'sashimiType', this.sashimiTypeValue );
+
 	}
 
-	public set sashimiType( type: 'maguro' | 'salmon' ) {
+	public set sashimiType( type: 'maguro' | 'salmon' | 'tako' ) {
 
-		this.sashimiComponent.setField( 'sashimiType', type );
+		this.setField( 'sashimiType', type );
 
 	}
 
