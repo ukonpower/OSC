@@ -7,19 +7,26 @@
 #include <noise_cyclic>
 #include <noise_value>
 
+uniform vec4 uState;
+
 uniform float uTime;
 uniform float uTimeE;
 
 // SDF関数 - TakoAshiを参考にしたゲート形状
 SDFResult D( vec3 p ) {
 
+	float close = uState.x;
+	float open = 1.0 - uState.x;
 
-
+	p.xy *= rotate( open * 1.0 * -length( p.yx ) * close + uTime * 0.2 );
 	p.xy = pmod( p.xy, 8.0 );
 
-	p.xz *= rotate( sin( p.y + uTimeE ) * 0.5 * smoothstep( 0.0, 1.0, p.y ) );
-	// p.yz *= rotate( sin( p.y + uTimeE ) * 0.1 + 0.2 );
-	p.z += sin( p.y + uTimeE ) * 0.3 - p.y * 0.2;
+	p.y += close * 2.0 + sin( uTime * 1.0 + p.y * 0.5 ) * 0.05;
+
+	float wave = linearstep( 0.4, 1.0, open );
+
+	p.xz *= rotate( sin( p.y * 2.0 - uTime * 2.0 - 1.0 ) * 0.5 * smoothstep( 0.3, 1.0, p.y )  * wave );
+	p.z += sin( p.y + uTime ) * 0.3 * wave - p.y * 0.2;
 
 
 	// ノイズによる形状の変化
@@ -100,7 +107,9 @@ void main( void ) {
 	vec3 marchPos = dist.pos;
 
 	// カラー設定 - ノイズによる模様と境界のスムージング
-	outColor.xyz = mix( vec3( 0.4 + noiseCyc( marchPos + 0.5 ).x * 0.5 ), vec3( 1.0 ), smoothstep( 0.55, 0.59, marchPos.z ) );
+	outColor.xyz = mix( vec3( 0.6, 0.2, 0.2 ) * (0.4 + noiseCyc( marchPos + 0.5 ).x * 0.5), vec3( 1.0 ), smoothstep( 0.55, 0.59, marchPos.z ) );
+
+	outGradient = 1.0;
 
 	outNormal = N( rayPos, 0.01 );
 

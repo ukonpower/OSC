@@ -4,6 +4,7 @@ import takoGateFrag from './shaders/takogate.fs';
 import takoGateVert from './shaders/takogate.vs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 /**
  * TakoGate - レイマーチングで描画するゲートコンポーネント
@@ -26,6 +27,8 @@ export class TakoGate extends MXP.Component {
 				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
 			} )
 		} );
+
+		bindBlidgeUniform( this.mesh.entity, this.mesh );
 
 		// ホットリロード対応
 		if ( import.meta.hot ) {
