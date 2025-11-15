@@ -6,8 +6,10 @@
 #include <rotate>
 #include <noise_cyclic>
 #include <noise_value>
+#include <random>
 
 uniform vec4 uState;
+uniform vec4 uPrevState;
 
 uniform float uTime;
 uniform float uTimeE;
@@ -18,10 +20,36 @@ SDFResult D( vec3 p ) {
 	float close = uState.x;
 	float open = 1.0 - uState.x;
 
-	p.xy *= rotate( open * 1.0 * -length( p.yx ) * close + uTime * 0.2 );
-	p.xy = pmod( p.xy, 8.0 );
+	// ランダムな補間位置を計算（位置ベース）
+	float randSeed = random( p.xy + p.z );
 
-	p.y += close * 2.0 + sin( uTime * 1.0 + p.y * 0.5 ) * 0.05;
+	// uPrevStateとuStateの間をランダムに補間
+	float b = mix( uPrevState.y, uState.y, randSeed );
+
+	float phase1 = min( b, 1.0 );
+	float phase2 = clamp( b - 1.0, 0.0, 1.0 );
+	float phase3 = clamp( b - 2.0, 0.0, 1.0 );
+	float phase4 = clamp( b - 3.0, 0.0, 1.0 );
+
+
+	p.xy *= rotate( open * 1.0 * -length( p.yx ) * 0.4 * ( 1.0 - phase1 ) + uTime * 0.2 );
+	p.xy = pmod( p.xy, 1.0 + phase1 * 6.0 );
+
+	for( int i = 0; i < 4; i++ ) {
+
+		if( phase2 > 0.0 ) {
+
+			p.x = abs( p.x );
+
+		}
+
+		p.x -= phase2 * 1.0;
+		p.zy *= rotate( phase2 * PI / 4.0 );
+		p.xz *= rotate( phase2 * PI / 2.0 );
+
+	}
+	
+	p.y += close * 5.0 + sin( uTime * 1.0 + p.y * 0.5 ) * 0.05;
 
 	float wave = linearstep( 0.4, 1.0, open );
 
