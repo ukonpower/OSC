@@ -8,6 +8,8 @@
 #include <noise_value>
 #include <random>
 
+uniform mat4 uModelViewMatrix;
+
 uniform vec4 uState;
 uniform vec4 uPrevState;
 
@@ -106,6 +108,7 @@ SDFResult D( vec3 p ) {
 
 }
 
+#include <subsurface>
 #include <rm_normal>
 
 void main( void ) {
@@ -146,16 +149,25 @@ void main( void ) {
 	vec3 marchPos = dist.pos;
 
 	// カラー設定 - ノイズによる模様と境界のスムージング
-	outColor.xyz = mix( vec3( 0.6, 0.2, 0.2 ) * (0.4 + noiseCyc( marchPos + 0.5 ).x * 0.5), vec3( 1.0 ), smoothstep( 0.55, 0.59, marchPos.z ) );
+	vec3 baseColor = vec3( 0.6, 0.2, 0.2 );
+	float noiseValue = noiseCyc( marchPos + 0.5 ).x;
+	vec3 redColor = baseColor * ( 0.4 + noiseValue * 0.5 );
+	vec3 whiteColor = vec3( 1.0 );
+	float colorMask = smoothstep( 0.55, 0.59, marchPos.z );
+	outColor.xyz = mix( redColor, whiteColor, colorMask );
 
-	outGradient = 1.0;
+	// outGradient = 1.0;
 
 	outNormal = N( rayPos, 0.01 );
 
 	// オブジェクト空間からワールド空間への変換、位置・法線・深度を出力
 	#include <rm_out_obj>
 
-	outEmission = vec3( 0.0 );
+	// subsurface scatteringを計算 - 赤い部分のみに適用
+	float redMask = smoothstep( 0.59, 0.55, marchPos.z );
+	float sss = subsurface( rayPos, normalize( (vec4( 1.0, 0.0, 0.0, 0.0 ) * uModelViewMatrix).xyz ), 0.3 );
+	outEmission.xyz += sss * vec3( 0.9, 0.1, 0.0 ) * 0.9;
+
 
 	#include <frag_out>
 
