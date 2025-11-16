@@ -333,7 +333,7 @@
 				{
 					"name": "SkyBox",
 					"props": {
-						"type": "default"
+						"skyboxType": "tsuri"
 					}
 				}
 			]
@@ -343,6 +343,14 @@
 			"components": [
 				{
 					"name": "Taiyaki"
+				}
+			]
+		},
+		{
+			"uuid": "ddc6e769",
+			"components": [
+				{
+					"name": "Teibo"
 				}
 			]
 		},
@@ -360,7 +368,7 @@
 				{
 					"name": "SkyBox",
 					"props": {
-						"type": "default"
+						"skyboxType": "default"
 					}
 				}
 			]

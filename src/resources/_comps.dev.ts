@@ -33,6 +33,7 @@ import { TakoKosen } from './Components/Demo4/Tako/TakoKosen/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { Ocean } from './Components/Demo4/Tsuri/Ocean/index.ts';
 import { Taiyaki } from './Components/Demo4/Tsuri/Taiyaki/index.ts';
+import { Teibo } from './Components/Demo4/Tsuri/Teibo/index.ts';
 import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
 import { ObjectRotate } from './Components/ObjectControls/ObjectRotate/index.ts';
@@ -88,6 +89,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		Tsuri: {
 			Ocean,
 			Taiyaki,
+			Teibo,
 		},
 	},
 	ObjectControls: {

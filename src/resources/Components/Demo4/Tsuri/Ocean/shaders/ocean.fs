@@ -70,7 +70,7 @@ void main( void ) {
 		dist = D( rayPos );
 		rayPos += dist.d * rayDir;
 
-		if( dist.d < 0.01 ) {
+		if( dist.d < 0.05 ) {
 
 			hit = true;
 			break;
