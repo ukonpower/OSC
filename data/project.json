@@ -290,6 +290,14 @@
 			]
 		},
 		{
+			"uuid": "77db9e8a",
+			"components": [
+				{
+					"name": "TakoKosen"
+				}
+			]
+		},
+		{
 			"uuid": "b9479e4a",
 			"components": [
 				{

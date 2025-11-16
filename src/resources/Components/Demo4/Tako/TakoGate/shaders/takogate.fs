@@ -43,7 +43,7 @@ SDFResult D( vec3 p ) {
 
 		p.x -= phase2 * 0.5;
 		p.yz *= rotate( phase2 * PI / 1.0 );
-		p.xz *= rotate( -phase2 * PI / 4.0 );
+		p.xz *= rotate( -phase2 * PI / 4.0 + phase4 * 0.4  );
 
 		
 		p.z -= phase3 * 0.5;
@@ -152,7 +152,7 @@ void main( void ) {
 
 	
 	// subsurface scatteringを計算 - 赤い部分のみに適用
-	float sss = subsurface( rayPos, normalize( (vec4( normalize( -rayPos.xyz), 0.0 )).xyz ), 0.5 ) * 1.0;
+	float sss = subsurface( rayPos, normalize( (vec4( normalize( -rayPos.xyz), 0.0 )).xyz ), 0.5 ) * (1.0 + uState.z * 5.0);
 	outEmission += outColor.xyz * 1.0 * redMask;
 	outEmission.xyz += sss * (outColor.xyz + vec3( 0.5, 0.1, 0.0 )) * ( redMask );
 

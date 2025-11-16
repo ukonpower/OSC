@@ -29,6 +29,7 @@ import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
 import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
 import { TakoAshi } from './Components/Demo4/Tako/TakoAshi/index.ts';
 import { TakoGate } from './Components/Demo4/Tako/TakoGate/index.ts';
+import { TakoKosen } from './Components/Demo4/Tako/TakoKosen/index.ts';
 import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { Ocean } from './Components/Demo4/Tsuri/Ocean/index.ts';
 import { Taiyaki } from './Components/Demo4/Tsuri/Taiyaki/index.ts';
@@ -81,6 +82,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		Tako: {
 			TakoAshi,
 			TakoGate,
+			TakoKosen,
 		},
 		TruchetSushiLane,
 		Tsuri: {
