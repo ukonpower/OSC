@@ -13,9 +13,6 @@
 uniform sampler2D uNoiseTex;
 uniform sampler2D uNoiseCyclicTex;
 
-// 刺身の種類（0: マグロ, 1: サーモン）
-uniform float uSashimiType;
-
 // 刺身のSDF定義
 SDFResult D( vec3 p ) {
 
@@ -87,18 +84,22 @@ void main( void ) {
 
 	float dnv = dot( rayDir, -outNormal.xyz );
 
-	// 刺身のカラー（マグロの赤身 or サーモンのオレンジ）
-	vec3 maguruColor = vec3( 0.9, 0.15, 0.1 );    // マグロ：赤身
-	vec3 salmonColor = vec3(  1.0, 0.4, 0.2  );      // サーモン：オレンジ
-	vec3 sashimiColor = mix( maguruColor, salmonColor, uSashimiType );
+	// 刺身のカラー（Defineで種類を切り替え）
+	#if defined( SALMON )
+		vec3 sashimiColor = vec3( 1.0, 0.4, 0.2 );  // サーモン：オレンジ
+		vec3 sashimiEmission = vec3( 1.0, 0.4, 0.1 );
+	#elif defined( TAKO )
+		vec3 sashimiColor = vec3( 1.0, 0.95, 0.9 ); // タコ：白っぽい
+		vec3 sashimiEmission = vec3( 1.0, 0.8, 0.7 );
+	#else
+		vec3 sashimiColor = vec3( 0.9, 0.15, 0.1 ); // マグロ：赤身
+		vec3 sashimiEmission = vec3( 0.9, 0.1, 0.2 );
+	#endif
 
 	outColor.xyz = sashimiColor;
 	outColor.xyz = mix( outColor.xyz, vec3( 1.0 ), smoothstep( 0.8, 1.0, fract(length( rayPos.xz + 0.5 + n.xy * 0.3 ) * 5.0 ) ) * n.y * 0.8 );
 
-	// エミッションもサーモンの時はオレンジに
-	vec3 maguruEmission = vec3( 0.9, 0.1, 0.2 );
-	vec3 salmonEmission = vec3( 1.0, 0.4, 0.1 );
-	outEmission.xyz += mix( maguruEmission, salmonEmission, uSashimiType ) * sss * 0.9 * smoothstep( 1.5, 0.0, dnv );
+	outEmission.xyz += sashimiEmission * sss * 0.9 * smoothstep( 1.5, 0.0, dnv );
 	outRoughness = 0.4;
 
 	// グラデーション効果

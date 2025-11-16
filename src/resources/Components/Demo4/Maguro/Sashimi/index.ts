@@ -27,32 +27,29 @@ export class Sashimi extends MXP.Component {
 				globalUniforms.resolution,
 				globalUniforms.time,
 				globalUniforms.tex,
-				{
-					// 刺身の種類（0: マグロ, 1: サーモン, 2: タコ）
-					uSashimiType: { type: '1f', value: 0 }
-				}
 			)
 		} );
 
-		// field設定（setterでuniformを更新）
+		// field設定（setterでDefineを更新）
 		this.field( "sashimiType", () => this.sashimiType, ( v ) => {
 
 			this.sashimiType = v;
 
-			// タイプに応じてuniformの値を設定
+			// Defineを設定してシェーダーバリアントを切り替え
+			const defines: { [ key: string ]: string } = {};
+
 			if ( v === 'salmon' ) {
 
-				this.material.uniforms.uSashimiType.value = 1;
+				defines.SALMON = '';
 
 			} else if ( v === 'tako' ) {
 
-				this.material.uniforms.uSashimiType.value = 2;
-
-			} else {
-
-				this.material.uniforms.uSashimiType.value = 0;
+				defines.TAKO = '';
 
 			}
+
+			this.material.defines = defines;
+			this.material.requestUpdate();
 
 		}, {
 			format: {
