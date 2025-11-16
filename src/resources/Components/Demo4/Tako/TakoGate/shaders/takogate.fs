@@ -23,17 +23,15 @@ SDFResult D( vec3 p ) {
 	float open = 1.0 - uState.x;
 
 	// ランダムな補間位置を計算（位置ベース）
-	float randSeed = random( p.xy + p.z );
+	float randSeed = random( gl_FragCoord.xy / 1000.0 );
 
 	// uPrevStateとuStateの間をランダムに補間
-	float b = mix( uState.y, uPrevState.y, randSeed * 0.5 );
+	float b = mix( uState.y, uPrevState.y, randSeed * 1.0 );
 
 	float phase1 = min( b, 1.0 );
 	float phase2 = clamp( b - 1.0, 0.0, 1.0 );
 	float phase3 = clamp( b - 2.0, 0.0, 1.0 );
 	float phase4 = clamp( b - 3.0, 0.0, 1.0 );
-
-
 
 	for( int i = 0; i < 4; i++ ) {
 
@@ -51,16 +49,11 @@ SDFResult D( vec3 p ) {
 		p.z -= phase3 * 0.5;
 		p.yz *= rotate( phase3 * PI / 1.0 );
 
-		
-
-
 	}
 
 	p.xy *= rotate( open * 1.0 * -length( p.yx ) * 0.4 * ( 1.0 - phase1 ) + uTime * 0.2 );
 	
 	p.xy = pmod( p.xy, 1.0 + phase1 * 7.0 );
-
-	
 	
 	p.y += close * 5.0 + sin( uTime * 1.0 + p.y * 0.5 ) * 0.05;
 
@@ -146,27 +139,26 @@ void main( void ) {
 	uvPos.xy *= rotate( HPI / 2.0 );
 	uvPos.yz *= rotate( HPI / 2.0);
 
-	vec3 marchPos = dist.pos;
-
-	// カラー設定 - ノイズによる模様と境界のスムージング
-	vec3 baseColor = vec3( 0.6, 0.2, 0.2 );
-	float noiseValue = noiseCyc( marchPos + 0.5 ).x;
-	vec3 redColor = baseColor * ( 0.4 + noiseValue * 0.5 );
-	vec3 whiteColor = vec3( 1.0 );
-	float colorMask = smoothstep( 0.55, 0.59, marchPos.z );
-	outColor.xyz = mix( redColor, whiteColor, colorMask );
-
-	// outGradient = 1.0;
-
 	outNormal = N( rayPos, 0.01 );
+
+	vec3 marchPos = dist.pos;
+	
+	// カラー設定 - ノイズによる模様と境界のスムージング
+	float noiseValue = noiseCyc( marchPos + 0.5 ).x;
+	vec3 redColor = vec3( 0.6, 0.2, 0.2 ) * ( 0.4 + noiseValue * 0.5 ) * 0.5;
+	vec3 whiteColor = vec3( 1.0 );
+	float redMask = smoothstep( 0.59, 0.55, marchPos.z );
+	outColor.xyz = mix( whiteColor, redColor, redMask );
+
+	
+	// subsurface scatteringを計算 - 赤い部分のみに適用
+	float sss = subsurface( rayPos, normalize( (vec4( normalize( -rayPos.xyz), 0.0 )).xyz ), 0.5 ) * 1.0;
+	outEmission += outColor.xyz * 1.0 * redMask;
+	outEmission.xyz += sss * (outColor.xyz + vec3( 0.5, 0.1, 0.0 )) * ( redMask );
 
 	// オブジェクト空間からワールド空間への変換、位置・法線・深度を出力
 	#include <rm_out_obj>
 
-	// subsurface scatteringを計算 - 赤い部分のみに適用
-	float redMask = smoothstep( 0.59, 0.55, marchPos.z );
-	float sss = subsurface( rayPos, normalize( (vec4( 1.0, 0.0, 0.0, 0.0 ) * uModelViewMatrix).xyz ), 0.3 );
-	outEmission.xyz += sss * vec3( 0.9, 0.1, 0.0 ) * 0.9;
 
 
 	#include <frag_out>

@@ -26,6 +26,7 @@ SDFResult D( vec3 p ) {
 	pp.xy *= rotate( -smoothstep( 0.0, 0.3, abs(pp.x) ) * sign( pp.x ) * 0.4);
 
 #if defined( TAKO )
+
 	// タコ
 
 	vec4 n = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) );
@@ -39,6 +40,7 @@ SDFResult D( vec3 p ) {
 	vec2 d = vec2( sdBox( pp, takoSize ), 0.0 );
 
 #else
+
 	vec4 n = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) );
 	vec4 n2 = texture( uNoiseTex, p.xz * 2.0 - vec2( 0.1, 0.3 ) );
 	pp.y += n2.x * 0.02;
