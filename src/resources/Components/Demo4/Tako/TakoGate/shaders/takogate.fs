@@ -32,22 +32,33 @@ SDFResult D( vec3 p ) {
 	float phase4 = clamp( b - 3.0, 0.0, 1.0 );
 
 
-	p.xy *= rotate( open * 1.0 * -length( p.yx ) * 0.4 * ( 1.0 - phase1 ) + uTime * 0.2 );
-	p.xy = pmod( p.xy, 1.0 + phase1 * 6.0 );
 
 	for( int i = 0; i < 4; i++ ) {
 
-		if( phase2 > 0.0 ) {
+		if( phase2 > 0.2 ) {
 
 			p.x = abs( p.x );
 
 		}
 
-		p.x -= phase2 * 1.0;
-		p.zy *= rotate( phase2 * PI / 4.0 );
-		p.xz *= rotate( phase2 * PI / 2.0 );
+		p.x -= phase2 * 0.5;
+		p.yz *= rotate( phase2 * PI / 1.0 );
+		p.xz *= rotate( -phase2 * PI / 4.0 );
+
+		
+		p.z -= phase3 * 0.5;
+		p.yz *= rotate( phase3 * PI / 1.0 );
+
+		
+
 
 	}
+
+	p.xy *= rotate( open * 1.0 * -length( p.yx ) * 0.4 * ( 1.0 - phase1 ) + uTime * 0.2 );
+	
+	p.xy = pmod( p.xy, 1.0 + phase1 * 7.0 );
+
+	
 	
 	p.y += close * 5.0 + sin( uTime * 1.0 + p.y * 0.5 ) * 0.05;
 
