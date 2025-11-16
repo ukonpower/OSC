@@ -301,6 +301,17 @@
 			]
 		},
 		{
+			"uuid": "2a16e1b2",
+			"components": [
+				{
+					"name": "Nigiri",
+					"props": {
+						"sashimiType": "tako"
+					}
+				}
+			]
+		},
+		{
 			"uuid": "727525da",
 			"components": [
 				{

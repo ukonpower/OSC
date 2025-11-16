@@ -26,7 +26,7 @@ SDFResult D( vec3 p ) {
 	float randSeed = random( p.xy + p.z );
 
 	// uPrevStateとuStateの間をランダムに補間
-	float b = mix( uPrevState.y, uState.y, randSeed );
+	float b = mix( uState.y, uPrevState.y, randSeed * 0.5 );
 
 	float phase1 = min( b, 1.0 );
 	float phase2 = clamp( b - 1.0, 0.0, 1.0 );

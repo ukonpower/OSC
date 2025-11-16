@@ -13,6 +13,8 @@
 uniform sampler2D uNoiseTex;
 uniform sampler2D uNoiseCyclicTex;
 
+uniform float uTimeE;
+
 // 刺身のSDF定義
 SDFResult D( vec3 p ) {
 
@@ -32,7 +34,7 @@ SDFResult D( vec3 p ) {
 	
 	vec3 takoSize = vec3( 0.25, 0.02, 0.4 );
 	pp.x *= 1.2 + sin( -HPI + pp.z * 4.0 ) * 0.4;
-	pp.y += sin( pp.z * 40.0 ) * 0.2 * smoothstep( 0.05, 1.0, abs( pp.x ) );
+	pp.y -= (texture( uNoiseTex, pp.xz * 0.1 - vec2( 0.1, 0.3 ) + vec2( 0.0, uTimeE * 0.01 ) ).x - 0.45) * smoothstep( 0.05, 0.2, abs( pp.x ) ) * 0.3;
 	pp.x += sin( pp.z * 30.0 ) * 0.2 * smoothstep( 0.1, 1.0, abs( pp.x ) );
 	vec2 d = vec2( sdBox( pp, takoSize ), 0.0 );
 
