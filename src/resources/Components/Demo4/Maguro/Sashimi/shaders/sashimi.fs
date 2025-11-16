@@ -18,14 +18,30 @@ SDFResult D( vec3 p ) {
 
 	vec3 sashimiP = p;
 	sashimiP.y -= 0.2;
+
+	vec3 pp = sashimiP;
+	pp.yz *= rotate( smoothstep( 0.0, 0.8, abs(pp.z) ) * sign( pp.z ) * 0.3);
+	pp.xy *= rotate( -smoothstep( 0.0, 0.3, abs(pp.x) ) * sign( pp.x ) * 0.4);
+
+#if defined( TAKO )
+	// タコ
+
+	vec4 n = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) );
+	vec4 n2 = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) + n.xy * 3.0 );
+	pp.y += n2.x * 0.02;
 	
+	vec3 takoSize = vec3( 0.25, 0.02, 0.4 );
+	pp.x *= 1.2 + sin( -HPI + pp.z * 4.0 ) * 0.4;
+	pp.y += sin( pp.z * 40.0 ) * 0.2 * smoothstep( 0.05, 1.0, abs( pp.x ) );
+	pp.x += sin( pp.z * 30.0 ) * 0.2 * smoothstep( 0.1, 1.0, abs( pp.x ) );
+	vec2 d = vec2( sdBox( pp, takoSize ), 0.0 );
+
+#else
 	vec4 n = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) );
 	vec4 n2 = texture( uNoiseTex, p.xz * 2.0 - vec2( 0.1, 0.3 ) );
-	
-	vec3 pp = sashimiP;
-	pp.yz *= rotate( smoothstep( 0.0, 1.0, abs(pp.z) ) * sign( pp.z ) * 0.5);
-	pp.xy *= rotate( -smoothstep( 0.0, 0.4, abs(pp.x) ) * sign( pp.x ) * 0.5);
-	pp.y += n2.x * 0.01;
+	pp.y += n2.x * 0.02;
+
+	// マグロ・サーモン（薄め）
 	vec3 sashimiSize = vec3( 0.2, 0.01 + n.x * 0.08, 0.65 );
 	vec2 d = vec2( sdBox( pp, sashimiSize ), 0.0 );
 
@@ -34,11 +50,13 @@ SDFResult D( vec3 p ) {
 	trimP.xz *= rotate( 0.3 );
 	d.x = opAnd( sdBox(trimP, vec3( 1.0, 0.2, 0.4 )), d.x );
 
+#endif
+
 	return SDFResult(
 		d.x,
 		p,
 		d.y,
-		vec4(0.0)
+		vec4(pp, 0.0)
 	);
 
 }
@@ -90,6 +108,7 @@ void main( void ) {
 		vec3 sashimiEmission = vec3( 1.0, 0.4, 0.1 );
 	#elif defined( TAKO )
 		vec3 sashimiColor = vec3( 1.0, 0.95, 0.9 ); // タコ：白っぽい
+		sashimiColor.xyz = mix( sashimiColor.xyz, vec3( 0.8, 0.0, 0.1 ), smoothstep( 0.16, 0.23, abs( dist.matparam.x ) ) );
 		vec3 sashimiEmission = vec3( 1.0, 0.8, 0.7 );
 	#else
 		vec3 sashimiColor = vec3( 0.9, 0.15, 0.1 ); // マグロ：赤身
