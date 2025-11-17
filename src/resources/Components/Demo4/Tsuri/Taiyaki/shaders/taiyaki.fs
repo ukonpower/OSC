@@ -14,8 +14,16 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	// 一旦シンプルな球体で配置
-	float d = sdSphere( pp, 0.5 );
+	vec3 bodyP = pp;
+	bodyP.x += 0.08;
+	bodyP.x *= 0.7;
+	float d = sdRoundedCylinder( bodyP, 0.12, 0.04, 0.01 );
+
+
+	vec3 shippoP = pp;
+	shippoP.xz += vec2( -0.3, 0.05 );
+	shippoP.xz *= rotate( -0.2 );
+	d = opAdd( d,sdRoundBox( shippoP, vec3( 0.15,0.05,0.16 ), 0.03 ) );
 
 	return SDFResult(
 		d,

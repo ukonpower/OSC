@@ -18,15 +18,17 @@ export class Teibo extends MXP.Component {
 
 		// geometry
 
-		const geo = new MXP.SphereGeometry( {
-			radius: 1
+		const geo = new MXP.CubeGeometry( {
+			width: 1,
+			height: 1,
+			depth: 1,
 		} );
 
 		// material
 
 		const mat = new MXP.Material( {
 			frag: MXP.hotGet( 'teiboFrag', teiboFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, { uNoiseTex: globalUniforms.tex.uNoiseTex } )
 		} );
 
 		this.mesh = this.entity.addComponent( MXP.Mesh, {
