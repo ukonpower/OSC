@@ -17,12 +17,17 @@ SDFResult D( vec3 p ) {
 	vec3 bodyP = pp;
 	bodyP.x += 0.08;
 	bodyP.x *= 0.7;
+	bodyP.z += smoothstep( 0.3, -0.4, bodyP.x ) * 0.1;
 	float d = sdRoundedCylinder( bodyP, 0.12, 0.04, 0.01 );
 
 
 	vec3 shippoP = pp;
-	shippoP.xz += vec2( -0.3, 0.05 );
+	shippoP.xz += vec2( -0.25, 0.05 );
+	// shippoP.z += shippoP.x * 0.3;
 	shippoP.xz *= rotate( -0.2 );
+	shippoP.x += abs( sin( shippoP.z * 37.0 ) ) * 0.02;
+	shippoP.x += cos( shippoP.z * 10.0 ) * 0.03;
+	shippoP.z *= 1.0 - shippoP.x * 1.0;
 	d = opAdd( d,sdRoundBox( shippoP, vec3( 0.15,0.05,0.16 ), 0.03 ) );
 
 	return SDFResult(
