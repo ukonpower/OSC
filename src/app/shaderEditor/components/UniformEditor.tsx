@@ -91,10 +91,24 @@ const UniformInput = ( { uniformKey, uniform, onChange }: { uniformKey: string; 
 
 	}
 
+	// テクスチャ型（1i）の場合
+	if ( uniform.type === '1i' ) {
+
+		// valueがテクスチャオブジェクトかどうかチェック
+		const isTexture = uniform.value && typeof uniform.value === 'object' && ( 'texture' in uniform.value || 'getTexture' in uniform.value );
+
+		return (
+			<span className="shader-editor__uniform-readonly">
+				{isTexture ? '[Texture]' : String( uniform.value )}
+			</span>
+		);
+
+	}
+
 	// その他の型は文字列表示のみ
 	return (
 		<span className="shader-editor__uniform-readonly">
-			{JSON.stringify( uniform.value )}
+			{typeof uniform.value === 'object' && uniform.value !== null ? '[Object]' : String( uniform.value )}
 		</span>
 	);
 
