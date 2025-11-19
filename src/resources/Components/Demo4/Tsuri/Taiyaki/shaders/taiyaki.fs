@@ -9,15 +9,46 @@
 
 #include <rm_h>
 
+uniform float uTime;
+
 // たいやき形状を表現するSDF関数
 SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
+	// 六角形座標系でのパターン計算（魚のウロコ柄）
+	// 参考: https://www.shadertoy.com/view/4dKXz3
+	vec2 uv = pp.xz * 15.0 * 1.73 / 2.0; // スケール調整
+	uv.x *= -1.0;
+	vec2 U = uv * mat2(1, -1.0/1.73, 0, 2.0/1.73); // 六角形座標への変換
+	vec3 g = vec3(U, 1.0 - U.x - U.y); // 六角形座標
+	vec3 id = floor(g); // セルID
+
+	g = fract(g); // ダイアモンド座標
+	if (length(g) > 1.0) g = 1.0 - g; // 重心座標
+
+	U = id.xy * mat2(1, 0.5, 0, 1.73/2.0);
+
+	// 各ノードへのスクリーン空間距離
+	float l00 = length(U - uv);
+	float l10 = length(U + vec2(1, 0) - uv);
+	float l01 = length(U + vec2(0.5, 1.73/2.0) - uv);
+	float l11 = length(U + vec2(1.5, 1.73/2.0) - uv);
+	float l20 = length(U + vec2(2, 0) - uv);
+
+	// 魚のウロコ模様を作成
+	float k = 0.75 + 0.25 * sin(uTime);
+	id += l20 < k ? vec3(2, 0, 0) : l11 < k ? vec3(1, 1, 0) : l10 < k ? vec3(1, 0, 0) : l01 < k ? vec3(0, 1, 0) : vec3(0);
+	vec2 C = id.xy * mat2(1, 0.5, 0, 1.73/2.0); // 最近傍ノードの中心
+
+	vec2 tileUv = uv - C;
+
 	vec3 bodyP = pp;
+	bodyP.y -= ( pow( length( tileUv ), 4.0 ) - tileUv.x * 0.5) * 0.01;
 	bodyP.x += 0.08;
 	bodyP.x *= 0.7;
-	bodyP.z += smoothstep( 0.3, -0.4, bodyP.x ) * 0.1;
+	float bodyPos = smoothstep( 0.3, -0.4, bodyP.x );
+	bodyP.z += bodyPos * 0.1;
 	float d = sdRoundedCylinder( bodyP, 0.12, 0.04, 0.01 );
 
 
