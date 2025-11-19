@@ -88,24 +88,24 @@ SDFResult D( vec3 p ) {
 
 	// 頭のヒレ(トサカ)
 	vec3 hireTosakaP = pp;
-	hireTosakaP.xz += vec2( -0.02, 0.25 );
+	hireTosakaP.xz += vec2( -0.010, 0.22 );
 	hireTosakaP.xz *= rotate( 0.25 );
-	float hireTosaka = sdRoundBox( hireTosakaP, vec3( 0.15, 0.035, 0.05 ), 0.03 );
-	d = opSmoothAdd( d, hireTosaka, 0.02 );
+	float hireTosaka = sdRoundBox( hireTosakaP, vec3( 0.15, 0.035 + sin( hireTosakaP.x * 200.0) * 0.002, 0.07 ), 0.03 );
+	d = opSmoothAdd( d, hireTosaka, 0.015 );
 
 	// バックヒレ
 	vec3 hireBackP = pp;
 	hireBackP.xz += vec2( -0.1, -0.19 );
 	hireBackP.xz *= rotate( -0.5 );
-	float hireBack = sdRoundBox( hireBackP, vec3( 0.1, 0.035, 0.05 ), 0.03 );
+	float hireBack = sdRoundBox( hireBackP, vec3( 0.1, 0.035 + sin( hireBackP.x * 200.0) * 0.002, 0.05 ), 0.03 );
 	d = opSmoothAdd( d, hireBack, 0.02 );
 
-	// バックヒレ
+	// ヒレサイド
 	vec3 hireSideP = pp;
 	hireSideP.xz += vec2( 0.11, -0.12 );
 	hireSideP.z *= 1.0 - hireSideP.x * 3.0;
-	float height = 0.073 + hireSideP.x * 0.1 + sin( hireSideP.z * 200.0 ) * 0.002;
-	float hireSide = sdRoundBox( hireSideP, vec3( 0.1, height, 0.06 ), 0.01 );
+	float hireSideHeight = 0.073 + hireSideP.x * 0.1 + sin( hireSideP.z * 200.0 ) * 0.002;
+	float hireSide = sdRoundBox( hireSideP, vec3( 0.1, hireSideHeight, 0.06 ), 0.01 );
 	d = opSmoothAdd( d, hireSide, 0.003 );
 
 	return SDFResult(
