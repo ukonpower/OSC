@@ -79,11 +79,16 @@ export class ShaderEditorScene {
 		renderCamera.needsUpdateProjectionMatrix = true;
 		renderCamera.resize( resolution );
 
-		// シェーダーエディターではDOFを無効化（パフォーマンス向上のため）
+		// シェーダーエディターではDOFとモーションブラーを無効化（パフォーマンス向上のため）
 		const renderer = this.engine.renderer as any;
 		renderer._pipelinePostProcess.dofCoc.enabled = false;
 		renderer._pipelinePostProcess.dofBokeh.enabled = false;
 		renderer._pipelinePostProcess.dofComposite.enabled = false;
+		renderer._pipelinePostProcess.postprocess.passes.forEach( ( pass: any ) => {
+			if ( pass.name && ( pass.name.includes( 'motionBlur' ) ) ) {
+				pass.enabled = false;
+			}
+		} );
 
 		// Light作成
 		this.light = new MXP.Entity();
