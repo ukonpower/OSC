@@ -10,6 +10,7 @@
 #include <rm_h>
 
 uniform float uTime;
+uniform float uTimeE;
 
 // たいやき形状を表現するSDF関数
 SDFResult D( vec3 p ) {
@@ -43,23 +44,27 @@ SDFResult D( vec3 p ) {
 
 	vec2 tileUv = uv - C;
 
+	float bodyHeightMap = 0.0;
+	bodyHeightMap = -tileUv.x * 1.5;
+
 	vec3 bodyP = pp;
-	bodyP.y -= ( pow( length( tileUv ), 4.0 ) - tileUv.x * 0.5) * 0.01;
 	bodyP.x += 0.08;
 	bodyP.x *= 0.7;
 	float bodyPos = smoothstep( 0.3, -0.4, bodyP.x );
 	bodyP.z += bodyPos * 0.1;
-	float d = sdRoundedCylinder( bodyP, 0.12, 0.04, 0.01 );
+	float d = sdRoundedCylinder( bodyP, 0.12, 0.04 + bodyHeightMap * 0.012, 0.01 );
 
 
 	vec3 shippoP = pp;
+	// shippoP.xz *= rotate( -0.2 + uTimeE );
 	shippoP.xz += vec2( -0.25, 0.05 );
-	// shippoP.z += shippoP.x * 0.3;
-	shippoP.xz *= rotate( -0.2 );
+	shippoP.z *= 1.0 - shippoP.x * 1.0;
 	shippoP.x += abs( sin( shippoP.z * 37.0 ) ) * 0.02;
 	shippoP.x += cos( shippoP.z * 10.0 ) * 0.03;
-	shippoP.z *= 1.0 - shippoP.x * 1.0;
-	d = opAdd( d,sdRoundBox( shippoP, vec3( 0.15,0.05,0.16 ), 0.03 ) );
+	float shippoHeightMap = 0.0;
+	shippoHeightMap += sin( shippoP.z * 180.0 );
+	shippoP.y -= shippoHeightMap * 0.002;
+	d = opAdd( d,sdRoundBox( shippoP, vec3( 0.15,0.05,0.16), 0.03 ) );
 
 	return SDFResult(
 		d,
