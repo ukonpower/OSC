@@ -4,6 +4,7 @@ import * as MXP from 'maxpower';
 import taiyakiFrag from './shaders/taiyaki.fs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 /**
  * Taiyaki - たいやき形状のレイマーチングコンポーネント
@@ -28,12 +29,18 @@ export class Taiyaki extends MXP.Component {
 
 		const mat = new MXP.Material( {
 			frag: MXP.hotGet( 'taiyakiFrag', taiyakiFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+			uniforms: MXP.UniformsUtils.merge(
+				globalUniforms.resolution,
+				globalUniforms.time,
+				globalUniforms.tex
+			)
 		} );
 
 		this.mesh = this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: mat
 		} );
+
+		// bindBlidgeUniform( this.mesh.entity, this.mesh );
 
 		// HMR
 

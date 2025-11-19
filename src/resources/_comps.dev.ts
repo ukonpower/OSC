@@ -10,6 +10,7 @@ import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
+import { Sara } from './Components/Demo4/Common/Sara/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
@@ -58,6 +59,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			DebaBouChou,
 			MizuBall,
 			Nigiri,
+			Sara,
 			ShaderMotionGraphics,
 			Shari,
 			SkyBox,

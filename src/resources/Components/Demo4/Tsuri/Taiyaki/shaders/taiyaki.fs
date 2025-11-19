@@ -11,6 +11,7 @@
 
 uniform float uTime;
 uniform float uTimeE;
+uniform sampler2D uNoiseTex;
 
 // たいやき形状を表現するSDF関数
 SDFResult D( vec3 p ) {
@@ -38,7 +39,7 @@ SDFResult D( vec3 p ) {
 	float l20 = length(U + vec2(2, 0) - uv);
 
 	// 魚のウロコ模様を作成
-	float k = 0.75 + 0.25 * sin(uTime);
+	float k = 0.75 + 0.25;
 	id += l20 < k ? vec3(2, 0, 0) : l11 < k ? vec3(1, 1, 0) : l10 < k ? vec3(1, 0, 0) : l01 < k ? vec3(0, 1, 0) : vec3(0);
 	vec2 C = id.xy * mat2(1, 0.5, 0, 1.73/2.0); // 最近傍ノードの中心
 
@@ -148,9 +149,24 @@ void main( void ) {
 
 	#include <rm_out_obj>
 
+	// ノイズテクスチャを取得
+	vec2 noiseUV = rayPos.xz * 2.0 + 0.5;
+	vec4 n1 = texture(uNoiseTex, noiseUV);
+	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0);
+	vec4 n3 = texture(uNoiseTex, noiseUV * 8.0);
+
 	// たいやきの焼き色
-	outColor.xyz = vec3( 0.9, 0.6, 0.3 );
-	outRoughness = 0.6;
+	vec3 baseColor = vec3( 0.9, 0.6, 0.3 );
+
+	// ノイズで焼き色のバリエーションを追加
+	float colorVariation = n1.r * 0.3 + n2.r * 0.1;
+	outColor.xyz = baseColor * (0.85 + colorVariation);
+
+	// ノイズでroughnessを調整（焼きムラを表現）
+	outRoughness = 0.1 + n1.r * 0.3 + n2.r * 0.2;
+
+	// ノイズでノーマルを微調整（表面の質感）
+	outNormal = normalize(outNormal + n3.xyz * 0.3);
 
 	// 距離に応じた減衰
 	outColor.xyz *= smoothstep( 1.5, 0.4, length( rayPos ) );
