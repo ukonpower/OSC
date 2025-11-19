@@ -44,14 +44,16 @@ SDFResult D( vec3 p ) {
 
 	vec2 tileUv = uv - C;
 
-	float bodyHeightMap = 0.0;
-	bodyHeightMap = -tileUv.x * 1.5;
-
 	vec3 bodyP = pp;
 	bodyP.x += 0.08;
 	bodyP.x *= 0.7;
 	float bodyPos = smoothstep( 0.3, -0.4, bodyP.x );
 	bodyP.z += bodyPos * 0.1;
+
+	float bodyHeightMap = 0.0;
+	bodyHeightMap = -tileUv.x * 1.5;
+	bodyHeightMap *= smoothstep( 0.195, 0.2, length( bodyP.xz * vec2( 1.0, 0.7 ) + vec2( 0.27, 0.05 ) ) ); 
+	
 	float d = sdRoundedCylinder( bodyP, 0.12, 0.04 + bodyHeightMap * 0.012, 0.01 );
 
 
