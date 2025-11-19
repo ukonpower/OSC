@@ -9,6 +9,8 @@
 
 #include <rm_h>
 
+uniform mat4 uModelViewMatrix;
+
 uniform float uTime;
 uniform float uTimeE;
 uniform sampler2D uNoiseTex;
@@ -118,6 +120,7 @@ SDFResult D( vec3 p ) {
 
 }
 
+#include <subsurface>
 #include <rm_normal>
 
 void main( void ) {
@@ -150,26 +153,26 @@ void main( void ) {
 	#include <rm_out_obj>
 
 	// ノイズテクスチャを取得
-	vec2 noiseUV = rayPos.xz * 2.0 + 0.5;
+	vec2 noiseUV = rayPos.xz * 1.0 + 0.5;
 	vec4 n1 = texture(uNoiseTex, noiseUV);
 	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0);
 	vec4 n3 = texture(uNoiseTex, noiseUV * 8.0);
 
+	// subsurface scatteringを計算
+	float sss = subsurface( rayPos, normalize( (vec4( 0.0, 1.0, 0.0, 0.0 ) * uModelViewMatrix).xyz ), 0.1);
+
 	// たいやきの焼き色
-	vec3 baseColor = vec3( 0.9, 0.6, 0.3 );
+	vec3 baseColor = vec3( 0.9, 0.55, 0.2 );
 
 	// ノイズで焼き色のバリエーションを追加
-	float colorVariation = n1.r * 0.3 + n2.r * 0.1;
-	outColor.xyz = baseColor * (0.85 + colorVariation);
+	outColor.xyz = mix( baseColor.xyz, vec3( 1.0, 0.2, 0.0 ), n1.r * 0.2 + n2.r * 0.1 );
+	outColor.xyz = mix( outColor.xyz, vec3( 0.6, 0.2, 0.0 ), smoothstep( 0.1, 0.01, abs( rayPos.y ) ) * 0.5 );
 
 	// ノイズでroughnessを調整（焼きムラを表現）
 	outRoughness = 0.1 + n1.r * 0.3 + n2.r * 0.2;
 
 	// ノイズでノーマルを微調整（表面の質感）
 	outNormal = normalize(outNormal + n3.xyz * 0.3);
-
-	// 距離に応じた減衰
-	outColor.xyz *= smoothstep( 1.5, 0.4, length( rayPos ) );
 
 	#include <frag_out>
 
