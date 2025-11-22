@@ -201,6 +201,14 @@
 			]
 		},
 		{
+			"uuid": "06a4626d",
+			"components": [
+				{
+					"name": "SushiGeta"
+				}
+			]
+		},
+		{
 			"uuid": "768002b3",
 			"components": [
 				{

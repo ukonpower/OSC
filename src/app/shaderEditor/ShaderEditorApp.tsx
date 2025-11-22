@@ -1,20 +1,19 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
-import { useCallback, useEffect, useState } from 'react';
-
 import { MouseMenu } from 'orengine/components/composites/MouseMenu';
 import { MouseMenuContext } from 'orengine/components/composites/MouseMenu/Context/MouseMenuContext';
 import { useMouseMenuContext } from 'orengine/components/composites/MouseMenu/Hooks/useMouseMenuContext';
 import { SplitContainer } from 'orengine/components/composites/SplitContainer';
 import { useLayout } from 'orengine/hooks/useLayout';
+import { useCallback, useEffect, useState } from 'react';
 
+import { loadComponent, loadShader, SHADER_COMPONENTS, ShaderComponent, ShaderFile } from './componentList';
 import { CodePane } from './components/CodePane';
 import { ComponentList } from './components/ComponentList';
 import { PreviewPane } from './components/PreviewPane';
 import { SettingsBar } from './components/SettingsBar';
 import { Toolbar } from './components/Toolbar';
 import { UniformEditor } from './components/UniformEditor';
-import { loadComponent, loadShader, SHADER_COMPONENTS, ShaderComponent, ShaderFile } from './componentList';
 
 import './styles/shaderEditor.scss';
 
@@ -200,7 +199,7 @@ export const ShaderEditorApp = () => {
 
 		}
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 	}, [] );
 
 	// コンポーネント選択時の処理
