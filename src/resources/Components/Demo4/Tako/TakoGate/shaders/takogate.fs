@@ -115,19 +115,7 @@ void main( void ) {
 	bool hit = false;
 
 	// レイマーチング
-	for( int i = 0; i < 64; i++ ) {
-
-		dist = D( rayPos );
-		rayPos += dist.d * rayDir * 0.7;
-
-		if( dist.d < 0.001 ) {
-
-			hit = true;
-			break;
-
-		}
-
-	}
+	#include <rm_loop,64,0.001,0.7>
 
 	if( !hit ) discard;
 

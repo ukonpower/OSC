@@ -39,19 +39,7 @@ void main( void ) {
 
 	bool hit = false;
 
-	for( int i = 0; i < 32; i++ ) {
-
-		dist = D( rayPos );
-		rayPos += dist.d * rayDir * 1.0;
-
-		if( dist.d < 0.001 ) {
-
-			hit = true;
-			break;
-
-		}
-
-	}
+	#include <rm_loop,32,0.001,1.0>
 
 	if( !hit ) discard;
 

@@ -106,19 +106,7 @@ void main( void ) {
 	SDFResult dist;
 	bool hit = false;
 
-	for( int i = 0; i < 64; i++ ) {
-
-		dist = D( rayPos );
-		rayPos += dist.d * rayDir * 1.0;
-
-		if( dist.d < 0.001 ) {
-
-			hit = true;
-			break;
-
-		}
-
-	}
+	#include <rm_loop,64,0.001,1.0>
 
 	if( !hit ) discard;
 
