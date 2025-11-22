@@ -1,11 +1,11 @@
 import * as MXP from 'maxpower';
 
-import tsuriZaoFrag from './shaders/tsuriZao.fs';
+import basicFrag from './shaders/basic.fs';
 
 import { globalUniforms } from '~/globals';
 
 /**
- * TsuriZao - 釣り竿のレイマーチングコンポーネント
+ * TsuriZao - 釣り竿コンポーネント
  */
 export class TsuriZao extends MXP.Component {
 
@@ -15,7 +15,7 @@ export class TsuriZao extends MXP.Component {
 
 		super( param );
 
-		// geometry
+		// geometry - 円錐状の釣り竿
 		const geo = new MXP.CylinderGeometry( {
 			radiusTop: 0.02,
 			radiusBottom: 0.05,
@@ -26,7 +26,7 @@ export class TsuriZao extends MXP.Component {
 
 		// material
 		const mat = new MXP.Material( {
-			frag: MXP.hotGet( 'tsuriZaoFrag', tsuriZaoFrag ),
+			frag: MXP.hotGet( 'tsuriZaoFrag', basicFrag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
 		} );
 
@@ -37,7 +37,7 @@ export class TsuriZao extends MXP.Component {
 		// HMR
 		if ( import.meta.hot ) {
 
-			import.meta.hot.accept( './shaders/tsuriZao.fs', ( module ) => {
+			import.meta.hot.accept( './shaders/basic.fs', ( module ) => {
 
 				if ( module ) {
 

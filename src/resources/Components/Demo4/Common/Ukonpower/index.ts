@@ -22,7 +22,7 @@ export class Ukonpower extends MXP.Component {
 		// geometry
 
 		const geo = new MXP.SphereGeometry( {
-			radius: 1
+			radius: 0.5
 		} );
 
 		// material
@@ -36,26 +36,24 @@ export class Ukonpower extends MXP.Component {
 			geometry: geo, material: mat
 		} );
 
-		// 足を追加
-		const ashiCount = 6;
-		for ( let i = 0; i < ashiCount; i ++ ) {
+		// 手足を追加（手2本、足2本）
+		const limbs = [
+			// 左手
+			{ pos: [ - 0.37, 0.00, - 0.1 ], rot: [ Math.PI / 2.0, 0, 0.5 ] },
+			// 右手
+			{ pos: [ 0.37, 0.00, - 0.1 ], rot: [ Math.PI / 2.0, 0, - 0.5 ] },
+			// 左足
+			{ pos: [ - 0.2, - 0.3, 0 ], rot: [ Math.PI / 2 * 0.9, 0, 0 ] },
+			// 右足
+			{ pos: [ 0.2, - 0.3, 0 ], rot: [ Math.PI / 2 * 0.9, 0, 0 ] }
+		];
+
+		for ( const limb of limbs ) {
 
 			const ashi = new MXP.Entity();
-			const angle = ( i / ashiCount ) * Math.PI * 2;
-			const radius = 0.5;
 
-			ashi.position.set(
-				Math.cos( angle ) * radius,
-				- 0.8,
-				Math.sin( angle ) * radius
-			);
-
-			ashi.quaternion.setFromEuler( new GLP.Euler(
-				Math.PI * 0.1,
-				0,
-				Math.sin( angle ) * 0.3
-			) );
-
+			ashi.position.set( limb.pos[ 0 ], limb.pos[ 1 ], limb.pos[ 2 ] );
+			ashi.quaternion.setFromEuler( new GLP.Euler( limb.rot[ 0 ], limb.rot[ 1 ], limb.rot[ 2 ] ) );
 			ashi.scale.set( 0.3, 0.3, 0.3 );
 
 			ashi.addComponent( UKPAshi );
