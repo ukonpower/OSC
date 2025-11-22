@@ -14,6 +14,7 @@ export class Ukonpower extends MXP.Component {
 
 	private mesh: MXP.Mesh;
 	private ashiEntities: MXP.Entity[] = [];
+	private legInitialRotX: number[] = [];
 
 	constructor( param: MXP.ComponentParams ) {
 
@@ -39,17 +40,18 @@ export class Ukonpower extends MXP.Component {
 		// 手足を追加（手2本、足2本）
 		const limbs = [
 			// 左手
-			{ pos: [ - 0.37, 0.00, - 0.1 ], rot: [ Math.PI / 2.0, 0, 0.5 ] },
+			{ pos: [ - 0.31, 0.00, - 0.2 ], rot: [ Math.PI / 2.0, 0, 0.5 ] },
 			// 右手
-			{ pos: [ 0.37, 0.00, - 0.1 ], rot: [ Math.PI / 2.0, 0, - 0.5 ] },
+			{ pos: [ 0.31, 0.00, - 0.2 ], rot: [ Math.PI / 2.0, 0, - 0.5 ] },
 			// 左足
-			{ pos: [ - 0.2, - 0.3, 0 ], rot: [ Math.PI / 2 * 0.9, 0, 0 ] },
+			{ pos: [ - 0.2, - 0.3, - 0.1 ], rot: [ Math.PI / 2 * 0.9, 0, 0 ] },
 			// 右足
-			{ pos: [ 0.2, - 0.3, 0 ], rot: [ Math.PI / 2 * 0.9, 0, 0 ] }
+			{ pos: [ 0.2, - 0.3, - 0.1 ], rot: [ Math.PI / 2 * 0.9, 0, 0 ] }
 		];
 
-		for ( const limb of limbs ) {
+		for ( let i = 0; i < limbs.length; i ++ ) {
 
+			const limb = limbs[ i ];
 			const ashi = new MXP.Entity();
 
 			ashi.position.set( limb.pos[ 0 ], limb.pos[ 1 ], limb.pos[ 2 ] );
@@ -59,6 +61,13 @@ export class Ukonpower extends MXP.Component {
 			ashi.addComponent( UKPAshi );
 			this.entity.add( ashi );
 			this.ashiEntities.push( ashi );
+
+			// 足（インデックス2, 3）の初期X軸回転を保存
+			if ( i >= 2 ) {
+
+				this.legInitialRotX.push( limb.rot[ 0 ] );
+
+			}
 
 		}
 
@@ -79,6 +88,22 @@ export class Ukonpower extends MXP.Component {
 			} );
 
 		}
+
+	}
+
+	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+
+		const time = event.timeCode;
+
+		// 左足（インデックス2）
+		const leftLeg = this.ashiEntities[ 2 ];
+		const leftRotX = this.legInitialRotX[ 0 ] + Math.sin( time * 3 ) * 0.3;
+		leftLeg.quaternion.setFromEuler( new GLP.Euler( leftRotX, 0, 0 ) );
+
+		// 右足（インデックス3）- 位相をずらす
+		const rightLeg = this.ashiEntities[ 3 ];
+		const rightRotX = this.legInitialRotX[ 1 ] + Math.sin( time * 3 + Math.PI ) * 0.3;
+		rightLeg.quaternion.setFromEuler( new GLP.Euler( rightRotX, 0, 0 ) );
 
 	}
 

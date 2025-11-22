@@ -28,7 +28,7 @@ export class UKPAshi extends MXP.Component {
 
 		// Cylinder部分
 
-		const h = 1.5;
+		const h = 1.1;
 
 		const cylinderGeo = new MXP.CylinderGeometry( {
 			height: h,

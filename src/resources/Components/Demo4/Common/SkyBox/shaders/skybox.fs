@@ -4,7 +4,7 @@
 #include <noise_value>
 #include <rotate>
 
-uniform float uTimeE;
+uniform float uTime;
 uniform float uAspectRatio;
 uniform sampler2D uNoiseTex;
 uniform vec4 uState;
@@ -26,7 +26,7 @@ void main( void ) {
 		);
 
 		// ノイズで雲のような質感を追加
-		vec4 n = texture( uNoiseTex, vUv * 0.3 + uTimeE * 0.01 );
+		vec4 n = texture( uNoiseTex, vUv * 0.3 + uTime * 0.01 );
 		skyColor += vec3( 0.2 ) * smoothstep( 0.5, 0.7, n.x );
 
 		outEmission = skyColor * 1.5;
