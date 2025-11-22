@@ -19,6 +19,24 @@ SDFResult D( vec3 p ) {
 
 	vec2 d = vec2( sdSphere( pp, bodyRadius ), 0.0 );
 
+	// eye
+	// 黒い丸
+	float eyeSize = 0.01;
+	float eyeDepth = 0.02;
+	vec3 eyeOffset = vec3( 0.05, 0.2, -0.33 );
+
+	// 左目
+	vec3 leftEyePos = pp - eyeOffset * vec3( 1.0, 1.0, 1.0 );
+	float leftEye = sdSphere( leftEyePos, eyeSize ) - eyeDepth;
+
+	// 右目
+	vec3 rightEyePos = pp - eyeOffset * vec3( -1.0, 1.0, 1.0 );
+	float rightEye = sdSphere( rightEyePos, eyeSize ) - eyeDepth;
+
+	// 目を本体に結合（matを2.0に設定）
+	vec2 eyes = vec2( min( leftEye, rightEye ), 2.0 );
+	d = d.x < eyes.x ? d : eyes;
+
 	return SDFResult(
 		d.x,
 		p,
@@ -73,6 +91,12 @@ void main( void ) {
 		// ソース
 		outColor.xyz = vec3( 0.15, 0.03, 0.00 );
 		outRoughness = 0.1;
+
+	} else if( dist.mat == 2.0 ) {
+
+		// 目（黒い丸）
+		outColor.xyz = vec3( 0.02 );
+		outRoughness = 0.2;
 
 	}
 
