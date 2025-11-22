@@ -4,6 +4,7 @@ import oceanFrag from './shaders/ocean.fs';
 import oceanVert from './shaders/ocean.vs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 /**
  * Ocean - 海洋レンダリングコンポーネント
@@ -27,6 +28,8 @@ export class Ocean extends MXP.Component {
 				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
 			} )
 		} );
+
+		bindBlidgeUniform( this.mesh.entity, this.mesh );
 
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {
