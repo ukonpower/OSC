@@ -15,7 +15,9 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	vec2 d = vec2( sdBox( pp, vec3( 0.5, 0.5, 0.5 ) ) - 0.005, 0.0 );
+	vec3 n = noiseCyc( pp * vec3( 5.0,1.0, 1.0 ) );
+
+	vec2 d = vec2( sdBox( pp, vec3( 0.5, 0.49 - n.x * 0.0005, 0.49 - n.x * 0.0005 ) ) - 0.005, 0.0 );
 
 	return SDFResult(
 		d.x,
@@ -37,7 +39,7 @@ void main( void ) {
 
 	bool hit = false;
 
-	for( int i = 0; i < 128; i++ ) {
+	for( int i = 0; i < 32; i++ ) {
 
 		dist = D( rayPos );
 		rayPos += dist.d * rayDir * 1.0;
@@ -58,29 +60,27 @@ void main( void ) {
 	#include <rm_out_obj>
 
 	// アスファルト質感
-	vec3 worldPos = rayPos;
+	vec3 uvSide = rayPos.xyz * 3.0;
 
 	// ノイズテクスチャから複数スケールでサンプリング
-	float n1 = texture( uNoiseTex, worldPos.xz * 0.5 ).r;
-	float n2 = texture( uNoiseTex, worldPos.xz * 2.0 ).g;
-	float n3 = texture( uNoiseTex, worldPos.xz * 8.0 ).b;
-	float n4 = texture( uNoiseTex, worldPos.xz * 0.1 ).r;
+	vec4 n1 = vec4( 
+		fbm( uvSide * vec3( 40.0, 1.0, 7.0) ),
+		fbm( uvSide * vec3( 20.0, 1.0, 7.0) + 100.0 ),
+		fbm( uvSide * vec3( 10.0, 1.0, 1.0 ) * 30.0 + 30.0 ),
+		fbm( uvSide * vec3( 10.0, 1.0, 1.0 ) * 2.0 + 30.0 )
+	);
 
 	// アスファルトのベースカラー（暗いグレー）
-	vec3 asphaltColor = vec3( 0.15, 0.14, 0.13 );
+	vec3 asphaltColor = mix( vec3( 0.5 ), vec3( 0.1 ), n1.x * smoothstep( -0.5, 0.7, rayPos.y ) * ( 1.0 - dot( outNormal, vec3( 0.0, 1.0, 0.0 ) ) ) );
 
-	// 粗い骨材の模様
-	float aggregate = n1 * 0.3 + n2 * 0.5 + n3 * 0.2;
-	asphaltColor += vec3( aggregate * 0.1 - 0.05 );
-
-	// 小石のような明るいスポット
-	float spots = smoothstep( 0.6, 0.8, n2 ) * n3;
-	asphaltColor += vec3( spots * 0.15 );
+	asphaltColor = mix( asphaltColor, vec3( 0.0 ), smoothstep( 0.2, -0.3, rayPos.y + smoothstep( 0.3, 1.0, n1.y ) * 0.3 ));
+	
+	asphaltColor = mix( asphaltColor, vec3( 0.1 ), n1.z * dot( outNormal, vec3( 0.0, 1.0, 0.0 ) ) * n1.w);
 
 	outColor.xyz = asphaltColor;
 
 	// ラフネス（アスファルトは粗い）
-	outRoughness = 0.7 + n2 * 0.2;
+	outRoughness = 0.7;
 
 	outColor.xyz *= smoothstep( 1.5, 0.4, length( rayPos ) );
 
