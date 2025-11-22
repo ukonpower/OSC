@@ -20,9 +20,12 @@ export class Taiyaki extends MXP.Component {
 		// geometry - たいやきの形状に合わせてSphereを使用
 
 		const geo = new MXP.CubeGeometry( {
-			width: 1,
+			width: 0.4,
 			height: 1,
 			depth: 1,
+			segmentsDepth: 8,
+			segmentsHeight: 8,
+			segmentsWidth: 2,
 		} );
 
 		// material

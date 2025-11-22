@@ -118,7 +118,7 @@ SDFResult D( vec3 p ) {
 		d,
 		p,
 		0.0,
-		vec4( 0.0 )
+		vec4( pp, 0.0 )
 	);
 
 }
@@ -156,7 +156,7 @@ void main( void ) {
 	#include <rm_out_obj>
 
 	// ノイズテクスチャを取得
-	vec2 noiseUV = rayPos.xz * 1.0 + 0.5;
+	vec2 noiseUV = dist.matparam.xz * 1.0 + 0.5;
 	vec4 n1 = texture(uNoiseTex, noiseUV);
 	vec4 n2 = texture(uNoiseTex, noiseUV * 4.0);
 	vec4 n3 = texture(uNoiseTex, noiseUV * 8.0);
@@ -169,7 +169,7 @@ void main( void ) {
 
 	// ノイズで焼き色のバリエーションを追加
 	outColor.xyz = mix( baseColor.xyz, vec3( 1.0, 0.2, 0.0 ), n1.r * 0.2 + n2.r * 0.1 );
-	outColor.xyz = mix( outColor.xyz, vec3( 0.6, 0.2, 0.0 ), smoothstep( 0.1, 0.01, abs( rayPos.y ) ) * 0.5 );
+	outColor.xyz = mix( outColor.xyz, vec3( 0.6, 0.2, 0.0 ), smoothstep( 0.1, 0.01, abs( dist.matparam.y ) ) * 0.5 );
 
 	// ノイズでroughnessを調整（焼きムラを表現）
 	outRoughness = 0.1 + n1.r * 0.3 + n2.r * 0.2;
