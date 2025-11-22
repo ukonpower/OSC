@@ -20,6 +20,9 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
+	pp.yz *= rotate( PI / 2.0 );
+	pp.xy *= rotate( PI / 2.0 );
+
 	// 六角形座標系でのパターン計算（魚のウロコ柄）
 	// 参考: https://www.shadertoy.com/view/4dKXz3
 	vec2 uv = pp.xz * 15.0 * 1.73 / 2.0; // スケール調整
