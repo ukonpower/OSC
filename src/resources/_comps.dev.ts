@@ -25,7 +25,6 @@ import { IkuraGunKan } from './Components/Demo4/Ikura/IkuraGunKan/index.ts';
 import { Kyuuri } from './Components/Demo4/Ikura/Kyuuri/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
-import { WaterPillar } from './Components/Demo4/Maguro/WaterPillar/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
 import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
@@ -80,7 +79,6 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		Maguro: {
 			Maguro,
 			Sashimi,
-			WaterPillar,
 		},
 		Music,
 		Salmon: {
