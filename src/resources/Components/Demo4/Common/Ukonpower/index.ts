@@ -1,6 +1,7 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
+import { TsuriZao } from '../Tsuri/TsuriZao';
 import { UKPAshi } from '../UKPAshi';
 
 import ukonpowerFrag from './shaders/ukonpower.fs';
@@ -70,6 +71,13 @@ export class Ukonpower extends MXP.Component {
 			}
 
 		}
+
+		// 釣り竿を両手の中央に追加
+		const tsuriZaoEntity = new MXP.Entity();
+		tsuriZaoEntity.position.set( 0, 0, - 0.4 );
+		tsuriZaoEntity.quaternion.setFromEuler( new GLP.Euler( -Math.PI / 4, 0, 0 ) );
+		tsuriZaoEntity.addComponent( TsuriZao );
+		this.entity.add( tsuriZaoEntity );
 
 		// HMR
 
