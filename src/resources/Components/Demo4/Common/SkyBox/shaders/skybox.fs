@@ -34,8 +34,8 @@ void main( void ) {
 	#else
 
 		// デフォルトスカイボックス
-		outColor *= 0.0;
-		outEmission = vec3( 1.0 );
+		outColor *= 1.0;
+		outEmission = vec3( 2.0 );
 		outEmission *= uState.x;
 
 	#endif

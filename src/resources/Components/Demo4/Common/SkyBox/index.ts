@@ -20,7 +20,7 @@ export class SkyBox extends MXP.Component {
 
 		// material
 		this.material = new MXP.Material( {
-			phase: [ "forward", "envMap" ],
+			phase: [ "deferred", "envMap" ],
 			frag: MXP.hotGet( 'skyboxFrag', skyboxFrag ),
 			cullFace: false,
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.tex )
