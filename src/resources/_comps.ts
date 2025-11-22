@@ -15,7 +15,7 @@ import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGrap
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
 import { TableStage } from './Components/Demo4/Common/TableStage/index.ts';
-import { Ukopower } from './Components/Demo4/Common/Ukopower/index.ts';
+import { Ukonpower } from './Components/Demo4/Common/Ukonpower/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
 import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
 import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
@@ -56,7 +56,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Shari,
 			SkyBox,
 			TableStage,
-			Ukopower,
+			Ukonpower,
 		},
 		Ikura: {
 			IkuraFluids,

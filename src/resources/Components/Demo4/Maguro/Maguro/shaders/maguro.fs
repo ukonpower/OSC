@@ -154,7 +154,7 @@ void main( void ) {
 
 	bool hit = false;
 
-	for( int i = 0; i < 128; i++ ) {
+	for( int i = 0; i < 64; i++ ) {
 
 		dist = D( rayPos );
 		rayPos += dist.d * rayDir * 0.7;

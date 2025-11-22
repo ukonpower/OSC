@@ -1,14 +1,14 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import ukopowerFrag from './shaders/ukopower.fs';
+import ukonpowerFrag from './shaders/ukonpower.fs';
 
 import { globalUniforms } from '~/globals';
 
 /**
- * Ukopower - レイマーチング球体コンポーネント
+ * Ukonpower - レイマーチング球体コンポーネント
  */
-export class Ukopower extends MXP.Component {
+export class Ukonpower extends MXP.Component {
 
 	private mesh: MXP.Mesh;
 
@@ -25,7 +25,7 @@ export class Ukopower extends MXP.Component {
 		// material
 
 		const mat = new MXP.Material( {
-			frag: MXP.hotGet( 'ukopowerFrag', ukopowerFrag ),
+			frag: MXP.hotGet( 'ukonpowerFrag', ukonpowerFrag ),
 			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
 		} );
 
@@ -37,11 +37,11 @@ export class Ukopower extends MXP.Component {
 
 		if ( import.meta.hot ) {
 
-			import.meta.hot.accept( './shaders/ukopower.fs', ( module ) => {
+			import.meta.hot.accept( './shaders/ukonpower.fs', ( module ) => {
 
 				if ( module ) {
 
-					mat.frag = MXP.hotUpdate( 'ukopowerFrag', module.default );
+					mat.frag = MXP.hotUpdate( 'ukonpowerFrag', module.default );
 
 					mat.requestUpdate();
 

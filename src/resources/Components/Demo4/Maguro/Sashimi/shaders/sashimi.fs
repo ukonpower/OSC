@@ -78,7 +78,7 @@ void main( void ) {
 	bool hit = false;
 
 	// レイマーチングループ
-	for( int i = 0; i < 128; i++ ) {
+	for( int i = 0; i < 32; i++ ) {
 
 		dist = D( rayPos );
 		rayPos += dist.d * rayDir * 0.7;

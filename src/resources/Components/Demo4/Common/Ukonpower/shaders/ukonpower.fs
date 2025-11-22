@@ -14,19 +14,10 @@ SDFResult D( vec3 p ) {
 	vec3 pp = p;
 
 	// たこ焼き風の球体を描画
-	float baseRadius = 0.40 + noiseValue( pp * 5.0 ) * 0.055;
+	float baseRadius = 0.40 + noiseValue( pp * 5.0 ) * 0.01;
 	float bodyRadius = baseRadius + fbm( pp * 20.0 ) * 0.01;
 
 	vec2 d = vec2( sdSphere( pp, bodyRadius ), 0.0 );
-
-	// ソース部分
-	float sauceRadius = baseRadius * 0.95;
-
-	float round = atan( pp.x, pp.z );
-	float wave = ( noiseValue( vec3( round * 2.0 ) ) ) * sin( round );
-
-	sauceRadius += smoothstep( 0.0, 0.4, pp.y * 1.3 + wave * 0.3 ) * 0.05 + smoothstep( 0.2, 0.8, noiseValue( pp * 7.0 ) ) * 0.001;
-	d = opAdd( d, vec2( sdSphere( pp, sauceRadius ), 1.0 ) );
 
 	return SDFResult(
 		d.x,
@@ -48,7 +39,7 @@ void main( void ) {
 
 	bool hit = false;
 
-	for( int i = 0; i < 128; i++ ) {
+	for( int i = 0; i < 32; i++ ) {
 
 		dist = D( rayPos );
 		rayPos += dist.d * rayDir * 1.0;

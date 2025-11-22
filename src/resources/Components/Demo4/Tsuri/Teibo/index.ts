@@ -22,6 +22,9 @@ export class Teibo extends MXP.Component {
 			width: 1,
 			height: 1,
 			depth: 1,
+			segmentsDepth: 8,
+			segmentsHeight: 8,
+			segmentsWidth: 8,
 		} );
 
 		// material
