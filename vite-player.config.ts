@@ -115,7 +115,8 @@ export default defineConfig( {
 	plugins: [
 		ResourceManager(),
 		ShaderLoader( {
-			skipMinifier: false
+			skipMinifier: false,
+			embedFilePath: false
 		} ),
 		visualizer( {
 			template: 'list',

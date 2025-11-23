@@ -9,6 +9,7 @@ const exec = util.promisify( childProcess.exec );
 
 export interface ShaderLoaderOptions {
 	skipMinifier?: boolean;
+	embedFilePath?: boolean;
 }
 
 export const ShaderLoader = ( userOptions?: ShaderLoaderOptions ): Plugin => {
@@ -31,7 +32,9 @@ export const ShaderLoader = ( userOptions?: ShaderLoaderOptions ): Plugin => {
 
 	// ShaderMinifierをスキップするかどうかはuserOptionsで制御
 	// デフォルトはfalse（minifierを実行する）
-	const skip = userOptions?.skipMinifier ?? false;
+	const skip = userOptions && userOptions.skipMinifier || false;
+	// ファイルパス情報を埋め込むかどうか（デフォルトはtrue）
+	const embedFilePath = userOptions && userOptions.embedFilePath !== false;
 
 	return {
 		name: 'shaderLoader',
@@ -150,12 +153,17 @@ export const ShaderLoader = ( userOptions?: ShaderLoaderOptions ): Plugin => {
 			// skip minifier if requested or on Mac
 			if ( skip ) {
 
-				// 開発環境でファイルパス情報をシェーダーソースの先頭にコメントとして埋め込む
-				const relativeId = id.replace( process.cwd(), '' ).replace( /^\//, '' );
-				const codeWithPath = `// @shader-file: ${relativeId}\n${code}`;
+				// ファイルパス情報をシェーダーソースの先頭にコメントとして埋め込む
+				let outputCode = code;
+				if ( embedFilePath ) {
+
+					const relativeId = id.replace( process.cwd(), '' ).replace( /^\//, '' );
+					outputCode = `// @shader-file: ${relativeId}\n${code}`;
+
+				}
 
 				return {
-					code: `export default ${JSON.stringify( codeWithPath )};`,
+					code: `export default ${JSON.stringify( outputCode )};`,
 					map: { mappings: '' }
 				};
 
@@ -191,10 +199,18 @@ export const ShaderLoader = ( userOptions?: ShaderLoaderOptions ): Plugin => {
 
 			}
 
-			const compiledCode = await fs.promises.readFile( outputFilePath, 'utf-8' );
+			let compiledCode = await fs.promises.readFile( outputFilePath, 'utf-8' );
 
 			fs.unlinkSync( inputFilePath );
 			fs.unlinkSync( outputFilePath );
+
+			// minify後もファイルパス情報を埋め込む
+			if ( embedFilePath ) {
+
+				const relativeId = id.replace( process.cwd(), '' ).replace( /^\//, '' );
+				compiledCode = `// @shader-file: ${relativeId}\n${compiledCode}`;
+
+			}
 
 			return {
 				code: `export default ${JSON.stringify( compiledCode )};`,
