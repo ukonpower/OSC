@@ -2,11 +2,15 @@ const moduleCache = new Map<any, any>();
 
 export const hotGet = ( key: string, module: any ) => {
 
-	const cache = moduleCache.get( key );
+	if ( process.env.NODE_ENV === 'development' ) {
 
-	if ( cache ) return cache;
+		const cache = moduleCache.get( key );
 
-	moduleCache.set( key, module );
+		if ( cache ) return cache;
+
+		moduleCache.set( key, module );
+
+	}
 
 	return module;
 
@@ -14,7 +18,11 @@ export const hotGet = ( key: string, module: any ) => {
 
 export const hotUpdate = ( key: string, newModule: any ) => {
 
-	moduleCache.set( key, newModule );
+	if ( process.env.NODE_ENV === 'development' ) {
+
+		moduleCache.set( key, newModule );
+
+	}
 
 	return newModule;
 

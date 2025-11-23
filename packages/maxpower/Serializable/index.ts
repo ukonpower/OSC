@@ -1,3 +1,6 @@
+import path from 'path';
+import { deserialize } from 'v8';
+
 import * as GLP from 'glpower';
 import { ValueOpt } from 'orengine/components/composites/Value';
 import { SelectList } from 'orengine/components/primitives/Input/InputSelect';
@@ -83,7 +86,7 @@ export class Serializable extends GLP.EventEmitter {
 
 	public serialize( event?: SerializeFieldSerializeEvent ): SerializeField {
 
-		event = event || { mode: "view" };
+		const ev = event || { mode: "view" };
 
 		const serialized: SerializeField = {};
 
@@ -91,7 +94,7 @@ export class Serializable extends GLP.EventEmitter {
 
 			const opt = this.getFieldOpt( k );
 
-			if ( event.mode == "export" && opt ) {
+			if ( ev.mode == "export" && opt ) {
 
 				if ( opt ) {
 
@@ -101,84 +104,92 @@ export class Serializable extends GLP.EventEmitter {
 
 			}
 
-			serialized[ k ] = field.get( event );
+			serialized[ k ] = field.get( ev );
 
 		} );
 
 		return serialized;
 
+
 	}
 
 	public serializeToDirectory() {
 
-		const toDirectory = ( serialized: SerializeField ) => {
+		if ( process.env.NODE_ENV === 'development' ) {
 
-			const result: SerializeFieldDirectory = {
-				type: "folder",
-				childs: {},
-				opt: {}
-			};
+			const toDirectory = ( serialized: SerializeField ) => {
 
-			const keys = Object.keys( serialized );
+				const result: SerializeFieldDirectory = {
+					type: "folder",
+					childs: {},
+					opt: {}
+				};
 
-			for ( let i = 0; i < keys.length; i ++ ) {
+				const keys = Object.keys( serialized );
 
-				const key = keys[ i ];
-				const opt = this.getFieldOpt( key );
+				for ( let i = 0; i < keys.length; i ++ ) {
 
-				if ( ! key ) continue;
+					const key = keys[ i ];
+					const opt = this.getFieldOpt( key );
 
-				let target:SerializeFieldDirectory = result;
+					if ( ! key ) continue;
 
-				const splitKeys = key.split( '/' );
+					let target:SerializeFieldDirectory = result;
 
-				for ( let j = 0; j < splitKeys.length; j ++ ) {
+					const splitKeys = key.split( '/' );
 
-					const splitedKey = splitKeys[ j ];
+					for ( let j = 0; j < splitKeys.length; j ++ ) {
 
-					if ( ! splitedKey ) continue;
+						const splitedKey = splitKeys[ j ];
 
-					if ( target.type == "value" ) continue;
+						if ( ! splitedKey ) continue;
 
-					if ( ! target.childs[ splitedKey ] ) {
+						if ( target.type == "value" ) continue;
 
-						if ( j == splitKeys.length - 1 ) {
+						if ( ! target.childs[ splitedKey ] ) {
 
-							target.childs[ splitedKey ] = {
-								type: "value",
-								value: null,
-								opt
-							};
+							if ( j == splitKeys.length - 1 ) {
 
-						} else {
+								target.childs[ splitedKey ] = {
+									type: "value",
+									value: null,
+									opt
+								};
 
-							target.childs[ splitedKey ] = {
-								type: "folder",
-								childs: {},
-								opt
-							};
+							} else {
+
+								target.childs[ splitedKey ] = {
+									type: "folder",
+									childs: {},
+									opt
+								};
+
+							}
 
 						}
 
+						target = target.childs[ splitedKey ];
+
 					}
 
-					target = target.childs[ splitedKey ];
+					if ( target.type == "value" ) {
+
+						target.value = serialized[ key ] as any;
+
+					}
 
 				}
 
-				if ( target.type == "value" ) {
+				return result;
 
-					target.value = serialized[ key ] as any;
+			};
 
-				}
 
-			}
+			return toDirectory( this.serialize() );
 
-			return result;
+		}
 
-		};
-
-		return toDirectory( this.serialize() );
+		return { type: "folder" as const, childs: {}, opt: {} };
 
 	}
 
@@ -212,9 +223,13 @@ export class Serializable extends GLP.EventEmitter {
 
 	public exportEditor() {
 
-		this.serialize( {
-			mode: "export"
-		} );
+		if ( process.env.NODE_ENV === 'development' ) {
+
+			this.serialize( {
+				mode: "export"
+			} );
+
+		}
 
 	}
 

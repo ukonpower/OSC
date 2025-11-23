@@ -72,7 +72,7 @@ export class Camera extends Component {
 
 		} else {
 
-			this.projectionMatrix.orthographic( this.orthWidth, this.orthHeight, this.near, this.far );
+			// this.projectionMatrix.orthographic( this.orthWidth, this.orthHeight, this.near, this.far );
 
 		}
 
