@@ -31,8 +31,6 @@ void main( void ) {
 	// カメラ位置からワールド空間でレイを初期化
 	#include <rm_ray_screen>
 
-	SDFResult dist;
-	bool hit = false;
 
 	// レイマーチング
 	#include <rm_loop,128,0.001,1.0>

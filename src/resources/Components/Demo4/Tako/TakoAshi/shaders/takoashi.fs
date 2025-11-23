@@ -54,8 +54,6 @@ void main( void ) {
 	#include <frag_in>
 	#include <rm_ray_obj>
 
-	SDFResult dist;
-	bool hit = false;
 
 	// レイマーチング
 	#include <rm_loop,32,0.001,0.7>

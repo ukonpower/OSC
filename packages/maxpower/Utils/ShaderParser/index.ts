@@ -21,11 +21,11 @@ import lighting_env from './shaderParts/lighting_env.part.glsl';
 import lighting_forwardIn from './shaderParts/lighting_forwardIn.part.glsl';
 import lighting_light from './shaderParts/lighting_light.part.glsl';
 import raymarch_h from './shaderParts/raymarch_h.part.glsl';
+import raymarch_loop from './shaderParts/raymarch_loop.part.glsl';
 import raymarch_out_obj from './shaderParts/raymarch_out_obj.part.glsl';
 import raymarch_ray_object from './shaderParts/raymarch_ray_object.part.glsl';
 import raymarch_ray_screen from './shaderParts/raymarch_ray_screen.part.glsl';
 import uniformTime from './shaderParts/uniform_time.part.glsl';
-import raymarch_loop from './shaderParts/raymarch_loop.part.glsl';
 import vert_h from './shaderParts/vert_h.part.glsl';
 import vert_in from './shaderParts/vert_in.part.glsl';
 import vert_out from './shaderParts/vert_out.part.glsl';
@@ -85,6 +85,8 @@ export const shaderInclude = ( shader: string ) => {
 		[ "subsurface", subsurface ],
 	] );
 
+	let loop = false;
+
 	shader = shader.replace( /#include\s?<([\S]*)>/g, ( _: string, body: string ) => {
 
 		let str = "";
@@ -98,11 +100,21 @@ export const shaderInclude = ( shader: string ) => {
 
 		module = module.replace( /#define GLSLIFY .*\n/g, "" );
 
+		if ( params.length > 0 ) {
+
+			loop = true;
+
+		}
+
 		// パラメータの置換: ARG1, ARG2, ARG3, ...
-		for ( let i = 0; i < params.length; i++ ) {
+		for ( let i = 0; i < params.length; i ++ ) {
+
 			if ( params[ i ] ) {
+
 				module = module.replace( new RegExp( 'ARG' + ( i + 1 ), 'g' ), params[ i ] );
+
 			}
+
 		}
 
 		str += module;
@@ -110,6 +122,13 @@ export const shaderInclude = ( shader: string ) => {
 		return str;
 
 	} );
+
+	if ( loop ) {
+
+		console.log( shader );
+
+	}
+
 
 	return shader;
 

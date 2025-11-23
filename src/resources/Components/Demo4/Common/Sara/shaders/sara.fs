@@ -53,8 +53,6 @@ void main( void ) {
 	#include <frag_in>
 	#include <rm_ray_obj>
 
-	SDFResult dist;
-	bool hit = false;
 
 	// レイマーチングループ
 	#include <rm_loop,128,0.001,1.0>

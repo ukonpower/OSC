@@ -53,7 +53,7 @@ export default defineConfig( {
 		react(),
 		OREngineFileSystemPlugin(),
 		ShaderLoader( {
-			skipMinifier: true,
+			skipMinifier: false,
 		} ),
 		ResourceManager(),
 		ShaderComponentRegistry(),
