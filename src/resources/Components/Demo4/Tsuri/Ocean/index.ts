@@ -1,7 +1,7 @@
 import * as MXP from 'maxpower';
 
 import oceanFrag from './shaders/ocean.fs';
-import oceanVert from './shaders/ocean.vs';
+import screenVert from '~/resources/shaders/screen.vs';
 
 import { globalUniforms } from '~/globals';
 import { bindBlidgeUniform } from '~/shortcuts';
@@ -22,8 +22,8 @@ export class Ocean extends MXP.Component {
 		this.mesh = this._entity.addComponent( MXP.Mesh, {
 			geometry: new MXP.CubeGeometry( { width: 2, height: 2 } ),
 			material: new MXP.Material( {
-				phase: [ "deferred" ], // Deferredレンダリングパイプラインを使用
-				vert: MXP.hotGet( "oceanVert", oceanVert ),
+				phase: [ "deferred" ],
+				vert: screenVert,
 				frag: MXP.hotGet( "oceanFrag", oceanFrag ),
 				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
 			} )
@@ -33,17 +33,6 @@ export class Ocean extends MXP.Component {
 
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {
-
-			import.meta.hot.accept( './shaders/ocean.vs', ( module ) => {
-
-				if ( module ) {
-
-					this.mesh.material.vert = MXP.hotUpdate( 'oceanVert', module.default );
-					this.mesh.material.requestUpdate();
-
-				}
-
-			} );
 
 			import.meta.hot.accept( './shaders/ocean.fs', ( module ) => {
 

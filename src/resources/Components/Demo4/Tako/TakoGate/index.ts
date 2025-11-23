@@ -2,7 +2,7 @@ import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
 import takoGateFrag from './shaders/takogate.fs';
-import takoGateVert from './shaders/takogate.vs';
+import screenVert from '~/resources/shaders/screen.vs';
 
 import { globalUniforms } from '~/globals';
 import { bindBlidgeUniform } from '~/shortcuts';
@@ -27,7 +27,7 @@ export class TakoGate extends MXP.Component {
 			geometry: new MXP.PlaneGeometry( { width: 2, height: 2 } ),
 			material: new MXP.Material( {
 				phase: [ "deferred" ],
-				vert: MXP.hotGet( "takoGateVert", takoGateVert ),
+				vert: screenVert,
 				frag: MXP.hotGet( "takoGateFrag", takoGateFrag ),
 				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution, {
 					uPrevState: {
@@ -42,17 +42,6 @@ export class TakoGate extends MXP.Component {
 
 		// ホットリロード対応
 		if ( import.meta.hot ) {
-
-			import.meta.hot.accept( './shaders/takogate.vs', ( module ) => {
-
-				if ( module ) {
-
-					this.mesh.material.vert = MXP.hotUpdate( 'takoGateVert', module.default );
-					this.mesh.material.requestUpdate();
-
-				}
-
-			} );
 
 			import.meta.hot.accept( './shaders/takogate.fs', ( module ) => {
 

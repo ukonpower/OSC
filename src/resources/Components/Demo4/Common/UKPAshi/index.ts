@@ -2,7 +2,7 @@ import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
 import basicFrag from './shaders/basic.fs';
-import basicVert from './shaders/basic.vs';
+import basicVert from '~/resources/shaders/basic.vs';
 
 import { globalUniforms } from '~/globals';
 
@@ -56,18 +56,6 @@ export class UKPAshi extends MXP.Component {
 		// HMR
 
 		if ( import.meta.hot ) {
-
-			import.meta.hot.accept( './shaders/basic.vs', ( module ) => {
-
-				if ( module ) {
-
-					mat.vert = MXP.hotUpdate( 'ukpashiVert', module.default );
-
-					mat.requestUpdate();
-
-				}
-
-			} );
 
 			import.meta.hot.accept( './shaders/basic.fs', ( module ) => {
 

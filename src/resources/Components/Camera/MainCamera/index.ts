@@ -3,7 +3,6 @@ import * as MXP from 'maxpower';
 import { Engine } from 'orengine';
 
 import { OrbitControls } from '../../_DevOnly/OrbitControls';
-import { ShakeViewer } from '../../ObjectControls/CameraShake';
 import { LookAt } from '../../ObjectControls/LookAt';
 import { BLidgeClient } from '../../Utilities/BLidgeClient';
 
@@ -75,7 +74,6 @@ export class MainCamera extends MXP.Component {
 		this.renderCamera = this.entity.addComponent( MXP.RenderCamera, { gl: gl } );
 		this._renderTarget = this.renderCamera.renderTarget;
 		this._lookAt = this.entity.addComponent( LookAt );
-		this.entity.addComponent( ShakeViewer );
 
 		emitter.emit( "createdCamera", [ this.renderCamera ] );
 
