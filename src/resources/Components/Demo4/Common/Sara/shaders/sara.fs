@@ -9,6 +9,11 @@
 
 #include <rm_h>
 
+// インスタンスIDを受け取る
+in vec4 vId;
+in vec4 vId2;
+in mat4 vTransformMatrix;
+
 // 皿のSDF関数（参考URLのGYOZA形状を皿形状に変換）
 SDFResult D( vec3 p ) {
 
@@ -16,6 +21,8 @@ SDFResult D( vec3 p ) {
 
 	// スケール調整（皿の大きさ）
 	pp *= 0.8;
+
+	pp.y -= 0.02;
 
 	// 皿の中心の穴の半径
 	float holeRadius = 0.3;
@@ -28,7 +35,7 @@ SDFResult D( vec3 p ) {
 	// 皿の底面（回転させて厚みを持たせる）
 	vec2 q1 = q;
 	q1.xy *= rotate( -1.4 );
-	q1.y += 0.1;
+	q1.y += 0.21;
 	d = opAdd( d, vec2( sdBox( vec3( q1, 0.0 ), vec3( 0.01, 0.28, 1.0 )), 0.0 ) );
 
 	// 皿の縁（上部のリム）
