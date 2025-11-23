@@ -39,7 +39,7 @@ export class Light extends ShadowMapCamera {
 		// shadow
 
 		this.castShadow = true;
-		this._shadowMapSize = new GLP.Vector( 1024, 1024 );
+		this._shadowMapSize = new GLP.Vector( 256, 256 );
 
 		// directional
 

@@ -13,10 +13,12 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	vec2 d = vec2( sdBox( pp, vec3( 0.5, 0.5, 0.5) ) - 0.005, 0.0 );
+	vec3 mainP = pp;
+	float d = vec2( sdBox( mainP, vec3( 0.5, 0.5, 0.5) ) - 0.005, 0.0 );
+	
 
 	return SDFResult(
-		d.x,
+		d,
 		p,
 		d.y,
 		vec4(0.0)
