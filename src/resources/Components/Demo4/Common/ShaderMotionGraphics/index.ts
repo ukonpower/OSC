@@ -1,11 +1,11 @@
 import * as MXP from 'maxpower';
 
-import basicVert from '~/resources/shaders/basic.vs';
 
 import ikuraBGScreenFrag from './shaders/ikuraBGScreen.fs';
 import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
 import salmonBGScreenFrag from './shaders/salmonBGScreen.fs';
 import takoBGScreenFrag from './shaders/takoBGScreen.fs';
+import smgVert from './shaders/smg.vs';
 
 import { globalUniforms } from '~/globals';
 import { bindBlidgeUniform } from '~/shortcuts';
@@ -29,10 +29,10 @@ export class ShaderMotionGraphics extends MXP.Component {
 
 		// シェーダーリストを定義（名前をキーにしたMap）
 		this.shaders = new Map( [
-			[ "ikuraBGScreen", { vert: basicVert, frag: ikuraBGScreenFrag } ],
-			[ "maguroBGScreen", { vert: basicVert, frag: maguroBGScreenFrag } ],
-			[ "salmonBGScreen", { vert: basicVert, frag: salmonBGScreenFrag } ],
-			[ "takoBGScreen", { vert: basicVert, frag: takoBGScreenFrag } ],
+			[ "ikuraBGScreen", { vert: smgVert, frag: ikuraBGScreenFrag } ],
+			[ "maguroBGScreen", { vert: smgVert, frag: maguroBGScreenFrag } ],
+			[ "salmonBGScreen", { vert: smgVert, frag: salmonBGScreenFrag } ],
+			[ "takoBGScreen", { vert: smgVert, frag: takoBGScreenFrag } ],
 		] );
 
 		this.shaderName = "ikuraBGScreen";

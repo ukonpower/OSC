@@ -1,20 +1,12 @@
-import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
-import { ShaderEditorSkybox } from './Components/_DevOnly/ShaderEditorSkybox/index.ts';
-import { InstancedMesh } from './Components/_Templates/InstancedMesh/index.ts';
-import { Particles } from './Components/_Templates/Particles/index.ts';
-import { RaymarchCube } from './Components/_Templates/RaymarchCube/index.ts';
-import { RaymarchScreen } from './Components/_Templates/RaymarchScreen/index.ts';
-import { RaymarchTransparent } from './Components/_Templates/RaymarchTransparent/index.ts';
-import { ShaderMesh } from './Components/_Templates/ShaderMesh/index.ts';
-import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { Bloom } from './Components/Camera/MainCamera/PostProcess/Bloom/index.ts';
 import { Blur } from './Components/Camera/MainCamera/PostProcess/Blur/index.ts';
 import { ColorGrading } from './Components/Camera/MainCamera/PostProcess/ColorGrading/index.ts';
-import { Finalize } from './Components/Camera/MainCamera/PostProcess/Finalize/index.ts';
 import { FXAA } from './Components/Camera/MainCamera/PostProcess/FXAA/index.ts';
+import { Finalize } from './Components/Camera/MainCamera/PostProcess/Finalize/index.ts';
 import { Glitch } from './Components/Camera/MainCamera/PostProcess/Glitch/index.ts';
 import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/OverlayMixer/index.ts';
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
+import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
@@ -24,8 +16,8 @@ import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
 import { TableStage } from './Components/Demo4/Common/TableStage/index.ts';
 import { TsuriZao } from './Components/Demo4/Common/Tsuri/TsuriZao/index.ts';
-import { Ukonpower } from './Components/Demo4/Common/Ukonpower/index.ts';
 import { UKPAshi } from './Components/Demo4/Common/UKPAshi/index.ts';
+import { Ukonpower } from './Components/Demo4/Common/Ukonpower/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
 import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
 import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
@@ -51,6 +43,14 @@ import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
 import { TextureGenerator } from './Components/Texture/TextureGenerator/index.ts';
 import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
+import { OrbitControls } from './Components/_DevOnly/OrbitControls/index.ts';
+import { ShaderEditorSkybox } from './Components/_DevOnly/ShaderEditorSkybox/index.ts';
+import { InstancedMesh } from './Components/_Templates/InstancedMesh/index.ts';
+import { Particles } from './Components/_Templates/Particles/index.ts';
+import { RaymarchCube } from './Components/_Templates/RaymarchCube/index.ts';
+import { RaymarchScreen } from './Components/_Templates/RaymarchScreen/index.ts';
+import { RaymarchTransparent } from './Components/_Templates/RaymarchTransparent/index.ts';
+import { ShaderMesh } from './Components/_Templates/ShaderMesh/index.ts';
 
 export const COMPONENTLIST: {[key: string]: any} = {
 	Camera: {
