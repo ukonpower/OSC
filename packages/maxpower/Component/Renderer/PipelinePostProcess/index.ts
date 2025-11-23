@@ -344,7 +344,7 @@ export class PipelinePostProcess {
 		// ssr
 
 		this._ssr.uniforms.uGbufferPos.value = renderTarget.gBuffer.textures[ 0 ];
-		this._ssr.uniforms.uGbufferNormal.value = renderTarget.normalBuffer.textures[ 0 ];
+		this._ssr.uniforms.uGbufferNormal.value = renderTarget.gBuffer.textures[ 1 ];
 		this._ssr.uniforms.uSceneTex.value = renderTarget.forwardBuffer.textures[ 0 ];
 
 		// ssComposite

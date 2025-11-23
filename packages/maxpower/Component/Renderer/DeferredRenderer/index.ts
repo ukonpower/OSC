@@ -3,7 +3,6 @@ import * as MXP from 'maxpower';
 import { Engine } from 'orengine';
 
 import deferredShadingFrag from './shaders/deferredShading.fs';
-import normalSelectorFrag from './shaders/normalSelector.fs';
 import ssaoFrag from './shaders/ssao.fs';
 import ssaoBlurFrag from './shaders/ssaoBlur.fs';
 
@@ -44,10 +43,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 
 	public postprocess: MXP.PostProcess;
 
-	// nromal buffer
-
-	public normalSelector_: MXP.PostProcessPass;
-
 	// ssao
 
 	public ssao: MXP.PostProcessPass;
@@ -75,29 +70,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 				type: "1f"
 			}
 		};
-
-		// normal buffer
-
-		const normalSelector = new MXP.PostProcessPass( gl, {
-			name: 'normalSelector',
-			frag: normalSelectorFrag,
-			renderTarget: null,
-			uniforms: MXP.UniformsUtils.merge( {
-				uNormalTexture: {
-					value: null,
-					type: '1i'
-				},
-				uPosTexture: {
-					value: null,
-					type: '1i'
-				},
-				uSelectorTexture: {
-					value: null,
-					type: '1i'
-				},
-			} ),
-			passThrough: true,
-		} );
 
 		// ssao
 
@@ -231,7 +203,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 		} );
 
 		this.postprocess = new MXP.PostProcess( { passes: [
-			normalSelector,
 			ssao,
 			ssaoBlurH,
 			ssaoBlurV,
@@ -247,8 +218,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 
 		this.ssaoBlur = ssaoBlurH;
 		this.ssaoBlurUni = ssaoBlurUni;
-
-		this.normalSelector_ = normalSelector;
 
 		if ( import.meta.hot ) {
 
@@ -294,13 +263,7 @@ export class DeferredRenderer extends GLP.EventEmitter {
 
 		for ( let i = 0; i < renderTarget.gBuffer.textures.length; i ++ ) {
 
-			let tex = renderTarget.gBuffer.textures[ i ];
-
-			if ( i === 1 ) {
-
-				tex = renderTarget.normalBuffer.textures[ 0 ];
-
-			}
+			const tex = renderTarget.gBuffer.textures[ i ];
 
 			this.shading.uniforms[ "sampler" + i ] = this.ssao.uniforms[ "sampler" + i ] = {
 				type: '1i',
@@ -312,12 +275,7 @@ export class DeferredRenderer extends GLP.EventEmitter {
 		this.ssaoBlur.uniforms.uDepthTexture.value = renderTarget.gBuffer.textures[ 0 ];
 		this.shading.renderTarget = renderTarget.shadingBuffer;
 
-		this.normalSelector_.renderTarget = renderTarget.normalBuffer;
-		this.normalSelector_.uniforms.uNormalTexture.value = renderTarget.gBuffer.textures[ 1 ];
-		this.normalSelector_.uniforms.uPosTexture.value = renderTarget.gBuffer.textures[ 0 ];
-		this.normalSelector_.uniforms.uSelectorTexture.value = renderTarget.gBuffer.textures[ 3 ];
-
-		this.ssaoBlurUni.uNormalTexture.value = renderTarget.normalBuffer.textures[ 0 ];
+		this.ssaoBlurUni.uNormalTexture.value = renderTarget.gBuffer.textures[ 1 ];
 
 	}
 

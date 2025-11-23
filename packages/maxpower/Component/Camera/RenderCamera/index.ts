@@ -8,7 +8,6 @@ export type RenderCameraTarget = {
 	shadingBuffer: GLP.GLPowerFrameBuffer,
 	forwardBuffer: GLP.GLPowerFrameBuffer,
 	uiBuffer: GLP.GLPowerFrameBuffer,
-	normalBuffer: GLP.GLPowerFrameBuffer,
 }
 
 type DofParams = {
@@ -66,12 +65,7 @@ export class RenderCamera extends Camera {
 		uiBuffer.setDepthTexture( this._gBuffer.depthTexture );
 		uiBuffer.setTexture( [ new GLP.GLPowerTexture( gl ) ] );
 
-		const normalBuffer = new GLP.GLPowerFrameBuffer( gl );
-		normalBuffer.setTexture( [
-			new GLP.GLPowerTexture( gl ).setting( { type: gl.FLOAT, internalFormat: gl.RGBA32F, format: gl.RGBA, magFilter: gl.NEAREST, minFilter: gl.NEAREST } )
-		] );
-
-		this._renderTarget = { gBuffer: this._gBuffer, shadingBuffer: shadingBuffer, forwardBuffer, uiBuffer, normalBuffer };
+		this._renderTarget = { gBuffer: this._gBuffer, shadingBuffer: shadingBuffer, forwardBuffer, uiBuffer };
 
 		this.resize( this._resolution );
 
@@ -108,7 +102,6 @@ export class RenderCamera extends Camera {
 			this._renderTarget.shadingBuffer.setSize( this._resolution );
 			this._renderTarget.forwardBuffer.setSize( this._resolution );
 			this._renderTarget.uiBuffer.setSize( this._resolution );
-			this._renderTarget.normalBuffer.setSize( this._resolution );
 
 		}
 
