@@ -849,7 +849,7 @@ vec2 music( float t ) {
 	beat16 = beat( mt, 16.0 );
 
 	// Section F-1: Climax - フルパワー、全要素が揃う (4小節)
-	if( isin( beat16.y, 0.0, 4.0 ) ) {
+	if( isin( beat16.y, 0.0, 3.0 ) ) {
 
 		// Climaxではコード進行を倍速に
 		g_chordSpeed = 1.0;
@@ -881,7 +881,7 @@ vec2 music( float t ) {
 	}
 
 	// Section F-2: Outro - 静かに終わる (2小節)
-	if( isin( beat16.y, 4.0, 6.0 ) ) {
+	if( isin( beat16.y, 3.0, 5.0 ) ) {
 
 		// 通常速度に戻す
 		g_chordSpeed = 1.0;
