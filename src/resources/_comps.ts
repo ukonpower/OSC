@@ -26,6 +26,9 @@ import { Kyuuri } from './Components/Demo4/Ikura/Kyuuri/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
+import { KaitenSushi } from './Components/Demo4/Party/KaitenSushi/index.ts';
+import { SushiGeta } from './Components/Demo4/Party/SushiGeta/index.ts';
+import { SushiSara } from './Components/Demo4/Party/SushiSara/index.ts';
 import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
 import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
@@ -36,9 +39,7 @@ import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { Ocean } from './Components/Demo4/Tsuri/Ocean/index.ts';
 import { Taiyaki } from './Components/Demo4/Tsuri/Taiyaki/index.ts';
 import { Teibo } from './Components/Demo4/Tsuri/Teibo/index.ts';
-import { ShakeViewer } from './Components/ObjectControls/CameraShake/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
-import { ObjectRotate } from './Components/ObjectControls/ObjectRotate/index.ts';
 import { TextureGenerator } from './Components/Texture/TextureGenerator/index.ts';
 import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
@@ -73,6 +74,11 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Sashimi,
 		},
 		Music,
+		Party: {
+			KaitenSushi,
+			SushiGeta,
+			SushiSara,
+		},
 		Salmon: {
 			Onigiri,
 			Salmon,
@@ -91,9 +97,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		},
 	},
 	ObjectControls: {
-		ShakeViewer,
 		LookAt,
-		ObjectRotate,
 	},
 	Texture: {
 		TextureGenerator,
