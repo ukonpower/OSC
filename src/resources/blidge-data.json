@@ -33,31 +33,26 @@
       22
     ],
     [
-      27,
       28
     ],
     [
-      29,
-      30
+      31,
+      32
     ],
     [
-      31
+      33,
+      34
     ],
     [
-      32,
-      33
+      35
     ],
     [
-      34,
-      35,
-      36
+      36,
+      37
     ],
     [
-      37,
       38,
-      39
-    ],
-    [
+      39,
       40
     ],
     [
@@ -66,89 +61,85 @@
       43
     ],
     [
-      44,
-      45,
-      46
+      44
     ],
     [
+      45,
+      46,
       47
     ],
     [
-      48
+      48,
+      49,
+      50
     ],
     [
-      49,
-      50,
       51
     ],
     [
-      52,
+      52
+    ],
+    [
       53,
-      54
+      54,
+      55
     ],
     [
-      55,
       56,
-      57
-    ],
-    [
+      57,
       58
     ],
     [
-      59
-    ],
-    [
-      60
-    ],
-    [
+      59,
+      60,
       61
     ],
     [
-      62,
-      63,
+      62
+    ],
+    [
+      63
+    ],
+    [
       64
     ],
     [
-      65,
+      65
+    ],
+    [
       66,
-      67
+      67,
+      68
     ],
     [
-      68,
-      69
-    ],
-    [
+      69,
       70,
+      71
+    ],
+    [
+      72,
       73
     ],
     [
-      71,
-      72
+      74,
+      77
     ],
     [
-      73,
-      74
-    ],
-    [
-      73
-    ],
-    [
-      75
-    ],
-    [
+      75,
       76
     ],
     [
+      77,
       78
+    ],
+    [
+      77
     ],
     [
       79
     ],
     [
       80
-    ],
-    [
-      81
     ],
     [
       82
@@ -169,17 +160,24 @@
       87
     ],
     [
-      88,
-      89,
+      88
+    ],
+    [
+      89
+    ],
+    [
       90
     ],
     [
-      91,
-      92,
-      93
+      91
     ],
     [
-      94
+      92
+    ],
+    [
+      93,
+      94,
+      95
     ],
     [
       96,
@@ -187,14 +185,22 @@
       98
     ],
     [
-      99,
-      100
+      99
     ],
     [
-      101
+      101,
+      102,
+      103
     ],
     [
-      102
+      104,
+      105
+    ],
+    [
+      106
+    ],
+    [
+      107
     ]
   ],
   "fcurves": [
@@ -1768,6 +1774,103 @@
             375.0,
             1.0,
             445.0,
+            1.0
+          ]
+        ]
+      ]
+    },
+    {
+      "axis": "x",
+      "k": [
+        [
+          1,
+          [
+            108.0,
+            0.0
+          ]
+        ],
+        [
+          1,
+          [
+            675.0,
+            1.0
+          ]
+        ]
+      ]
+    },
+    {
+      "axis": "x",
+      "k": [
+        [
+          2,
+          [
+            258.0,
+            0.0,
+            223.0,
+            0.0,
+            293.0,
+            0.0
+          ]
+        ],
+        [
+          2,
+          [
+            105.0,
+            1.0,
+            328.0,
+            1.0,
+            398.0,
+            1.0
+          ]
+        ]
+      ]
+    },
+    {
+      "axis": "x",
+      "k": [
+        [
+          1,
+          [
+            108.0,
+            0.0
+          ]
+        ],
+        [
+          1,
+          [
+            675.0,
+            1.0
+          ]
+        ],
+        [
+          1,
+          [
+            1969.0,
+            0.0
+          ]
+        ]
+      ]
+    },
+    {
+      "axis": "x",
+      "k": [
+        [
+          2,
+          [
+            255.0,
+            0.0,
+            220.0,
+            0.0,
+            290.0,
+            0.0
+          ]
+        ],
+        [
+          1,
+          [
+            105.0,
+            1.0,
+            325.0,
             1.0
           ]
         ]
@@ -3670,6 +3773,25 @@
         [
           1,
           [
+            411.0,
+            1.0
+          ]
+        ],
+        [
+          1,
+          [
+            2342.0,
+            0.0
+          ]
+        ]
+      ]
+    },
+    {
+      "axis": "x",
+      "k": [
+        [
+          1,
+          [
             977.0,
             1.0
           ]
@@ -3748,23 +3870,35 @@
         [
           2,
           [
-            255.0,
+            263.0,
             0.0,
-            219.667,
+            223.667,
             0.0,
-            290.333,
+            302.333,
             0.0
           ]
         ],
         [
-          2,
+          1,
           [
-            106.0,
-            1.0,
-            325.667,
-            1.0,
-            396.333,
+            118.0,
+            0.085,
+            336.132,
+            0.078
+          ]
+        ],
+        [
+          1,
+          [
+            324.0,
             1.0
+          ]
+        ],
+        [
+          1,
+          [
+            2048.0,
+            0.141
           ]
         ]
       ]
@@ -3784,6 +3918,13 @@
           [
             1.0,
             0.0
+          ]
+        ],
+        [
+          1,
+          [
+            2035.0,
+            1.0
           ]
         ]
       ]
@@ -4404,7 +4545,7 @@
           -0.0
         ],
         "animation": {
-          "hide": 33
+          "hide": 34
         },
         "children": [
           {
@@ -4422,7 +4563,7 @@
             ],
             "visible": false,
             "animation": {
-              "hide": 17
+              "hide": 18
             }
           },
           {
@@ -4439,7 +4580,7 @@
               29.83
             ],
             "animation": {
-              "hide": 43
+              "hide": 45
             },
             "children": [
               {
@@ -4693,7 +4834,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 34
+          "hide": 35
         },
         "children": [
           {
@@ -4721,10 +4862,10 @@
               }
             },
             "animation": {
-              "uState": 9
+              "uState": 10
             },
             "uniforms": {
-              "uState": 9
+              "uState": 10
             }
           },
           {
@@ -4751,10 +4892,10 @@
               }
             },
             "animation": {
-              "uState": 10
+              "uState": 11
             },
             "uniforms": {
-              "uState": 10
+              "uState": 11
             }
           },
           {
@@ -4782,12 +4923,12 @@
               }
             },
             "animation": {
-              "position": 14,
-              "rotation": 15,
-              "uState": 16
+              "position": 15,
+              "rotation": 16,
+              "uState": 17
             },
             "uniforms": {
-              "uState": 16
+              "uState": 17
             }
           },
           {
@@ -4815,12 +4956,12 @@
               }
             },
             "animation": {
-              "position": 11,
-              "rotation": 12,
-              "uState": 13
+              "position": 12,
+              "rotation": 13,
+              "uState": 14
             },
             "uniforms": {
-              "uState": 13
+              "uState": 14
             }
           },
           {
@@ -4863,7 +5004,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 35
+          "hide": 36
         },
         "children": [
           {
@@ -4885,8 +5026,8 @@
               5.625
             ],
             "animation": {
-              "position": 7,
-              "rotation": 8
+              "position": 8,
+              "rotation": 9
             }
           },
           {
@@ -4923,13 +5064,13 @@
               }
             },
             "animation": {
-              "position": 18,
-              "rotation": 19,
-              "hide": 21,
-              "uState": 20
+              "position": 19,
+              "rotation": 20,
+              "hide": 22,
+              "uState": 21
             },
             "uniforms": {
-              "uState": 20
+              "uState": 21
             }
           },
           {
@@ -4952,10 +5093,10 @@
               }
             },
             "animation": {
-              "uState": 22
+              "uState": 23
             },
             "uniforms": {
-              "uState": 22
+              "uState": 23
             }
           },
           {
@@ -5019,7 +5160,7 @@
               5.99
             ],
             "animation": {
-              "hide": 42
+              "hide": 44
             }
           },
           {
@@ -5041,7 +5182,7 @@
               5.346
             ],
             "animation": {
-              "hide": 41
+              "hide": 43
             }
           },
           {
@@ -5073,6 +5214,9 @@
           16.458,
           6.4
         ],
+        "animation": {
+          "hide": 37
+        },
         "children": [
           {
             "name": "KaitenSushi",
@@ -5246,10 +5390,10 @@
               }
             },
             "animation": {
-              "uState": 46
+              "uState": 48
             },
             "uniforms": {
-              "uState": 46
+              "uState": 48
             }
           },
           {
@@ -5277,10 +5421,10 @@
               }
             },
             "animation": {
-              "uState": 46
+              "uState": 48
             },
             "uniforms": {
-              "uState": 46
+              "uState": 48
             }
           }
         ]
@@ -5295,7 +5439,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 36
+          "hide": 38
         },
         "children": [
           {
@@ -5350,11 +5494,11 @@
               }
             },
             "animation": {
-              "position": 29,
-              "uState": 30
+              "position": 30,
+              "uState": 31
             },
             "uniforms": {
-              "uState": 30
+              "uState": 31
             }
           },
           {
@@ -5376,12 +5520,12 @@
               6.226
             ],
             "animation": {
-              "position": 25,
-              "rotation": 26,
-              "uState": 31
+              "position": 26,
+              "rotation": 27,
+              "uState": 32
             },
             "uniforms": {
-              "uState": 31
+              "uState": 32
             }
           },
           {
@@ -5409,11 +5553,11 @@
               }
             },
             "animation": {
-              "position": 27,
-              "uState": 28
+              "position": 28,
+              "uState": 29
             },
             "uniforms": {
-              "uState": 28
+              "uState": 29
             }
           },
           {
@@ -5436,10 +5580,10 @@
               }
             },
             "animation": {
-              "uState": 32
+              "uState": 33
             },
             "uniforms": {
-              "uState": 32
+              "uState": 33
             }
           }
         ]
@@ -5454,7 +5598,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 37
+          "hide": 39
         },
         "children": [
           {
@@ -5477,10 +5621,10 @@
               }
             },
             "animation": {
-              "uState": 24
+              "uState": 25
             },
             "uniforms": {
-              "uState": 24
+              "uState": 25
             }
           },
           {
@@ -5511,10 +5655,10 @@
               }
             },
             "animation": {
-              "uState": 47
+              "uState": 49
             },
             "uniforms": {
-              "uState": 47
+              "uState": 49
             }
           },
           {
@@ -5541,10 +5685,10 @@
               }
             },
             "animation": {
-              "uState": 48
+              "uState": 50
             },
             "uniforms": {
-              "uState": 48
+              "uState": 50
             }
           },
           {
@@ -5566,7 +5710,7 @@
               13.213
             ],
             "animation": {
-              "hide": 50
+              "hide": 52
             }
           },
           {
@@ -5588,7 +5732,7 @@
               10.71
             ],
             "animation": {
-              "hide": 49
+              "hide": 51
             }
           }
         ]
@@ -5603,7 +5747,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 38
+          "hide": 40
         },
         "children": [
           {
@@ -5621,10 +5765,10 @@
               }
             },
             "animation": {
-              "uState": 23
+              "uState": 24
             },
             "uniforms": {
-              "uState": 23
+              "uState": 24
             }
           },
           {
@@ -5665,8 +5809,8 @@
               5.456
             ],
             "animation": {
-              "position": 44,
-              "rotation": 45
+              "position": 46,
+              "rotation": 47
             }
           },
           {
@@ -5734,14 +5878,14 @@
         "custom_properties": {
           "yoake": {
             "type": "float",
-            "value": 1.0
+            "value": 0.141
           }
         },
         "animation": {
-          "uState": 39
+          "uState": 41
         },
         "uniforms": {
-          "uState": 39
+          "uState": 41
         }
       },
       {
@@ -5772,20 +5916,19 @@
         }
       },
       {
-        "name": "Spot.002",
-        "uuid": "69181f20",
+        "name": "Spot.001",
+        "uuid": "3f8ac3fd",
         "position": [
           -0.436,
-          42.487,
-          64.127
+          31.409,
+          7.075
         ],
         "type": "light",
         "rotation": [
-          0.888,
+          -0.005,
           0.0,
-          -0.0
+          0.0
         ],
-        "visible": false,
         "custom_properties": {
           "testtest": {
             "type": "float",
@@ -5796,7 +5939,9 @@
             "value": 1.0
           }
         },
-        "animation": {},
+        "animation": {
+          "light": 7
+        },
         "param": {
           "shadow_map": false,
           "color": {
@@ -5804,7 +5949,7 @@
             "y": 1.0,
             "z": 1.0
           },
-          "intensity": 0.935,
+          "intensity": 0.002,
           "type": "spot",
           "angle": 2.119,
           "blend": 1.0,
@@ -5812,12 +5957,96 @@
         }
       },
       {
+        "name": "Spot.002",
+        "uuid": "cc736d54",
+        "position": [
+          -0.436,
+          -158.07,
+          436.502
+        ],
+        "type": "light",
+        "rotation": [
+          0.965,
+          0.0,
+          -0.0
+        ],
+        "param": {
+          "shadow_map": false,
+          "color": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "intensity": 1.13,
+          "type": "spot",
+          "angle": 1.864,
+          "blend": 1.0,
+          "distance": 361.31
+        }
+      },
+      {
+        "name": "Spot.003",
+        "uuid": "3bf2b50c",
+        "position": [
+          -12.028,
+          1.836,
+          22.171
+        ],
+        "type": "light",
+        "rotation": [
+          1.249,
+          -0.718,
+          3.062
+        ],
+        "param": {
+          "shadow_map": false,
+          "color": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "intensity": 1.26,
+          "type": "spot",
+          "angle": 0.785,
+          "blend": 0.15,
+          "distance": 99.97
+        }
+      },
+      {
+        "name": "Spot.004",
+        "uuid": "26373a5a",
+        "position": [
+          10.375,
+          1.836,
+          22.171
+        ],
+        "type": "light",
+        "rotation": [
+          1.249,
+          0.696,
+          3.062
+        ],
+        "param": {
+          "shadow_map": false,
+          "color": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "intensity": 1.26,
+          "type": "spot",
+          "angle": 0.785,
+          "blend": 0.15,
+          "distance": 99.97
+        }
+      },
+      {
         "name": "Sun",
         "uuid": "130e1f31",
         "position": [
-          48.666,
-          38.875,
-          6.106
+          66.81,
+          52.478,
+          116.473
         ],
         "type": "light",
         "rotation": [
@@ -5825,8 +6054,9 @@
           1.119,
           -0.425
         ],
+        "visible": false,
         "animation": {
-          "hide": 40
+          "hide": 42
         },
         "param": {
           "shadow_map": true,
