@@ -23,7 +23,7 @@ void main( void ) {
 	#include <vert_in>
 
 	// 上に積み重ねる
-	vec3 instancePos = vec3( 0.0, id.x * 5.0, 0.0 );
+	vec3 instancePos = vec3( 0.0, id.x * 1.6, 0.0 );
 
 	// マトリックス生成関数を使用してマトリックスを構築
 	mat4 translateMatrix = makeTranslation(instancePos);

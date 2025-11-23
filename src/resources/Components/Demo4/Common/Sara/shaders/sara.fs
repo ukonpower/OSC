@@ -58,28 +58,54 @@ void main( void ) {
 	#include <frag_in>
 	#include <rm_ray_obj>
 
+	// vTransformMatrixの逆行列を計算してレイの座標をインスタンス空間に変換
+	mat4 invMatrix = inverse(vTransformMatrix);
+	vec3 localRayPos = (invMatrix * vec4(rayPos, 1.0)).xyz;
+	vec3 localRayDir = normalize((invMatrix * vec4(rayDir, 0.0)).xyz);
+
+	SDFResult dist;
+	bool hit = false;
 
 	// レイマーチングループ
-	#include <rm_loop,128,0.001,1.0>
+	for( int i = 0; i < 128; i++ ) {
+
+		dist = D( localRayPos );
+		localRayPos += dist.d * localRayDir * 1.0;
+
+		if( dist.d < 0.001 ) {
+
+			hit = true;
+			break;
+
+		}
+
+	}
 
 	if( !hit ) discard;
 
-	// 法線計算
-	outNormal = N( rayPos, 0.01 );
+	// 法線計算（ローカル空間）
+	vec3 localNormal = N( localRayPos, 0.01 );
+
+	// 法線をワールド空間に変換
+	outNormal = normalize((transpose(invMatrix) * vec4(localNormal, 0.0)).xyz);
+
+	// ワールド空間の位置を計算
+	rayPos = (vTransformMatrix * vec4(localRayPos, 1.0)).xyz;
 
 	#include <rm_out_obj>
 
 	// 皿の色（白基調）
-	outColor.xyz = vec3( 1.0, 0.98, 0.95 );
+	outColor.xyz = mix( 
+		vec3( 0.1, 0.15, 0.3 ),
+		vec3( 0.8, 0.7, 0.6 ),
+		smoothstep( 0.35, 0.3, length( localRayPos ) )
+	);
 
 	// ラフネス（陶器の質感）
 	outRoughness = 0.3;
 
 	// メタリック値（非金属）
 	outMetalic = 0.0;
-
-	// 距離に応じて暗くする（RaymarchCubeと同様）
-	outColor.xyz *= smoothstep( 1.5, 0.4,  length( rayPos ) );
 
 	#include <frag_out>
 
