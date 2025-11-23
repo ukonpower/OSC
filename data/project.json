@@ -201,10 +201,94 @@
 			]
 		},
 		{
+			"uuid": "b01f8327",
+			"components": [
+				{
+					"name": "KaitenSushi",
+					"props": {
+						"speed": 0.5,
+						"rangeX": 5,
+						"offsetX": 0,
+						"sashimiType": "maguro"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "76c75ce7",
+			"components": [
+				{
+					"name": "Maguro"
+				}
+			]
+		},
+		{
+			"uuid": "dd391494",
+			"components": [
+				{
+					"name": "Maguro"
+				}
+			]
+		},
+		{
+			"uuid": "ef245de7",
+			"components": [
+				{
+					"name": "Salmon",
+					"props": {
+						"blockType": "saku"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "24a125ef",
+			"components": [
+				{
+					"name": "Salmon",
+					"props": {
+						"blockType": "saku"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "96971d72",
+			"components": [
+				{
+					"name": "Taiyaki"
+				}
+			]
+		},
+		{
+			"uuid": "526c1c65",
+			"components": [
+				{
+					"name": "SushiGeta"
+				}
+			]
+		},
+		{
 			"uuid": "06a4626d",
 			"components": [
 				{
 					"name": "SushiGeta"
+				}
+			]
+		},
+		{
+			"uuid": "b41b8d15",
+			"components": [
+				{
+					"name": "TakoGate"
+				}
+			]
+		},
+		{
+			"uuid": "e63fb6c9",
+			"components": [
+				{
+					"name": "TakoGate"
 				}
 			]
 		},
