@@ -225,7 +225,9 @@ export const ShaderEditorApp = () => {
 
 	}, [ selectedComponent ] );
 
-	// シェーダー選択時の処理
+	// シェーダー選択時の処理（selectedComponentとselectedShaderのパスを追跡）
+	const [ loadedShaderKey, setLoadedShaderKey ] = useState<string>( '' );
+
 	useEffect( () => {
 
 		// 初期化中は処理をスキップ
@@ -241,6 +243,15 @@ export const ShaderEditorApp = () => {
 			setCurrentShaderCode( '' );
 			setAppliedShaderCode( undefined );
 			setCompileStatus( 'idle' );
+			setLoadedShaderKey( '' );
+			return;
+
+		}
+
+		// 同じシェーダーが既に読み込まれている場合はスキップ（HMR対策）
+		const shaderKey = `${selectedComponent.path}/${selectedShader.path}`;
+		if ( shaderKey === loadedShaderKey ) {
+
 			return;
 
 		}
@@ -255,6 +266,7 @@ export const ShaderEditorApp = () => {
 				setCurrentShaderCode( shaderCode );
 				setAppliedShaderCode( shaderCode );
 				setCompileStatus( 'idle' );
+				setLoadedShaderKey( shaderKey );
 
 			} catch ( error ) {
 
@@ -266,7 +278,7 @@ export const ShaderEditorApp = () => {
 
 		loadShaderCode();
 
-	}, [ selectedComponent, selectedShader, isInitializing ] );
+	}, [ selectedComponent, selectedShader, isInitializing, loadedShaderKey ] );
 
 	// コード変更ハンドラ
 	const handleCodeChange = useCallback( ( value: string | undefined ) => {

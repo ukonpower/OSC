@@ -264,7 +264,10 @@
 			"uuid": "526c1c65",
 			"components": [
 				{
-					"name": "SushiGeta"
+					"name": "SushiGetaWithNigiri",
+					"props": {
+						"sashimiType": "maguro"
+					}
 				}
 			]
 		},
@@ -272,7 +275,10 @@
 			"uuid": "06a4626d",
 			"components": [
 				{
-					"name": "SushiGeta"
+					"name": "SushiGetaWithNigiri",
+					"props": {
+						"sashimiType": "maguro"
+					}
 				}
 			]
 		},

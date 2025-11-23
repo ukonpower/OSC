@@ -16,7 +16,6 @@ SDFResult D( vec3 p ) {
 
 	// スケール調整（皿の大きさ）
 	pp *= 0.8;
-	pp.x *= 0.6;
 
 	// 皿の中心の穴の半径
 	float holeRadius = 0.3;
