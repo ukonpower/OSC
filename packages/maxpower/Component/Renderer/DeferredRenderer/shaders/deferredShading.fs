@@ -13,7 +13,6 @@ uniform sampler2D sampler3; // roughness, metalic, normalSelect, envSelect,
 uniform sampler2D sampler4; // velocity.xy, flatness, emission.z
 
 uniform sampler2D uSSAOTexture;
-uniform sampler2D uLightShaftTexture;
 uniform sampler2D uEnvMap;
 uniform sampler2D uNoiseSimpleTex;
 
@@ -91,11 +90,6 @@ void main( void ) {
 	// emission
 
 	outColor.xyz += mat.emission;
-
-	// light shaft
-	
-	outColor.xyz += texture( uLightShaftTexture, vUv ).xyz;
-
 
 	// DEMO4 CUSTOM ----------
 

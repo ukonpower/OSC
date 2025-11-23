@@ -3,7 +3,6 @@ import * as MXP from 'maxpower';
 import { Engine } from 'orengine';
 
 import deferredShadingFrag from './shaders/deferredShading.fs';
-import lightShaftFrag from './shaders/lightShaft.fs';
 import normalSelectorFrag from './shaders/normalSelector.fs';
 import ssaoFrag from './shaders/ssao.fs';
 import ssaoBlurFrag from './shaders/ssaoBlur.fs';
@@ -48,12 +47,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 	// nromal buffer
 
 	public normalSelector_: MXP.PostProcessPass;
-
-	// light shaft
-
-	public lightShaft: MXP.PostProcessPass;
-	public rtLightShaft1: GLP.GLPowerFrameBuffer;
-	public rtLightShaft2: GLP.GLPowerFrameBuffer;
 
 	// ssao
 
@@ -103,34 +96,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 					type: '1i'
 				},
 			} ),
-			passThrough: true,
-		} );
-
-		// light shaft
-
-		const rtLightShaft1 = new GLP.GLPowerFrameBuffer( gl ).setTexture( [
-			new GLP.GLPowerTexture( gl ).setting( { magFilter: gl.LINEAR, minFilter: gl.LINEAR } ),
-		] );
-
-		const rtLightShaft2 = new GLP.GLPowerFrameBuffer( gl ).setTexture( [
-			new GLP.GLPowerTexture( gl ).setting( { magFilter: gl.LINEAR, minFilter: gl.LINEAR } ),
-		] );
-
-		const lightShaft = new MXP.PostProcessPass( gl, {
-			name: 'lightShaft',
-			frag: lightShaftFrag,
-			renderTarget: rtLightShaft1,
-			uniforms: MXP.UniformsUtils.merge( timeUniforms, {
-				uLightShaftBackBuffer: {
-					value: rtLightShaft2.textures[ 0 ],
-					type: '1i'
-				},
-				uDepthTexture: {
-					value: null,
-					type: '1i'
-				},
-			} ),
-			resolutionRatio: 0.5,
 			passThrough: true,
 		} );
 
@@ -250,10 +215,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 			name: "deferredShading",
 			frag: MXP.hotGet( "deferredShading", deferredShadingFrag ),
 			uniforms: MXP.UniformsUtils.merge( {
-				uLightShaftTexture: {
-					value: null,
-					type: '1i'
-				},
 				uSSAOTexture: {
 					value: ssaoBlurV.renderTarget!.textures[ 0 ],
 					type: '1i'
@@ -271,7 +232,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 
 		this.postprocess = new MXP.PostProcess( { passes: [
 			normalSelector,
-			lightShaft,
 			ssao,
 			ssaoBlurH,
 			ssaoBlurV,
@@ -280,7 +240,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 
 		this.timeUniforms_ = timeUniforms;
 		this.shading = shading;
-		this.lightShaft = lightShaft;
 		this.ssao = ssao;
 
 		this.rtSSAO1 = rtSSAO1;
@@ -288,9 +247,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 
 		this.ssaoBlur = ssaoBlurH;
 		this.ssaoBlurUni = ssaoBlurUni;
-
-		this.rtLightShaft1 = rtLightShaft1;
-		this.rtLightShaft2 = rtLightShaft2;
 
 		this.normalSelector_ = normalSelector;
 
@@ -318,19 +274,9 @@ export class DeferredRenderer extends GLP.EventEmitter {
 
 		this.timeUniforms_.uTimeEF.value = ( this.timeUniforms_.uTimeEF.value + event.timeDelta ) % 1;
 
-		// light shaft swap
-
-		let tmp = this.rtLightShaft1;
-		this.rtLightShaft1 = this.rtLightShaft2;
-		this.rtLightShaft2 = tmp;
-
-		this.lightShaft.setRendertarget( this.rtLightShaft1 );
-		this.shading.uniforms.uLightShaftTexture.value = this.rtLightShaft1.textures[ 0 ];
-		this.lightShaft.uniforms.uLightShaftBackBuffer.value = this.rtLightShaft2.textures[ 0 ];
-
 		// ssao swap
 
-		tmp = this.rtSSAO1;
+		let tmp = this.rtSSAO1;
 		this.rtSSAO1 = this.rtSSAO2;
 		this.rtSSAO2 = tmp;
 
@@ -364,7 +310,6 @@ export class DeferredRenderer extends GLP.EventEmitter {
 		}
 
 		this.ssaoBlur.uniforms.uDepthTexture.value = renderTarget.gBuffer.textures[ 0 ];
-		this.lightShaft.uniforms.uDepthTexture.value = renderTarget.gBuffer.depthTexture;
 		this.shading.renderTarget = renderTarget.shadingBuffer;
 
 		this.normalSelector_.renderTarget = renderTarget.normalBuffer;
