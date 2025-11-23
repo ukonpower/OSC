@@ -28,6 +28,7 @@ import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
 import { KaitenSushi } from './Components/Demo4/Party/KaitenSushi/index.ts';
 import { SushiGeta } from './Components/Demo4/Party/SushiGeta/index.ts';
+import { SushiGetaWithNigiri } from './Components/Demo4/Party/SushiGetaWithNigiri/index.ts';
 import { SushiSara } from './Components/Demo4/Party/SushiSara/index.ts';
 import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
@@ -77,6 +78,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 		Party: {
 			KaitenSushi,
 			SushiGeta,
+			SushiGetaWithNigiri,
 			SushiSara,
 		},
 		Salmon: {
