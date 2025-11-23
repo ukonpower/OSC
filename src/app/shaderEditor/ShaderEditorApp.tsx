@@ -227,6 +227,44 @@ export const ShaderEditorApp = () => {
 
 	// シェーダー選択時の処理（selectedComponentとselectedShaderのパスを追跡）
 	const [ loadedShaderKey, setLoadedShaderKey ] = useState<string>( '' );
+	// HMR更新を検出するためのカウンター
+	const [ hmrUpdateCounter, setHmrUpdateCounter ] = useState<number>( 0 );
+
+	// ViteのHMRイベントをリスン（外部エディターからの変更を検出）
+	useEffect( () => {
+
+		const hot = import.meta.hot;
+		if ( ! hot ) return;
+
+		const handleHmrUpdate = ( payload: any ) => {
+
+			// シェーダーファイルの更新かどうかをチェック
+			const updates = payload.updates || [];
+			const isShaderUpdate = updates.some( ( update: any ) => {
+
+				const path = update.acceptedPath || '';
+				return path.includes( '/shaders/' ) && ( path.endsWith( '.fs' ) || path.endsWith( '.vs' ) );
+
+			} );
+
+			if ( isShaderUpdate ) {
+
+				// HMR更新カウンターをインクリメントしてシェーダー再読み込みをトリガー
+				setHmrUpdateCounter( prev => prev + 1 );
+
+			}
+
+		};
+
+		hot.on( 'vite:beforeUpdate', handleHmrUpdate );
+
+		return () => {
+
+			hot.off( 'vite:beforeUpdate', handleHmrUpdate );
+
+		};
+
+	}, [] );
 
 	useEffect( () => {
 
@@ -249,8 +287,9 @@ export const ShaderEditorApp = () => {
 		}
 
 		// 同じシェーダーが既に読み込まれている場合はスキップ（HMR対策）
+		// ただしHMR更新があった場合は再読み込み
 		const shaderKey = `${selectedComponent.path}/${selectedShader.path}`;
-		if ( shaderKey === loadedShaderKey ) {
+		if ( shaderKey === loadedShaderKey && hmrUpdateCounter === 0 ) {
 
 			return;
 
@@ -262,11 +301,34 @@ export const ShaderEditorApp = () => {
 
 				// シェーダーファイルを読み込み
 				const shaderCode = await loadShader( selectedComponent, selectedShader );
+
+				// 未保存の変更がある場合は、外部からの変更であることを通知
+				if ( loadedShaderKey === shaderKey && originalShaderCode !== currentShaderCode ) {
+
+					const shouldReload = window.confirm(
+						'シェーダーファイルが外部で変更されました。\n' +
+						'再読み込みしますか？（未保存の変更は失われます）'
+					);
+
+					if ( ! shouldReload ) {
+
+						return;
+
+					}
+
+				}
+
 				setOriginalShaderCode( shaderCode );
 				setCurrentShaderCode( shaderCode );
 				setAppliedShaderCode( shaderCode );
 				setCompileStatus( 'idle' );
 				setLoadedShaderKey( shaderKey );
+				// HMR更新カウンターをリセット
+				if ( hmrUpdateCounter > 0 ) {
+
+					setHmrUpdateCounter( 0 );
+
+				}
 
 			} catch ( error ) {
 
@@ -278,7 +340,7 @@ export const ShaderEditorApp = () => {
 
 		loadShaderCode();
 
-	}, [ selectedComponent, selectedShader, isInitializing, loadedShaderKey ] );
+	}, [ selectedComponent, selectedShader, isInitializing, loadedShaderKey, hmrUpdateCounter, originalShaderCode, currentShaderCode ] );
 
 	// コード変更ハンドラ
 	const handleCodeChange = useCallback( ( value: string | undefined ) => {
