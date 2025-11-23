@@ -27,13 +27,14 @@ SDFResult D( vec3 p ) {
 
 	// 皿の底面（回転させて厚みを持たせる）
 	vec2 q1 = q;
-	q1.xy *= rotate( -1.1 );
-	d = opAdd( d, vec2( sdBox( vec3( q1, 0.0 ), vec3( 0.01, 0.18, 1.0 )), 0.0 ) );
+	q1.xy *= rotate( -1.4 );
+	q1.y += 0.1;
+	d = opAdd( d, vec2( sdBox( vec3( q1, 0.0 ), vec3( 0.01, 0.28, 1.0 )), 0.0 ) );
 
 	// 皿の縁（上部のリム）
 	vec2 q2 = q;
 	q2.x += 0.4;
-	q2.y += 0.11;
+	q2.y += 0.05;
 	d = opAdd( d, vec2( sdBox( vec3( q2, 0.0 ), vec3( 0.3, 0.04, 0.1 )), 0.0 ) );
 
 	return SDFResult(
