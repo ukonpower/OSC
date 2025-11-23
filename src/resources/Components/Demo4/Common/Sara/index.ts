@@ -16,7 +16,7 @@ export class Sara extends MXP.Component {
 		super( param );
 
 		// インスタンス数
-		const instanceCount = 128;
+		const instanceCount = 10;
 
 		// geometry
 		const geo = new MXP.CylinderGeometry( {
