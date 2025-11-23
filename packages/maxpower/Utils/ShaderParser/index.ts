@@ -85,8 +85,6 @@ export const shaderInclude = ( shader: string ) => {
 		[ "subsurface", subsurface ],
 	] );
 
-	let loop = false;
-
 	shader = shader.replace( /#include\s?<([\S]*)>/g, ( _: string, body: string ) => {
 
 		let str = "";
@@ -99,12 +97,6 @@ export const shaderInclude = ( shader: string ) => {
 		let module = dict.get( moduleName ) || '';
 
 		module = module.replace( /#define GLSLIFY .*\n/g, "" );
-
-		if ( params.length > 0 ) {
-
-			loop = true;
-
-		}
 
 		// パラメータの置換: ARG1, ARG2, ARG3, ...
 		for ( let i = 0; i < params.length; i ++ ) {
@@ -122,13 +114,6 @@ export const shaderInclude = ( shader: string ) => {
 		return str;
 
 	} );
-
-	if ( loop ) {
-
-		console.log( shader );
-
-	}
-
 
 	return shader;
 
