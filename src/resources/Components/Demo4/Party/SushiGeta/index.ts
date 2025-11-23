@@ -17,8 +17,10 @@ export class SushiGeta extends MXP.Component {
 
 		// geometry
 
-		const geo = new MXP.SphereGeometry( {
-			radius: 1
+		const geo = new MXP.CubeGeometry( {
+			width: 1.1,
+			height: 0.4,
+			depth: 1.1
 		} );
 
 		// material
