@@ -15,7 +15,7 @@ export class KaitenSushi extends MXP.Component {
 
 	// 移動パラメータ
 	private speed: number = 0.1;
-	private rangeX: number = 20.0;
+	private rangeX: number = 40.0;
 	private sushiCount: number = 9;
 
 	private sashimiTypes: ( 'maguro' | 'salmon' | 'tako' )[] = [ 'maguro', 'salmon', 'tako' ];
@@ -86,8 +86,10 @@ export class KaitenSushi extends MXP.Component {
 			const t = ( time * this.speed + offset ) % 1;
 			// rangeX/2 から -rangeX/2 へ（右から左）
 			const x = this.rangeX / 2 - t * this.rangeX;
+			const z = - Math.pow( x, 2.0 ) * 0.003;
 
 			this.sushiEntities[ i ].position.x = x;
+			this.sushiEntities[ i ].position.z = z;
 
 		}
 

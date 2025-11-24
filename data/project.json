@@ -319,6 +319,14 @@
 			]
 		},
 		{
+			"uuid": "4dbbbcce",
+			"components": [
+				{
+					"name": "Ukonpower"
+				}
+			]
+		},
+		{
 			"uuid": "768002b3",
 			"components": [
 				{
