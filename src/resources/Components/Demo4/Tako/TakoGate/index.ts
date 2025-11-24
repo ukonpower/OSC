@@ -2,9 +2,9 @@ import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
 import takoGateFrag from './shaders/takogate.fs';
-import screenVert from '~/resources/shaders/screen.vs';
 
 import { globalUniforms } from '~/globals';
+import screenVert from '~/resources/shaders/screen.vs';
 import { bindBlidgeUniform } from '~/shortcuts';
 
 /**

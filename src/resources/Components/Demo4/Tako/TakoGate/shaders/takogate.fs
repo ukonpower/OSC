@@ -113,7 +113,7 @@ void main( void ) {
 
 
 	// レイマーチング
-	#include <rm_loop,50,0.001,0.7>
+	#include <rm_loop,32,0.001,0.7>
 
 	if( !hit ) discard;
 

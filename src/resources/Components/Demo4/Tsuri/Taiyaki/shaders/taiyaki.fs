@@ -132,8 +132,7 @@ void main( void ) {
 	#include <rm_ray_obj>
 
 
-
-	#include <rm_loop,128,0.001,1.0>
+	#include <rm_loop,64,0.001,1.0>
 
 	if( !hit ) discard;
 
