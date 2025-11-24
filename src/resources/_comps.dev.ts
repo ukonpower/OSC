@@ -41,6 +41,7 @@ import { Ocean } from './Components/Demo4/Tsuri/Ocean/index.ts';
 import { Taiyaki } from './Components/Demo4/Tsuri/Taiyaki/index.ts';
 import { Teibo } from './Components/Demo4/Tsuri/Teibo/index.ts';
 import { LookAt } from './Components/ObjectControls/LookAt/index.ts';
+import { Party } from './Components/ObjectControls/Party/index.ts';
 import { TextureGenerator } from './Components/Texture/TextureGenerator/index.ts';
 import { BLidgeClient } from './Components/Utilities/BLidgeClient/index.ts';
 import { UniformControls } from './Components/Utilities/UniformsControls/index.ts';
@@ -108,6 +109,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	},
 	ObjectControls: {
 		LookAt,
+		Party,
 	},
 	Texture: {
 		TextureGenerator,

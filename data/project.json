@@ -213,6 +213,9 @@
 			"components": [
 				{
 					"name": "Maguro"
+				},
+				{
+					"name": "Party"
 				}
 			]
 		},
@@ -221,6 +224,9 @@
 			"components": [
 				{
 					"name": "Maguro"
+				},
+				{
+					"name": "Party"
 				}
 			]
 		},
@@ -232,6 +238,9 @@
 					"props": {
 						"blockType": "saku"
 					}
+				},
+				{
+					"name": "Party"
 				}
 			]
 		},
@@ -243,6 +252,9 @@
 					"props": {
 						"blockType": "saku"
 					}
+				},
+				{
+					"name": "Party"
 				}
 			]
 		},
@@ -251,6 +263,9 @@
 			"components": [
 				{
 					"name": "Taiyaki"
+				},
+				{
+					"name": "Party"
 				}
 			]
 		},
@@ -323,6 +338,9 @@
 			"components": [
 				{
 					"name": "Ukonpower"
+				},
+				{
+					"name": "Party"
 				}
 			]
 		},

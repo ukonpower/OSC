@@ -20,6 +20,9 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
+	pp.xz *= rotate( sin( -pp.x * 3.0 - 0.3 + uTime * 10.0 ) * 0.5 );
+
+
 	pp.yz *= rotate( PI / 2.0 );
 	pp.xy *= rotate( PI / 2.0 );
 
@@ -132,7 +135,7 @@ void main( void ) {
 	#include <rm_ray_obj>
 
 
-	#include <rm_loop,64,0.001,1.0>
+	#include <rm_loop,64,0.001,0.8>
 
 	if( !hit ) discard;
 
