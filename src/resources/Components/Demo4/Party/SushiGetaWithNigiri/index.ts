@@ -1,6 +1,7 @@
 import * as MXP from 'maxpower';
 
 import { Nigiri } from '../../Common/Nigiri';
+import { IkuraGunKan } from '../../Ikura/IkuraGunKan';
 import { SushiGeta } from '../SushiGeta';
 
 /**
@@ -8,11 +9,8 @@ import { SushiGeta } from '../SushiGeta';
  */
 export class SushiGetaWithNigiri extends MXP.Component {
 
-	private sashimiTypeValue: 'maguro' | 'salmon' | 'tako' = 'maguro';
-
 	private getaEntity: MXP.Entity;
-	private nigiriEntity: MXP.Entity;
-	private nigiriComponent: Nigiri;
+	private sushiEntities: MXP.Entity[] = [];
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -24,43 +22,40 @@ export class SushiGetaWithNigiri extends MXP.Component {
 		this.getaEntity.addComponent( SushiGeta );
 		this.entity.add( this.getaEntity );
 
-		// Nigiriエンティティを作成（握り寿司部分）
-		this.nigiriEntity = new MXP.Entity();
-		this.nigiriEntity.name = "Nigiri";
+		// マグロ・サーモン・いくら・タコを1貫ずつ並べる
+		// Entity名の最後がRなら並びを逆にする
+		const isReverse = this.entity.name.endsWith( 'R' );
+		const sushiTypes: Array<'maguro' | 'salmon' | 'ikura' | 'tako'> = isReverse
+			? [ 'maguro', 'salmon', 'ikura', 'tako' ]
+			: [ 'tako', 'ikura', 'salmon', 'maguro' ];
+		const spacing = 0.25;
+		const startX = - ( sushiTypes.length - 1 ) * spacing / 2;
 
-		// 握り寿司の位置調整（下駄の上に配置）
-		this.nigiriEntity.position.set( 0, 0.2, 0 );
+		for ( let i = 0; i < sushiTypes.length; i ++ ) {
 
-		this.entity.add( this.nigiriEntity );
+			const sushiEntity = new MXP.Entity();
+			sushiEntity.name = "Sushi_" + i;
+			sushiEntity.position.set( startX + i * spacing, 0.1, 0 );
+			sushiEntity.euler.set( 0, - 0.5, 0 );
+			sushiEntity.scale.setScalar( 0.6 );
+			this.entity.add( sushiEntity );
 
-		// Nigiriコンポーネントを追加
-		this.nigiriComponent = this.nigiriEntity.addComponent( Nigiri );
+			if ( sushiTypes[ i ] === 'ikura' ) {
 
-		// field設定（setterでNigiriのsashimiTypeを更新）
-		this.field( "sashimiType", () => this.sashimiTypeValue, ( v ) => {
+				sushiEntity.addComponent( IkuraGunKan );
+				sushiEntity.scale.setScalar( 0.45 );
 
-			this.sashimiTypeValue = v;
-			this.nigiriComponent.sashimiType = v;
 
-		}, {
-			format: {
-				type: "select",
-				list: [
-					{ label: "マグロ", value: "maguro" },
-					{ label: "サーモン", value: "salmon" },
-					{ label: "タコ", value: "tako" }
-				]
+			} else {
+
+				const nigiriComponent = sushiEntity.addComponent( Nigiri );
+				nigiriComponent.sashimiType = sushiTypes[ i ] as 'maguro' | 'salmon' | 'tako';
+
 			}
-		} );
 
-		// 初期タイプを設定
-		this.nigiriComponent.sashimiType = this.sashimiTypeValue;
+			this.sushiEntities.push( sushiEntity );
 
-	}
-
-	public set sashimiType( type: 'maguro' | 'salmon' | 'tako' ) {
-
-		this.setField( 'sashimiType', type );
+		}
 
 	}
 
@@ -69,8 +64,12 @@ export class SushiGetaWithNigiri extends MXP.Component {
 		this.entity.remove( this.getaEntity );
 		this.getaEntity.dispose();
 
-		this.entity.remove( this.nigiriEntity );
-		this.nigiriEntity.dispose();
+		for ( let i = 0; i < this.sushiEntities.length; i ++ ) {
+
+			this.entity.remove( this.sushiEntities[ i ] );
+			this.sushiEntities[ i ].dispose();
+
+		}
 
 	}
 
