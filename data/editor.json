@@ -1,11 +1,11 @@
 {
 	"enableRender": true,
-	"resolutionScale": 0.125,
+	"resolutionScale": 1,
 	"viewType": "render",
 	"frameLoop/enabled": false,
 	"frameLoop/start": 1240.0256373310162,
 	"frameLoop/end": 1842.562994460508,
-	"timelineCurrent": 2969.84,
+	"timelineCurrent": 2946,
 	"selectedEntityId": "16b6b3da",
 	"showWireframe": false
 }
