@@ -110,8 +110,16 @@ SDFResult seat( vec3 p  ) {
 	float d = sdBox( seatP, vec3( 0.2, 0.06, seatDepth ) );
 
 	vec3 semotareP = seatP;
-	semotareP += vec3( -0.12, -0.27, 0.0 );
+	semotareP += vec3( -0.12, -0.26, 0.0 );
 	d = min( d, sdBox( semotareP, vec3( 0.08, 0.20, seatDepth ) ) );
+
+	vec3 kushonP = seatP;
+	kushonP -= vec3( 0.02, 0.27, 0.0 );
+	d = min( d, sdBox( kushonP, vec3( 0.007, 0.15, seatDepth * 0.93 ) ) - 0.02 );
+
+	vec3 kushon2P = seatP;
+	kushon2P -= vec3( -0.08, 0.08, 0.0 );
+	d = min( d, sdBox( kushon2P, vec3( 0.1, 0.007, seatDepth * 0.93 ) ) - 0.02 );
 
 	vec3 ashiP = semotareP;
 	ashiP += vec3( 0.0, 0.4, 0.0 );
