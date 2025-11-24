@@ -50,7 +50,12 @@ void main( void ) {
 	outColor.xyz = vec3( 1.0 );
 	outRoughness = 0.5;
 
-	// outColor.xyz *= smoothstep( 1.5, 0.4,  length( rayPos ) );
+	float n1 = fbm( rayPos * 0.4 );
+	float mokume = fract( length( rayPos * vec3( 0.5, 1.0, 1.0) + vec3( -0.1, 0.4, 0.1 ) ) * 45.0 + n1 * 20.0 );
+
+	vec3 baseCol = vec3( 0.8, 0.55, 0.25 );
+	outColor.xyz = mix( baseCol, baseCol * 0.9, mokume );
+	outNormal = normalize( outNormal + mokume * 0.2 );
 
 	#include <frag_out>
 
