@@ -6,53 +6,69 @@ import { globalUniforms } from '~/globals';
 
 /**
  * KaitenSushi - SushiSaraを横に流すコンポーネント
+ * 右から左へ一方向に流れ、端まで行ったら右に戻る
  */
 export class KaitenSushi extends MXP.Component {
 
-	private sushiSaraEntity: MXP.Entity;
-	private sushiSaraComponent: SushiSara;
+	private sushiEntities: MXP.Entity[] = [];
+	private sushiComponents: SushiSara[] = [];
 
 	// 移動パラメータ
-	private speed: number = 0.5;
-	private rangeX: number = 5.0;
-	private offsetX: number = 0;
+	private speed: number = 0.1;
+	private rangeX: number = 20.0;
+	private sushiCount: number = 9;
 
-	private sashimiTypeValue: 'maguro' | 'salmon' | 'tako' = 'maguro';
+	private sashimiTypes: ( 'maguro' | 'salmon' | 'tako' )[] = [ 'maguro', 'salmon', 'tako' ];
 
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
 
-		// SushiSaraエンティティを作成
-		this.sushiSaraEntity = new MXP.Entity();
-		this.sushiSaraEntity.name = "SushiSara";
-		this.entity.add( this.sushiSaraEntity );
-
-		// SushiSaraコンポーネントを追加
-		this.sushiSaraComponent = this.sushiSaraEntity.addComponent( SushiSara );
+		// 初期寿司を生成
+		this.createSushi();
 
 		// field設定
 		if ( import.meta.env.DEV ) {
 
-			this.field( "speed", () => this.speed, ( v ) => this.speed = v );
-			this.field( "rangeX", () => this.rangeX, ( v ) => this.rangeX = v );
-			this.field( "offsetX", () => this.offsetX, ( v ) => this.offsetX = v );
+			// this.field( "speed", () => this.speed, ( v ) => this.speed = v );
+			// this.field( "rangeX", () => this.rangeX, ( v ) => this.rangeX = v );
+			// this.field( "sushiCount", () => this.sushiCount, ( v ) => {
 
-			this.field( "sashimiType", () => this.sashimiTypeValue, ( v ) => {
+			// 	this.sushiCount = Math.max( 1, Math.floor( v ) );
+			// 	this.createSushi();
 
-				this.sashimiTypeValue = v;
-				this.sushiSaraComponent.sashimiType = v;
+			// } );
 
-			}, {
-				format: {
-					type: "select",
-					list: [
-						{ label: "マグロ", value: "maguro" },
-						{ label: "サーモン", value: "salmon" },
-						{ label: "タコ", value: "tako" }
-					]
-				}
-			} );
+		}
+
+	}
+
+	private createSushi(): void {
+
+		// 既存の寿司を削除
+		for ( let i = 0; i < this.sushiEntities.length; i ++ ) {
+
+			this.entity.remove( this.sushiEntities[ i ] );
+			this.sushiEntities[ i ].dispose();
+
+		}
+
+		this.sushiEntities = [];
+		this.sushiComponents = [];
+
+		// 新しい寿司を生成
+		for ( let i = 0; i < this.sushiCount; i ++ ) {
+
+			const sushiEntity = new MXP.Entity();
+			sushiEntity.name = "SushiSara_" + i;
+			this.entity.add( sushiEntity );
+
+			const sushiComponent = sushiEntity.addComponent( SushiSara );
+			// 寿司の種類をサイクル
+			sushiComponent.sashimiType = this.sashimiTypes[ i % this.sashimiTypes.length ];
+
+			this.sushiEntities.push( sushiEntity );
+			this.sushiComponents.push( sushiComponent );
 
 		}
 
@@ -60,19 +76,34 @@ export class KaitenSushi extends MXP.Component {
 
 	protected updateImpl( _event: MXP.ComponentUpdateEvent ): void {
 
-		// 横に流れる動き（ループ）
 		const time = globalUniforms.time.uTimeE.value;
-		const t = ( time * this.speed + this.offsetX ) % ( this.rangeX * 2 );
-		const x = t < this.rangeX ? t - this.rangeX / 2 : this.rangeX * 1.5 - t;
 
-		this.sushiSaraEntity.position.x = x;
+		for ( let i = 0; i < this.sushiEntities.length; i ++ ) {
+
+			// 各寿司のオフセット（均等配置）
+			const offset = i / this.sushiCount;
+			// 右から左への一方向移動（0→1を右端→左端にマッピング）
+			const t = ( time * this.speed + offset ) % 1;
+			// rangeX/2 から -rangeX/2 へ（右から左）
+			const x = this.rangeX / 2 - t * this.rangeX;
+
+			this.sushiEntities[ i ].position.x = x;
+
+		}
 
 	}
 
 	protected disposeImpl(): void {
 
-		this.entity.remove( this.sushiSaraEntity );
-		this.sushiSaraEntity.dispose();
+		for ( let i = 0; i < this.sushiEntities.length; i ++ ) {
+
+			this.entity.remove( this.sushiEntities[ i ] );
+			this.sushiEntities[ i ].dispose();
+
+		}
+
+		this.sushiEntities = [];
+		this.sushiComponents = [];
 
 	}
 

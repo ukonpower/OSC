@@ -206,10 +206,9 @@
 				{
 					"name": "KaitenSushi",
 					"props": {
-						"speed": 0.5,
-						"rangeX": 5,
-						"offsetX": 0,
-						"sashimiType": "maguro"
+						"speed": 0.15000000000000102,
+						"rangeX": 32.40000000000001,
+						"sushiCount": 10
 					}
 				}
 			]
