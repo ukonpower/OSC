@@ -11,12 +11,13 @@ import { globalUniforms } from '~/globals';
  */
 export class Sara extends MXP.Component {
 
-	constructor( param: MXP.ComponentParams ) {
+	constructor( param: MXP.ComponentParams<{ instanceCount?: number }> ) {
 
 		super( param );
 
-		// インスタンス数
-		const instanceCount = 10;
+		// インスタンス数（デフォルト10、パラメータで上書き可能）
+		const args = param.args as { instanceCount?: number } | undefined;
+		const instanceCount = args && args.instanceCount !== undefined ? args.instanceCount : 10;
 
 		// geometry
 		const geo = new MXP.CylinderGeometry( {

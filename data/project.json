@@ -204,12 +204,7 @@
 			"uuid": "b01f8327",
 			"components": [
 				{
-					"name": "KaitenSushi",
-					"props": {
-						"speed": 0.15000000000000102,
-						"rangeX": 32.40000000000001,
-						"sushiCount": 10
-					}
+					"name": "KaitenSushi"
 				}
 			]
 		},
