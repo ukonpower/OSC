@@ -17,12 +17,13 @@ const float MAT_CONVEYOR = 3.0;
 const float MAT_FAUCET = 4.0;
 const float MAT_BLACK = 5.0;
 const float MAT_WALL = 6.0;
+const float MAT_NOREN = 7.0;
 
 uniform float uTimeE;
 
 vec2 gridCenter = vec2( 0.0, 0.0 );
 const vec2 gridSize = vec2( 1.0, 1.6 );
-const vec2 offsetPos = vec2( gridSize / 2.0 );
+const vec2 offsetPos = vec2( gridSize / 2.0 ) + vec2( 0.0, 0.3);
 
 // https://kinakomoti321.hatenablog.com/entry/2024/12/10/023309
 float gridTraversal( vec2 ro, vec2 rd) {
@@ -90,6 +91,11 @@ SDFResult lane( vec3 p ) {
 	laneWallP += vec3( 0.0, 0.0, 0.1 );
 	d = opAdd( d, vec2( sdBox( laneWallP, vec3( 0.5, 2.0, 0.03) ), MAT_WALL ) );
 
+	vec3 shikiriP = laneWallP;
+	shikiriP.x = abs( shikiriP.x );
+	shikiriP += vec3( -0.5, 0.0, -0.01 );
+	d = opAdd( d, vec2( sdBox( shikiriP, vec3( 0.03, 2.0, 0.03) ), MAT_WOOD ) );
+
 	return SDFResult( d.x, p, d.y, vec4( laneP, 0.0 ) );
 
 }
@@ -145,14 +151,31 @@ SDFResult sdFloor( vec3 p ) {
 
 }
 
+SDFResult noren( vec3 p ) {
+
+	float norenWidth = 0.045;
+	float norenLoop = norenWidth * 2.5;
+	float size = step( 0.45, abs( p.x ) );
+
+	vec3 norenP = p;
+	
+	norenP += vec3( 0.0, -0.8, 0.55 );
+	norenP.x = mod( norenP.x, norenLoop ) - norenLoop * 0.5;
+	float d = sdBox( norenP, vec3( norenWidth, 0.15, 0.005 ) );
+
+	return SDFResult( d, p, MAT_WOOD, vec4( p, 0.0 ) );
+
+}
+
 SDFResult D( vec3 p ) {
 
 	p.z += pow( p.x, 2.0 ) * 0.03;
 
 	vec3 pl = p;
-
 	pl.xy -= offsetPos;
 	pl.xy -= gridCenter;
+	pl.y += 0.3;
+	
 
 	SDFResult distTable = table( pl );
 	SDFResult result = distTable;
@@ -168,6 +191,9 @@ SDFResult D( vec3 p ) {
 
 	SDFResult distJaguchi = jaguchi( pl );
 	if( distJaguchi.d < result.d ) result = distJaguchi;
+
+	SDFResult distNoren = noren( pl );
+	if( distNoren.d < result.d ) result = distNoren;
 
 	return result;
 
@@ -278,6 +304,14 @@ void main( void ) {
 		outColor.xyz = vec3( 0.95, 0.90, 0.8 );
 		outColor.xyz *= 0.95 + gara * 0.1;
 		outRoughness = 0.1+ gara;
+
+	} else if( dist.mat == MAT_NOREN ) {
+
+		// 暖簾（青い布）
+		float gara = noise.z * 0.1;
+		outColor.xyz = vec3( 0.25, 0.35, 0.5 ) + gara;
+		outRoughness = 0.8 + noise.w * 0.2;
+		outNormal = normalize( outNormal + vec3( noise.y, noise.z, 0.0 ) * 0.1 );
 
 	}
 
