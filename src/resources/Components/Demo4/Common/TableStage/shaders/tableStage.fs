@@ -4,8 +4,19 @@
 #include <sdf>
 #include <rm_h>
 #include <rotate>
+#include <noise_cyclic>
+#include <noise_value>
 
 const float seatDepth = 0.4;
+
+// マテリアルID
+const float MAT_FLOOR = 0.0;
+const float MAT_WOOD = 1.0;
+const float MAT_LANE = 2.0;
+const float MAT_CONVEYOR = 3.0;
+const float MAT_FAUCET = 4.0;
+const float MAT_BLACK = 5.0;
+const float MAT_WALL = 6.0;
 
 uniform float uTimeE;
 
@@ -51,13 +62,7 @@ SDFResult jaguchi( vec3 p ) {
 	jaguchi2P += vec3( 0.0, 0.0054, -0.01 );
 	d = opAdd( d, vec2( sdCappedCylinder( jaguchi2P, 0.009, 0.015 ), 0.0 ) );
 
-	vec4 color = vec4( 0.8, 0.8, 0.82, 1.0 );
-	if( d.y == 1.0 ) {
-		// ボタン部分（青色）
-		color = vec4( vec3( 0.4), 1.0 );
-	}
-
-	return SDFResult( d.x, p, 4.0, color );
+	return SDFResult( d.x, p, MAT_FAUCET, vec4( p, 0.0 ) );
 }
 
 SDFResult laneConveyor( vec3 p ) {
@@ -67,38 +72,36 @@ SDFResult laneConveyor( vec3 p ) {
 	laneConveyorP.x = mod( laneConveyorP.x + uTimeE * 0.2, 0.1 ) - 0.05;
 	float d = sdBox( laneConveyorP, vec3( 0.045, 0.01, 0.06 ) );
 
-	return SDFResult( d, p, 3.0, vec4( 0.15, 0.15, 0.15, 1.0 ) );
+	return SDFResult( d, p, MAT_CONVEYOR, vec4( p, 0.0 ) );
 }
 
 SDFResult lane( vec3 p ) {
 
 	vec3 laneP = p;
 	laneP += vec3( 0.0, 0.05, 0.5 );
-	float d = sdBox( laneP, vec3( 0.5, 0.2, 0.1) );
-	d = min( d, laneConveyor( laneP + vec3( 0.0, -0.2, -0.015 ) ).d );
+	vec2 d = vec2( sdBox( laneP, vec3( 0.5, 0.2, 0.1) ), MAT_WOOD );
+	d = opAdd( d, vec2( laneConveyor( laneP + vec3( 0.0, -0.2, -0.015 ) ).d, MAT_CONVEYOR ) );
 
 	vec3 topLaneP = laneP;
 	topLaneP += vec3( 0.0, -0.45, 0.0  );
-	d = min( d, sdBox( topLaneP, vec3( 0.5, 0.013, 0.1) ) );
-	// d = min( d, laneConveyor( topLaneP + vec3( 0.0, -0.015, -0.015 ) ).d );
-
+	d = opAdd( d, vec2( sdBox( topLaneP, vec3( 0.5, 0.013, 0.1) ), MAT_WOOD ) );
 
 	vec3 laneWallP = topLaneP;
 	laneWallP += vec3( 0.0, 0.0, 0.1 );
-	d = min( d, sdBox( laneWallP, vec3( 0.5, 2.0, 0.03) ) );
+	d = opAdd( d, vec2( sdBox( laneWallP, vec3( 0.5, 2.0, 0.03) ), MAT_WALL ) );
 
-	return SDFResult( d, laneP, 2.0, vec4( 0.95, 0.95, 0.95, 1.0 ) );
+	return SDFResult( d.x, p, d.y, vec4( laneP, 0.0 ) );
 
 }
 
 SDFResult table( vec3 p  ) {
 
-	float d = sdBox( p, vec3( 0.2, 0.02, seatDepth ) );
+	vec2 d = vec2( sdBox( p, vec3( 0.2, 0.02, seatDepth ) ), MAT_WOOD );
 
 	vec3 poleP = p;
 	poleP += vec3( 0.0, 0.25, 0.0 );
-	d = min( d, sdCappedCylinder( poleP, 0.03, 0.25 ) );
-	return SDFResult( d, p, 1.0, vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	d = opAdd( d, vec2( sdCappedCylinder( poleP, 0.03, 0.25 ), MAT_BLACK ) );
+	return SDFResult( d.x, p, d.y, vec4( p, 0.0 ) );
 
 }
 
@@ -107,25 +110,25 @@ SDFResult seat( vec3 p  ) {
 	vec3 seatP = p;
 	seatP.x = abs( seatP.x );
 	seatP += vec3( - 0.4, 0.2, 0.0 );
-	float d = sdBox( seatP, vec3( 0.2, 0.06, seatDepth ) );
+	vec2 d = vec2( sdBox( seatP, vec3( 0.2, 0.06, seatDepth ) ), MAT_WOOD );
 
 	vec3 semotareP = seatP;
 	semotareP += vec3( -0.12, -0.26, 0.0 );
-	d = min( d, sdBox( semotareP, vec3( 0.08, 0.20, seatDepth ) ) );
+	d = opAdd( d, vec2( sdBox( semotareP, vec3( 0.08, 0.20, seatDepth ) ), MAT_WOOD ) );
 
 	vec3 kushonP = seatP;
 	kushonP -= vec3( 0.02, 0.27, 0.0 );
-	d = min( d, sdBox( kushonP, vec3( 0.007, 0.15, seatDepth * 0.93 ) ) - 0.02 );
+	d = opAdd( d, vec2( sdBox( kushonP, vec3( 0.007, 0.15, seatDepth * 0.93 ) ) - 0.02, MAT_BLACK ) );
 
 	vec3 kushon2P = seatP;
 	kushon2P -= vec3( -0.08, 0.08, 0.0 );
-	d = min( d, sdBox( kushon2P, vec3( 0.1, 0.007, seatDepth * 0.93 ) ) - 0.02 );
+	d = opAdd( d, vec2( sdBox( kushon2P, vec3( 0.1, 0.007, seatDepth * 0.93 ) ) - 0.02, MAT_BLACK ) );
 
 	vec3 ashiP = semotareP;
 	ashiP += vec3( 0.0, 0.4, 0.0 );
-	d = min( d, sdBox( ashiP, vec3( 0.25, 0.1, 0.35 ) ) );
+	d = opAdd( d, vec2( sdBox( ashiP, vec3( 0.25, 0.1, 0.35 ) ), MAT_WOOD ) );
 
-	return SDFResult( d, p, 1.0, vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	return SDFResult( d.x, p, d.y, vec4( p, 0.0 ) );
 
 }
 
@@ -138,7 +141,7 @@ SDFResult sdFloor( vec3 p ) {
 	floorP += vec3( 0.0, 0.45, 0.0 );
 	float d = sdBox( floorP, vec3( 0.5, 0.05, seatDepth ) );
 
-	return SDFResult( d, p, 0.0, vec4( 0.85, 0.85, 0.88, 1.0 ) );
+	return SDFResult( d, p, MAT_FLOOR, vec4( p, 0.0 ) );
 
 }
 
@@ -212,37 +215,69 @@ void main( void ) {
 	// オブジェクト空間からワールド空間への変換、位置・法線・深度を出力
 	#include <rm_out_obj>
 
-	// SDFResultから渡された色を使用
-	outColor.xyz = dist.matparam.xyz;
+	// 汎用ノイズ（細かさ違い3種）
+	vec3 matP = dist.matparam.xyz;
+	vec4 noise = vec4(
+		fbm( rayPos * 2.0 ),   // 粗い
+		fbm( rayPos * 8.0 ),   // 中間
+		fbm( rayPos * 32.0 ),   // 細かい
+		fbm( rayPos * 64.0 )   // さらに細かい
+	);
+
+	// マテリアルIDごとに色とプロパティを設定
 	outEmission = vec3( 0.0 );
 	outRoughness = 0.7;
 	outMetalic = 0.0;
 
-	if( dist.mat == 0.0 ) {
+	if( dist.mat == MAT_FLOOR ) {
 
 		// 床（タイル風の明るいグレー）
+		outColor.xyz = vec3( 0.85, 0.85, 0.88 );
 		outRoughness = 0.4;
 
-	} else if( dist.mat == 1.0 ) {
+	} else if( dist.mat == MAT_WOOD ) {
 
-		// テーブル・椅子（木材風の温かみのあるブラウン）
-		outRoughness = 0.6;
+		// テーブル・椅子（木目）
+		float mokume = fract( length( matP * vec3( 0.5, 1.0, 1.0 ) + vec3( -0.1, 0.4, 0.1 ) ) * 45.0 + noise.x * 20.0 );
+		vec3 baseCol = vec3( 0.8, 0.55, 0.25 );
+		outColor.xyz = mix( baseCol, baseCol * 0.95, mokume );
+		outNormal = normalize( outNormal + mokume * 0.0 );
+		outRoughness = 0.2 + mokume * 0.1;
 
-	} else if( dist.mat == 2.0 ) {
+	} else if( dist.mat == MAT_LANE ) {
 
 		// レーン（プラスチック風の白）
+		outColor.xyz = vec3( 0.95, 0.95, 0.95 );
 		outRoughness = 0.3;
 
-	} else if( dist.mat == 3.0 ) {
+	} else if( dist.mat == MAT_CONVEYOR ) {
 
 		// コンベア（ゴム風の濃いグレー）
+		outColor.xyz = vec3( 1.0, 0.95, 0.85 );
 		outRoughness = 0.8;
 
-	} else if( dist.mat == 4.0 ) {
+	} else if( dist.mat == MAT_FAUCET ) {
 
 		// 蛇口（ステンレス風のメタリック）
+		outColor.xyz = vec3( 0.8, 0.8, 0.82 );
 		outRoughness = 0.15;
 		outMetalic = 0.85;
+
+	} else if( dist.mat == MAT_BLACK ) {
+
+		// クッション
+		float gara = fract( noise.w * 20.0 );
+		outColor.xyz = vec3( 0.3, 0.3, 0.3 ) * noise.x + gara * 0.01;
+		outRoughness = 0.3 + gara * 0.3;
+		outNormal = normalize( outNormal + vec3(  gara  ) * 0.05 );
+
+	} else if( dist.mat == MAT_WALL ) {
+
+		// 壁（白ベース）
+		float gara = fract( noise.x * 40.0 ) * noise.z;
+		outColor.xyz = vec3( 0.95, 0.90, 0.8 );
+		outColor.xyz *= 0.95 + gara * 0.1;
+		outRoughness = 0.1+ gara;
 
 	}
 
