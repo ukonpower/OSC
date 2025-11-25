@@ -9,6 +9,7 @@ import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/Overlay
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
+import { Logo } from './Components/Demo4/Common/Logo/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
@@ -19,7 +20,6 @@ import { TruchetSushiLane } from './Components/Demo4/Common/TruchetSushiLane/ind
 import { TsuriZao } from './Components/Demo4/Common/Tsuri/TsuriZao/index.ts';
 import { UKPAshi } from './Components/Demo4/Common/UKPAshi/index.ts';
 import { Ukonpower } from './Components/Demo4/Common/Ukonpower/index.ts';
-import { Logo } from './Components/Demo4/Common/_Logo/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
 import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
 import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
@@ -63,6 +63,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	Demo4: {
 		Common: {
 			DebaBouChou,
+			Logo,
 			MizuBall,
 			Nigiri,
 			ShaderMotionGraphics,
@@ -75,7 +76,6 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			},
 			UKPAshi,
 			Ukonpower,
-			Logo,
 		},
 		Ikura: {
 			IkuraFluids,
