@@ -16,6 +16,7 @@ export class Ukonpower extends MXP.Component {
 	private mesh: MXP.Mesh;
 	private ashiEntities: MXP.Entity[] = [];
 	private legInitialRotX: number[] = [];
+	private tsuriZaoEntity: MXP.Entity | null = null;
 
 	constructor( param: MXP.ComponentParams ) {
 
@@ -73,11 +74,11 @@ export class Ukonpower extends MXP.Component {
 		}
 
 		// 釣り竿を両手の中央に追加
-		const tsuriZaoEntity = new MXP.Entity();
-		tsuriZaoEntity.position.set( 0, 0, - 0.45 );
-		tsuriZaoEntity.quaternion.setFromEuler( new GLP.Euler( - Math.PI / 4, 0, 0 ) );
-		tsuriZaoEntity.addComponent( TsuriZao );
-		this.entity.add( tsuriZaoEntity );
+		this.tsuriZaoEntity = new MXP.Entity();
+		this.tsuriZaoEntity.position.set( 0, 0, - 0.45 );
+		this.tsuriZaoEntity.quaternion.setFromEuler( new GLP.Euler( - Math.PI / 4, 0, 0 ) );
+		this.tsuriZaoEntity.addComponent( TsuriZao );
+		this.entity.add( this.tsuriZaoEntity );
 
 		// HMR
 
@@ -123,11 +124,19 @@ export class Ukonpower extends MXP.Component {
 		// 足を削除
 		for ( const ashi of this.ashiEntities ) {
 
-			this.entity.remove( ashi );
+			ashi.dispose();
 
 		}
 
 		this.ashiEntities = [];
+
+		// 釣り竿を削除
+		if ( this.tsuriZaoEntity ) {
+
+			this.tsuriZaoEntity.dispose();
+			this.tsuriZaoEntity = null;
+
+		}
 
 	}
 
