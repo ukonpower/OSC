@@ -7,6 +7,7 @@ import { LookAt } from '../../ObjectControls/LookAt';
 import { BLidgeClient } from '../../Utilities/BLidgeClient';
 
 import { Bloom } from './PostProcess/Bloom';
+import { Bokeh } from './PostProcess/Bokeh';
 import { ColorGrading } from './PostProcess/ColorGrading';
 import { Finalize } from './PostProcess/Finalize';
 import { FXAA } from './PostProcess/FXAA';
@@ -40,6 +41,7 @@ export class MainCamera extends MXP.Component {
 	private _tmpVector2: GLP.Vector;
 
 	private _dofTarget: MXP.Entity | null;
+	private _bokeh: Bokeh;
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -100,6 +102,10 @@ export class MainCamera extends MXP.Component {
 		// finalize
 
 		this.postProcessPipeline.add( Finalize );
+
+		// bokeh
+
+		this._bokeh = this.postProcessPipeline.add( Bokeh );
 
 		// dof
 

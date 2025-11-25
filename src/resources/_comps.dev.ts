@@ -1,5 +1,6 @@
 import { Bloom } from './Components/Camera/MainCamera/PostProcess/Bloom/index.ts';
 import { Blur } from './Components/Camera/MainCamera/PostProcess/Blur/index.ts';
+import { Bokeh } from './Components/Camera/MainCamera/PostProcess/Bokeh/index.ts';
 import { ColorGrading } from './Components/Camera/MainCamera/PostProcess/ColorGrading/index.ts';
 import { FXAA } from './Components/Camera/MainCamera/PostProcess/FXAA/index.ts';
 import { Finalize } from './Components/Camera/MainCamera/PostProcess/Finalize/index.ts';
