@@ -386,18 +386,6 @@ export class Music extends MXP.Component {
 
 	}
 
-	public setEntityImpl( entity: MXP.Entity ): void {
-
-		this.notice();
-
-	}
-
-	protected unsetEntityImpl( prevEntity: MXP.Entity ): void {
-
-		this.stop();
-
-	}
-
 	private notice() {
 
 		queueMicrotask( () => {
