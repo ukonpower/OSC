@@ -99,13 +99,14 @@ export class MainCamera extends MXP.Component {
 
 		this.postProcessPipeline.add( ColorGrading );
 
+		// bokeh
+
+		this._bokeh = this.postProcessPipeline.add( Bokeh );
+
 		// finalize
 
 		this.postProcessPipeline.add( Finalize );
 
-		// bokeh
-
-		this._bokeh = this.postProcessPipeline.add( Bokeh );
 
 		// dof
 
@@ -287,6 +288,26 @@ export class MainCamera extends MXP.Component {
 		}
 
 		this.renderCamera.dofParams.focusDistance = this._tmpVector1.sub( this._tmpVector2 ).length();
+
+		// camera effect
+
+		const blidger = this.entity.getComponent( MXP.BLidger );
+
+		if ( blidger ) {
+
+			const uPP = blidger.uniforms.uPP;
+
+			if ( uPP ) {
+
+				const blurRange = uPP.value.y;
+
+				this._bokeh.bokehV.uniforms.uBlurRange.value = blurRange;
+				this._bokeh.bokehH.uniforms.uBlurRange.value = blurRange;
+				// this._bokeh.bokehH.enabled = this._bokeh.bokehV.enabled = blurRange > 0.0;
+
+			}
+
+		}
 
 	}
 

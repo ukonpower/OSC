@@ -13,6 +13,7 @@ export class Bokeh extends MXP.PostProcess {
 	constructor( params: MXP.PostProcessParams<void> ) {
 
 		const bSample = 8;
+
 		const bokehParam: MXP.PostProcessPassParam = {
 			name: 'bokeh/v',
 			frag: gaussBlur,
@@ -43,7 +44,7 @@ export class Bokeh extends MXP.PostProcess {
 		this.bokehV = bokehV;
 		this.bokehH = bokehH;
 
-		this.enabled = false;
+		this.enabled = true;
 
 	}
 
