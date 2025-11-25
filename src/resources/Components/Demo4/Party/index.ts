@@ -21,6 +21,15 @@ export class Party extends MXP.Component {
 		this.speed = 9.0;
 		this.height = 3;
 
+		// Meshコンポーネントを取得してuniformを追加
+		const mesh = this.entity.getComponent( MXP.Mesh );
+
+		if ( mesh && mesh.material && mesh.material.uniforms ) {
+
+			mesh.material.uniforms.uParty = { value: 1.0, type: "1f" };
+
+		}
+
 		// エディタフィールドの定義
 		if ( import.meta.env.DEV ) {
 
