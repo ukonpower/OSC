@@ -201,14 +201,6 @@
 			]
 		},
 		{
-			"uuid": "b01f8327",
-			"components": [
-				{
-					"name": "KaitenSushi"
-				}
-			]
-		},
-		{
 			"uuid": "76c75ce7",
 			"components": [
 				{
@@ -298,22 +290,6 @@
 			"components": [
 				{
 					"name": "Sara"
-				}
-			]
-		},
-		{
-			"uuid": "526c1c65",
-			"components": [
-				{
-					"name": "SushiGetaWithNigiri"
-				}
-			]
-		},
-		{
-			"uuid": "06a4626d",
-			"components": [
-				{
-					"name": "SushiGetaWithNigiri"
 				}
 			]
 		},
