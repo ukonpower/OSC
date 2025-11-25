@@ -1,9 +1,11 @@
 import * as GLP from 'glpower';
 
 import { Serializable } from '../Serializable';
-import type { PostProcessPipeline } from '../Component/PostProcessPipeline';
 
 import { PostProcessPass } from './PostProcessPass';
+
+import type { PostProcessPipeline } from '../Component/PostProcessPipeline';
+
 
 export type PostProcessParams<TArgs = void> = TArgs extends void
   ? { pipeline: PostProcessPipeline; args?: TArgs }
