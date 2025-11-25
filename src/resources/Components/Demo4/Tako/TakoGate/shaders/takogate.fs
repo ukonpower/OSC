@@ -16,6 +16,8 @@ uniform vec4 uPrevState;
 uniform float uTime;
 uniform float uTimeE;
 
+uniform float uParty;
+
 // SDF関数 - TakoAshiを参考にしたゲート形状
 SDFResult D( vec3 p ) {
 
@@ -138,7 +140,8 @@ void main( void ) {
 
 	
 	// subsurface scatteringを計算 - 赤い部分のみに適用
-	float sss = subsurface( rayPos, normalize( (vec4( normalize( -rayPos.xyz), 0.0 )).xyz ), 0.5 ) * (1.0 + uState.z * 5.0);
+	float sssPower = (1.0 + uState.z * 5.0) + uParty * 10.0;
+	float sss = subsurface( rayPos, normalize( (vec4( normalize( -rayPos.xyz), 0.0 )).xyz ), 0.5 ) * sssPower;
 	outEmission += outColor.xyz * 1.0 * redMask;
 	outEmission.xyz += sss * (outColor.xyz + vec3( 0.5, 0.1, 0.0 )) * ( redMask );
 
