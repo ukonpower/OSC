@@ -1,7 +1,7 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-export class Party extends MXP.Component {
+export class PartyTime extends MXP.Component {
 
 	// 初期位置を保持
 	private basePosition: GLP.Vector;

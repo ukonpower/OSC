@@ -11,14 +11,15 @@ import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
-import { Sara } from './Components/Demo4/Common/Sara/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
 import { TableStage } from './Components/Demo4/Common/TableStage/index.ts';
+import { TruchetSushiLane } from './Components/Demo4/Common/TruchetSushiLane/index.ts';
 import { TsuriZao } from './Components/Demo4/Common/Tsuri/TsuriZao/index.ts';
 import { UKPAshi } from './Components/Demo4/Common/UKPAshi/index.ts';
 import { Ukonpower } from './Components/Demo4/Common/Ukonpower/index.ts';
+import { Logo } from './Components/Demo4/Common/_Logo/index.ts';
 import { IkuraFluids } from './Components/Demo4/Ikura/IkuraFluids/index.ts';
 import { GunkanShari } from './Components/Demo4/Ikura/IkuraGunKan/GunkanShari/index.ts';
 import { Ikura } from './Components/Demo4/Ikura/IkuraGunKan/Ikura/index.ts';
@@ -28,17 +29,17 @@ import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
 import { KaitenSushi } from './Components/Demo4/Party/KaitenSushi/index.ts';
+import { PartyTime } from './Components/Demo4/Party/PartyTime/index.ts';
+import { Sara } from './Components/Demo4/Party/Sara/index.ts';
 import { SushiGeta } from './Components/Demo4/Party/SushiGeta/index.ts';
 import { SushiGetaWithNigiri } from './Components/Demo4/Party/SushiGetaWithNigiri/index.ts';
 import { SushiSara } from './Components/Demo4/Party/SushiSara/index.ts';
-import { Party } from './Components/Demo4/Party/index.ts';
 import { Onigiri } from './Components/Demo4/Salmon/Onigiri/index.ts';
 import { Salmon } from './Components/Demo4/Salmon/Salmon/index.ts';
 import { SalmonSushi } from './Components/Demo4/Salmon/SalmonSushi/index.ts';
 import { TakoAshi } from './Components/Demo4/Tako/TakoAshi/index.ts';
 import { TakoGate } from './Components/Demo4/Tako/TakoGate/index.ts';
 import { TakoKosen } from './Components/Demo4/Tako/TakoKosen/index.ts';
-import { TruchetSushiLane } from './Components/Demo4/TruchetSushiLane/index.ts';
 import { Ocean } from './Components/Demo4/Tsuri/Ocean/index.ts';
 import { Taiyaki } from './Components/Demo4/Tsuri/Taiyaki/index.ts';
 import { Teibo } from './Components/Demo4/Tsuri/Teibo/index.ts';
@@ -64,16 +65,17 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			DebaBouChou,
 			MizuBall,
 			Nigiri,
-			Sara,
 			ShaderMotionGraphics,
 			Shari,
 			SkyBox,
 			TableStage,
+			TruchetSushiLane,
 			Tsuri: {
 				TsuriZao,
 			},
 			UKPAshi,
 			Ukonpower,
+			Logo,
 		},
 		Ikura: {
 			IkuraFluids,
@@ -85,7 +87,14 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Sashimi,
 		},
 		Music,
-		Party,
+		Party: {
+			KaitenSushi,
+			PartyTime,
+			Sara,
+			SushiGeta,
+			SushiGetaWithNigiri,
+			SushiSara,
+		},
 		Salmon: {
 			Onigiri,
 			Salmon,
@@ -96,7 +105,6 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			TakoGate,
 			TakoKosen,
 		},
-		TruchetSushiLane,
 		Tsuri: {
 			Ocean,
 			Taiyaki,

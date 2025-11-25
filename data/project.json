@@ -201,13 +201,21 @@
 			]
 		},
 		{
+			"uuid": "b01f8327",
+			"components": [
+				{
+					"name": "KaitenSushi"
+				}
+			]
+		},
+		{
 			"uuid": "76c75ce7",
 			"components": [
 				{
 					"name": "Maguro"
 				},
 				{
-					"name": "Party"
+					"name": "PartyTime"
 				}
 			]
 		},
@@ -218,7 +226,7 @@
 					"name": "Maguro"
 				},
 				{
-					"name": "Party"
+					"name": "PartyTime"
 				}
 			]
 		},
@@ -232,7 +240,7 @@
 					}
 				},
 				{
-					"name": "Party"
+					"name": "PartyTime"
 				}
 			]
 		},
@@ -246,7 +254,7 @@
 					}
 				},
 				{
-					"name": "Party"
+					"name": "PartyTime"
 				}
 			]
 		},
@@ -257,7 +265,7 @@
 					"name": "Taiyaki"
 				},
 				{
-					"name": "Party"
+					"name": "PartyTime"
 				}
 			]
 		},
@@ -294,6 +302,22 @@
 			]
 		},
 		{
+			"uuid": "526c1c65",
+			"components": [
+				{
+					"name": "SushiGetaWithNigiri"
+				}
+			]
+		},
+		{
+			"uuid": "06a4626d",
+			"components": [
+				{
+					"name": "SushiGetaWithNigiri"
+				}
+			]
+		},
+		{
 			"uuid": "b41b8d15",
 			"components": [
 				{
@@ -316,7 +340,7 @@
 					"name": "Ukonpower"
 				},
 				{
-					"name": "Party"
+					"name": "PartyTime"
 				}
 			]
 		},

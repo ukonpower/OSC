@@ -1,7 +1,8 @@
 import * as MXP from 'maxpower';
 
-import { Sara } from '../../Common/Sara';
 import { Nigiri } from '../../Common/Nigiri';
+import { Sara } from '../Sara';
+
 
 /**
  * SushiSara - SaraとNigiriを組み合わせた回転寿司の皿コンポーネント
