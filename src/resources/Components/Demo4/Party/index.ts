@@ -21,9 +21,6 @@ export class Party extends MXP.Component {
 		this.speed = 9.0;
 		this.height = 3;
 
-		console.log( this );
-
-
 		// エディタフィールドの定義
 		if ( import.meta.env.DEV ) {
 
