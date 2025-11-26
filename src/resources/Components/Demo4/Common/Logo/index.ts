@@ -61,32 +61,22 @@ export class Logo extends MXP.Component {
 
 		} );
 
-	}
-
-	protected setEntityImpl( entity: MXP.Entity ): void {
-
 		// BLidgerコンポーネントを取得
-		this.blidger = entity.getComponent( MXP.BLidger ) || null;
+		this.blidger = this.entity && this.entity.getComponent( MXP.BLidger ) || null;
 
 		// SVG要素をDOMに追加
 		document.body.appendChild( this.svgWrap );
 
 	}
 
-	protected unsetEntityImpl( prevEntity: MXP.Entity ): void {
+	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
 
-		// SVG要素をDOMから削除
-		if ( this.svgWrap && this.svgWrap.parentElement ) {
+		// 初回更新時にBLidgerを取得
+		if ( ! this.blidger && this.entity ) {
 
-			this.svgWrap.parentElement.removeChild( this.svgWrap );
+			this.blidger = this.entity.getComponent( MXP.BLidger ) || null;
 
 		}
-
-		this.blidger = null;
-
-	}
-
-	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
 
 		if ( ! this.blidger ) return;
 
@@ -119,20 +109,20 @@ export class Logo extends MXP.Component {
 
 		}
 
-		// アニメーション "_logoState2" を取得（名前の透明度）
-		const anim2 = this.blidger.animations.get( "_logoState2" );
+	}
 
-		if ( anim2 ) {
+	public dispose() {
 
-			const name = this.elms.get( "ic_name" );
+		super.dispose();
 
-			if ( name ) {
+		// SVG要素をDOMから削除
+		if ( this.svgWrap && this.svgWrap.parentElement ) {
 
-				name.style.opacity = anim2.value.x + "";
-
-			}
+			this.svgWrap.parentElement.removeChild( this.svgWrap );
 
 		}
+
+		this.blidger = null;
 
 	}
 
