@@ -35,7 +35,7 @@ export default defineConfig( {
 	},
 	resolve: {
 		alias: {
-			"glpower": path.join( __dirname, "packages/glpower/packages/glpower/src" ),
+			"glpower": path.join( __dirname, "packages/glpower/src" ),
 			"maxpower": path.join( __dirname, "packages/maxpower" ),
 			"orengine": path.join( __dirname, "packages/orengine" ),
 			"~": path.join( __dirname, "src" ),
