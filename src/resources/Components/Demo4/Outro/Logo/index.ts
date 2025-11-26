@@ -1,6 +1,8 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
+import { gl } from '~/globals';
+
 const length = 1000;
 const pathParam: {[key: string]: {l: number, i: string}} = {
 	_ic_body: { l: 137 * Math.PI * 2, i: "x" },
@@ -64,24 +66,34 @@ export class Logo extends MXP.Component {
 		// BLidgerコンポーネントを取得
 		this.blidger = this.entity && this.entity.getComponent( MXP.BLidger ) || null;
 
-		// SVG要素をDOMに追加
-		document.body.appendChild( this.svgWrap );
+		// SVG要素をcanvasの親要素に追加
+		if ( gl.canvas instanceof HTMLCanvasElement ) {
+
+			const canvasParent = gl.canvas.parentElement;
+
+			if ( canvasParent ) {
+
+				canvasParent.appendChild( this.svgWrap );
+
+			}
+
+		}
 
 	}
 
 	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
 
-		// 初回更新時にBLidgerを取得
-		if ( ! this.blidger && this.entity ) {
-
-			this.blidger = this.entity.getComponent( MXP.BLidger ) || null;
-
-		}
-
 		if ( ! this.blidger ) return;
 
 		// アニメーション "_logoState" を取得
-		const anim = this.blidger.animations.get( "_logoState" );
+		const anim = this.blidger.animations.get( "state" );
+		const hide = this.blidger.animations.get( "hide" );
+
+		if ( hide ) {
+
+			this.svgWrap.style.display = hide.value.x > 0.5 ? "none" : "block";
+
+		}
 
 		if ( anim ) {
 

@@ -9,7 +9,6 @@ import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/Overlay
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
-import { Logo } from './Components/Demo4/Common/Logo/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
@@ -28,6 +27,7 @@ import { Kyuuri } from './Components/Demo4/Ikura/Kyuuri/index.ts';
 import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
+import { Logo } from './Components/Demo4/Outro/Logo/index.ts';
 import { KaitenSushi } from './Components/Demo4/Party/KaitenSushi/index.ts';
 import { PartyTime } from './Components/Demo4/Party/PartyTime/index.ts';
 import { Sara } from './Components/Demo4/Party/Sara/index.ts';
@@ -55,7 +55,6 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	Demo4: {
 		Common: {
 			DebaBouChou,
-			Logo,
 			MizuBall,
 			Nigiri,
 			ShaderMotionGraphics,
@@ -79,6 +78,9 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Sashimi,
 		},
 		Music,
+		Outro: {
+			Logo,
+		},
 		Party: {
 			KaitenSushi,
 			PartyTime,
