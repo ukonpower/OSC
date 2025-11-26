@@ -20,7 +20,6 @@ export * from './Math/Utils';
 
 // animation
 
-export * from './Animation/Animator';
 export * from './Animation/Bezier';
 export * from './Animation/Easings';
 export * from './Animation/FCurve';
