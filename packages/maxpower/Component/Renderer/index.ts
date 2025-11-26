@@ -293,7 +293,7 @@ export class Renderer extends GLP.EventEmitter {
 
 	}
 
-	public getRenderStack( entity: Entity ) {
+	public getRenderStack( entity: Entity, event?: EntityUpdateEvent ) {
 
 		const stack: RenderStack = {
 			camera: [],
@@ -306,11 +306,12 @@ export class Renderer extends GLP.EventEmitter {
 			empty: [],
 		};
 
-		const _ = ( event: {entity: Entity, visibility: boolean} ) => {
+		const _ = ( params: {entity: Entity, visibility: boolean} ) => {
 
-			const entity = event.entity;
+			const entity = params.entity;
 
-			const visibility = ( event.visibility || event.visibility === undefined ) && entity.visible;
+			const forceDraw = event && event.forceDraw;
+			const visibility = forceDraw || ( ( params.visibility || params.visibility === undefined ) && entity.visible );
 			const mesh = entity.getComponent( Mesh );
 
 			if ( mesh && visibility ) {
@@ -448,7 +449,7 @@ export class Renderer extends GLP.EventEmitter {
 			Get RenderStack
 		-------------------------------*/
 
-		const stack = this.getRenderStack( root );
+		const stack = this.getRenderStack( root, event );
 
 		/*-------------------------------
 			UpdateLight
@@ -1354,6 +1355,9 @@ export class Renderer extends GLP.EventEmitter {
 		/*-------------------------------
 			Compile
 		-------------------------------*/
+
+		console.log( this.compileDrawParams );
+
 
 		const total = this.compileDrawParams.length;
 		let loaded = 0;
