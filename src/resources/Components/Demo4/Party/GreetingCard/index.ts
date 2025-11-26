@@ -19,8 +19,8 @@ export class GreetingCard extends MXP.Component {
 
 		super( params );
 
-		// Geometry作成
-		const geometry = new MXP.PlaneGeometry( { width: 1.0, height: 0.5 } );
+		// Geometry作成（縦書き用に縦長）
+		const geometry = new MXP.PlaneGeometry( { width: 0.5, height: 1.0 } );
 
 		// Material作成
 		this.material = new MXP.Material( {
@@ -82,10 +82,10 @@ export class GreetingCard extends MXP.Component {
 
 		if ( value ) {
 
-			// Canvas作成
+			// Canvas作成（縦書き用に縦長）
 			const canvas = document.createElement( 'canvas' );
-			canvas.width = 256;
-			canvas.height = 128;
+			canvas.width = 128;
+			canvas.height = 256;
 
 			const ctx = canvas.getContext( '2d' );
 			if ( ! ctx ) return;
@@ -100,12 +100,24 @@ export class GreetingCard extends MXP.Component {
 			ctx.lineWidth = 2;
 			ctx.strokeRect( padding, padding, canvas.width - padding * 2, canvas.height - padding * 2 );
 
-			// テキスト描画
+			// 縦書きテキスト描画
 			ctx.fillStyle = '#000';
-			ctx.font = 'bold 32px sans-serif';
+			ctx.font = 'bold 28px sans-serif';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
-			ctx.fillText( value.toUpperCase(), canvas.width / 2, canvas.height / 2 );
+
+			// 文字列を1文字ずつ縦に描画
+			const text = value.toUpperCase();
+			const charHeight = 32; // 文字間隔
+			const startY = ( canvas.height - ( text.length - 1 ) * charHeight ) / 2;
+
+			for ( let i = 0; i < text.length; i ++ ) {
+
+				const char = text[ i ];
+				const y = startY + i * charHeight;
+				ctx.fillText( char, canvas.width / 2, y );
+
+			}
 
 			// テクスチャ作成
 			this.texture = new GLP.GLPowerTexture( gl ).attach( canvas );

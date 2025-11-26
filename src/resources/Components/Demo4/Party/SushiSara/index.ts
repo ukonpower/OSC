@@ -1,8 +1,8 @@
 import * as MXP from 'maxpower';
 
 import { Nigiri } from '../../Common/Nigiri';
-import { Sara } from '../Sara';
 import { GreetingCard } from '../GreetingCard';
+import { Sara } from '../Sara';
 
 /**
  * SushiSara - SaraとNigiriを組み合わせた回転寿司の皿コンポーネント
@@ -40,7 +40,8 @@ export class SushiSara extends MXP.Component {
 		// GreetingCardエンティティを作成
 		this.greetingEntity = new MXP.Entity();
 		this.greetingEntity.name = "GreetingCard";
-		this.greetingEntity.position.set( 0, 0.3, 0 );
+		this.greetingEntity.position.set( - 0.3, 0.3, 0 );
+		this.greetingEntity.euler.y = - Math.PI / 4;
 		this.entity.add( this.greetingEntity );
 
 		// GreetingCardコンポーネントを追加
