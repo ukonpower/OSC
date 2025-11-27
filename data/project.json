@@ -317,18 +317,10 @@
 			]
 		},
 		{
-			"uuid": "689b8bb9",
-			"components": [
-				{
-					"name": "Sara"
-				}
-			]
-		},
-		{
 			"uuid": "b2ebb3cb",
 			"components": [
 				{
-					"name": "SaraAudio"
+					"name": "Sara"
 				}
 			]
 		},
@@ -336,7 +328,7 @@
 			"uuid": "dd9c0ac8",
 			"components": [
 				{
-					"name": "Sara"
+					"name": "SaraAudio"
 				}
 			]
 		},

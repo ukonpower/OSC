@@ -28,7 +28,7 @@ export class SaraAudio extends MXP.Component {
 
 	private setupSaras() {
 
-		const spacing = 2.5;
+		const spacing = 1.0;
 		const startX = - ( this.numSaras - 1 ) * spacing / 2;
 
 		for ( let i = 0; i < this.numSaras; i ++ ) {
@@ -114,7 +114,7 @@ export class SaraAudio extends MXP.Component {
 				const average = sum / binSize;
 
 				// 0-255の値を0-10にマッピング（表示する皿の枚数）
-				const visibleCount = Math.floor( ( average / 255 ) * 10 );
+				const visibleCount = Math.floor( ( ( average * 2.0 ) / 255 ) * 10 );
 
 				// SaraコンポーネントのuniformでVisibleCountを更新
 				const saraEntity = this.saraEntities[ i ];
