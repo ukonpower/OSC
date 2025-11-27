@@ -12,6 +12,7 @@ import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
 import { HUD } from './Components/Demo4/Common/HUD/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
+import { RandomSMG } from './Components/Demo4/Common/RandomSMG/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
 import { Shari } from './Components/Demo4/Common/Shari/index.ts';
 import { SkyBox } from './Components/Demo4/Common/SkyBox/index.ts';
@@ -59,6 +60,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			HUD,
 			MizuBall,
 			Nigiri,
+			RandomSMG,
 			ShaderMotionGraphics,
 			Shari,
 			SkyBox,

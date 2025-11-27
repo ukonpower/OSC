@@ -152,9 +152,6 @@
 						"Position Range/rangeY": 5,
 						"Position Range/rangeZ": 10,
 						"randomSeed": 0,
-						"rotationRandomness": 1,
-						"scaleMin": 0.5,
-						"scaleMax": 2,
 						"shaderType": "random"
 					}
 				}

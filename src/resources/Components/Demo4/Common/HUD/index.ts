@@ -1,9 +1,10 @@
 import * as MXP from 'maxpower';
 
+import hudFrag from './shaders/hud.fs';
+import hudVert from './shaders/hud.vs';
+
 import { globalUniforms } from '~/globals';
 
-import hudVert from './shaders/hud.vs';
-import hudFrag from './shaders/hud.fs';
 
 /**
  * HUD - UIフェーズでフルスクリーンに真っ白なフレームを表示
