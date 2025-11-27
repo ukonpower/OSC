@@ -3,7 +3,7 @@ import { Engine } from 'orengine';
 
 import SceneData from '../../../data/project.json';
 
-import { gl } from '~/globals';
+import { BASE_RESOLUTION, gl } from '~/globals';
 import { initResouces } from '~/resources';
 import { BLidgeClient } from '~/resources/Components/Utilities/BLidgeClient';
 
@@ -74,7 +74,7 @@ const exitElm = document.getElementById( 'e' )!;
 -------------------------------*/
 
 const engine = new Engine( gl );
-engine.setSize( new GLP.Vector( 1920, 1080 ) );
+engine.setSize( BASE_RESOLUTION );
 
 // canvas
 
