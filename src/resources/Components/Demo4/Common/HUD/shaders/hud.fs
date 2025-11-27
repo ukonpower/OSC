@@ -55,13 +55,13 @@ void main( void ) {
 	dotUv.y = abs(dotUv.y);
 	dotUv.x = abs(dotUv.x);
 	float dots = 0.0;
-	dots += smoothstep( 0.012, 0.005, length( dotUv + vec2( 0.0, -0.44 ) ) );
-	dots += smoothstep( 0.012, 0.005, length( dotUv + vec2( -0.05, -0.44 ) ) );
-	dots += smoothstep( 0.012, 0.005, length( dotUv + vec2( -1.08, -0.0 ) ) );
-	dots += smoothstep( 0.012, 0.005, length( dotUv + vec2( -1.08, -0.05 ) ) );
+	dots += smoothstep( 0.009, 0.007, length( dotUv + vec2( 0.0, -0.44 ) ) );
+	dots += smoothstep( 0.009, 0.007, length( dotUv + vec2( -0.05, -0.44 ) ) );
+	dots += smoothstep( 0.009, 0.007, length( dotUv + vec2( -1.08, -0.0 ) ) );
+	dots += smoothstep( 0.009, 0.007, length( dotUv + vec2( -1.08, -0.05 ) ) );
 	// dots += smoothstep( 0.2, 0.17, length( dotUv + vec2( -1.10, -0.0 ) ) ) * 0.2;
 
-	w += dots * 0.5;
+	w += dots * 0.4;
 
 	w = max( w, smoothstep( 0.004, 0.002, abs( sdBox( dotUv, vec2( 1.1, 0.46 ) ) - 0.02 )  ) * 0.3 );
 
