@@ -57,7 +57,7 @@ export class Salmon extends MXP.Component {
 			geometry: geo, material: mat
 		} );
 
-		bindBlidgeUniform( mesh );
+		bindBlidgeUniform( mesh.entity, mesh );
 
 		// マテリアルの参照を保持
 		this.material = mat;

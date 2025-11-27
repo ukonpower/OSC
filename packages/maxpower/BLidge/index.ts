@@ -76,6 +76,7 @@ type BLidgeLightParamCommon = {
 	type: 'POINT' | 'SUN' | 'SPOT' | 'AREA'
 	color: GLP.IVector3,
 	intensity: number,
+	shadow_map?: boolean,
 }
 
 export type BLidgeDirectionalLightParam = {

@@ -94,7 +94,7 @@
 			]
 		},
 		{
-			"uuid": "058d95c2",
+			"uuid": "67e890a6",
 			"components": [
 				{
 					"name": "IkuraFluids"
@@ -103,6 +103,14 @@
 		},
 		{
 			"uuid": "2b281283",
+			"components": [
+				{
+					"name": "IkuraGunKan"
+				}
+			]
+		},
+		{
+			"uuid": "c85f4ed4",
 			"components": [
 				{
 					"name": "IkuraGunKan"
@@ -174,7 +182,10 @@
 			"uuid": "b6c68e95",
 			"components": [
 				{
-					"name": "Nigiri"
+					"name": "Nigiri",
+					"props": {
+						"sashimiType": "maguro"
+					}
 				}
 			]
 		},
@@ -182,15 +193,154 @@
 			"uuid": "f2985235",
 			"components": [
 				{
-					"name": "Nigiri"
+					"name": "Nigiri",
+					"props": {
+						"sashimiType": "maguro"
+					}
 				}
 			]
 		},
 		{
-			"uuid": "36a0e8da",
+			"uuid": "b01f8327",
 			"components": [
 				{
-					"name": "WaterPillar"
+					"name": "KaitenSushi"
+				}
+			]
+		},
+		{
+			"uuid": "76c75ce7",
+			"components": [
+				{
+					"name": "Maguro"
+				},
+				{
+					"name": "PartyTime"
+				}
+			]
+		},
+		{
+			"uuid": "dd391494",
+			"components": [
+				{
+					"name": "Maguro"
+				},
+				{
+					"name": "PartyTime"
+				}
+			]
+		},
+		{
+			"uuid": "ef245de7",
+			"components": [
+				{
+					"name": "Salmon",
+					"props": {
+						"blockType": "saku"
+					}
+				},
+				{
+					"name": "PartyTime"
+				}
+			]
+		},
+		{
+			"uuid": "24a125ef",
+			"components": [
+				{
+					"name": "Salmon",
+					"props": {
+						"blockType": "saku"
+					}
+				},
+				{
+					"name": "PartyTime"
+				}
+			]
+		},
+		{
+			"uuid": "96971d72",
+			"components": [
+				{
+					"name": "Taiyaki"
+				},
+				{
+					"name": "PartyTime"
+				}
+			]
+		},
+		{
+			"uuid": "689b8bb9",
+			"components": [
+				{
+					"name": "Sara"
+				}
+			]
+		},
+		{
+			"uuid": "b2ebb3cb",
+			"components": [
+				{
+					"name": "Sara"
+				}
+			]
+		},
+		{
+			"uuid": "dd9c0ac8",
+			"components": [
+				{
+					"name": "Sara"
+				}
+			]
+		},
+		{
+			"uuid": "0472d010",
+			"components": [
+				{
+					"name": "Sara"
+				}
+			]
+		},
+		{
+			"uuid": "526c1c65",
+			"components": [
+				{
+					"name": "SushiGetaWithNigiri"
+				}
+			]
+		},
+		{
+			"uuid": "06a4626d",
+			"components": [
+				{
+					"name": "SushiGetaWithNigiri"
+				}
+			]
+		},
+		{
+			"uuid": "b41b8d15",
+			"components": [
+				{
+					"name": "TakoGate"
+				}
+			]
+		},
+		{
+			"uuid": "e63fb6c9",
+			"components": [
+				{
+					"name": "TakoGate"
+				}
+			]
+		},
+		{
+			"uuid": "4dbbbcce",
+			"components": [
+				{
+					"name": "Ukonpower"
+				},
+				{
+					"name": "PartyTime"
 				}
 			]
 		},
@@ -268,10 +418,18 @@
 			]
 		},
 		{
-			"uuid": "26b24f0a",
+			"uuid": "27599264",
 			"components": [
 				{
-					"name": "Octopus"
+					"name": "TakoGate"
+				}
+			]
+		},
+		{
+			"uuid": "77db9e8a",
+			"components": [
+				{
+					"name": "TakoKosen"
 				}
 			]
 		},
@@ -279,7 +437,21 @@
 			"uuid": "b9479e4a",
 			"components": [
 				{
-					"name": "SashimiTako"
+					"name": "Nigiri",
+					"props": {
+						"sashimiType": "tako"
+					}
+				}
+			]
+		},
+		{
+			"uuid": "2a16e1b2",
+			"components": [
+				{
+					"name": "Nigiri",
+					"props": {
+						"sashimiType": "tako"
+					}
 				}
 			]
 		},
@@ -297,7 +469,7 @@
 				{
 					"name": "SkyBox",
 					"props": {
-						"type": "default"
+						"skyboxType": "tsuri"
 					}
 				}
 			]
@@ -311,10 +483,26 @@
 			]
 		},
 		{
+			"uuid": "ddc6e769",
+			"components": [
+				{
+					"name": "Teibo"
+				}
+			]
+		},
+		{
+			"uuid": "69f163d9",
+			"components": [
+				{
+					"name": "Teibo"
+				}
+			]
+		},
+		{
 			"uuid": "5fe0ec15",
 			"components": [
 				{
-					"name": "Ukopower"
+					"name": "Ukonpower"
 				}
 			]
 		},
@@ -324,7 +512,7 @@
 				{
 					"name": "SkyBox",
 					"props": {
-						"type": "default"
+						"skyboxType": "default"
 					}
 				}
 			]

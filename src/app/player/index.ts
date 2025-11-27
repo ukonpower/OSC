@@ -89,6 +89,7 @@ if ( engine.canvas instanceof HTMLCanvasElement ) {
 -------------------------------*/
 
 const fullScreen = document.getElementById( 'fl' ) as HTMLButtonElement;
+
 fullScreen.onclick = () => {
 
 	const elem = document.documentElement;

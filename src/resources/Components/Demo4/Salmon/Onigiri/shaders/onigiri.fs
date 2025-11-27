@@ -14,7 +14,7 @@ SDFResult D( vec3 p ) {
 	vec3 pp = p;
 
 	vec2 d = vec2( udTriangle( pp, vec3( 0.0, 0.5, 0.0 ), vec3( -0.5, -0.35, 0.0 ), vec3( 0.5, -0.35, 0.0 ) ), 0.0 );
-	d -= 0.2;
+	d -= 0.3;
 
 	return SDFResult(
 		d.x,
@@ -32,23 +32,9 @@ void main( void ) {
 	#include <frag_in>
 	#include <rm_ray_obj>
 
-	SDFResult dist;
 
-	bool hit = false;
 	
-	for( int i = 0; i < 128; i++ ) { 
-
-		dist = D( rayPos );		
-		rayPos += dist.d * rayDir * 1.0;
-
-		if( dist.d < 0.001 ) {
-
-			hit = true;
-			break;
-
-		}
-		
-	}
+	#include <rm_loop,128,0.001,1.0>
 
 	if( !hit ) discard;
 

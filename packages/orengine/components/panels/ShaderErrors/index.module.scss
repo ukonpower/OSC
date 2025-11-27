@@ -157,6 +157,20 @@
 	}
 }
 
+.copySourceButton {
+	background-color: #2d5a27;
+	color: $fontCol2;
+	border: 1px solid #3d7a37;
+	padding: 0.25em 0.6em;
+	cursor: pointer;
+	font-size: 0.8em;
+	border-radius: 3px;
+
+	&:hover {
+		background-color: #3d7a37;
+	}
+}
+
 .sourceContext {
 	background-color: $bgCol0;
 	padding: 0.5em;

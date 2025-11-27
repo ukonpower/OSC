@@ -8,8 +8,8 @@ import { globalUniforms } from '~/globals';
 
 export class Sashimi extends MXP.Component {
 
-	// 刺身の種類（マグロ or サーモン）
-	private sashimiType: 'maguro' | 'salmon';
+	// 刺身の種類（マグロ or サーモン or いくら or タコ）
+	private sashimiType: 'maguro' | 'salmon' | 'ikura' | 'tako';
 	private material: MXP.Material;
 
 	constructor( param: MXP.ComponentParams ) {
@@ -27,26 +27,42 @@ export class Sashimi extends MXP.Component {
 				globalUniforms.resolution,
 				globalUniforms.time,
 				globalUniforms.tex,
-				{
-					// 刺身の種類（0: マグロ, 1: サーモン）
-					uSashimiType: { type: '1f', value: 0 }
-				}
 			)
 		} );
 
-		// field設定（setterでuniformを更新）
+		// field設定（setterでDefineを更新）
 		this.field( "sashimiType", () => this.sashimiType, ( v ) => {
 
 			this.sashimiType = v;
 
-			this.material.uniforms.uSashimiType.value = v === 'salmon' ? 1 : 0;
+			// Defineを設定してシェーダーバリアントを切り替え
+			const defines: { [ key: string ]: string } = {};
+
+			if ( v === 'salmon' ) {
+
+				defines.SALMON = '';
+
+			} else if ( v === 'ikura' ) {
+
+				defines.IKURA = '';
+
+			} else if ( v === 'tako' ) {
+
+				defines.TAKO = '';
+
+			}
+
+			this.material.defines = defines;
+			this.material.requestUpdate();
 
 		}, {
 			format: {
 				type: "select",
 				list: [
 					{ label: "マグロ", value: "maguro" },
-					{ label: "サーモン", value: "salmon" }
+					{ label: "サーモン", value: "salmon" },
+					{ label: "いくら", value: "ikura" },
+					{ label: "タコ", value: "tako" }
 				]
 			}
 		} );

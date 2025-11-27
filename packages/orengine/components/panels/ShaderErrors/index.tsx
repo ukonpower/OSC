@@ -235,6 +235,29 @@ export const ShaderErrors = () => {
 									>
 										コピー
 									</button>
+									{error.fullSource && (
+										<button
+											className={style.copySourceButton}
+											onClick={async ( e ) => {
+
+												e.stopPropagation();
+												const success = await copyToClipboard( error.fullSource! );
+
+												if ( success ) {
+
+													console.log( 'ソースコードをクリップボードにコピーしました' );
+
+												} else {
+
+													console.error( 'クリップボードへのコピーに失敗しました' );
+
+												}
+
+											}}
+										>
+											ソース全体をコピー
+										</button>
+									)}
 								</div>
 							</div>
 							{error.sourceContext && (

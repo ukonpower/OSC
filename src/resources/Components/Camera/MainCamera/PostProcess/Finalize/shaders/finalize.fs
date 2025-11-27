@@ -34,7 +34,7 @@ void main( void ) {
 	float len = length(cuv);
 	col *= smoothstep( 1.2, 0.3, len );
 
-	col.xyz += random( vUv + floor(uTimeEF * 18.0 ) * 0.5 ) * 0.05;
+	col.xyz += random( vUv + floor(uTimeEF * 18.0 ) * 0.5 ) * 0.02;
 
 	col.xyz *= uPP.x;
 	

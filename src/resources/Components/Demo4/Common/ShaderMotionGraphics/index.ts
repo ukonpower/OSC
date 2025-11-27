@@ -1,11 +1,11 @@
 import * as MXP from 'maxpower';
 
-import basicVert from './shaders/basic.vs';
+
 import ikuraBGScreenFrag from './shaders/ikuraBGScreen.fs';
 import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
 import salmonBGScreenFrag from './shaders/salmonBGScreen.fs';
-import sampleFrag from './shaders/sample.fs';
 import takoBGScreenFrag from './shaders/takoBGScreen.fs';
+import smgVert from './shaders/smg.vs';
 
 import { globalUniforms } from '~/globals';
 import { bindBlidgeUniform } from '~/shortcuts';
@@ -29,14 +29,13 @@ export class ShaderMotionGraphics extends MXP.Component {
 
 		// シェーダーリストを定義（名前をキーにしたMap）
 		this.shaders = new Map( [
-			[ "sample", { vert: basicVert, frag: sampleFrag } ],
-			[ "ikuraBGScreen", { vert: basicVert, frag: ikuraBGScreenFrag } ],
-			[ "maguroBGScreen", { vert: basicVert, frag: maguroBGScreenFrag } ],
-			[ "salmonBGScreen", { vert: basicVert, frag: salmonBGScreenFrag } ],
-			[ "takoBGScreen", { vert: basicVert, frag: takoBGScreenFrag } ],
+			[ "ikuraBGScreen", { vert: smgVert, frag: ikuraBGScreenFrag } ],
+			[ "maguroBGScreen", { vert: smgVert, frag: maguroBGScreenFrag } ],
+			[ "salmonBGScreen", { vert: smgVert, frag: salmonBGScreenFrag } ],
+			[ "takoBGScreen", { vert: smgVert, frag: takoBGScreenFrag } ],
 		] );
 
-		this.shaderName = "sample";
+		this.shaderName = "ikuraBGScreen";
 		this.layers = 1; // デフォルトは1レイヤー
 		this.layerSpacing = 0.01; // デフォルトの間隔
 
@@ -59,7 +58,6 @@ export class ShaderMotionGraphics extends MXP.Component {
 			format: {
 				type: "select",
 				list: [
-					{ label: "Sample", value: "sample" },
 					{ label: "Ikura BG Screen", value: "ikuraBGScreen" },
 					{ label: "Maguro BG Screen", value: "maguroBGScreen" },
 					{ label: "Salmon BG Screen", value: "salmonBGScreen" },
@@ -88,25 +86,6 @@ export class ShaderMotionGraphics extends MXP.Component {
 		// ホットリロード対応（開発時のみ）
 		if ( import.meta.hot ) {
 
-			// 頂点シェーダーのホットリロード
-			import.meta.hot.accept( './shaders/basic.vs', ( module ) => {
-
-				if ( module ) {
-
-					// 全てのシェーダーの頂点シェーダーを更新
-					for ( const shader of this.shaders.values() ) {
-
-						shader.vert = MXP.hotUpdate( 'smgBasicVert', module.default );
-
-					}
-
-					// マテリアルを再構築
-					this.updateMaterial();
-
-				}
-
-			} );
-
 			// シェーダーホットリロードハンドラーを生成する関数
 			const createHotReloadHandler = ( shaderName: string, hotKey: string ) => ( module: any ) => {
 
@@ -125,7 +104,6 @@ export class ShaderMotionGraphics extends MXP.Component {
 			};
 
 			// 各シェーダーファイルのホットリロードを登録
-			import.meta.hot.accept( './shaders/sample.fs', createHotReloadHandler( 'sample', 'smgSampleFrag' ) );
 			import.meta.hot.accept( './shaders/ikuraBGScreen.fs', createHotReloadHandler( 'ikuraBGScreen', 'smgIkuraBGScreenFrag' ) );
 			import.meta.hot.accept( './shaders/maguroBGScreen.fs', createHotReloadHandler( 'maguroBGScreen', 'smgMaguroBGScreenFrag' ) );
 			import.meta.hot.accept( './shaders/salmonBGScreen.fs', createHotReloadHandler( 'salmonBGScreen', 'smgSalmonBGScreenFrag' ) );
@@ -186,7 +164,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 		} );
 
 		// BLidgerのuniformsをマテリアルにバインド
-		bindBlidgeUniform( this.mesh );
+		bindBlidgeUniform( this.mesh.entity, this.mesh );
 
 	}
 

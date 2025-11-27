@@ -31,7 +31,7 @@
     "baseUrl": "./",
     "paths": {
       "glpower": [
-        "./packages/glpower/packages/glpower/src"
+        "./packages/glpower/src"
       ],
       "maxpower": [
         "./packages/maxpower"
@@ -58,7 +58,6 @@
     "plugins/**/*",
     "vite.config.ts",
     "vite-player.config.ts",
-    "packages/glpower/**/*",
     "**/*.test.ts",
     "**/*.test.tsx"
   ],

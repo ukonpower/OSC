@@ -201,6 +201,7 @@ export class BLidger extends Component {
 				...lightParam,
 				lightType: lightParam.type,
 				color: new GLP.Vector().copy( lightParam.color ).getElm( "vec3" ),
+				castShadow: lightParam.shadow_map !== undefined ? lightParam.shadow_map : true,
 			} );
 
 		}

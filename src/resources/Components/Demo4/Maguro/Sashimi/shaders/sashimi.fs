@@ -13,35 +13,56 @@
 uniform sampler2D uNoiseTex;
 uniform sampler2D uNoiseCyclicTex;
 
-// 刺身の種類（0: マグロ, 1: サーモン）
-uniform float uSashimiType;
+uniform float uTimeE;
 
 // 刺身のSDF定義
 SDFResult D( vec3 p ) {
 
 	vec3 sashimiP = p;
 	sashimiP.y -= 0.2;
-	
-	vec4 n = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) );
-	vec4 n2 = texture( uNoiseTex, p.xz * 2.0 - vec2( 0.1, 0.3 ) );
-	
-	vec3 pp = sashimiP;
-	pp.yz *= rotate( smoothstep( 0.0, 1.0, abs(pp.z) ) * sign( pp.z ) * 0.5);
-	pp.xy *= rotate( -smoothstep( 0.0, 0.4, abs(pp.x) ) * sign( pp.x ) * 0.5);
-	pp.y += n2.x * 0.01;
-	vec3 sashimiSize = vec3( 0.2, 0.01 + n.x * 0.08, 0.65 );
-	vec2 d = vec2( sdBox( pp, sashimiSize ), 0.0 );
 
-	vec3 trimP = pp;
-	trimP.xz += vec2( -0.0, 0.0);
-	trimP.xz *= rotate( 0.3 );
-	d.x = opAnd( sdBox(trimP, vec3( 1.0, 0.2, 0.4 )), d.x );
+	vec3 pp = sashimiP;
+	pp.yz *= rotate( smoothstep( 0.0, 0.8, abs(pp.z) ) * sign( pp.z ) * 0.3);
+	pp.xy *= rotate( -smoothstep( 0.0, 0.3, abs(pp.x) ) * sign( pp.x ) * 0.4);
+
+	vec2 d = vec2( 9999999.0, 1.0 );
+
+	#if defined( TAKO )
+
+		// タコ
+
+		vec4 n = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) );
+		vec4 n2 = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) + n.xy * 3.0 );
+		pp.y += n2.x * 0.02;
+		
+		vec3 takoSize = vec3( 0.25, 0.02, 0.4 );
+		pp.x *= 1.2 + sin( -HPI + pp.z * 4.0 ) * 0.4;
+		pp.y -= (texture( uNoiseTex, pp.xz * 0.1 - vec2( 0.1, 0.3 ) + vec2( 0.0, uTimeE * 0.01 ) ).x - 0.45) * smoothstep( 0.05, 0.2, abs( pp.x ) ) * 0.3;
+		pp.x += sin( pp.z * 30.0 ) * 0.2 * smoothstep( 0.1, 1.0, abs( pp.x ) );
+		d.x = sdBox( pp, takoSize );
+
+	#else
+
+		vec4 n = texture( uNoiseTex, p.xz * 0.1 - vec2( 0.1, 0.3 ) );
+		vec4 n2 = texture( uNoiseTex, p.xz * 2.0 - vec2( 0.1, 0.3 ) );
+		pp.y += n2.x * 0.02;
+
+		// マグロ・サーモン（薄め）
+		vec3 sashimiSize = vec3( 0.2, 0.01 + n.x * 0.08, 0.65 );
+		d.x = sdBox( pp, sashimiSize );
+
+		vec3 trimP = pp;
+		trimP.xz += vec2( -0.0, 0.0);
+		trimP.xz *= rotate( 0.3 );
+		d.x = opAnd( sdBox(trimP, vec3( 1.0, 0.2, 0.4 )), d.x );
+
+	#endif
 
 	return SDFResult(
 		d.x,
 		p,
 		d.y,
-		vec4(0.0)
+		vec4(pp, 0.0)
 	);
 
 }
@@ -54,24 +75,10 @@ void main( void ) {
 	#include <frag_in>
 	#include <rm_ray_obj>
 
-	SDFResult dist;
 
-	bool hit = false;
 
 	// レイマーチングループ
-	for( int i = 0; i < 128; i++ ) {
-
-		dist = D( rayPos );
-		rayPos += dist.d * rayDir * 0.7;
-
-		if( dist.d < 0.001 ) {
-
-			hit = true;
-			break;
-
-		}
-
-	}
+	#include <rm_loop,32,0.001,0.7>
 
 	if( !hit ) discard;
 
@@ -87,18 +94,26 @@ void main( void ) {
 
 	float dnv = dot( rayDir, -outNormal.xyz );
 
-	// 刺身のカラー（マグロの赤身 or サーモンのオレンジ）
-	vec3 maguruColor = vec3( 0.9, 0.15, 0.1 );    // マグロ：赤身
-	vec3 salmonColor = vec3(  1.0, 0.4, 0.2  );      // サーモン：オレンジ
-	vec3 sashimiColor = mix( maguruColor, salmonColor, uSashimiType );
+	vec3 sashimiColor = vec3( 1.0 );
+	vec3 sashimiEmission = vec3( 0.0 );
+
+	// 刺身のカラー（Defineで種類を切り替え）
+	#if defined( SALMON )
+		sashimiColor = vec3( 1.0, 0.4, 0.2 );  // サーモン：オレンジ
+		sashimiEmission = vec3( 1.0, 0.4, 0.1 );
+	#elif defined( TAKO )
+		sashimiColor = vec3( 1.0, 0.95, 0.9 ); // タコ：白っぽい
+		sashimiColor.xyz = mix( sashimiColor.xyz, vec3( 0.8, 0.0, 0.1 ), smoothstep( 0.16, 0.23, abs( dist.matparam.x ) )  );
+		sashimiEmission = vec3( 1.0, 0.8, 0.7 );
+	#else
+		sashimiColor = vec3( 0.9, 0.15, 0.1 ); // マグロ：赤身
+		sashimiEmission = vec3( 0.9, 0.1, 0.2 );
+	#endif
 
 	outColor.xyz = sashimiColor;
 	outColor.xyz = mix( outColor.xyz, vec3( 1.0 ), smoothstep( 0.8, 1.0, fract(length( rayPos.xz + 0.5 + n.xy * 0.3 ) * 5.0 ) ) * n.y * 0.8 );
 
-	// エミッションもサーモンの時はオレンジに
-	vec3 maguruEmission = vec3( 0.9, 0.1, 0.2 );
-	vec3 salmonEmission = vec3( 1.0, 0.4, 0.1 );
-	outEmission.xyz += mix( maguruEmission, salmonEmission, uSashimiType ) * sss * 0.9 * smoothstep( 1.5, 0.0, dnv );
+	outEmission.xyz += sashimiEmission * sss * 0.9 * smoothstep( 1.5, 0.0, dnv );
 	outRoughness = 0.4;
 
 	// グラデーション効果

@@ -1,7 +1,6 @@
 import * as MXP from 'maxpower';
 
-import skyboxDefaultFrag from './shaders/skybox.fs';
-import skyboxTsuriFrag from './shaders/skybox_tsuri.fs';
+import skyboxFrag from './shaders/skybox.fs';
 
 import { globalUniforms } from '~/globals';
 import { bindBlidgeUniform } from '~/shortcuts';
@@ -9,56 +8,68 @@ import { bindBlidgeUniform } from '~/shortcuts';
 export class SkyBox extends MXP.Component {
 
 	// Skyboxのタイプ（default or tsuri）
-	public type: string = "default";
+	private skyboxType: 'default' | 'tsuri';
+	private material: MXP.Material;
 
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
 
-		// エディタフィールドの定義
-		if ( import.meta.env.DEV ) {
+		// デフォルトはdefault
+		this.skyboxType = 'default';
 
-			this.field( "type", () => this.type, ( v ) => this.type = v );
+		// material
+		this.material = new MXP.Material( {
+			phase: [ "deferred", "envMap" ],
+			frag: MXP.hotGet( 'skyboxFrag', skyboxFrag ),
+			cullFace: false,
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.tex )
+		} );
 
-		}
+		// field設定（setterでDefineを更新）
+		this.field( "skyboxType", () => this.skyboxType, ( v ) => {
 
-		// typeに応じてシェーダーを切り替え
-		const frag = this.type === "tsuri" ? skyboxTsuriFrag : skyboxDefaultFrag;
-		const hotKey = this.type === "tsuri" ? "skybox_tsuri" : "skybox_default";
+			this.skyboxType = v;
+
+			// Defineを設定してシェーダーバリアントを切り替え
+			const defines: { [ key: string ]: string } = {};
+
+			if ( v === 'tsuri' ) {
+
+				defines.TSURI = '';
+
+			}
+
+			this.material.defines = defines;
+			this.material.requestUpdate();
+
+		}, {
+			format: {
+				type: "select",
+				list: [
+					{ label: "Default", value: "default" },
+					{ label: "Tsuri", value: "tsuri" }
+				]
+			}
+		} );
 
 		const mesh = this._entity.addComponent( MXP.Mesh, {
 			geometry: new MXP.SphereGeometry( { radius: 500, widthSegments: 32, heightSegments: 32 } ),
-			material: new MXP.Material( {
-				phase: [ "deferred", "envMap" ],
-				frag: MXP.hotGet( hotKey, frag ),
-				cullFace: false,
-				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.tex )
-			} )
+			material: this.material
 		} );
 
-		bindBlidgeUniform( mesh );
+		bindBlidgeUniform( mesh.entity, mesh );
 
+		// HMR
 		if ( import.meta.hot ) {
 
 			import.meta.hot.accept( './shaders/skybox.fs', ( module ) => {
 
-				if ( module && this.type === "default" ) {
+				if ( module ) {
 
-					mesh.material.frag = MXP.hotUpdate( 'skybox_default', module.default );
+					this.material.frag = MXP.hotUpdate( 'skyboxFrag', module.default );
 
-					mesh.material.requestUpdate();
-
-				}
-
-			} );
-
-			import.meta.hot.accept( './shaders/skybox_tsuri.fs', ( module ) => {
-
-				if ( module && this.type === "tsuri" ) {
-
-					mesh.material.frag = MXP.hotUpdate( 'skybox_tsuri', module.default );
-
-					mesh.material.requestUpdate();
+					this.material.requestUpdate();
 
 				}
 

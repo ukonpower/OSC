@@ -1,17 +1,33 @@
+import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
 /**
- * MeshのマテリアルにBLidgerのuniformsをバインドする
- * @param mesh 対象のMesh
+ * BLidgerのuniformsをバインドする
+ * @param entity BLidgerコンポーネントを持つEntity
+ * @param target バインド先（Mesh、Material、またはUniforms）
  */
-export function bindBlidgeUniform( mesh: MXP.Mesh ): void {
+export function bindBlidgeUniform( entity: MXP.Entity, target: MXP.Mesh | MXP.Material | GLP.Uniforms ): void {
 
-	const blidger = mesh.entity.getComponent( MXP.BLidger );
+	const blidger = entity.getComponent( MXP.BLidger );
 
-	if ( mesh.material && blidger ) {
+	if ( ! blidger ) return;
 
-		blidger.bindUniforms( mesh.material.uniforms );
+	let uniforms: GLP.Uniforms;
+
+	if ( target instanceof MXP.Mesh ) {
+
+		uniforms = target.material.uniforms;
+
+	} else if ( target instanceof MXP.Material ) {
+
+		uniforms = target.uniforms;
+
+	} else {
+
+		uniforms = target;
 
 	}
+
+	blidger.bindUniforms( uniforms );
 
 }

@@ -37,36 +37,42 @@ export default defineConfig( {
 						properties: {
 							regex: /^(?!(u[A-Z]|[A-Z_]+$|_)).*$/,
 							reserved: [
-								"overrides",
-								"side",
-								"scene",
 								...( () => {
 
 									const data = playerJson; // セーブデータJSON
 									const reserved = new Set<string>();
-									const addComponentNames = ( obj: any ) => {
 
-										if ( obj.components ) {
+									// すべてのキー名と値を再帰的に収集
+									const collectAllKeys = ( obj: any ) => {
 
-											obj.components.forEach( ( comp: any ) => {
+										if ( ! obj || typeof obj !== 'object' ) return;
 
-												if ( comp.name ) reserved.add( comp.name );
-												if ( comp.props ) {
+										Object.keys( obj ).forEach( key => {
 
-													Object.keys( comp.props ).forEach( prop => reserved.add( prop ) );
+											reserved.add( key );
 
-												}
+											const value = obj[ key ];
 
-											} );
+											// 文字列値も収集（コンポーネント名など）
+											if ( typeof value === 'string' ) {
 
-										}
+												reserved.add( value );
 
-										if ( obj.childs ) obj.childs.forEach( addComponentNames );
-										if ( obj.overrides ) obj.overrides.forEach( addComponentNames );
+											} else if ( Array.isArray( value ) ) {
+
+												value.forEach( collectAllKeys );
+
+											} else if ( typeof value === 'object' ) {
+
+												collectAllKeys( value );
+
+											}
+
+										} );
 
 									};
 
-									addComponentNames( data );
+									collectAllKeys( data );
 									return Array.from( reserved );
 
 								} )()
@@ -93,7 +99,7 @@ export default defineConfig( {
 	},
 	resolve: {
 		alias: {
-			"glpower": path.join( __dirname, "packages/glpower/packages/glpower/src" ),
+			"glpower": path.join( __dirname, "packages/glpower/src" ),
 			"maxpower": path.join( __dirname, "packages/maxpower" ),
 			"orengine": path.join( __dirname, "packages/orengine" ),
 			"~": path.join( __dirname, "src" ),
@@ -109,7 +115,8 @@ export default defineConfig( {
 	plugins: [
 		ResourceManager(),
 		ShaderLoader( {
-			skipMinifier: false
+			skipMinifier: false,
+			embedFilePath: false
 		} ),
 		visualizer( {
 			template: 'list',

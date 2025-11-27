@@ -1,7 +1,7 @@
 import * as MXP from 'maxpower';
 
-import basicVert from './shaders/basic.vs';
 import basicFrag from './shaders/basic.fs';
+import basicVert from './shaders/basic.vs';
 
 import { globalUniforms } from '~/globals';
 
@@ -21,7 +21,6 @@ export class ShaderMesh extends MXP.Component {
 		this.mesh = this._entity.addComponent( MXP.Mesh, {
 			geometry: new MXP.PlaneGeometry( { width: 1.0, height: 1.0 } ),
 			material: new MXP.Material( {
-				phase: [ "deferred", "forward" ], // deferredとforwardの両方で描画
 				vert: MXP.hotGet( "basicVert", basicVert ),
 				frag: MXP.hotGet( "basicFrag", basicFrag ),
 				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )

@@ -41,6 +41,26 @@ export const CodePane = ( { code, onChange }: CodePaneProps ) => {
 			// GLSL言語を登録
 			monaco.languages.register( { id: 'glsl' } );
 
+			// コメント設定（Cmd+/ でコメントトグル）
+			monaco.languages.setLanguageConfiguration( 'glsl', {
+				comments: {
+					lineComment: '//',
+					blockComment: [ '/*', '*/' ]
+				},
+				brackets: [
+					[ '{', '}' ],
+					[ '[', ']' ],
+					[ '(', ')' ]
+				],
+				autoClosingPairs: [
+					{ open: '{', close: '}' },
+					{ open: '[', close: ']' },
+					{ open: '(', close: ')' },
+					{ open: '"', close: '"' },
+					{ open: "'", close: "'" }
+				]
+			} );
+
 			// GLSLのトークン定義（シンタックスハイライト）
 			monaco.languages.setMonarchTokensProvider( 'glsl', {
 				keywords: [

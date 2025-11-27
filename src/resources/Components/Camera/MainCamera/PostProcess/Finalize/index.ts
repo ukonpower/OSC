@@ -24,6 +24,7 @@ export class Finalize extends MXP.PostProcess {
 			name: "Finalize",
 			passes: [
 				new MXP.PostProcessPass( gl, {
+					name: "finalize",
 					frag: finalizeFrag,
 					uniforms: uniforms,
 				} )

@@ -33,24 +33,10 @@ void main( void ) {
 	#include <frag_in>
 	#include <rm_ray_obj>
 
-	SDFResult dist;
 
-	bool hit = false;
 
 	// レイマーチングループ
-	for( int i = 0; i < 64; i++ ) {
-
-		dist = D( rayPos );
-		rayPos += dist.d * rayDir * 0.8;
-
-		if( dist.d < 0.01 ) {
-
-			hit = true;
-			break;
-
-		}
-
-	}
+	#include <rm_loop,64,0.001,0.8>
 
 	if( !hit ) discard;
 

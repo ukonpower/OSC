@@ -38,12 +38,6 @@ vec2 saw( vec2 time ) {
 
 }
 
-float square( float time) {
-
-	return sign( fract( time ) - 0.1 );
-
-}
-
 float tri(float time ){
     return abs(2.*fract(time*.5-.25)-1.)*2.-1.;
 }
@@ -131,18 +125,6 @@ float snare( float et, float ft, float etw ) {
 
 }
 
-
-vec2 snare1( float mt, float ft ) {
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 bt = beat( mt, 8.0 );
-
-	o += snare( bt.z - (1.0 - 0.125), fract( ft ), 1.0 );
-
-	return o * 1.0; // より激しく
-
-}
 
 vec2 snare2( float mt, float ft ) {
 
@@ -414,67 +396,6 @@ vec2 arpeggio_fast( float mt, float ft, float pitch ) {
 	o.y *= 1.0 - pan * 0.3;
 
 	return o * 0.06;
-
-}
-
-// アルペジオバリエーション2: トリルパターン
-vec2 arpeggio_trill( float mt, float ft, float pitch ) {
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 b32 = beat( mt, 32.0 );
-
-	// トリル: 2音を交互に
-	int notes[] = int[]( 0, 4 );
-	int noteIndex = int( mod( floor( mt * 8.0 ), 2.0 ) );
-
-	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
-	float note = scale + float( notes[noteIndex] ) + pitch;
-
-	float envTime = fract( mt * 8.0 );
-	float env = exp( -envTime * 10.0 );
-	env *= smoothstep( 0.0, 0.004, envTime );
-
-	// 複数のオシレーターで豊かな音色
-	for( int i = 0; i < 3; i++ ) {
-		float detune = (float(i) - 1.0) * 0.005;
-		o += ssin( ft * s2f( note ) * (1.0 + detune) + float(i) * 0.2 ) * env;
-	}
-
-	return o * 0.04;
-
-}
-
-// アルペジオバリエーション3: 転換用の下降パターン
-vec2 arpeggio_transition( float mt, float ft, float pitch ) {
-
-	vec2 o = vec2( 0.0 );
-
-	vec4 b32 = beat( mt, 32.0 );
-
-	// 印象的な下降パターン: 高音から一気に下降
-	int notes[] = int[]( 19, 15, 12, 7, 4, 0, -5, -12 );
-	int noteIndex = int( mod( floor( mt * 4.0 ), 8.0 ) );
-
-	float scale = baseLine[ int( b32.x / 4.0 ) % 8 ];
-	float note = scale + float( notes[noteIndex] ) + pitch;
-
-	float envTime = fract( mt * 4.0 );
-	float env = exp( -envTime * 6.0 );
-	env *= smoothstep( 0.0, 0.002, envTime );
-
-	// 明るくキラキラした音色
-	for( int i = 0; i < 2; i++ ) {
-		float detune = float(i) * 0.002;
-		o += ssin( ft * s2f( note ) * ( 1.0 + detune ) ) * env;
-	}
-
-	// ステレオで広がりを持たせる
-	float pan = float(noteIndex) / 8.0;
-	o.x *= 1.0 + pan * 0.5;
-	o.y *= 1.5 - pan * 0.5;
-
-	return o * 0.15;
 
 }
 
@@ -928,7 +849,7 @@ vec2 music( float t ) {
 	beat16 = beat( mt, 16.0 );
 
 	// Section F-1: Climax - フルパワー、全要素が揃う (4小節)
-	if( isin( beat16.y, 0.0, 4.0 ) ) {
+	if( isin( beat16.y, 0.0, 3.0 ) ) {
 
 		// Climaxではコード進行を倍速に
 		g_chordSpeed = 1.0;
@@ -960,7 +881,7 @@ vec2 music( float t ) {
 	}
 
 	// Section F-2: Outro - 静かに終わる (2小節)
-	if( isin( beat16.y, 4.0, 6.0 ) ) {
+	if( isin( beat16.y, 3.0, 5.0 ) ) {
 
 		// 通常速度に戻す
 		g_chordSpeed = 1.0;
@@ -988,6 +909,7 @@ void main( void ) {
 	float time = (aTime / uSampleRate ) + uTimeOffset;
 
 	vec2 o = music( time );
+	
 
 	o_left = o.x;
 	o_right = o.y;

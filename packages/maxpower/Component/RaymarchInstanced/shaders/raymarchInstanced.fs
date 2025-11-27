@@ -46,7 +46,7 @@ void main( void ) {
 	for( int i = 0; i < 64; i++ ) {
 
 		dist = D( localRayPos );
-		localRayPos += dist.d * localRayDir;
+		localRayPos += dist.d * localRayDir * 1.0;
 
 		if( dist.d < 0.001 ) {
 

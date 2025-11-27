@@ -2,13 +2,14 @@
 #include <frag_h>
 #include <light>
 #include <pmrem>
+#include <rm_h>
 #include <sdf>
 #include <noise_cyclic>
-
-#include <rm_h>
+#include <rotate>
 
 uniform sampler2D uNoiseTex;
 uniform float uTime;
+uniform vec4 uState;
 
 float daenScale = 0.7;
 
@@ -33,7 +34,7 @@ SDFResult nori( vec3 p ) {
 
 	vec3 noriPos = p - vec3(0.0, 0.0, 0.0);
 	noriPos.z *= daenScale;
-	
+
 	// 海苔の表面テクスチャ（ノイズで凹凸）
 	vec3 noise = noiseCyc(p * 30.0);
 	float heightMap = noise.x * 0.003;
@@ -48,6 +49,38 @@ SDFResult nori( vec3 p ) {
 
 }
 
+// スライスきゅうり部分
+SDFResult kyuuri( vec3 p ) {
+
+	float comp = uState.x;
+
+	vec3 kyuuriP = p;
+	// kyuuriP.x += uState.x * 0.1;
+	kyuuriP += vec3(0.0, -0.14, 0.2);
+	kyuuriP.y += -uState.x * 0.4;
+	kyuuriP.xz *= rotate( comp * 0.5 );
+	kyuuriP.yz *= rotate( 0.3 + comp * 1.0 );
+	kyuuriP.xy *= rotate( 0.3 + comp * 1.0 );
+
+	kyuuriP.y -= sin( kyuuriP.z * 4.0 + HPI ) * 0.05 - 0.04;
+	kyuuriP.z *= 0.8;
+
+
+	// きゅうりの表面の凹凸
+	vec3 noise = noiseCyc(kyuuriP * 40.0);
+	float heightMap = noise.x * 0.002;
+
+	// スライスされた円柱（薄い円盤）
+	float d = sdCappedCylinder(kyuuriP, heightMap + 0.2, 0.015);
+
+	vec3 color = vec3( 0.4, 0.7, 0.3 );
+	color = mix( color, vec3( 0.05, 0.08, 0.05 ), smoothstep( 0.00, 0.3, length( kyuuriP.xz ) ) );
+	color = mix( color, vec3( 0.05, 0.08, 0.05 ), smoothstep( 0.19, 0.205, length( kyuuriP.xz ) ) );
+
+	return SDFResult( d, kyuuriP, 2.0, vec4( color, 1.0 ) );
+
+}
+
 SDFResult D( vec3 p ) {
 
 	SDFResult distShari = shari( p );
@@ -55,6 +88,9 @@ SDFResult D( vec3 p ) {
 
 	SDFResult distNori = nori( p );
 	if( distNori.d < result.d ) result = distNori;
+
+	SDFResult distKyuuri = kyuuri( p );
+	if( distKyuuri.d < result.d ) result = distKyuuri;
 
 	return result;
 
@@ -67,22 +103,8 @@ void main( void ) {
 	#include <frag_in>
 	#include <rm_ray_obj>
 
-	SDFResult dist;
-	bool hit = false;
 
-	for( int i = 0; i < 64; i++ ) {
-
-		dist = D( rayPos );
-		rayPos += dist.d * rayDir * 1.0;
-
-		if( dist.d < 0.001 ) {
-
-			hit = true;
-			break;
-
-		}
-
-	}
+	#include <rm_loop,64,0.001,1.0>
 
 	if( !hit ) discard;
 
@@ -107,6 +129,13 @@ void main( void ) {
 		float variation = noiseCyc(rayPos * 20.0).x * 0.05;
 		outColor.xyz += variation;
 		outRoughness = 0.9;
+
+	} else if( dist.mat == 2.0 ) {
+
+		// きゅうり（緑色）
+		float variation = noiseCyc(dist.pos * 25.0).x * 0.08;
+		outColor.xyz += variation;
+		outRoughness = 0.7;
 
 	}
 

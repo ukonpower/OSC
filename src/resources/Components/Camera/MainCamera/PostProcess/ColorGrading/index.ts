@@ -12,6 +12,7 @@ export class ColorGrading extends MXP.PostProcess {
 			name: "ColorGrading",
 			passes: [
 				new MXP.PostProcessPass( gl, {
+					name: "colorGrading",
 					frag: colorGradingFrag,
 				} )
 			]

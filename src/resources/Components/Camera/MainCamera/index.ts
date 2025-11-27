@@ -3,11 +3,11 @@ import * as MXP from 'maxpower';
 import { Engine } from 'orengine';
 
 import { OrbitControls } from '../../_DevOnly/OrbitControls';
-import { ShakeViewer } from '../../ObjectControls/CameraShake';
 import { LookAt } from '../../ObjectControls/LookAt';
 import { BLidgeClient } from '../../Utilities/BLidgeClient';
 
 import { Bloom } from './PostProcess/Bloom';
+import { Bokeh } from './PostProcess/Bokeh';
 import { ColorGrading } from './PostProcess/ColorGrading';
 import { Finalize } from './PostProcess/Finalize';
 import { FXAA } from './PostProcess/FXAA';
@@ -41,6 +41,7 @@ export class MainCamera extends MXP.Component {
 	private _tmpVector2: GLP.Vector;
 
 	private _dofTarget: MXP.Entity | null;
+	private _bokeh: Bokeh;
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -75,7 +76,6 @@ export class MainCamera extends MXP.Component {
 		this.renderCamera = this.entity.addComponent( MXP.RenderCamera, { gl: gl } );
 		this._renderTarget = this.renderCamera.renderTarget;
 		this._lookAt = this.entity.addComponent( LookAt );
-		this.entity.addComponent( ShakeViewer );
 
 		emitter.emit( "createdCamera", [ this.renderCamera ] );
 
@@ -99,9 +99,14 @@ export class MainCamera extends MXP.Component {
 
 		this.postProcessPipeline.add( ColorGrading );
 
+		// bokeh
+
+		this._bokeh = this.postProcessPipeline.add( Bokeh );
+
 		// finalize
 
 		this.postProcessPipeline.add( Finalize );
+
 
 		// dof
 
@@ -283,6 +288,26 @@ export class MainCamera extends MXP.Component {
 		}
 
 		this.renderCamera.dofParams.focusDistance = this._tmpVector1.sub( this._tmpVector2 ).length();
+
+		// camera effect
+
+		const blidger = this.entity.getComponent( MXP.BLidger );
+
+		if ( blidger ) {
+
+			const uPP = blidger.uniforms.uPP;
+
+			if ( uPP ) {
+
+				const blurRange = uPP.value.y;
+
+				this._bokeh.bokehV.uniforms.uBlurRange.value = blurRange;
+				this._bokeh.bokehH.uniforms.uBlurRange.value = blurRange;
+				// this._bokeh.bokehH.enabled = this._bokeh.bokehV.enabled = blurRange > 0.0;
+
+			}
+
+		}
 
 	}
 

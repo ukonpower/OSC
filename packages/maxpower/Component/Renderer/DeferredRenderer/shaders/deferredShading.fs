@@ -13,7 +13,6 @@ uniform sampler2D sampler3; // roughness, metalic, normalSelect, envSelect,
 uniform sampler2D sampler4; // velocity.xy, flatness, emission.z
 
 uniform sampler2D uSSAOTexture;
-uniform sampler2D uLightShaftTexture;
 uniform sampler2D uEnvMap;
 uniform sampler2D uNoiseSimpleTex;
 
@@ -92,19 +91,14 @@ void main( void ) {
 
 	outColor.xyz += mat.emission;
 
-	// light shaft
-	
-	outColor.xyz += texture( uLightShaftTexture, vUv ).xyz;
-
-
 	// DEMO4 CUSTOM ----------
 
 	// グラデーション質感効果
 	float rnd = random( vUv );
 	vec3 noise = texture( uNoiseSimpleTex, vUv * 0.3 * vec2( 1.0, 0.5 ) ).xyz;
 	vec3 hsv = rgb2hsv( outColor.xyz );
-	hsv.x += noise.x * gradient * rnd * 0.08;
-	hsv.z -= noise.y * abs(gradient) * rnd * 0.5;
+	hsv.x += noise.x * gradient * rnd * 0.11;
+	hsv.z -= noise.y * (gradient) * rnd * 0.25;
 	outColor.xyz = hsv2rgb( hsv );
 
 	// -----------------------

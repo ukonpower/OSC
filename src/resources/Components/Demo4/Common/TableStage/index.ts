@@ -1,7 +1,7 @@
 import * as MXP from 'maxpower';
 
 import raymarchFrag from './shaders/tableStage.fs';
-import raymarchVert from './shaders/tableStage.vs';
+import screenVert from '~/resources/shaders/screen.vs';
 
 import { globalUniforms } from '~/globals';
 
@@ -21,8 +21,8 @@ export class TableStage extends MXP.Component {
 		this.mesh = this._entity.addComponent( MXP.Mesh, {
 			geometry: new MXP.PlaneGeometry( { width: 2, height: 2 } ),
 			material: new MXP.Material( {
-				phase: [ "deferred", "shadowMap" ], // Deferredレンダリングパイプラインを使用
-				vert: MXP.hotGet( "tableStageVert", raymarchVert ),
+				phase: [ "deferred", "shadowMap" ],
+				vert: screenVert,
 				frag: MXP.hotGet( "tableStageFrag", raymarchFrag ),
 				uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
 			} )
@@ -44,17 +44,6 @@ export class TableStage extends MXP.Component {
 
 		// ホットリロード対応(開発時のみ)
 		if ( import.meta.hot ) {
-
-			import.meta.hot.accept( './shaders/tableStage.vs', ( module ) => {
-
-				if ( module ) {
-
-					this.mesh.material.vert = MXP.hotUpdate( 'tableStageVert', module.default );
-					this.mesh.material.requestUpdate();
-
-				}
-
-			} );
 
 			import.meta.hot.accept( './shaders/tableStage.fs', ( module ) => {
 
