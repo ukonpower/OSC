@@ -34,6 +34,7 @@ import { GreetingCard } from './Components/Demo4/Party/GreetingCard/index.ts';
 import { KaitenSushi } from './Components/Demo4/Party/KaitenSushi/index.ts';
 import { PartyTime } from './Components/Demo4/Party/PartyTime/index.ts';
 import { Sara } from './Components/Demo4/Party/Sara/index.ts';
+import { SaraAudio } from './Components/Demo4/Party/SaraAudio/index.ts';
 import { SushiGeta } from './Components/Demo4/Party/SushiGeta/index.ts';
 import { SushiGetaWithNigiri } from './Components/Demo4/Party/SushiGetaWithNigiri/index.ts';
 import { SushiSara } from './Components/Demo4/Party/SushiSara/index.ts';
@@ -98,6 +99,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			KaitenSushi,
 			PartyTime,
 			Sara,
+			SaraAudio,
 			SushiGeta,
 			SushiGetaWithNigiri,
 			SushiSara,

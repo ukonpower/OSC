@@ -329,6 +329,9 @@
 			"components": [
 				{
 					"name": "Sara"
+				},
+				{
+					"name": "SaraAudio"
 				}
 			]
 		},
