@@ -109,7 +109,7 @@ export class GreetingCard extends MXP.Component {
 
 			// 文字列を1文字ずつ縦に描画
 			const text = value.toUpperCase();
-			const charHeight = 32; // 文字間隔
+			const charHeight = 24; // 文字間隔
 			const startY = ( canvas.height - ( text.length - 1 ) * charHeight ) / 2;
 
 			for ( let i = 0; i < text.length; i ++ ) {

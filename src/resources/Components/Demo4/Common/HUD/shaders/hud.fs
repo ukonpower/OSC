@@ -5,6 +5,9 @@
 void main( void ) {
 
 	#include <frag_in>
+
+	outColor.w *= 0.0;
+	
 	#include <frag_out>
 
 }
