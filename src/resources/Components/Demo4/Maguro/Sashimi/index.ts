@@ -71,10 +71,12 @@ export class Sashimi extends MXP.Component {
 		// geometry
 
 		const geo = new MXP.CubeGeometry( {
-			depth: 1.7,
-			width: 0.7,
-			height: 1.0
+			depth: 1.0,
+			width: 0.6,
+			height: 0.3
 		} );
+
+		geo.applyMatrix( new GLP.Matrix().setFromTransform( new GLP.Vector( 0.0, 0.11, 0.0 ) ) );
 
 		this.entity.addComponent( MXP.Mesh, {
 			geometry: geo, material: this.material
