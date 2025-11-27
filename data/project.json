@@ -320,7 +320,10 @@
 			"uuid": "b2ebb3cb",
 			"components": [
 				{
-					"name": "Sara"
+					"name": "SaraAudio",
+					"props": {
+						"samplePosition": 0.3
+					}
 				}
 			]
 		},
@@ -328,7 +331,10 @@
 			"uuid": "dd9c0ac8",
 			"components": [
 				{
-					"name": "SaraAudio"
+					"name": "SaraAudio",
+					"props": {
+						"samplePosition": 0.5
+					}
 				}
 			]
 		},
@@ -336,7 +342,32 @@
 			"uuid": "0472d010",
 			"components": [
 				{
-					"name": "Sara"
+					"name": "SaraAudio",
+					"props": {
+						"samplePosition": 0.56
+					}
+				}
+			]
+		},
+		{
+			"uuid": "651fdf32",
+			"components": [
+				{
+					"name": "SaraAudio",
+					"props": {
+						"samplePosition": 0.2
+					}
+				}
+			]
+		},
+		{
+			"uuid": "02e7b7ae",
+			"components": [
+				{
+					"name": "SaraAudio",
+					"props": {
+						"samplePosition": 0.5
+					}
 				}
 			]
 		},

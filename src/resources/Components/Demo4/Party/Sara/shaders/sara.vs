@@ -25,11 +25,11 @@ void main( void ) {
 	#include <vert_in>
 
 	// uVisibleCountより大きいインデックスは非表示
-	float instanceIndex = id.x * 10.0;
+	float instanceIndex = id.x * 15.0;
 	
 
 	// 上に積み重ねる
-	vec3 instancePos = vec3( 0.0, id.x * 1.6, 0.0 );
+	vec3 instancePos = vec3( 0.0, id.x * 2.2, 0.0 );
 	instancePos.y += step(uVisibleCount, instanceIndex) * 100.0;
 
 	// マトリックス生成関数を使用してマトリックスを構築

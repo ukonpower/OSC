@@ -8,8 +8,8 @@ export class SaraAudio extends MXP.Component {
 
 	private musicComponent: Music | null;
 	private frequencyData: Uint8Array | null;
-	private saraEntities: MXP.Entity[];
-	private numSaras: number;
+	private saraEntity: MXP.Entity | null;
+	private samplePosition: number;
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -17,33 +17,27 @@ export class SaraAudio extends MXP.Component {
 
 		this.musicComponent = null;
 		this.frequencyData = null;
-		this.saraEntities = [];
+		this.saraEntity = null;
+		this.samplePosition = 0.5;
 
-		// 5つのSaraを横に配置
-		this.numSaras = 5;
+		this.setupSara();
 
-		this.setupSaras();
+		// fieldでサンプル位置を設定
+		this.field( "samplePosition", () => this.samplePosition, ( v ) => {
+
+			this.samplePosition = v;
+
+		} );
 
 	}
 
-	private setupSaras() {
+	private setupSara() {
 
-		const spacing = 1.0;
-		const startX = - ( this.numSaras - 1 ) * spacing / 2;
-
-		for ( let i = 0; i < this.numSaras; i ++ ) {
-
-			const saraEntity = new MXP.Entity();
-			saraEntity.name = `Sara_${i}`;
-			saraEntity.position.set( startX + i * spacing, 0, 0 );
-
-			// Saraコンポーネントを追加（インスタンス数は常に10枚）
-			saraEntity.addComponent( Sara );
-
-			this.entity.add( saraEntity );
-			this.saraEntities.push( saraEntity );
-
-		}
+		// Saraエンティティを1つだけ作成
+		this.saraEntity = new MXP.Entity();
+		this.saraEntity.name = "Sara";
+		this.saraEntity.addComponent( Sara );
+		this.entity.add( this.saraEntity );
 
 	}
 
@@ -92,44 +86,41 @@ export class SaraAudio extends MXP.Component {
 
 		}
 
-		// MusicコンポーネントのfrequencyDataを使って各Saraのインスタンス数を更新
-		if ( this.frequencyData && event.playing ) {
+		// MusicコンポーネントのfrequencyDataを使ってSaraのインスタンス数を更新
+		if ( this.frequencyData && event.playing && this.saraEntity ) {
 
-			// 周波数帯域を5つに分割
-			const binSize = Math.floor( this.frequencyData.length / this.numSaras );
+			// サンプル位置から周波数帯域を計算（0.0-1.0を周波数帯域のインデックスにマッピング）
+			const sampleIndex = Math.floor( this.samplePosition * ( this.frequencyData.length - 1 ) );
 
-			for ( let i = 0; i < this.numSaras; i ++ ) {
+			// サンプル位置周辺の平均値を計算（前後5個ずつ、合計11個）
+			const windowSize = 5;
+			let sum = 0;
+			let count = 0;
 
-				// 各帯域の平均値を計算
-				let sum = 0;
-				const startIdx = i * binSize;
-				const endIdx = Math.min( startIdx + binSize, this.frequencyData.length );
+			for ( let offset = - windowSize; offset <= windowSize; offset ++ ) {
 
-				for ( let j = startIdx; j < endIdx; j ++ ) {
+				const idx = sampleIndex + offset;
 
-					sum += this.frequencyData[ j ];
+				if ( idx >= 0 && idx < this.frequencyData.length ) {
 
-				}
-
-				const average = sum / binSize;
-
-				// 0-255の値を0-10にマッピング（表示する皿の枚数）
-				const visibleCount = Math.floor( ( ( average * 2.0 ) / 255 ) * 10 );
-
-				// SaraコンポーネントのuniformでVisibleCountを更新
-				const saraEntity = this.saraEntities[ i ];
-
-				if ( saraEntity ) {
-
-					const saraComponent = saraEntity.getComponent( Sara );
-
-					if ( saraComponent && saraComponent.uniforms ) {
-
-						saraComponent.uniforms.uVisibleCount.value = visibleCount;
-
-					}
+					sum += this.frequencyData[ idx ];
+					count ++;
 
 				}
+
+			}
+
+			const average = sum / count;
+
+			// 0-255の値を0-15にマッピング（表示する皿の枚数）
+			const visibleCount = Math.floor( ( ( average * 2.0 ) / 255 ) * 15 );
+
+			// SaraコンポーネントのuniformでVisibleCountを更新
+			const saraComponent = this.saraEntity.getComponent( Sara );
+
+			if ( saraComponent && saraComponent.uniforms ) {
+
+				saraComponent.uniforms.uVisibleCount.value = visibleCount;
 
 			}
 
@@ -142,8 +133,12 @@ export class SaraAudio extends MXP.Component {
 		super.dispose();
 
 		// Sara Entityをクリーンアップ
-		this.saraEntities.forEach( entity => entity.dispose() );
-		this.saraEntities = [];
+		if ( this.saraEntity ) {
+
+			this.saraEntity.dispose();
+			this.saraEntity = null;
+
+		}
 
 	}
 
