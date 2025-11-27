@@ -13,6 +13,7 @@ uniform mat4 uModelViewMatrix;
 
 uniform float uTime;
 uniform float uTimeE;
+uniform float uParty;
 uniform sampler2D uNoiseTex;
 
 // たいやき形状を表現するSDF関数
@@ -20,7 +21,10 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	pp.xz *= rotate( sin( -pp.x * 3.0 - 0.3 + uTime * 10.0 ) * 0.5 );
+	float r = sin( -pp.x * 3.0 - 0.3 + uTimeE * 10.0 ) * 0.5;
+	r *= uParty;
+
+	pp.xz *= rotate( r );
 
 
 	pp.yz *= rotate( PI / 2.0 );

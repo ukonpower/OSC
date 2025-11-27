@@ -14,6 +14,7 @@ uniform mat4 uModelViewMatrix;
 uniform float uTimeE;
 uniform sampler2D uNoiseTex;
 uniform vec4 uState;
+uniform float uParty;
 
 // サーモンの形状を定義
 float salmon( vec3 p ) {
@@ -21,7 +22,9 @@ float salmon( vec3 p ) {
 	vec3 salmonP = p;
 	salmonP *= 0.8;
 	salmonP.y -= 0.05;
-	salmonP.xz *= rotate( sin( -p.x - 0.3 + uTimeE * 12.0 ) * 0.5 * smoothstep( -1.0, 1.0, p.x )  );
+	float r = sin( -p.x - 0.3 + uTimeE * 12.0 ) * 0.5 * smoothstep( -1.0, 1.0, p.x );
+	r = mix( r, sin( -p.x - 0.3 + uTimeE * 12.0 ) * 0.5, uParty );
+	salmonP.xz *= rotate( r );
 
 	// ボデー
 
