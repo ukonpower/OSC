@@ -9,6 +9,7 @@ import { OverlayMixer } from './Components/Camera/MainCamera/PostProcess/Overlay
 import { PixelSort } from './Components/Camera/MainCamera/PostProcess/PixelSort/index.ts';
 import { MainCamera } from './Components/Camera/MainCamera/index.ts';
 import { DebaBouChou } from './Components/Demo4/Common/DebaBouChou/index.ts';
+import { HUD } from './Components/Demo4/Common/HUD/index.ts';
 import { MizuBall } from './Components/Demo4/Common/MizuBall/index.ts';
 import { Nigiri } from './Components/Demo4/Common/Nigiri/index.ts';
 import { ShaderMotionGraphics } from './Components/Demo4/Common/ShaderMotionGraphics/index.ts';
@@ -63,6 +64,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 	Demo4: {
 		Common: {
 			DebaBouChou,
+			HUD,
 			MizuBall,
 			Nigiri,
 			ShaderMotionGraphics,
