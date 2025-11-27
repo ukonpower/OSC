@@ -247,7 +247,10 @@
 					"name": "Maguro"
 				},
 				{
-					"name": "PartyTime"
+					"name": "PartyTime",
+					"props": {
+						"isJumping": true
+					}
 				}
 			]
 		},
@@ -258,7 +261,10 @@
 					"name": "Maguro"
 				},
 				{
-					"name": "PartyTime"
+					"name": "PartyTime",
+					"props": {
+						"isJumping": true
+					}
 				}
 			]
 		},
@@ -272,7 +278,10 @@
 					}
 				},
 				{
-					"name": "PartyTime"
+					"name": "PartyTime",
+					"props": {
+						"isJumping": true
+					}
 				}
 			]
 		},
@@ -286,7 +295,10 @@
 					}
 				},
 				{
-					"name": "PartyTime"
+					"name": "PartyTime",
+					"props": {
+						"isJumping": true
+					}
 				}
 			]
 		},
@@ -297,7 +309,10 @@
 					"name": "Taiyaki"
 				},
 				{
-					"name": "PartyTime"
+					"name": "PartyTime",
+					"props": {
+						"isJumping": true
+					}
 				}
 			]
 		},
@@ -354,6 +369,12 @@
 			"components": [
 				{
 					"name": "TakoGate"
+				},
+				{
+					"name": "PartyTime",
+					"props": {
+						"isJumping": false
+					}
 				}
 			]
 		},
@@ -362,6 +383,12 @@
 			"components": [
 				{
 					"name": "TakoGate"
+				},
+				{
+					"name": "PartyTime",
+					"props": {
+						"isJumping": false
+					}
 				}
 			]
 		},
@@ -372,7 +399,10 @@
 					"name": "Ukonpower"
 				},
 				{
-					"name": "PartyTime"
+					"name": "PartyTime",
+					"props": {
+						"isJumping": true
+					}
 				}
 			]
 		},

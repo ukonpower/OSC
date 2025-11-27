@@ -7,6 +7,7 @@ export class PartyTime extends MXP.Component {
 	private basePosition: GLP.Vector;
 
 	// アニメーションパラメータ
+	private isJumping: boolean;
 	private speed: number;
 	private height: number;
 
@@ -18,6 +19,7 @@ export class PartyTime extends MXP.Component {
 		this.basePosition = this.entity.position.clone();
 
 		// デフォルト値
+		this.isJumping = true;
 		this.speed = 9.0;
 		this.height = 3;
 
@@ -33,6 +35,8 @@ export class PartyTime extends MXP.Component {
 		// エディタフィールドの定義
 		if ( import.meta.env.DEV ) {
 
+			this.field( "isJumping", () => this.isJumping, ( v ) => this.isJumping = v );
+
 			// this.field( "speed", () => this.speed, ( v ) => this.speed = v, {
 			// 	step: 0.1,
 			// } );
@@ -46,6 +50,14 @@ export class PartyTime extends MXP.Component {
 	}
 
 	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+
+		// isJumpingがfalseの場合は跳ねない（ベース位置に固定）
+		if ( ! this.isJumping ) {
+
+			this.entity.position.y = this.basePosition.y;
+			return;
+
+		}
 
 		// 跳ねるアニメーション（abs(sin)で常に上向きにバウンド）
 		const bounce = Math.abs( Math.sin( event.timeElapsed * this.speed ) );

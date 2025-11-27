@@ -47,7 +47,6 @@ SDFResult D( vec3 p ) {
 		p.yz *= rotate( phase2 * PI / 1.0 );
 		p.xz *= rotate( -phase2 * PI / 4.0 + phase4 * 0.4  );
 
-		
 		p.z -= phase3 * 0.5;
 		p.yz *= rotate( phase3 * PI / 1.0 );
 
@@ -62,7 +61,12 @@ SDFResult D( vec3 p ) {
 	float wave = linearstep( 0.4, 1.0, open );
 
 	p.xz *= rotate( sin( p.y * 2.0 - uTime * 2.0 - 1.0 ) * 0.5 * smoothstep( 0.3, 1.0, p.y )  * wave );
-	p.z += sin( p.y + uTime ) * 0.3 * wave - p.y * 0.2;
+
+
+	float partyWaveT = uTimeE * 3.0 * uParty;
+	partyWaveT = floor( partyWaveT ) + 1.0 - exp( fract( partyWaveT ) * -5.0 );
+	
+	p.z += sin( p.y + uTime  - partyWaveT * 6.0) * 0.3 * wave - p.y * 0.2;
 
 
 	// ノイズによる形状の変化
@@ -115,7 +119,7 @@ void main( void ) {
 
 
 	// レイマーチング
-	#include <rm_loop,32,0.001,0.7>
+	#include <rm_loop,50,0.001,0.7>
 
 	if( !hit ) discard;
 
@@ -141,7 +145,10 @@ void main( void ) {
 	
 	// subsurface scatteringを計算 - 赤い部分のみに適用
 	float sssPower = (1.0 + uState.z * 5.0) + uParty * 10.0;
-	float sss = subsurface( rayPos, normalize( (vec4( normalize( -rayPos.xyz), 0.0 )).xyz ), 0.5 ) * sssPower;
+	float sss = subsurface( rayPos, normalize( (vec4( normalize( -rayPos.xyz), 0.0 )).xyz ), 0.5 );
+
+	sss += uParty * 10.0 * exp(fract( uTimeE * 4.0 + noiseValue * 0.7 ) * - 5.0);
+	
 	outEmission += outColor.xyz * 1.0 * redMask;
 	outEmission.xyz += sss * (outColor.xyz + vec3( 0.5, 0.1, 0.0 )) * ( redMask );
 
