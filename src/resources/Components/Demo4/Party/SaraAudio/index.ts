@@ -10,7 +10,6 @@ export class SaraAudio extends MXP.Component {
 	private frequencyData: Uint8Array | null;
 	private saraEntities: MXP.Entity[];
 	private numSaras: number;
-	private maxInstancesPerSara: number;
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -22,8 +21,6 @@ export class SaraAudio extends MXP.Component {
 
 		// 5つのSaraを横に配置
 		this.numSaras = 5;
-		// 各Saraの最大インスタンス数
-		this.maxInstancesPerSara = 20;
 
 		this.setupSaras();
 
@@ -40,8 +37,8 @@ export class SaraAudio extends MXP.Component {
 			saraEntity.name = `Sara_${i}`;
 			saraEntity.position.set( startX + i * spacing, 0, 0 );
 
-			// Saraコンポーネントを追加（初期インスタンス数1）
-			saraEntity.addComponent( Sara, { instanceCount: 1 } );
+			// Saraコンポーネントを追加（インスタンス数は常に10枚）
+			saraEntity.addComponent( Sara );
 
 			this.entity.add( saraEntity );
 			this.saraEntities.push( saraEntity );
@@ -116,55 +113,23 @@ export class SaraAudio extends MXP.Component {
 
 				const average = sum / binSize;
 
-				// 0-255の値を1-maxInstancesPerSaraにマッピング
-				const instanceCount = Math.max( 1, Math.floor( ( average / 255 ) * this.maxInstancesPerSara ) );
+				// 0-255の値を0-10にマッピング（表示する皿の枚数）
+				const visibleCount = Math.floor( ( average / 255 ) * 10 );
 
-				// Saraコンポーネントのインスタンス数を更新
+				// SaraコンポーネントのuniformでVisibleCountを更新
 				const saraEntity = this.saraEntities[ i ];
 
 				if ( saraEntity ) {
 
 					const saraComponent = saraEntity.getComponent( Sara );
 
-					if ( saraComponent ) {
+					if ( saraComponent && saraComponent.uniforms ) {
 
-						this.updateSaraInstanceCount( saraComponent, instanceCount );
+						saraComponent.uniforms.uVisibleCount.value = visibleCount;
 
 					}
 
 				}
-
-			}
-
-		}
-
-	}
-
-	private updateSaraInstanceCount( saraComponent: any, newCount: number ) {
-
-		const mesh = saraComponent.entity.getComponent( MXP.Mesh );
-		const geo = mesh && mesh.geometry;
-
-		if ( geo ) {
-
-			const idAttr = geo.getAttribute( "id" );
-			const currentCount = idAttr && idAttr.array.length / 4 || 0;
-
-			if ( currentCount !== newCount ) {
-
-				const random = GLP.MathUtils.randomSeed( 2 );
-				const idArray = [];
-				const id2Array = [];
-
-				for ( let i = 0; i < newCount; i ++ ) {
-
-					idArray.push( i / newCount, random(), random(), random() );
-					id2Array.push( random(), random(), random(), random() );
-
-				}
-
-				geo.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
-				geo.setAttribute( 'id2', new Float32Array( id2Array ), 4, { instanceDivisor: 1 } );
 
 			}
 

@@ -11,13 +11,14 @@ import { globalUniforms } from '~/globals';
  */
 export class Sara extends MXP.Component {
 
-	constructor( param: MXP.ComponentParams<{ instanceCount?: number }> ) {
+	public uniforms: GLP.Uniforms;
+
+	constructor( param: MXP.ComponentParams ) {
 
 		super( param );
 
-		// インスタンス数（デフォルト10、パラメータで上書き可能）
-		const args = param.args as { instanceCount?: number } | undefined;
-		const instanceCount = args && args.instanceCount !== undefined ? args.instanceCount : 10;
+		// インスタンス数は常に10枚固定
+		const instanceCount = 10;
 
 		// geometry
 		const geo = new MXP.CylinderGeometry( {
@@ -45,12 +46,20 @@ export class Sara extends MXP.Component {
 		geo.setAttribute( 'id', new Float32Array( idArray ), 4, { instanceDivisor: 1 } );
 		geo.setAttribute( 'id2', new Float32Array( id2Array ), 4, { instanceDivisor: 1 } );
 
+		// uniformで表示枚数を制御
+		this.uniforms = {
+			uVisibleCount: {
+				value: instanceCount,
+				type: '1f'
+			}
+		};
+
 		// material
 		const mat = new MXP.Material( {
 			phase: [ "deferred", "shadowMap" ],
 			vert: MXP.hotGet( 'saraVert', saraVert ),
 			frag: MXP.hotGet( 'saraFrag', saraFrag ),
-			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time )
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.resolution, globalUniforms.time, this.uniforms )
 		} );
 
 		const mesh = this.entity.addComponent( MXP.Mesh, {

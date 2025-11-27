@@ -23,11 +23,18 @@ export class SushiSara extends MXP.Component {
 
 		super( params );
 
-		// Saraエンティティを作成（皿部分）- インスタンス数1
+		// Saraエンティティを作成（皿部分）- インスタンス数は常に10枚
 		this.saraEntity = new MXP.Entity();
 		this.saraEntity.name = "Sara";
-		this.saraEntity.addComponent( Sara, { instanceCount: 1 } );
+		const saraComponent = this.saraEntity.addComponent( Sara );
 		this.entity.add( this.saraEntity );
+
+		// 回転寿司では皿1枚のみ表示
+		if ( saraComponent && saraComponent.uniforms ) {
+
+			saraComponent.uniforms.uVisibleCount.value = 1;
+
+		}
 
 		// 寿司エンティティを作成（NigiriまたはIkuraGunKan）
 		this.sushiEntity = new MXP.Entity();

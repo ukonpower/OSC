@@ -13,6 +13,7 @@
 in vec4 vId;
 in vec4 vId2;
 in mat4 vTransformMatrix;
+in float vDiscard;
 
 // 皿のSDF関数（参考URLのGYOZA形状を皿形状に変換）
 SDFResult D( vec3 p ) {
@@ -54,6 +55,9 @@ SDFResult D( vec3 p ) {
 #include <rm_normal>
 
 void main( void ) {
+
+	// vDiscardが1.0なら非表示
+	if (vDiscard > 0.5) discard;
 
 	#include <frag_in>
 	#include <rm_ray_obj>

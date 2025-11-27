@@ -11,19 +11,26 @@ layout(location = 5) in vec4 id2;
 
 // グローバルユニフォーム
 uniform float uTime;
+uniform float uVisibleCount;
 
 // フラグメントシェーダーに渡す変数
 out vec4 vId;
 out vec4 vId2;
 out mat4 vTransformMatrix;
+out float vDiscard;
 
 void main( void ) {
 
 	// 基本的な頂点処理
 	#include <vert_in>
 
+	// uVisibleCountより大きいインデックスは非表示
+	float instanceIndex = id.x * 10.0;
+	
+
 	// 上に積み重ねる
 	vec3 instancePos = vec3( 0.0, id.x * 1.6, 0.0 );
+	instancePos.y += step(uVisibleCount, instanceIndex) * 100.0;
 
 	// マトリックス生成関数を使用してマトリックスを構築
 	mat4 translateMatrix = makeTranslation(instancePos);
