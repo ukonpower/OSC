@@ -2,6 +2,7 @@
 #include <packing>
 #include <frag_h>
 #include <rotate>
+#include <sdf>
 
 // uTime is available from <common>
 uniform float uTimeE;
@@ -16,9 +17,11 @@ void main( void ) {
 
 	vec2 cuv = vUv - 0.5;
 
+	float aspect = uResolution.x / uResolution.y;
+
 	// アスペクト比補正、abs、回転を一度に適用
 	vec2 uv = abs(cuv);
-	uv.y /= uResolution.x / uResolution.y;
+	uv.y /= aspect;
 	uv *= rotate(HPI * 0.8);
 	uv.y += uTimeE * 0.01 * sign(cuv.y); // スクロール
 
@@ -46,6 +49,21 @@ void main( void ) {
 	float dist = length(C - uv);
 	float w = sin(dist * PI * 10.0 - sin(uTimeE * 0.3 + length(C.x) * 2.0) * 10.0);
 	w *= smoothstep(3.6, 8.0, C.x) * 0.5;
+
+	vec2 dotUv = cuv;
+	dotUv.x *= aspect;
+	dotUv.y = abs(dotUv.y);
+	dotUv.x = abs(dotUv.x);
+	float dots = 0.0;
+	dots += smoothstep( 0.012, 0.005, length( dotUv + vec2( 0.0, -0.44 ) ) );
+	dots += smoothstep( 0.012, 0.005, length( dotUv + vec2( -0.05, -0.44 ) ) );
+	dots += smoothstep( 0.012, 0.005, length( dotUv + vec2( -1.08, -0.0 ) ) );
+	dots += smoothstep( 0.012, 0.005, length( dotUv + vec2( -1.08, -0.05 ) ) );
+	// dots += smoothstep( 0.2, 0.17, length( dotUv + vec2( -1.10, -0.0 ) ) ) * 0.2;
+
+	w += dots * 0.5;
+
+	w = max( w, smoothstep( 0.004, 0.002, abs( sdBox( dotUv, vec2( 1.1, 0.46 ) ) - 0.02 )  ) * 0.3 );
 
 	outColor = vec4(1.0, 1.0, 1.0, w);
 	
