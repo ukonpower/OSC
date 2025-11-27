@@ -96,16 +96,16 @@ export class KaitenSushi extends MXP.Component {
 
 	}
 
-	protected updateImpl( _event: MXP.ComponentUpdateEvent ): void {
+	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
 
-		const time = globalUniforms.time.uTimeE.value;
+		const timecode = event.timeCode;
 
 		for ( let i = 0; i < this.sushiEntities.length; i ++ ) {
 
 			// 各寿司のオフセット（均等配置）
 			const offset = i / this.sushiCount;
 			// 右から左への一方向移動（0→1を右端→左端にマッピング）
-			const t = ( time * this.speed + offset ) % 1;
+			const t = ( timecode * this.speed + offset ) % 1;
 			// rangeX/2 から -rangeX/2 へ（右から左）
 			const x = this.rangeX / 2 - t * this.rangeX;
 			const z = - Math.pow( x, 2.0 ) * 0.003;
