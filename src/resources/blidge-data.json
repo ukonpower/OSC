@@ -4908,22 +4908,12 @@
           5.786,
           154.197
         ],
-        "type": "camera",
         "rotation": [
           1.553,
           -0.0,
           -0.0
         ],
-        "custom_properties": {
-          "master": {
-            "type": "float",
-            "value": 0.0
-          },
-          "bokeh": {
-            "type": "float",
-            "value": 5.128
-          }
-        },
+        "type": "camera",
         "animation": {
           "position": 0,
           "rotation": 1,
@@ -4983,12 +4973,12 @@
               -14.439,
               0.114
             ],
-            "type": "cube",
             "scale": [
               0.23,
               0.768,
               0.23
             ],
+            "type": "cube",
             "visible": false,
             "param": {
               "x": 2.0,
@@ -5000,12 +4990,7 @@
       },
       {
         "name": "HUD",
-        "uuid": "93978ccc",
-        "position": [
-          -50.664,
-          41.027,
-          29.569
-        ]
+        "uuid": "93978ccc"
       },
       {
         "name": "Outro",
@@ -5025,24 +5010,6 @@
               0.262
             ],
             "visible": false,
-            "custom_properties": {
-              "logoX": {
-                "type": "float",
-                "value": 1.0
-              },
-              "logoY": {
-                "type": "float",
-                "value": 1.0
-              },
-              "logoZ": {
-                "type": "float",
-                "value": 1.0
-              },
-              "logoW": {
-                "type": "float",
-                "value": 1.0
-              }
-            },
             "animation": {
               "hide": 21,
               "state": 20
@@ -5115,12 +5082,12 @@
                       -4.089,
                       -6.671
                     ],
-                    "type": "cube",
                     "scale": [
                       12.5,
                       1.406,
                       0.427
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5135,7 +5102,6 @@
                       3.212,
                       -7.405
                     ],
-                    "type": "cube",
                     "rotation": [
                       0.142,
                       -0.0,
@@ -5146,6 +5112,7 @@
                       1.411,
                       0.386
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5160,12 +5127,12 @@
                       -2.941,
                       -8.438
                     ],
-                    "type": "cube",
                     "scale": [
                       23.694,
                       0.162,
                       1.469
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5180,12 +5147,12 @@
                       -3.259,
                       -10.898
                     ],
-                    "type": "cube",
                     "scale": [
                       23.694,
                       0.673,
                       1.068
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5200,12 +5167,12 @@
                       -3.011,
                       -13.377
                     ],
-                    "type": "cube",
                     "scale": [
                       23.694,
                       0.162,
                       1.469
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5220,12 +5187,12 @@
                       -9.352,
                       -9.19
                     ],
-                    "type": "cube",
                     "scale": [
                       12.5,
                       5.55,
                       2.688
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5240,12 +5207,12 @@
                       -4.927,
                       3.321
                     ],
-                    "type": "cube",
                     "scale": [
                       4.942,
                       0.275,
                       10.277
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5260,12 +5227,12 @@
                       -7.572,
                       4.167
                     ],
-                    "type": "cube",
                     "scale": [
                       0.907,
                       6.688,
                       10.787
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5280,12 +5247,12 @@
                       -7.572,
                       4.167
                     ],
-                    "type": "cube",
                     "scale": [
                       0.907,
                       6.688,
                       10.787
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5300,12 +5267,12 @@
                       -12.193,
                       4.167
                     ],
-                    "type": "cube",
                     "scale": [
                       3.763,
                       2.778,
                       10.787
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5320,12 +5287,12 @@
                       -12.193,
                       4.167
                     ],
-                    "type": "cube",
                     "scale": [
                       3.763,
                       2.778,
                       10.787
                     ],
+                    "type": "cube",
                     "param": {
                       "x": 2.0,
                       "y": 2.0,
@@ -5369,12 +5336,6 @@
               67.194,
               67.194
             ],
-            "custom_properties": {
-              "visibility": {
-                "type": "float",
-                "value": 1.0
-              }
-            },
             "animation": {
               "uState": 11
             },
@@ -5395,16 +5356,6 @@
               7.802,
               7.802
             ],
-            "custom_properties": {
-              "emitIkura": {
-                "type": "float",
-                "value": 1.0
-              },
-              "ikuraSize": {
-                "type": "float",
-                "value": 1.0
-              }
-            },
             "animation": {
               "uState": 12
             },
@@ -5430,12 +5381,6 @@
               5.81,
               5.81
             ],
-            "custom_properties": {
-              "complete": {
-                "type": "float",
-                "value": 0.0
-              }
-            },
             "animation": {
               "position": 16,
               "rotation": 17,
@@ -5463,12 +5408,6 @@
               5.252,
               5.252
             ],
-            "custom_properties": {
-              "complete": {
-                "type": "float",
-                "value": 0.0
-              }
-            },
             "animation": {
               "position": 13,
               "rotation": 14,
@@ -5563,20 +5502,6 @@
               9.774
             ],
             "visible": false,
-            "custom_properties": {
-              "scale": {
-                "type": "float",
-                "value": 0.831
-              },
-              "blockSize": {
-                "type": "float",
-                "value": 1.0
-              },
-              "blockOut": {
-                "type": "float",
-                "value": 0.999
-              }
-            },
             "animation": {
               "position": 22,
               "rotation": 23,
@@ -5600,12 +5525,6 @@
               73.019,
               73.019
             ],
-            "custom_properties": {
-              "visibility": {
-                "type": "float",
-                "value": 0.15
-              }
-            },
             "animation": {
               "uState": 26
             },
@@ -5905,12 +5824,12 @@
               -14.623,
               15.77
             ],
-            "type": "light",
             "rotation": [
               -1.892,
               2.423,
               0.08
             ],
+            "type": "light",
             "param": {
               "shadow_map": false,
               "color": {
@@ -5933,12 +5852,12 @@
               -14.623,
               15.77
             ],
-            "type": "light",
             "rotation": [
               -1.892,
               -2.446,
               0.08
             ],
+            "type": "light",
             "param": {
               "shadow_map": false,
               "color": {
@@ -6009,12 +5928,6 @@
               5.323,
               5.323
             ],
-            "custom_properties": {
-              "phase": {
-                "type": "float",
-                "value": 1.718
-              }
-            },
             "animation": {
               "uState": 51
             },
@@ -6040,12 +5953,6 @@
               5.323,
               5.323
             ],
-            "custom_properties": {
-              "phase": {
-                "type": "float",
-                "value": 1.718
-              }
-            },
             "animation": {
               "uState": 51
             },
@@ -6128,16 +6035,6 @@
               7.953,
               7.953
             ],
-            "custom_properties": {
-              "kirimi": {
-                "type": "float",
-                "value": 1.0
-              },
-              "sushi": {
-                "type": "float",
-                "value": 1.0
-              }
-            },
             "animation": {
               "position": 33,
               "uState": 34
@@ -6191,12 +6088,6 @@
               6.518,
               6.518
             ],
-            "custom_properties": {
-              "sushi": {
-                "type": "float",
-                "value": 1.0
-              }
-            },
             "animation": {
               "position": 31,
               "uState": 32
@@ -6218,12 +6109,6 @@
               72.711,
               72.711
             ],
-            "custom_properties": {
-              "visibility": {
-                "type": "float",
-                "value": 2.0
-              }
-            },
             "animation": {
               "uState": 36
             },
@@ -6259,12 +6144,6 @@
               103.398,
               103.398
             ],
-            "custom_properties": {
-              "visibility": {
-                "type": "float",
-                "value": 1.0
-              }
-            },
             "animation": {
               "uState": 28
             },
@@ -6285,20 +6164,6 @@
               5.593,
               5.593
             ],
-            "custom_properties": {
-              "close": {
-                "type": "float",
-                "value": 0.0
-              },
-              "phase": {
-                "type": "float",
-                "value": 4.0
-              },
-              "emit": {
-                "type": "float",
-                "value": -0.007
-              }
-            },
             "animation": {
               "uState": 52
             },
@@ -6319,16 +6184,6 @@
               5.875,
               5.875
             ],
-            "custom_properties": {
-              "size": {
-                "type": "float",
-                "value": 2.587
-              },
-              "alphe": {
-                "type": "float",
-                "value": 0.0
-              }
-            },
             "animation": {
               "uState": 53
             },
@@ -6403,12 +6258,6 @@
               -10.253,
               -0.914
             ],
-            "custom_properties": {
-              "fishup": {
-                "type": "float",
-                "value": 1.304
-              }
-            },
             "animation": {
               "uState": 27
             },
@@ -6520,12 +6369,6 @@
           1.235,
           1.235
         ],
-        "custom_properties": {
-          "yoake": {
-            "type": "float",
-            "value": 0.141
-          }
-        },
         "animation": {
           "uState": 44
         },
@@ -6541,12 +6384,12 @@
           9.823,
           16.176
         ],
-        "type": "light",
         "rotation": [
           0.991,
           0.069,
           0.87
         ],
+        "type": "light",
         "param": {
           "shadow_map": false,
           "color": {
@@ -6568,22 +6411,12 @@
           31.409,
           7.075
         ],
-        "type": "light",
         "rotation": [
           -0.005,
           0.0,
           0.0
         ],
-        "custom_properties": {
-          "testtest": {
-            "type": "float",
-            "value": 0.0
-          },
-          "power": {
-            "type": "float",
-            "value": 1.0
-          }
-        },
+        "type": "light",
         "animation": {
           "hide": 7,
           "light": 8
@@ -6610,12 +6443,12 @@
           -158.07,
           436.502
         ],
-        "type": "light",
         "rotation": [
           0.965,
           0.0,
           -0.0
         ],
+        "type": "light",
         "param": {
           "shadow_map": false,
           "color": {
@@ -6638,12 +6471,12 @@
           52.478,
           116.473
         ],
-        "type": "light",
         "rotation": [
           0.169,
           1.119,
           -0.425
         ],
+        "type": "light",
         "visible": false,
         "animation": {
           "hide": 45
