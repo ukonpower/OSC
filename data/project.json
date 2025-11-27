@@ -142,6 +142,25 @@
 			]
 		},
 		{
+			"uuid": "8d834b6f",
+			"components": [
+				{
+					"name": "RandomSMG",
+					"props": {
+						"count": 10,
+						"Position Range/rangeX": 10,
+						"Position Range/rangeY": 5,
+						"Position Range/rangeZ": 10,
+						"randomSeed": 0,
+						"rotationRandomness": 1,
+						"scaleMin": 0.5,
+						"scaleMax": 2,
+						"shaderType": "random"
+					}
+				}
+			]
+		},
+		{
 			"uuid": "989f5be8",
 			"components": [
 				{
