@@ -65,6 +65,22 @@
 			]
 		},
 		{
+			"uuid": "93978ccc",
+			"components": [
+				{
+					"name": "HUD"
+				}
+			]
+		},
+		{
+			"uuid": "dcfcefc5",
+			"components": [
+				{
+					"name": "HUD"
+				}
+			]
+		},
+		{
 			"uuid": "0f3c0a1f",
 			"components": [
 				{
