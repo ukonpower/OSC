@@ -19,7 +19,7 @@ export class TakoKosen extends MXP.Component {
 
 		// Meshコンポーネントを追加
 		this.mesh = this._entity.addComponent( MXP.Mesh, {
-			geometry: new MXP.SphereGeometry( { radius: 0.5 } ),
+			geometry: new MXP.SphereGeometry( { radius: 0.5, widthSegments: 32, heightSegments: 32 } ),
 			material: new MXP.Material( {
 				phase: [ "forward" ],
 				vert: MXP.hotGet( "takoKosenVert", takoKosenVert ),
