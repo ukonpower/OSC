@@ -1,6 +1,7 @@
 import * as MXP from 'maxpower';
 
 import { Nigiri } from '../../Common/Nigiri';
+import { IkuraGunKan } from '../../Ikura/IkuraGunKan';
 import { GreetingCard } from '../GreetingCard';
 import { Sara } from '../Sara';
 
@@ -10,12 +11,13 @@ import { Sara } from '../Sara';
 export class SushiSara extends MXP.Component {
 
 	private saraEntity: MXP.Entity;
-	private nigiriEntity: MXP.Entity;
-	private nigiriComponent: Nigiri;
+	private sushiEntity: MXP.Entity; // NigiriまたはIkuraGunKan
+	private nigiriComponent: Nigiri | null = null;
+	private ikuraGunkanComponent: IkuraGunKan | null = null;
 	private greetingEntity: MXP.Entity;
 	private greetingComponent: GreetingCard;
 
-	private sashimiTypeValue: 'maguro' | 'salmon' | 'tako' = 'maguro';
+	private sashimiTypeValue: 'maguro' | 'salmon' | 'ikura' | 'tako' = 'maguro';
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -27,15 +29,15 @@ export class SushiSara extends MXP.Component {
 		this.saraEntity.addComponent( Sara, { instanceCount: 1 } );
 		this.entity.add( this.saraEntity );
 
-		// Nigiriエンティティを作成（寿司部分）
-		this.nigiriEntity = new MXP.Entity();
-		this.nigiriEntity.name = "Nigiri";
+		// 寿司エンティティを作成（NigiriまたはIkuraGunKan）
+		this.sushiEntity = new MXP.Entity();
+		this.sushiEntity.name = "Sushi";
 		// 皿の上に配置
-		this.nigiriEntity.position.set( 0, 0.15, 0 );
-		this.entity.add( this.nigiriEntity );
+		this.sushiEntity.position.set( 0, 0.15, 0 );
+		this.entity.add( this.sushiEntity );
 
-		// Nigiriコンポーネントを追加
-		this.nigiriComponent = this.nigiriEntity.addComponent( Nigiri );
+		// 初期タイプに応じてコンポーネントを追加
+		this.updateSushiComponent( this.sashimiTypeValue );
 
 		// GreetingCardエンティティを作成
 		this.greetingEntity = new MXP.Entity();
@@ -51,7 +53,7 @@ export class SushiSara extends MXP.Component {
 		this.field( "sashimiType", () => this.sashimiTypeValue, ( v ) => {
 
 			this.sashimiTypeValue = v;
-			this.nigiriComponent.sashimiType = v;
+			this.updateSushiComponent( v );
 
 		}, {
 			format: {
@@ -59,6 +61,7 @@ export class SushiSara extends MXP.Component {
 				list: [
 					{ label: "マグロ", value: "maguro" },
 					{ label: "サーモン", value: "salmon" },
+					{ label: "いくら", value: "ikura" },
 					{ label: "タコ", value: "tako" }
 				]
 			}
@@ -66,7 +69,7 @@ export class SushiSara extends MXP.Component {
 
 	}
 
-	public set sashimiType( type: 'maguro' | 'salmon' | 'tako' ) {
+	public set sashimiType( type: 'maguro' | 'salmon' | 'ikura' | 'tako' ) {
 
 		this.setField( 'sashimiType', type );
 
@@ -78,6 +81,59 @@ export class SushiSara extends MXP.Component {
 
 	}
 
+	// 寿司コンポーネントを更新（ikuraの場合はIkuraGunKan、それ以外はNigiri）
+	private updateSushiComponent( type: 'maguro' | 'salmon' | 'ikura' | 'tako' ): void {
+
+		const needsIkuraGunkan = type === 'ikura';
+
+		// 既に適切なコンポーネントがある場合
+		if ( needsIkuraGunkan && this.ikuraGunkanComponent ) {
+
+			return;
+
+		}
+
+		if ( ! needsIkuraGunkan && this.nigiriComponent ) {
+
+			this.nigiriComponent.sashimiType = type;
+			return;
+
+		}
+
+		// コンポーネントを切り替える必要がある場合
+		// 既存のコンポーネントを削除
+		if ( this.nigiriComponent ) {
+
+			this.sushiEntity.removeComponent( Nigiri );
+			this.nigiriComponent = null;
+
+		}
+
+		if ( this.ikuraGunkanComponent ) {
+
+			this.sushiEntity.removeComponent( IkuraGunKan );
+			this.ikuraGunkanComponent = null;
+
+		}
+
+		// 新しいコンポーネントを追加
+		if ( needsIkuraGunkan ) {
+
+			this.ikuraGunkanComponent = this.sushiEntity.addComponent( IkuraGunKan );
+			// ikuraの場合は0.8倍に縮小
+			this.sushiEntity.scale.setScalar( 0.8 );
+
+		} else {
+
+			this.nigiriComponent = this.sushiEntity.addComponent( Nigiri );
+			this.nigiriComponent.sashimiType = type;
+			// 通常サイズに戻す
+			this.sushiEntity.scale.setScalar( 1 );
+
+		}
+
+	}
+
 	protected disposeImpl(): void {
 
 		this.entity.remove( this.greetingEntity );
@@ -86,8 +142,8 @@ export class SushiSara extends MXP.Component {
 		this.entity.remove( this.saraEntity );
 		this.saraEntity.dispose();
 
-		this.entity.remove( this.nigiriEntity );
-		this.nigiriEntity.dispose();
+		this.entity.remove( this.sushiEntity );
+		this.sushiEntity.dispose();
 
 	}
 

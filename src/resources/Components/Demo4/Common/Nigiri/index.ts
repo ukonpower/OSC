@@ -8,7 +8,7 @@ import { Shari } from '../Shari';
  */
 export class Nigiri extends MXP.Component {
 
-	private sashimiTypeValue: 'maguro' | 'salmon' | 'ikura' | 'tako' = 'maguro';
+	private sashimiTypeValue: 'maguro' | 'salmon' | 'tako' = 'maguro';
 
 	private shariEntity: MXP.Entity;
 	private sashimiEntity: MXP.Entity;
@@ -52,7 +52,6 @@ export class Nigiri extends MXP.Component {
 				list: [
 					{ label: "マグロ", value: "maguro" },
 					{ label: "サーモン", value: "salmon" },
-					{ label: "いくら", value: "ikura" },
 					{ label: "タコ", value: "tako" }
 				]
 			}
@@ -63,7 +62,7 @@ export class Nigiri extends MXP.Component {
 
 	}
 
-	public set sashimiType( type: 'maguro' | 'salmon' | 'ikura' | 'tako' ) {
+	public set sashimiType( type: 'maguro' | 'salmon' | 'tako' ) {
 
 		this.setField( 'sashimiType', type );
 

@@ -23,7 +23,7 @@ export class KaitenSushi extends MXP.Component {
 	private rangeX: number = 40.0;
 	private sushiCount: number = 18;
 
-	private sashimiTypes: ( 'maguro' | 'salmon' | 'tako' )[] = [ 'maguro', 'salmon', 'tako' ];
+	private sashimiTypes: ( 'maguro' | 'salmon' | 'ikura' | 'tako' )[] = [ 'maguro', 'salmon', 'ikura', 'tako' ];
 
 	constructor( params: MXP.ComponentParams ) {
 
