@@ -1,0 +1,8 @@
+@use '~/styles/common' as *;
+
+.search_icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-text-secondary);
+}

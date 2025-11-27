@@ -4,9 +4,9 @@ import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { InputGroup } from '../../../../components/composites/InputGroup';
 import { Picker } from '../../../../components/composites/Picker';
 import { ArrowIcon } from '../../../../components/primitives/Icons/ArrowIcon';
+import { useOREditor } from '../../../../features/OREditor/Hooks/useOREditor';
 import { useMouseMenu } from '../../../../hooks/useMouseMenu';
 import { useSerializableField } from '../../../../hooks/useSerializableProps';
-import { useOREditor } from '../../../../features/OREditor/Hooks/useOREditor';
 
 import style from './index.module.scss';
 
@@ -14,6 +14,7 @@ import style from './index.module.scss';
 type HierarchyNodeProps = {
 	depth?: number;
 	entity: MXP.Entity
+	searchQuery?: string;
 }
 
 export const HierarchyNode = ( props: HierarchyNodeProps ) => {
@@ -32,6 +33,25 @@ export const HierarchyNode = ( props: HierarchyNodeProps ) => {
 	const offsetPx = depth * 20;
 
 	const noEditable = props.entity.initiator == "script";
+
+	// 検索フィルタリング
+	const searchQuery = props.searchQuery || '';
+	const normalizedQuery = searchQuery.toLowerCase();
+
+	// 自分自身または子孫が検索にマッチするかチェック
+	const matchesSearch = ( entity: MXP.Entity, query: string ): boolean => {
+
+		if ( query === '' ) return true;
+
+		// 自分自身の名前がマッチするか
+		if ( entity.name.toLowerCase().includes( query ) ) return true;
+
+		// 子孫のいずれかがマッチするか
+		return entity.children.some( child => matchesSearch( child, query ) );
+
+	};
+
+	const isVisible = matchesSearch( props.entity, normalizedQuery );
 
 	// ref for scroll
 	const nodeRef = useRef<HTMLDivElement>( null );
@@ -114,6 +134,9 @@ export const HierarchyNode = ( props: HierarchyNodeProps ) => {
 
 	}, [ editor, props.entity, pushContent, closeAll, noEditable ] );
 
+	// 検索クエリがある場合、非表示のノードは描画しない
+	if ( ! isVisible ) return null;
+
 	return <div className={style.node} data-no_export={noEditable}>
 		<div ref={nodeRef} className={style.self} style={{ paddingLeft: offsetPx }} onClick={onClickNode} onContextMenu={onRightClickNode} data-selected={selectedEntity && selectedEntity.uuid == props.entity.uuid}>
 			<div className={style.fold} data-hnode_open={open}>
@@ -127,7 +150,7 @@ export const HierarchyNode = ( props: HierarchyNodeProps ) => {
 			{
 				sortedChildren.map( item => {
 
-					return <HierarchyNode key={item.uuid} entity={item} depth={depth + 1} />;
+					return <HierarchyNode key={item.uuid} entity={item} depth={depth + 1} searchQuery={searchQuery} />;
 
 				} )
 			}

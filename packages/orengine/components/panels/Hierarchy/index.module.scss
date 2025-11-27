@@ -1,3 +1,53 @@
 @use '~/styles/common' as *;
 
-.hierarchy {}
+.hierarchy {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+}
+
+.search {
+	flex-shrink: 0;
+	padding: 4px;
+	border-bottom: 1px solid var(--color-border);
+	background: var(--color-bg);
+}
+
+.search_wrapper {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 6px;
+	background: var(--color-bg-dark);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 4px;
+
+	&:focus-within {
+		border-color: rgba(255, 255, 255, 0.2);
+	}
+}
+
+.search_input {
+	flex: 1;
+	background: transparent;
+	border: none;
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 12px;
+	padding: 0;
+
+	&:focus {
+		outline: none;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	&::placeholder {
+		color: rgba(255, 255, 255, 0.3);
+	}
+}
+
+.hierarchy_content {
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
