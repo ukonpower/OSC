@@ -1,15 +1,13 @@
 import * as GLP from 'glpower';
 import * as MXP from 'maxpower';
 
-import { Sara } from '../Sara';
 import { Music } from '../../Music';
+import { Sara } from '../Sara';
 
 export class SaraAudio extends MXP.Component {
 
 	private musicComponent: Music | null;
-	private audioContext: AudioContext | null;
-	private analyser: AnalyserNode | null;
-	private dataArray: Uint8Array | null;
+	private frequencyData: Uint8Array | null;
 	private saraEntities: MXP.Entity[];
 	private numSaras: number;
 	private maxInstancesPerSara: number;
@@ -19,9 +17,7 @@ export class SaraAudio extends MXP.Component {
 		super( params );
 
 		this.musicComponent = null;
-		this.audioContext = null;
-		this.analyser = null;
-		this.dataArray = null;
+		this.frequencyData = null;
 		this.saraEntities = [];
 
 		// 5つのSaraを横に配置
@@ -54,45 +50,37 @@ export class SaraAudio extends MXP.Component {
 
 	}
 
-	private setupAnalyser() {
+	private setupMusicReference() {
 
-		// Musicコンポーネントを探す
+		// シーン内を再帰的に探索してMusicコンポーネントを見つける
 		const root = this.entity.getRootEntity();
-		const musicEntity = root.findEntityByName( "Music" );
 
-		if ( musicEntity ) {
+		const findMusicComponent = ( entity: MXP.Entity ): Music | null => {
 
-			const musicComp = musicEntity.getComponent( Music );
+			const musicComp = entity.getComponent( Music );
 
-			if ( musicComp ) {
+			if ( musicComp ) return musicComp;
 
-				this.musicComponent = musicComp;
+			for ( let i = 0; i < entity.children.length; i ++ ) {
 
-				// MusicコンポーネントからaudioContextを取得
-				const ctx = ( this.musicComponent as any ).audioContext as AudioContext;
+				const found = findMusicComponent( entity.children[ i ] );
 
-				if ( ctx ) {
-
-					this.audioContext = ctx;
-
-					// AnalyserNodeを作成
-					this.analyser = this.audioContext.createAnalyser();
-					this.analyser.fftSize = 256;
-					const bufferLength = this.analyser.frequencyBinCount;
-					this.dataArray = new Uint8Array( bufferLength );
-
-					// 音源とAnalyserを接続
-					const gainNode = ( this.musicComponent as any ).gainNode as GainNode;
-
-					if ( gainNode ) {
-
-						gainNode.connect( this.analyser );
-
-					}
-
-				}
+				if ( found ) return found;
 
 			}
+
+			return null;
+
+		};
+
+		const musicComp = findMusicComponent( root );
+
+		if ( musicComp ) {
+
+			this.musicComponent = musicComp;
+
+			// MusicコンポーネントのfrequencyDataを参照
+			this.frequencyData = ( this.musicComponent as any ).frequencyData as Uint8Array;
 
 		}
 
@@ -100,31 +88,29 @@ export class SaraAudio extends MXP.Component {
 
 	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
 
-		// 初回のみAnalyserをセットアップ
-		if ( ! this.analyser && event.playing ) {
+		// 初回のみMusicコンポーネントへの参照をセットアップ
+		if ( ! this.musicComponent && event.playing ) {
 
-			this.setupAnalyser();
+			this.setupMusicReference();
 
 		}
 
-		// スペクトラムデータを取得して各Saraのインスタンス数を更新
-		if ( this.analyser && this.dataArray ) {
-
-			this.analyser.getByteFrequencyData( this.dataArray );
+		// MusicコンポーネントのfrequencyDataを使って各Saraのインスタンス数を更新
+		if ( this.frequencyData && event.playing ) {
 
 			// 周波数帯域を5つに分割
-			const binSize = Math.floor( this.dataArray.length / this.numSaras );
+			const binSize = Math.floor( this.frequencyData.length / this.numSaras );
 
 			for ( let i = 0; i < this.numSaras; i ++ ) {
 
 				// 各帯域の平均値を計算
 				let sum = 0;
 				const startIdx = i * binSize;
-				const endIdx = Math.min( startIdx + binSize, this.dataArray.length );
+				const endIdx = Math.min( startIdx + binSize, this.frequencyData.length );
 
 				for ( let j = startIdx; j < endIdx; j ++ ) {
 
-					sum += this.dataArray[ j ];
+					sum += this.frequencyData[ j ];
 
 				}
 
@@ -189,19 +175,6 @@ export class SaraAudio extends MXP.Component {
 	public dispose(): void {
 
 		super.dispose();
-
-		// Analyserの接続を解除
-		if ( this.analyser && this.musicComponent ) {
-
-			const gainNode = ( this.musicComponent as any ).gainNode as GainNode;
-
-			if ( gainNode ) {
-
-				this.analyser.disconnect();
-
-			}
-
-		}
 
 		// Sara Entityをクリーンアップ
 		this.saraEntities.forEach( entity => entity.dispose() );

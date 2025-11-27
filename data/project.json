@@ -328,9 +328,6 @@
 			"uuid": "b2ebb3cb",
 			"components": [
 				{
-					"name": "Sara"
-				},
-				{
 					"name": "SaraAudio"
 				}
 			]
