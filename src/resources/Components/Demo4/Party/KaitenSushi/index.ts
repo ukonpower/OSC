@@ -6,7 +6,19 @@ import { globalUniforms } from '~/globals';
 
 // グリーティング名前リスト
 const GREETING_NAMES = [
-	"aaaaa",
+	"0b5vr",
+	"conspiracy",
+	"ctrl-alt-test",
+	"doxas",
+	"draw();",
+	"gam0022",
+	"kinakomochi",
+	"logicoma",
+	"mrdoob",
+	"renard",
+	"saina",
+	"SESSIONS",
+	"totetmatt",
 ];
 
 /**
