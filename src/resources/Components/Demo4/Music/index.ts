@@ -5,7 +5,7 @@ import { Engine } from 'orengine';
 import musicFrag from './shaders/music.fs';
 import musicVert from './shaders/music.vs';
 
-import { gl, power } from '~/globals';
+import { gl, power, globalUniforms } from '~/globals';
 
 const BPM = 100;
 const MUSIC_DURATION = 60 * ( ( 8 * ( 32 + 1 ) ) / BPM );
@@ -25,6 +25,10 @@ export class Music extends MXP.Component {
 	private convolverNode: ConvolverNode;
 	private gainNode: GainNode;
 
+	// spectrum
+	private analyser: AnalyserNode | null;
+	private frequencyData: Uint8Array | null;
+	private frequencyTexture: GLP.GLPowerTexture | null;
 
 	// buffers
 
@@ -147,6 +151,35 @@ export class Music extends MXP.Component {
 
 		this.gainNode = this.audioContext.createGain();
 		this.gainNode.gain.value = 1.3;
+
+		// spectrum analyser
+
+		this.analyser = this.audioContext.createAnalyser();
+		this.analyser.fftSize = 512;
+		this.frequencyData = new Uint8Array( this.analyser.frequencyBinCount );
+
+		this.frequencyTexture = new GLP.GLPowerTexture( this.gl );
+		this.frequencyTexture.setting( {
+			type: this.gl.UNSIGNED_BYTE,
+			internalFormat: this.gl.LUMINANCE,
+			format: this.gl.LUMINANCE,
+			magFilter: this.gl.LINEAR,
+			minFilter: this.gl.LINEAR,
+			wrapS: this.gl.CLAMP_TO_EDGE,
+			wrapT: this.gl.CLAMP_TO_EDGE,
+		} );
+		this.frequencyTexture.attach( { width: this.analyser.frequencyBinCount, height: 1, data: this.frequencyData } );
+
+		globalUniforms.music.uMusicFreqTex.value = this.frequencyTexture;
+
+		const engine = Engine.getInstance( gl );
+		const deferredRenderer = engine.renderer && engine.renderer.deferredRenderer;
+
+		if ( deferredRenderer ) {
+
+			MXP.UniformsUtils.assign( deferredRenderer.shading.uniforms, globalUniforms.music );
+
+		}
 
 		// DEV環境でEngineに登録（Editorがリッスン）
 		if ( import.meta.env.DEV ) {
@@ -384,6 +417,18 @@ export class Music extends MXP.Component {
 		this.play( event.timeCode, this.forcePlay );
 		this.forcePlay = false;
 
+		// スペクトラムテクスチャを更新
+		if ( this.analyser && this.frequencyData && this.frequencyTexture && event.playing ) {
+
+			this.analyser.getByteFrequencyData( this.frequencyData );
+			this.frequencyTexture.attach( {
+				width: this.analyser.frequencyBinCount,
+				height: 1,
+				data: this.frequencyData
+			} );
+
+		}
+
 	}
 
 	private notice() {
@@ -428,6 +473,12 @@ export class Music extends MXP.Component {
 		this.convolverNode.connect( this.gainNode );
 		this.gainNode.connect( this.audioContext.destination );
 
+		if ( this.analyser ) {
+
+			this.gainNode.connect( this.analyser );
+
+		}
+
 	}
 
 	public stop() {
@@ -453,6 +504,20 @@ export class Music extends MXP.Component {
 		super.dispose();
 
 		this.stop();
+
+		if ( this.frequencyTexture ) {
+
+			this.frequencyTexture.dispose();
+			this.frequencyTexture = null;
+
+		}
+
+		if ( this.analyser ) {
+
+			this.analyser.disconnect();
+			this.analyser = null;
+
+		}
 
 	}
 
