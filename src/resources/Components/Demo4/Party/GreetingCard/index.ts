@@ -1,8 +1,8 @@
-import * as MXP from 'maxpower';
 import * as GLP from 'glpower';
+import * as MXP from 'maxpower';
 
-import greetingVert from './shaders/greeting.vs';
 import greetingFrag from './shaders/greeting.fs';
+import greetingVert from './shaders/greeting.vs';
 
 import { gl } from '~/globals';
 
@@ -20,7 +20,8 @@ export class GreetingCard extends MXP.Component {
 		super( params );
 
 		// Geometry作成（縦書き用に縦長）
-		const geometry = new MXP.PlaneGeometry( { width: 0.5, height: 1.0 } );
+		const height = 0.6;
+		const geometry = new MXP.PlaneGeometry( { width: height / 2, height } );
 
 		// Material作成
 		this.material = new MXP.Material( {
