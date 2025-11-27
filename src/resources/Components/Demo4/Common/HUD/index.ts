@@ -1,5 +1,7 @@
 import * as MXP from 'maxpower';
 
+import { globalUniforms } from '~/globals';
+
 import hudVert from './shaders/hud.vs';
 import hudFrag from './shaders/hud.fs';
 
@@ -58,6 +60,13 @@ export class HUD extends MXP.Component {
 			} );
 
 		}
+
+	}
+
+	protected override updateImpl( _event: MXP.ComponentUpdateEvent ): void {
+
+		// グローバルuniformsをマージしてuTimeなどを利用可能にする
+		this.material.uniforms = MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution );
 
 	}
 
