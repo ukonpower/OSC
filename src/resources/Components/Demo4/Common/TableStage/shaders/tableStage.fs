@@ -20,6 +20,7 @@ const float MAT_WALL = 6.0;
 const float MAT_NOREN = 7.0;
 
 uniform float uTimeE;
+uniform vec4 uState;
 
 vec2 gridCenter = vec2( 0.0, 0.0 );
 const vec2 gridSize = vec2( 1.0, 1.6 );
@@ -314,6 +315,17 @@ void main( void ) {
 		outNormal = normalize( outNormal + vec3( noise.y, noise.z, 0.0 ) * 0.1 );
 
 	}
+
+	float partyLen = length( rayPos ) * 15.0;
+
+	vec3 emission = vec3( 0.0 );
+	emission.x = sin( partyLen - uTimeE * 10.0 );
+	emission.y = sin( partyLen - uTimeE * 20.0 - 0.5 );
+	emission.z = sin( partyLen - uTimeE * 30.0 - 1.0);
+	emission = smoothstep( 0.9, 1.0, emission );
+	emission *= 10.0 * uState.y;
+
+	outEmission = emission;
 
 	#include <frag_out>
 

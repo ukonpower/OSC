@@ -1,9 +1,10 @@
 import * as MXP from 'maxpower';
 
 import raymarchFrag from './shaders/tableStage.fs';
-import screenVert from '~/resources/shaders/screen.vs';
 
 import { globalUniforms } from '~/globals';
+import screenVert from '~/resources/shaders/screen.vs';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 /**
  * TableStage - テーブルステージ用のレイマーチングコンポーネント
@@ -31,6 +32,8 @@ export class TableStage extends MXP.Component {
 		// 子entityを作成
 		const cubeEntity = new MXP.Entity();
 		this._entity.add( cubeEntity );
+
+		bindBlidgeUniform( this.entity, this.mesh );
 
 		// 子entityにMeshコンポーネントを追加
 		// const cubeMesh = cubeEntity.addComponent( MXP.Mesh, {
