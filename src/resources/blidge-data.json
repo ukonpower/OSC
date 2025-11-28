@@ -109,17 +109,17 @@
       54
     ],
     [
-      55
-    ],
-    [
+      55,
       56
     ],
     [
-      57,
-      58,
-      59
+      57
     ],
     [
+      58
+    ],
+    [
+      59,
       60,
       61
     ],
@@ -129,30 +129,28 @@
     ],
     [
       64,
-      67
+      65
     ],
     [
-      65,
-      66
+      66,
+      69
     ],
     [
       67,
       68
     ],
     [
-      67
+      69,
+      70
     ],
     [
       69
     ],
     [
-      70
+      71
     ],
     [
       72
-    ],
-    [
-      73
     ],
     [
       74
@@ -173,74 +171,80 @@
       79
     ],
     [
-      80,
+      80
+    ],
+    [
       81
     ],
     [
       82,
-      83,
-      84
+      83
     ],
     [
-      85
+      84,
+      85,
+      86
     ],
     [
-      86,
       87
     ],
     [
       88,
-      89,
-      90
+      89
     ],
     [
-      91
-    ],
-    [
+      90,
+      91,
       92
     ],
     [
-      93,
-      94,
-      95
+      93
     ],
     [
-      96
+      94
     ],
     [
-      98,
-      99,
-      100
+      95,
+      96,
+      97
     ],
     [
+      98
+    ],
+    [
+      100,
       101,
       102
     ],
     [
       103,
-      104,
-      105
+      104
     ],
     [
+      105,
       106,
-      107,
-      108
+      107
     ],
     [
-      109
+      108,
+      109,
+      110
     ],
     [
-      110,
-      111,
-      112
+      111
     ],
     [
+      112,
       113,
-      114,
-      115
+      114
     ],
     [
-      116
+      115,
+      116,
+      117
+    ],
+    [
+      118
     ]
   ],
   "fcurves": [
@@ -2807,6 +2811,44 @@
       "axis": "x",
       "k": [
         [
+          0,
+          [
+            1091.0,
+            4.766
+          ]
+        ],
+        [
+          0,
+          [
+            43.0,
+            -4.299
+          ]
+        ]
+      ]
+    },
+    {
+      "axis": "y",
+      "k": [
+        [
+          0,
+          [
+            1091.0,
+            -9.866
+          ]
+        ],
+        [
+          0,
+          [
+            43.0,
+            -14.859
+          ]
+        ]
+      ]
+    },
+    {
+      "axis": "x",
+      "k": [
+        [
           2,
           [
             2677.0,
@@ -4630,13 +4672,13 @@
         "name": "Camera",
         "uuid": "d7b3bbdf",
         "position": [
-          99.945,
-          3.765,
-          14.389
+          -715.987,
+          2.244,
+          -2.289
         ],
         "rotation": [
           1.571,
-          0.0,
+          -1.577,
           -0.0
         ],
         "type": "camera",
@@ -4657,9 +4699,9 @@
         "name": "CamLook",
         "uuid": "b89a78b8",
         "position": [
-          100.066,
-          3.899,
-          -0.013
+          -712.985,
+          1.834,
+          0.227
         ],
         "rotation": [
           0.0,
@@ -4752,7 +4794,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 37
+          "hide": 38
         },
         "children": [
           {
@@ -5039,7 +5081,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 38
+          "hide": 39
         },
         "children": [
           {
@@ -5105,14 +5147,14 @@
             "name": "IkuraGunKan_left",
             "uuid": "2b281283",
             "position": [
-              -2.944,
-              -24.617,
+              -7.055,
+              -19.582,
               -8.38
             ],
             "rotation": [
-              1.225,
-              1.082,
-              0.171
+              0.39,
+              0.59,
+              0.139
             ],
             "scale": [
               5.81,
@@ -5132,14 +5174,14 @@
             "name": "IkuraGunKan_right",
             "uuid": "c85f4ed4",
             "position": [
-              -0.18,
-              -33.378,
+              2.022,
+              -28.024,
               -6.461
             ],
             "rotation": [
-              0.776,
-              -0.93,
-              0.431
+              0.572,
+              -0.404,
+              -0.299
             ],
             "scale": [
               5.252,
@@ -5193,22 +5235,23 @@
           16.37,
           -0.0
         ],
+        "visible": false,
         "animation": {
-          "hide": 39
+          "hide": 40
         },
         "children": [
           {
             "name": "DebaBouChou",
             "uuid": "989f5be8",
             "position": [
-              -5.207,
-              -25.501,
+              -9.86,
+              -11.698,
               2.819
             ],
             "rotation": [
               0.0,
-              -1.094,
-              -0.087
+              -3.237,
+              -0.827
             ],
             "scale": [
               5.625,
@@ -5226,7 +5269,7 @@
             "position": [
               0.204,
               -12.548,
-              -4.787
+              -2.134
             ],
             "scale": [
               1.886,
@@ -5238,12 +5281,12 @@
             "name": "Maguro",
             "uuid": "29549b03",
             "position": [
-              1.068,
-              -13.017,
+              0.119,
+              -12.487,
               -0.001
             ],
             "rotation": [
-              0.649,
+              -11.703,
               0.0,
               -0.443
             ],
@@ -5252,6 +5295,7 @@
               9.774,
               9.774
             ],
+            "visible": false,
             "animation": {
               "position": 22,
               "rotation": 23,
@@ -5328,50 +5372,48 @@
             "name": "Sushi",
             "uuid": "b6c68e95",
             "position": [
-              -2.114,
-              -13.294,
+              -2.439,
+              -12.498,
               -0.026
             ],
             "rotation": [
-              -0.606,
-              -1.052,
-              -0.712
+              -0.446,
+              -0.641,
+              -0.031
             ],
             "scale": [
               5.99,
               5.99,
               5.99
             ],
-            "visible": false,
             "animation": {
-              "position": 49,
-              "rotation": 50,
-              "hide": 51
+              "position": 50,
+              "rotation": 51,
+              "hide": 52
             }
           },
           {
             "name": "Sushi.001",
             "uuid": "f2985235",
             "position": [
-              2.74,
-              -14.149,
+              2.245,
+              -13.728,
               -1.187
             ],
             "rotation": [
-              -0.613,
-              0.713,
-              -0.087
+              -0.843,
+              0.15,
+              -0.696
             ],
             "scale": [
               5.346,
               5.346,
               5.346
             ],
-            "visible": false,
             "animation": {
-              "position": 46,
-              "rotation": 47,
-              "hide": 48
+              "position": 47,
+              "rotation": 48,
+              "hide": 49
             }
           }
         ]
@@ -5386,7 +5428,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 40
+          "hide": 41
         },
         "children": [
           {
@@ -5681,10 +5723,10 @@
               5.323
             ],
             "animation": {
-              "uState": 54
+              "uState": 55
             },
             "uniforms": {
-              "uState": 54
+              "uState": 55
             }
           },
           {
@@ -5706,10 +5748,10 @@
               5.323
             ],
             "animation": {
-              "uState": 54
+              "uState": 55
             },
             "uniforms": {
-              "uState": 54
+              "uState": 55
             }
           },
           {
@@ -5743,35 +5785,52 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 41
+          "hide": 42
         },
         "children": [
           {
             "name": "GraphSalmon",
             "uuid": "7d90402e",
             "position": [
-              0.0,
-              -11.892,
-              -15.354
+              -0.0,
+              -12.412,
+              -12.21
             ],
             "scale": [
-              2.483,
-              2.483,
-              2.483
+              2.407,
+              2.407,
+              2.407
             ]
+          },
+          {
+            "name": "MizuBall.003",
+            "uuid": "06674a7c",
+            "position": [
+              -4.299,
+              -14.859,
+              4.183
+            ],
+            "scale": [
+              1.34,
+              1.34,
+              1.34
+            ],
+            "animation": {
+              "position": 27
+            }
           },
           {
             "name": "Onigiri",
             "uuid": "768002b3",
             "position": [
-              76.279,
-              29.509,
+              -76.511,
+              -45.664,
               -75.15
             ],
             "rotation": [
-              -0.526,
-              0.048,
-              -0.279
+              0.613,
+              -0.074,
+              0.376
             ],
             "scale": [
               9.497,
@@ -5787,8 +5846,8 @@
             "name": "Salmon",
             "uuid": "c51ba9ef",
             "position": [
-              -36.28,
-              -27.842,
+              -0.098,
+              -12.036,
               -6.016
             ],
             "rotation": [
@@ -5802,25 +5861,25 @@
               7.953
             ],
             "animation": {
-              "position": 33,
-              "uState": 34
+              "position": 34,
+              "uState": 35
             },
             "uniforms": {
-              "uState": 34
+              "uState": 35
             }
           },
           {
             "name": "Salmon_sub1",
             "uuid": "0dd05673",
             "position": [
-              -28.103,
-              -20.062,
-              -11.533
+              -75.067,
+              -47.254,
+              -75.954
             ],
             "rotation": [
               0.012,
-              3.138,
-              -0.368
+              6.263,
+              0.4
             ],
             "scale": [
               6.226,
@@ -5828,20 +5887,20 @@
               6.226
             ],
             "animation": {
-              "position": 29,
-              "rotation": 30,
-              "uState": 35
+              "position": 30,
+              "rotation": 31,
+              "uState": 36
             },
             "uniforms": {
-              "uState": 35
+              "uState": 36
             }
           },
           {
             "name": "Salmon_sub2",
             "uuid": "78014334",
             "position": [
-              -24.403,
-              -32.081,
+              -0.142,
+              -16.065,
               -11.151
             ],
             "rotation": [
@@ -5855,11 +5914,11 @@
               6.518
             ],
             "animation": {
-              "position": 31,
-              "uState": 32
+              "position": 32,
+              "uState": 33
             },
             "uniforms": {
-              "uState": 32
+              "uState": 33
             }
           },
           {
@@ -5876,10 +5935,10 @@
               72.711
             ],
             "animation": {
-              "uState": 36
+              "uState": 37
             },
             "uniforms": {
-              "uState": 36
+              "uState": 37
             }
           }
         ]
@@ -5894,7 +5953,7 @@
         ],
         "visible": false,
         "animation": {
-          "hide": 42
+          "hide": 43
         },
         "children": [
           {
@@ -5925,10 +5984,10 @@
               103.398
             ],
             "animation": {
-              "uState": 28
+              "uState": 29
             },
             "uniforms": {
-              "uState": 28
+              "uState": 29
             }
           },
           {
@@ -5945,10 +6004,10 @@
               5.593
             ],
             "animation": {
-              "uState": 55
+              "uState": 56
             },
             "uniforms": {
-              "uState": 55
+              "uState": 56
             }
           },
           {
@@ -5965,48 +6024,47 @@
               5.875
             ],
             "animation": {
-              "uState": 56
+              "uState": 57
             },
             "uniforms": {
-              "uState": 56
+              "uState": 57
             }
           },
           {
             "name": "TakoNigiri",
             "uuid": "f14b3580",
             "position": [
-              1.152,
-              -8.926,
-              -5.469
+              1.911,
+              -8.277,
+              -5.457
             ],
             "rotation": [
-              -0.867,
-              1.807,
-              0.213
+              -0.821,
+              2.243,
+              -0.063
             ],
             "scale": [
               13.213,
               13.213,
               13.213
             ],
-            "visible": false,
             "animation": {
-              "position": 60,
-              "rotation": 61,
-              "hide": 62
+              "position": 61,
+              "rotation": 62,
+              "hide": 63
             }
           },
           {
             "name": "TakoNigiri.001",
             "uuid": "2a16e1b2",
             "position": [
-              -2.278,
-              -13.761,
-              -1.202
+              -3.714,
+              -12.11,
+              -1.206
             ],
             "rotation": [
               -0.821,
-              -0.277,
+              -0.796,
               -0.063
             ],
             "scale": [
@@ -6014,11 +6072,10 @@
               10.71,
               10.71
             ],
-            "visible": false,
             "animation": {
-              "position": 58,
-              "rotation": 57,
-              "hide": 59
+              "position": 59,
+              "rotation": 58,
+              "hide": 60
             }
           }
         ]
@@ -6031,9 +6088,8 @@
           10.301,
           -0.112
         ],
-        "visible": false,
         "animation": {
-          "hide": 43
+          "hide": 44
         },
         "children": [
           {
@@ -6045,10 +6101,10 @@
               -0.914
             ],
             "animation": {
-              "uState": 27
+              "uState": 28
             },
             "uniforms": {
-              "uState": 27
+              "uState": 28
             }
           },
           {
@@ -6089,8 +6145,8 @@
               5.456
             ],
             "animation": {
-              "position": 52,
-              "rotation": 53
+              "position": 53,
+              "rotation": 54
             }
           },
           {
@@ -6156,10 +6212,10 @@
           1.235
         ],
         "animation": {
-          "uState": 44
+          "uState": 45
         },
         "uniforms": {
-          "uState": 44
+          "uState": 45
         }
       },
       {
@@ -6265,7 +6321,7 @@
         ],
         "type": "light",
         "animation": {
-          "hide": 45
+          "hide": 46
         },
         "param": {
           "shadow_map": false,

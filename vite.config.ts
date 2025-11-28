@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 import { FileWriter } from './plugins/FileWriter';
+import { HotGetRemover } from './plugins/HotGetRemover';
 import { OREngineFileSystemPlugin } from './plugins/OREngineFileSystem';
 import { ResourceManager } from './plugins/ResourceManager';
 import { ShaderComponentRegistry } from './plugins/ShaderComponentRegistry';
@@ -49,6 +50,7 @@ export default defineConfig( {
 		},
 	},
 	plugins: [
+		HotGetRemover(),
 		FileWriter(),
 		react(),
 		OREngineFileSystemPlugin(),

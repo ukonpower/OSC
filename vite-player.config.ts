@@ -5,6 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 import playerJson from './data/project.json';
+import { HotGetRemover } from './plugins/HotGetRemover';
 import { ResourceManager } from './plugins/ResourceManager';
 import { ShaderLoader } from './plugins/ShaderLoader';
 
@@ -113,6 +114,7 @@ export default defineConfig( {
 		},
 	},
 	plugins: [
+		HotGetRemover(),
 		ResourceManager(),
 		ShaderLoader( {
 			skipMinifier: false,
