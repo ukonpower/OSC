@@ -619,46 +619,6 @@ vec2 rhythmicBass( float mt, float ft, float pitch ) {
 
 }
 
-// MARK: Dada
-
-/*-------------------------------
-	dada
--------------------------------*/
-
-vec2 dada( float time, float loop ) {
-
-	int index = int( loop );
-	float envTime = fract( loop );
-	float w = mod( envTime * 8.0, 2.0 );
-
-	vec2 o = vec2( 0.0 );
-
-	for( int i = 0; i < 6; i++ ) {
-
-		float fi = float( i ) / 6.0;
-		float frec = s2f( 4.0 + float(i) * 12.0 ) * pow( 0.5, 4.0 );
-
-		float v = saw( time * frec + ssin( w * 20.0 ) + TPI * fi ) * abs( pow( sin( w * TPI ), 3.0 ) );
-
-		o.x += v * ( sin( fi * TPI ) * 0.5 + 0.5 );
-		o.y += v * ( cos( fi * TPI ) * 0.5 + 0.5 );
-
-		frec = s2f( 4.0 + float(i) * 12.0 ) * pow( 0.5, 10.0 );
-		v = tri( time * frec + ssin( w * 21.0 ) + TPI * fi ) * abs( pow( sin( w * TPI ), 1.0 ) ) * 0.8;
-
-		o.x += v * ( sin( PI / 2.0 + fi * TPI ) * 0.5 + 0.5 );
-		o.y += v * ( cos( PI / 2.0 + fi * TPI ) * 0.5 + 0.5 );
-
-	}
-
-	o *= isin( w, 1.0, 2.0 ) && isin( loop, 1.75, 2.0 ) ? 1.0 : 0.0;
-
-	o *= 0.05;
-
-	return o;
-
-}
-
 // MARK: Lead Synth
 
 /*-------------------------------
@@ -792,7 +752,6 @@ vec2 music( float t ) {
 		sum += kick2( mt, t ) * 1.2;
 		sum += snare2( mt, t ) * 0.8;
 		sum += pad( mt, t, 0.0 ) * 0.6;
-		sum += dada( mt, beat4.w );
 		sum += bass( mt, t, 0.0 ); // ベースライン
 		sum += arpeggio( mt, t, 0.0 );
 
@@ -862,7 +821,6 @@ vec2 music( float t ) {
 		sum += kick3( mt, t ) * 1.0; // だだだだっちゃだだだだのkick3
 		sum += snare3( mt, t ); // 「っちゃ」部分のsnare3
 		sum += hihat1( mt ); // ハイハットも強調
-		sum += dada( mt, beat4.w );
 		sum += bass( mt, t, pitch ); // climaxでリズミカルに
 		sum += arpeggio_fast( mt, t, pitch ) * 1.2;
 		sum += arpeggio( mt, t, pitch + 12.0 ) * 0.6;
