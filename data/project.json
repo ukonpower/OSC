@@ -97,6 +97,24 @@
 			]
 		},
 		{
+			"uuid": "72ce0867",
+			"components": [
+				{
+					"name": "RandomSMG",
+					"props": {
+						"count": 40,
+						"Position Range/rangeX": 14.999999999999991,
+						"Position Range/rangeY": 24.850000000000023,
+						"Position Range/rangeZ": 7.299999999999983,
+						"randomSeed": 0,
+						"shaderType": "random",
+						"Movement/movementX": 0,
+						"Movement/movementY": 0
+					}
+				}
+			]
+		},
+		{
 			"uuid": "cebe8ad4",
 			"components": [
 				{
@@ -526,6 +544,24 @@
 						"layers": 3,
 						"layerSpacing": -0.09,
 						"timeOffset": 0
+					}
+				}
+			]
+		},
+		{
+			"uuid": "de897ba0",
+			"components": [
+				{
+					"name": "RandomSMG",
+					"props": {
+						"count": 24,
+						"Position Range/rangeX": 15.150000000000007,
+						"Position Range/rangeY": 5.950000000000014,
+						"Position Range/rangeZ": 10,
+						"randomSeed": 0,
+						"shaderType": "random",
+						"Movement/movementX": 0,
+						"Movement/movementY": 0
 					}
 				}
 			]
