@@ -5,6 +5,10 @@ import ikuraBGScreenFrag from './shaders/ikuraBGScreen.fs';
 import maguroBGScreenFrag from './shaders/maguroBGScreen.fs';
 import salmonBGScreenFrag from './shaders/salmonBGScreen.fs';
 import takoBGScreenFrag from './shaders/takoBGScreen.fs';
+import circleFrag from './shaders/circle.fs';
+import crossFrag from './shaders/cross.fs';
+import borderFrag from './shaders/border.fs';
+import dotGridFrag from './shaders/dotGrid.fs';
 import smgVert from './shaders/smg.vs';
 
 import { globalUniforms } from '~/globals';
@@ -33,6 +37,10 @@ export class ShaderMotionGraphics extends MXP.Component {
 			[ "maguroBGScreen", { vert: smgVert, frag: maguroBGScreenFrag } ],
 			[ "salmonBGScreen", { vert: smgVert, frag: salmonBGScreenFrag } ],
 			[ "takoBGScreen", { vert: smgVert, frag: takoBGScreenFrag } ],
+			[ "circle", { vert: smgVert, frag: circleFrag } ],
+			[ "cross", { vert: smgVert, frag: crossFrag } ],
+			[ "border", { vert: smgVert, frag: borderFrag } ],
+			[ "dotGrid", { vert: smgVert, frag: dotGridFrag } ],
 		] );
 
 		this.shaderName = "ikuraBGScreen";
@@ -62,6 +70,10 @@ export class ShaderMotionGraphics extends MXP.Component {
 					{ label: "Maguro BG Screen", value: "maguroBGScreen" },
 					{ label: "Salmon BG Screen", value: "salmonBGScreen" },
 					{ label: "Tako BG Screen", value: "takoBGScreen" },
+					{ label: "Circle", value: "circle" },
+					{ label: "Cross", value: "cross" },
+					{ label: "Border", value: "border" },
+					{ label: "Dot Grid", value: "dotGrid" },
 				]
 			}
 		} );
@@ -108,6 +120,10 @@ export class ShaderMotionGraphics extends MXP.Component {
 			import.meta.hot.accept( './shaders/maguroBGScreen.fs', createHotReloadHandler( 'maguroBGScreen', 'smgMaguroBGScreenFrag' ) );
 			import.meta.hot.accept( './shaders/salmonBGScreen.fs', createHotReloadHandler( 'salmonBGScreen', 'smgSalmonBGScreenFrag' ) );
 			import.meta.hot.accept( './shaders/takoBGScreen.fs', createHotReloadHandler( 'takoBGScreen', 'smgTakoBGScreenFrag' ) );
+			import.meta.hot.accept( './shaders/circle.fs', createHotReloadHandler( 'circle', 'smgCircleFrag' ) );
+			import.meta.hot.accept( './shaders/cross.fs', createHotReloadHandler( 'cross', 'smgCrossFrag' ) );
+			import.meta.hot.accept( './shaders/border.fs', createHotReloadHandler( 'border', 'smgBorderFrag' ) );
+			import.meta.hot.accept( './shaders/dotGrid.fs', createHotReloadHandler( 'dotGrid', 'smgDotGridFrag' ) );
 
 		}
 

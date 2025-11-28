@@ -82,10 +82,10 @@ export class RandomSMG extends MXP.Component {
 				type: "select",
 				list: [
 					{ label: "Random", value: "random" },
-					{ label: "Ikura BG Screen", value: "ikuraBGScreen" },
-					{ label: "Maguro BG Screen", value: "maguroBGScreen" },
-					{ label: "Salmon BG Screen", value: "salmonBGScreen" },
-					{ label: "Tako BG Screen", value: "takoBGScreen" },
+					{ label: "Circle", value: "circle" },
+					{ label: "Cross", value: "cross" },
+					{ label: "Border", value: "border" },
+					{ label: "Dot Grid", value: "dotGrid" },
 				]
 			}
 		} );
@@ -100,7 +100,7 @@ export class RandomSMG extends MXP.Component {
 	 */
 	private getRandomShaderType( random: () => number ): string {
 
-		const types = [ "ikuraBGScreen", "maguroBGScreen", "salmonBGScreen", "takoBGScreen" ];
+		const types = [ "circle", "cross", "border", "dotGrid" ];
 		const index = Math.floor( random() * types.length );
 
 		return types[ index ];
