@@ -178,7 +178,7 @@
 						"Position Range/rangeX": 24.85,
 						"Position Range/rangeY": 12.600000000000001,
 						"Position Range/rangeZ": 12.5,
-						"randomSeed": -6,
+						"randomSeed": 11,
 						"shaderType": "random",
 						"Movement/movementX": 0,
 						"Movement/movementY": 0

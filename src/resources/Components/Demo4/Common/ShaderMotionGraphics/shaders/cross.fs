@@ -23,7 +23,7 @@ void main( void ) {
 	float d = sdSegment( p, vec2( -len ), vec2( len ) );
 	d = min( d, sdSegment( p, vec2( len, -len ), vec2( -len, len ) ) );
 
-	float w = step( d, 0.2 );
+	float w = step( d, 0.15 );
 
 	if( w < 0.5 ) {
 		discard;
