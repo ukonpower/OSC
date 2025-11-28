@@ -1,6 +1,7 @@
 #include <common>
 #include <packing>
 #include <frag_h>
+#include <rotate>
 
 in vec2 vLayerIndex;
 uniform float uTime;
@@ -12,11 +13,12 @@ void main( void ) {
 	#include <frag_in>
 
 	// タイムオフセットを適用
-	float time = uTime + uTimeOffset;
+	float time = uTime * 0.2 + uTimeOffset;
 
 	// UV座標を中心基準に変換
 	vec2 uv = vUv;
 	vec2 p = uv * 2.0 - 1.0;
+	p.xy *= rotate( time * 20.0 + uTimeOffset * 10.0 );
 
 	// 中心からの距離を計算
 	float dist = length( p );
@@ -25,15 +27,17 @@ void main( void ) {
 	float angle = atan( p.y, p.x );
 	float normalizedAngle = ( angle + PI ) / ( 2.0 * PI );
 
-	// アニメーション：円が描かれて消える
-	float animationSpeed = 1.5;
-	float animationPhase = fract( time * animationSpeed );
-
 	// 円周上での描画進行（0.0 ~ 1.0）
-	float drawProgress = animationPhase;
+	float drawProgress = fract( time * 1.5 );
+	float phase1 = linearstep( 0.15, 0.3, drawProgress );
+	float phase2 = linearstep( 0.7, 0.85, drawProgress );
 
 	// 描画されていない部分を破棄
-	if( normalizedAngle > drawProgress ) {
+	if( normalizedAngle > phase1 ) {
+		discard;
+	}
+
+	if( 1.0 - normalizedAngle > 1.0 - phase2 ) {
 		discard;
 	}
 
@@ -41,7 +45,7 @@ void main( void ) {
 	float radius = 0.7 + vLayerIndex.y * 0.1;
 
 	// ボーダーの太さ
-	float borderWidth = 0.05;
+	float borderWidth = 0.1;
 
 	// 円のボーダー（輪）を描画
 	float outerEdge = smoothstep( radius - 0.01, radius + 0.01, dist );
@@ -55,13 +59,7 @@ void main( void ) {
 
 	// 真っ白な色
 	vec3 color = vec3( 1.0 );
-
-	outColor = vec4( color, 1.0 );
-	outRoughness = 0.5;
-	outMetalic = 0.0;
 	outEmission = vec3( 1.0 );
-	outEnv = 0.0;
-	outGradient = 1.0;
 
 	#include <frag_out>
 

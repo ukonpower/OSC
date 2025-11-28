@@ -13,7 +13,7 @@ void main( void ) {
 	#include <frag_in>
 
 	// タイムオフセットを適用
-	float time = uTime + uTimeOffset;
+	float time = uTime + uTimeOffset * 3.0;
 
 	// UV座標
 	vec2 uv = vUv;
@@ -46,21 +46,14 @@ void main( void ) {
 	// ドットのエッジをスムーズに描画
 	float dot = 1.0 - smoothstep( dotRadius - 0.05, dotRadius + 0.05, dist );
 
-	// ドットの外側を破棄
-	if( dot < 0.1 ) {
+
+	if(dot < 0.5 ) {
 		discard;
 	}
 
 	// 真っ白な色
 	vec3 color = vec3( 1.0 );
-
-	outColor = vec4( color, 1.0 );
-	outRoughness = 0.6;
-	outMetalic = 0.0;
 	outEmission = vec3( 1.0 );
-	outEnv = 0.0;
-	outGradient = 1.0;
-
 	#include <frag_out>
 
 }

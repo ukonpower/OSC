@@ -161,24 +161,6 @@
 			]
 		},
 		{
-			"uuid": "8d834b6f",
-			"components": [
-				{
-					"name": "RandomSMG",
-					"props": {
-						"count": 10,
-						"Position Range/rangeX": 10,
-						"Position Range/rangeY": 5,
-						"Position Range/rangeZ": 10,
-						"randomSeed": 0,
-						"shaderType": "random",
-						"Movement/movementX": 0,
-						"Movement/movementY": 0
-					}
-				}
-			]
-		},
-		{
 			"uuid": "989f5be8",
 			"components": [
 				{
@@ -192,10 +174,10 @@
 				{
 					"name": "RandomSMG",
 					"props": {
-						"count": 17,
-						"Position Range/rangeX": 24.85,
-						"Position Range/rangeY": 12.600000000000001,
-						"Position Range/rangeZ": 12.5,
+						"count": 24,
+						"Position Range/rangeX": 17.249999999999964,
+						"Position Range/rangeY": 7.899999999999973,
+						"Position Range/rangeZ": 11.149999999999986,
 						"randomSeed": 11,
 						"shaderType": "random",
 						"Movement/movementX": 0,
@@ -476,14 +458,22 @@
 					"name": "RandomSMG",
 					"props": {
 						"count": 26,
-						"Position Range/rangeX": 25.750000000000053,
-						"Position Range/rangeY": 18.799999999999997,
+						"Position Range/rangeX": 18.449999999999935,
+						"Position Range/rangeY": 10.049999999999974,
 						"Position Range/rangeZ": 10,
-						"randomSeed": 5,
+						"randomSeed": 4,
 						"shaderType": "random",
-						"Movement/movementX": -5.449999999999998,
-						"Movement/movementY": -3.2999999999999985
+						"Movement/movementX": -3.1000000000000085,
+						"Movement/movementY": -2.300000000000002
 					}
+				}
+			]
+		},
+		{
+			"uuid": "06674a7c",
+			"components": [
+				{
+					"name": "MizuBall"
 				}
 			]
 		},
@@ -561,7 +551,7 @@
 						"randomSeed": 0,
 						"shaderType": "random",
 						"Movement/movementX": 0,
-						"Movement/movementY": 0
+						"Movement/movementY": 0.25
 					}
 				}
 			]
