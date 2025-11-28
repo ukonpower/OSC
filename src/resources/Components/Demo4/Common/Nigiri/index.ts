@@ -46,7 +46,7 @@ export class Nigiri extends MXP.Component {
 			this.sashimiTypeValue = v;
 			this.sashimiComponent.setField( 'sashimiType', v );
 
-		}, {
+		}, import.meta.env.DEV ? {
 			format: {
 				type: "select",
 				list: [
@@ -55,7 +55,7 @@ export class Nigiri extends MXP.Component {
 					{ label: "タコ", value: "tako" }
 				]
 			}
-		} );
+		} : undefined );
 
 		// 初期タイプを設定
 		this.sashimiComponent.setField( 'sashimiType', this.sashimiTypeValue );

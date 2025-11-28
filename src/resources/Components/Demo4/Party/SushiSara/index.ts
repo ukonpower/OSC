@@ -62,7 +62,7 @@ export class SushiSara extends MXP.Component {
 			this.sashimiTypeValue = v;
 			this.updateSushiComponent( v );
 
-		}, {
+		}, import.meta.env.DEV ? {
 			format: {
 				type: "select",
 				list: [
@@ -72,7 +72,7 @@ export class SushiSara extends MXP.Component {
 					{ label: "タコ", value: "tako" }
 				]
 			}
-		} );
+		} : undefined );
 
 	}
 

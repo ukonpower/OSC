@@ -43,7 +43,7 @@ export class SkyBox extends MXP.Component {
 			this.material.defines = defines;
 			this.material.requestUpdate();
 
-		}, {
+		}, import.meta.env.DEV ? {
 			format: {
 				type: "select",
 				list: [
@@ -51,7 +51,7 @@ export class SkyBox extends MXP.Component {
 					{ label: "Tsuri", value: "tsuri" }
 				]
 			}
-		} );
+		} : undefined );
 
 		const mesh = this._entity.addComponent( MXP.Mesh, {
 			geometry: new MXP.SphereGeometry( { radius: 500, widthSegments: 32, heightSegments: 32 } ),

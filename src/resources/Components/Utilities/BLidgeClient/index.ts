@@ -233,12 +233,12 @@ export class BLidgeClient extends MXP.Component {
 
 			reload();
 
-		}, {
+		}, import.meta.env.DEV ? {
 			format: {
 				type: "select",
 				list: [ "websocket", "json" ],
 			}
-		} );
+		} : undefined );
 
 		// GLTFを使用するかどうかのフィールド
 		this.field( "gltf", () => this.useGLTF, v => {

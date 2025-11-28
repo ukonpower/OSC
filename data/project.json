@@ -171,11 +171,11 @@
 				{
 					"name": "RandomSMG",
 					"props": {
-						"count": 10,
-						"Position Range/rangeX": 10,
-						"Position Range/rangeY": 5,
-						"Position Range/rangeZ": 10,
-						"randomSeed": 0,
+						"count": 30,
+						"Position Range/rangeX": 13.849999999999987,
+						"Position Range/rangeY": 6.05,
+						"Position Range/rangeZ": 12.5,
+						"randomSeed": 3,
 						"shaderType": "random"
 					}
 				}
@@ -441,6 +441,22 @@
 					"name": "PartyTime",
 					"props": {
 						"isJumping": true
+					}
+				}
+			]
+		},
+		{
+			"uuid": "7d90402e",
+			"components": [
+				{
+					"name": "RandomSMG",
+					"props": {
+						"count": 26,
+						"Position Range/rangeX": 22.600000000000033,
+						"Position Range/rangeY": 18.499999999999993,
+						"Position Range/rangeZ": 10,
+						"randomSeed": 5,
+						"shaderType": "random"
 					}
 				}
 			]

@@ -77,7 +77,7 @@ export class RandomSMG extends MXP.Component {
 			this.shaderType = v;
 			this.regenerateShapes();
 
-		}, {
+		}, import.meta.env.DEV ? {
 			format: {
 				type: "select",
 				list: [
@@ -88,7 +88,7 @@ export class RandomSMG extends MXP.Component {
 					{ label: "Dot Grid", value: "dotGrid" },
 				]
 			}
-		} );
+		} : undefined );
 
 		// 初期生成
 		this.regenerateShapes();

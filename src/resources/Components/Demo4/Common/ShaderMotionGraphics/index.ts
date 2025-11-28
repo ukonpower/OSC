@@ -62,7 +62,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 			this.shaderName = v;
 			this.updateMaterial();
 
-		}, {
+		}, import.meta.env.DEV ? {
 			format: {
 				type: "select",
 				list: [
@@ -76,7 +76,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 					{ label: "Dot Grid", value: "dotGrid" },
 				]
 			}
-		} );
+		} : undefined );
 
 		// エディタフィールド定義 - レイヤー数
 		this.field( "layers", () => this.layers, ( v ) => {

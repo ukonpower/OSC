@@ -55,7 +55,7 @@ export class Sashimi extends MXP.Component {
 			this.material.defines = defines;
 			this.material.requestUpdate();
 
-		}, {
+		}, import.meta.env.DEV ? {
 			format: {
 				type: "select",
 				list: [
@@ -65,7 +65,7 @@ export class Sashimi extends MXP.Component {
 					{ label: "タコ", value: "tako" }
 				]
 			}
-		} );
+		} : undefined );
 
 
 		// geometry
