@@ -4,7 +4,7 @@ import * as MXP from 'maxpower';
 import greetingFrag from './shaders/greeting.fs';
 import greetingVert from './shaders/greeting.vs';
 
-import { gl } from '~/globals';
+import { gl, globalUniforms } from '~/globals';
 
 /**
  * GreetingCard - Canvas2Dでテキストを描画してテクスチャとして表示するコンポーネント
@@ -20,19 +20,20 @@ export class GreetingCard extends MXP.Component {
 		super( params );
 
 		// Geometry作成（縦書き用に縦長）
-		const height = 0.6;
-		const geometry = new MXP.PlaneGeometry( { width: height / 2, height } );
+		const width = 0.3;
+		const height = 0.9;
+		const geometry = new MXP.PlaneGeometry( { width, height } );
 
 		// Material作成
 		this.material = new MXP.Material( {
 			vert: MXP.hotGet( 'greetingVert', greetingVert ),
 			frag: MXP.hotGet( 'greetingFrag', greetingFrag ),
-			uniforms: {
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, {
 				uTex: {
 					value: null,
 					type: '1i'
 				}
-			}
+			} )
 		} );
 
 		// Mesh作成
@@ -86,7 +87,7 @@ export class GreetingCard extends MXP.Component {
 			// Canvas作成（縦書き用に縦長）
 			const canvas = document.createElement( 'canvas' );
 			canvas.width = 128;
-			canvas.height = 256;
+			canvas.height = 384;
 
 			const ctx = canvas.getContext( '2d' );
 			if ( ! ctx ) return;
@@ -95,21 +96,34 @@ export class GreetingCard extends MXP.Component {
 			ctx.fillStyle = '#FFF';
 			ctx.fillRect( 0, 0, canvas.width, canvas.height );
 
-			// 枠（黒）
-			const padding = 4;
-			ctx.strokeStyle = '#000';
-			ctx.lineWidth = 2;
-			ctx.strokeRect( padding, padding, canvas.width - padding * 2, canvas.height - padding * 2 );
-
 			// 縦書きテキスト描画
 			ctx.fillStyle = '#000';
-			ctx.font = 'bold 28px sans-serif';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 
 			// 文字列を1文字ずつ縦に描画
 			const text = value.toUpperCase();
-			const charHeight = 24; // 文字間隔
+
+			// 利用可能な縦幅（上下余白考慮）
+			const availableHeight = canvas.height - 40; // 上下余白考慮
+
+			// 基本設定
+			let fontSize = 42;
+			let charHeight = 44;
+
+			// 必要な高さを計算
+			const requiredHeight = text.length * charHeight;
+
+			// 入りきらない場合は縦に詰める
+			if ( requiredHeight > availableHeight ) {
+
+				charHeight = availableHeight / text.length;
+				fontSize = Math.min( 42, charHeight - 2 );
+
+			}
+
+			ctx.font = `bold ${fontSize}px Noto Sans JP`;
+
 			const startY = ( canvas.height - ( text.length - 1 ) * charHeight ) / 2;
 
 			for ( let i = 0; i < text.length; i ++ ) {

@@ -73,9 +73,6 @@ export class KaitenSushi extends MXP.Component {
 		this.sushiEntities = [];
 		this.sushiComponents = [];
 
-		// グリーティング名前リストをシャッフル
-		const shuffledNames = [ ... GREETING_NAMES ].sort( () => Math.random() - 0.5 );
-
 		// 新しい寿司を生成
 		for ( let i = 0; i < this.sushiCount; i ++ ) {
 
@@ -86,8 +83,8 @@ export class KaitenSushi extends MXP.Component {
 			const sushiComponent = sushiEntity.addComponent( SushiSara );
 			// 寿司の種類をサイクル
 			sushiComponent.sashimiType = this.sashimiTypes[ i % this.sashimiTypes.length ];
-			// グリーティング名前を割り当て
-			sushiComponent.greetingName = shuffledNames[ i % shuffledNames.length ];
+			// グリーティング名前を順番に割り当て
+			sushiComponent.greetingName = GREETING_NAMES[ i % GREETING_NAMES.length ];
 
 			this.sushiEntities.push( sushiEntity );
 			this.sushiComponents.push( sushiComponent );

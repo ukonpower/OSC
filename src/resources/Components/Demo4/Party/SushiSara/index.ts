@@ -49,7 +49,7 @@ export class SushiSara extends MXP.Component {
 		// GreetingCardエンティティを作成
 		this.greetingEntity = new MXP.Entity();
 		this.greetingEntity.name = "GreetingCard";
-		this.greetingEntity.position.set( - 0.5, 0.3, 0 );
+		this.greetingEntity.position.set( - 0.4, 0.49, 0 );
 		this.greetingEntity.euler.y = - Math.PI / 4;
 		this.entity.add( this.greetingEntity );
 
