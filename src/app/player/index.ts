@@ -18,44 +18,11 @@ initResouces();
 	HTML
 -------------------------------*/
 
-const opacity0 = "opacity:0;";
-const pointerEventsNone = "pointer-events:none;";
-const positionAbsolute = "position:absolute;";
-const full = positionAbsolute + "width:100%;height:100%;";
-const fullFlexCenter = full + "display:flex;justify-content:center;align-items:center;";
-
-document.body.innerHTML = `
-	<style>
-		*{color:#fff;font-size:13px;text-align:center;}
-		body{margin:0;font-family:sans-serif;}
-		button{display:block;width:200px;margin:0 auto 10px auto;padding:10px;border:1px solid #fff;background:none;cursor:pointer;}
-		#r{${fullFlexCenter}overflow:hidden;background:#000;}
-		#cw{${pointerEventsNone}${fullFlexCenter}${opacity0}}
-		canvas{${full}object-fit:contain;}
-		#l{${pointerEventsNone}${positionAbsolute}width:100%;}
-		#b{width:100%;height:1px;background:#fff;margin-bottom:10px;}
-		#t{font-size:11px;margin-top:5px;}
-		#m{${pointerEventsNone}${opacity0}}
-		#e{${fullFlexCenter}${opacity0}${pointerEventsNone}}
-	</style>
-	<div id="r">
-		<div id="cw">
-		</div>
-		<div id="m">
-			<button id="fl">1. Full Screen</button>
-			<button id="pl">2. Play!</button>
-		</div>
-		<div id="l">
-			<div id="b"></div>
-			<div id="t"></div>
-		</div>
-		<div id="e">
-			Press Esc to exit.
-		</div>
-	</div>
-`;
-
-document.title = "OREngine";
+// HTML/CSS最小化（64KB制約のため）
+const s = "position:absolute;width:100%;height:100%;";
+const f = "display:flex;justify-content:center;align-items:center";
+document.body.innerHTML = `<style>*{color:#fff;font-size:13px;text-align:center}body{margin:0;font-family:sans-serif}button{display:block;width:200px;margin:0 auto 10px;padding:10px;border:1px solid #fff;background:0;cursor:pointer}#r{${s + f};overflow:hidden;background:#000}#cw,#l,#m,#e{pointer-events:none}#cw{${s + f};opacity:0}canvas{${s}object-fit:contain}#l{position:absolute;width:100%}#b{width:100%;height:1px;background:#fff;margin-bottom:10px}#t{font-size:11px;margin-top:5px}#m,#e{opacity:0}#e{${s + f}}</style><div id=r><div id=cw></div><div id=m><button id=fl>1. Full Screen</button><button id=pl>2. Play!</button></div><div id=l><div id=b></div><div id=t></div></div><div id=e>Press Esc to exit.</div></div>`;
+document.title = "OSC";
 
 /*-------------------------------
 	DOM
@@ -77,27 +44,15 @@ const engine = new Engine( gl );
 engine.setSize( BASE_RESOLUTION );
 
 // canvas
-
-if ( engine.canvas instanceof HTMLCanvasElement ) {
-
-	screenWrapElm.appendChild( engine.canvas );
-
-}
+if ( engine.canvas instanceof HTMLCanvasElement ) screenWrapElm.appendChild( engine.canvas );
 
 /*-------------------------------
 	Full Screen
 -------------------------------*/
 
-const fullScreen = document.getElementById( 'fl' ) as HTMLButtonElement;
+( document.getElementById( 'fl' ) as HTMLButtonElement ).onclick = () => {
 
-fullScreen.onclick = () => {
-
-	const elem = document.documentElement;
-	if ( elem.requestFullscreen ) {
-
-		elem.requestFullscreen();
-
-	}
+	if ( document.documentElement.requestFullscreen ) document.documentElement.requestFullscreen();
 
 };
 
@@ -110,14 +65,15 @@ playButton.disabled = true;
 
 playButton.onclick = () => {
 
-	menuElm.style.opacity = "0";
-	menuElm.style.pointerEvents = "none";
+	const ms = menuElm.style;
+	ms.opacity = "0";
+	ms.pointerEvents = "none";
 	screenWrapElm.style.opacity = '1';
 	rootElm.style.cursor = 'none';
 	engine.play();
 
 	// アニメーション関数
-	function animate() {
+	const animate = () => {
 
 		engine.update();
 
@@ -128,9 +84,9 @@ playButton.onclick = () => {
 
 		}
 
-		window.requestAnimationFrame( animate );
+		requestAnimationFrame( animate );
 
-	}
+	};
 
 	animate();
 
@@ -151,20 +107,19 @@ if ( blidgeClient ) {
 
 		engine.compileShaders( ( label, loaded, total ) => {
 
-			const progress = loaded / total;
-
-			loadingBarElm.style.transform = `scaleX(${progress})`;
-			loadingTextElm.textContent = `${label}`;
+			loadingBarElm.style.transform = `scaleX(${loaded / total})`;
+			loadingTextElm.textContent = label;
 
 		} ).then( () => {
 
-			loadingElm.style.opacity = "0";
-			menuElm.style.opacity = "1";
-			menuElm.style.pointerEvents = "auto";
+			const ls = loadingElm.style;
+			const ms = menuElm.style;
+			ls.opacity = "0";
+			ms.opacity = "1";
+			ms.pointerEvents = "auto";
 			playButton.disabled = false;
 
 		} );
-
 
 	} );
 
