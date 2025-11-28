@@ -4,11 +4,15 @@
 
 in vec2 vLayerIndex;
 uniform float uTime;
+uniform float uTimeOffset;
 uniform vec4 uState;
 
 void main( void ) {
 
 	#include <frag_in>
+
+	// タイムオフセットを適用
+	float time = uTime + uTimeOffset;
 
 	// UV座標を中心基準に変換
 	vec2 uv = vUv;
@@ -16,6 +20,22 @@ void main( void ) {
 
 	// 中心からの距離を計算
 	float dist = length( p );
+
+	// 中心からの角度を計算（円周上での位置を決定）
+	float angle = atan( p.y, p.x );
+	float normalizedAngle = ( angle + PI ) / ( 2.0 * PI );
+
+	// アニメーション：円が描かれて消える
+	float animationSpeed = 1.5;
+	float animationPhase = fract( time * animationSpeed );
+
+	// 円周上での描画進行（0.0 ~ 1.0）
+	float drawProgress = animationPhase;
+
+	// 描画されていない部分を破棄
+	if( normalizedAngle > drawProgress ) {
+		discard;
+	}
 
 	// 円のサイズ（レイヤーごとに変化）
 	float radius = 0.7 + vLayerIndex.y * 0.1;

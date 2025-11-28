@@ -104,7 +104,8 @@
 					"props": {
 						"shaderName": "ikuraBGScreen",
 						"layers": 5,
-						"layerSpacing": -0.01
+						"layerSpacing": -0.01,
+						"timeOffset": 0
 					}
 				}
 			]
@@ -201,7 +202,8 @@
 					"props": {
 						"shaderName": "maguroBGScreen",
 						"layers": 3,
-						"layerSpacing": -0.08999999999999662
+						"layerSpacing": -0.08999999999999662,
+						"timeOffset": 0
 					}
 				}
 			]
@@ -522,7 +524,8 @@
 					"props": {
 						"shaderName": "salmonBGScreen",
 						"layers": 3,
-						"layerSpacing": -0.09
+						"layerSpacing": -0.09,
+						"timeOffset": 0
 					}
 				}
 			]
@@ -535,7 +538,8 @@
 					"props": {
 						"shaderName": "takoBGScreen",
 						"layers": 3,
-						"layerSpacing": -0.04000000000000001
+						"layerSpacing": -0.04000000000000001,
+						"timeOffset": 0
 					}
 				}
 			]

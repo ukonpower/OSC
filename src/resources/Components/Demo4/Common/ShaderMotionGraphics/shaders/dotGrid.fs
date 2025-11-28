@@ -4,11 +4,16 @@
 
 in vec2 vLayerIndex;
 uniform float uTime;
+uniform float uTimeOffset;
+uniform sampler2D uNoiseTex;
 uniform vec4 uState;
 
 void main( void ) {
 
 	#include <frag_in>
+
+	// タイムオフセットを適用
+	float time = uTime + uTimeOffset;
 
 	// UV座標
 	vec2 uv = vUv;
@@ -18,7 +23,19 @@ void main( void ) {
 
 	// グリッド座標を計算
 	vec2 gridUV = fract( uv * gridSize );
+	vec2 gridID = floor( uv * gridSize );
 	vec2 gridCenter = gridUV * 2.0 - 1.0;
+
+	// 各グリッドセルごとのノイズ値（ノイズテクスチャを使用）
+	vec2 noiseUV = gridID * 0.1 + time * 0.05;
+	vec4 noiseTex = texture( uNoiseTex, noiseUV );
+	float noiseValue = noiseTex.r;
+
+	// ノイズ値が閾値を超えたドットのみ表示
+	float threshold = sin( time * 2.0 ) * 0.3 + 0.5;
+	if( noiseValue < threshold ) {
+		discard;
+	}
 
 	// 各グリッドセル内での中心からの距離
 	float dist = length( gridCenter );

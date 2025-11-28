@@ -25,6 +25,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 	private shaderName: string;
 	private layers: number; // レイヤー数（1以上、1の場合は通常のメッシュ）
 	private layerSpacing: number; // 各レイヤー間のz方向の間隔
+	private timeOffset: number; // アニメーションのタイムオフセット
 	private shaders: Map<string, { vert: string; frag: string }>;
 
 	constructor( params: MXP.ComponentParams ) {
@@ -46,6 +47,7 @@ export class ShaderMotionGraphics extends MXP.Component {
 		this.shaderName = "ikuraBGScreen";
 		this.layers = 1; // デフォルトは1レイヤー
 		this.layerSpacing = 0.01; // デフォルトの間隔
+		this.timeOffset = 0.0; // デフォルトはオフセットなし
 
 		// Meshコンポーネントを追加
 		this.mesh = this._entity.addComponent( MXP.Mesh );
@@ -91,6 +93,14 @@ export class ShaderMotionGraphics extends MXP.Component {
 		this.field( "layerSpacing", () => this.layerSpacing, ( v ) => {
 
 			this.layerSpacing = v;
+			this.updateMaterial(); // ユニフォームを更新
+
+		} );
+
+		// エディタフィールド定義 - タイムオフセット
+		this.field( "timeOffset", () => this.timeOffset, ( v ) => {
+
+			this.timeOffset = v;
 			this.updateMaterial(); // ユニフォームを更新
 
 		} );
@@ -174,7 +184,8 @@ export class ShaderMotionGraphics extends MXP.Component {
 				globalUniforms.tex,
 				{
 					uLayers: { value: this.layers, type: '1i' },
-					uLayerSpacing: { value: this.layerSpacing, type: '1f' }
+					uLayerSpacing: { value: this.layerSpacing, type: '1f' },
+					uTimeOffset: { value: this.timeOffset, type: '1f' }
 				}
 			)
 		} );

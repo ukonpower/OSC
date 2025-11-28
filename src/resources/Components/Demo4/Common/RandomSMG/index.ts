@@ -23,6 +23,8 @@ export class RandomSMG extends MXP.Component {
 	private shapeEntities: MXP.Entity[];
 	// 各エンティティの初期位置を保持
 	private initialPositions: GLP.Vector[];
+	// 各エンティティのtimeOffsetを保持
+	private timeOffsets: number[];
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -40,6 +42,7 @@ export class RandomSMG extends MXP.Component {
 
 		this.shapeEntities = [];
 		this.initialPositions = [];
+		this.timeOffsets = [];
 
 		// エディタフィールド定義
 		this.field( "count", () => this.count, ( v ) => {
@@ -143,6 +146,7 @@ export class RandomSMG extends MXP.Component {
 
 		this.shapeEntities = [];
 		this.initialPositions = [];
+		this.timeOffsets = [];
 
 		// 乱数ジェネレータの初期化
 		const random = GLP.MathUtils.randomSeed( this.randomSeed );
@@ -162,12 +166,19 @@ export class RandomSMG extends MXP.Component {
 			// 初期位置を保存
 			this.initialPositions.push( new GLP.Vector( x, y, z ) );
 
+			// ランダムなtimeOffsetを生成（0~10秒の範囲）
+			const timeOffset = random() * 10.0;
+			this.timeOffsets.push( timeOffset );
+
 			// ShaderMotionGraphicsコンポーネントを追加
 			const smg = shapeEntity.addComponent( ShaderMotionGraphics );
 
 			// シェーダータイプを設定
 			const selectedShaderType = this.shaderType === "random" ? this.getRandomShaderType( random ) : this.shaderType;
 			smg.setField( 'shaderName', selectedShaderType );
+
+			// timeOffsetを設定
+			smg.setField( 'timeOffset', timeOffset );
 
 			// エンティティを親に追加
 			this.entity.add( shapeEntity );
