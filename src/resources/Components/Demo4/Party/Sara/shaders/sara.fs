@@ -98,15 +98,21 @@ void main( void ) {
 
 	#include <rm_out_obj>
 
+	float saraGrade = vId.x;
+	vec3 saraColor = mix( vec3( 0.1, 0.15, 0.3 ), vec3( 0.6, 0.2, 0.0 ), smoothstep( 0.0, 0.3, saraGrade ) );
+	saraColor = mix( saraColor, vec3( 1.0, 0.6, 0.0 ), smoothstep( 0.3, 1.0, saraGrade ) );
+
 	// 皿の色（白基調）
 	outColor.xyz = mix( 
-		vec3( 0.1, 0.15, 0.3 ),
+		saraColor,
 		vec3( 0.8, 0.7, 0.6 ),
 		smoothstep( 0.35, 0.3, length( localRayPos ) )
 	);
 
 	// ラフネス（陶器の質感）
 	outRoughness = 0.3;
+
+	outEmission.xyz = saraColor * 10.0 * pow( saraGrade, 3.0 );
 
 	// メタリック値（非金属）
 	outMetalic = 0.0;
