@@ -152,7 +152,9 @@
 						"Position Range/rangeY": 5,
 						"Position Range/rangeZ": 10,
 						"randomSeed": 0,
-						"shaderType": "random"
+						"shaderType": "random",
+						"Movement/movementX": 0,
+						"Movement/movementY": 0
 					}
 				}
 			]
@@ -171,12 +173,14 @@
 				{
 					"name": "RandomSMG",
 					"props": {
-						"count": 30,
-						"Position Range/rangeX": 13.849999999999987,
-						"Position Range/rangeY": 6.05,
+						"count": 17,
+						"Position Range/rangeX": 24.85,
+						"Position Range/rangeY": 12.600000000000001,
 						"Position Range/rangeZ": 12.5,
-						"randomSeed": 3,
-						"shaderType": "random"
+						"randomSeed": -6,
+						"shaderType": "random",
+						"Movement/movementX": 0,
+						"Movement/movementY": 0
 					}
 				}
 			]
@@ -452,11 +456,13 @@
 					"name": "RandomSMG",
 					"props": {
 						"count": 26,
-						"Position Range/rangeX": 22.600000000000033,
-						"Position Range/rangeY": 18.499999999999993,
+						"Position Range/rangeX": 25.750000000000053,
+						"Position Range/rangeY": 18.799999999999997,
 						"Position Range/rangeZ": 10,
 						"randomSeed": 5,
-						"shaderType": "random"
+						"shaderType": "random",
+						"Movement/movementX": -5.449999999999998,
+						"Movement/movementY": -3.2999999999999985
 					}
 				}
 			]

@@ -16,9 +16,13 @@ export class RandomSMG extends MXP.Component {
 	private rangeZ: number;
 	private randomSeed: number;
 	private shaderType: string;
+	private movementX: number;
+	private movementY: number;
 
 	// 生成したエンティティの配列
 	private shapeEntities: MXP.Entity[];
+	// 各エンティティの初期位置を保持
+	private initialPositions: GLP.Vector[];
 
 	constructor( params: MXP.ComponentParams ) {
 
@@ -31,8 +35,11 @@ export class RandomSMG extends MXP.Component {
 		this.rangeZ = 10;
 		this.randomSeed = 0;
 		this.shaderType = "random";
+		this.movementX = 0;
+		this.movementY = 0;
 
 		this.shapeEntities = [];
+		this.initialPositions = [];
 
 		// エディタフィールド定義
 		this.field( "count", () => this.count, ( v ) => {
@@ -90,6 +97,20 @@ export class RandomSMG extends MXP.Component {
 			}
 		} : undefined );
 
+		const movementFolder = this.fieldDir( "Movement" );
+
+		movementFolder.field( "movementX", () => this.movementX, ( v ) => {
+
+			this.movementX = v;
+
+		} );
+
+		movementFolder.field( "movementY", () => this.movementY, ( v ) => {
+
+			this.movementY = v;
+
+		} );
+
 		// 初期生成
 		this.regenerateShapes();
 
@@ -121,6 +142,7 @@ export class RandomSMG extends MXP.Component {
 		}
 
 		this.shapeEntities = [];
+		this.initialPositions = [];
 
 		// 乱数ジェネレータの初期化
 		const random = GLP.MathUtils.randomSeed( this.randomSeed );
@@ -137,6 +159,9 @@ export class RandomSMG extends MXP.Component {
 			const z = ( random() - 0.5 ) * this.rangeZ;
 			shapeEntity.position.set( x, y, z );
 
+			// 初期位置を保存
+			this.initialPositions.push( new GLP.Vector( x, y, z ) );
+
 			// ShaderMotionGraphicsコンポーネントを追加
 			const smg = shapeEntity.addComponent( ShaderMotionGraphics );
 
@@ -147,6 +172,45 @@ export class RandomSMG extends MXP.Component {
 			// エンティティを親に追加
 			this.entity.add( shapeEntity );
 			this.shapeEntities.push( shapeEntity );
+
+		}
+
+	}
+
+	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+
+		// movementが0の場合はスキップ
+		if ( this.movementX === 0 && this.movementY === 0 ) return;
+
+		// 各エンティティの位置を更新
+		for ( let i = 0; i < this.shapeEntities.length; i ++ ) {
+
+			const entity = this.shapeEntities[ i ];
+			const initialPos = this.initialPositions[ i ];
+
+			// timeCodeに基づく移動量を計算
+			const offsetX = this.movementX * event.timeCode;
+			const offsetY = this.movementY * event.timeCode;
+
+			// rangeを超えた場合はmodでループ（マイナス方向も対応）
+			let wrappedX = initialPos.x + offsetX;
+			let wrappedY = initialPos.y + offsetY;
+
+			if ( this.rangeX > 0 ) {
+
+				// -rangeX/2 ~ +rangeX/2 の範囲にループ
+				wrappedX = ( ( wrappedX + this.rangeX / 2 ) % this.rangeX + this.rangeX ) % this.rangeX - this.rangeX / 2;
+
+			}
+
+			if ( this.rangeY > 0 ) {
+
+				// -rangeY/2 ~ +rangeY/2 の範囲にループ
+				wrappedY = ( ( wrappedY + this.rangeY / 2 ) % this.rangeY + this.rangeY ) % this.rangeY - this.rangeY / 2;
+
+			}
+
+			entity.position.set( wrappedX, wrappedY, initialPos.z );
 
 		}
 
