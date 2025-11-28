@@ -4,6 +4,7 @@ import hudFrag from './shaders/hud.fs';
 import hudVert from './shaders/hud.vs';
 
 import { globalUniforms } from '~/globals';
+import { bindBlidgeUniform } from '~/shortcuts';
 
 
 /**
@@ -27,6 +28,7 @@ export class HUD extends MXP.Component {
 			frag: MXP.hotGet( 'hudFrag', hudFrag ),
 			depthTest: false,
 			depthWrite: false,
+			uniforms: MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution )
 		} );
 
 		// Meshコンポーネントを追加
@@ -34,6 +36,8 @@ export class HUD extends MXP.Component {
 			geometry,
 			material: this.material
 		} );
+
+		bindBlidgeUniform( this.entity, this.material );
 
 		// HMR
 		if ( import.meta.hot ) {
@@ -61,13 +65,6 @@ export class HUD extends MXP.Component {
 			} );
 
 		}
-
-	}
-
-	protected override updateImpl( _event: MXP.ComponentUpdateEvent ): void {
-
-		// グローバルuniformsをマージしてuTimeなどを利用可能にする
-		this.material.uniforms = MXP.UniformsUtils.merge( globalUniforms.time, globalUniforms.resolution );
 
 	}
 

@@ -6,6 +6,7 @@
 
 // uTime is available from <common>
 uniform float uTimeE;
+uniform vec4 uState;
 
 void main( void ) {
 
@@ -64,6 +65,8 @@ void main( void ) {
 	w += dots * 0.4;
 
 	w = max( w, smoothstep( 0.004, 0.002, abs( sdBox( dotUv, vec2( 1.1, 0.46 ) ) - 0.02 )  ) * 0.3 );
+
+	w *= uState.x;
 
 	outColor = vec4(1.0, 1.0, 1.0, w);
 	
