@@ -114,21 +114,26 @@ if ( blidgeClient ) {
 
 	blidgeClient.on( "loaded", () => {
 
-		engine.compileShaders( ( label, loaded, total ) => {
+		setTimeout( () => {
 
-			loadingBarElm.style.transform = `scaleX(${loaded / total})`;
-			loadingTextElm.textContent = label;
+			engine.compileShaders( ( label, loaded, total ) => {
 
-		} ).then( () => {
+				loadingBarElm.style.transform = `scaleX(${loaded / total})`;
+				loadingTextElm.textContent = label;
 
-			const ls = loadingElm.style;
-			const ms = menuElm.style;
-			ls.opacity = "0";
-			ms.opacity = "1";
-			ms.pointerEvents = "auto";
-			playButton.disabled = false;
+			} ).then( () => {
 
-		} );
+				const ls = loadingElm.style;
+				const ms = menuElm.style;
+				ls.opacity = "0";
+				ms.opacity = "1";
+				ms.pointerEvents = "auto";
+				playButton.disabled = false;
+
+			} );
+
+		}, 100 );
+
 
 	} );
 

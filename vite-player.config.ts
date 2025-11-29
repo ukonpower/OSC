@@ -8,6 +8,7 @@ import playerJson from './data/project.json';
 import { HotGetRemover } from './plugins/HotGetRemover';
 import { ResourceManager } from './plugins/ResourceManager';
 import { ShaderLoader } from './plugins/ShaderLoader';
+import blidgeData from './src/resources/blidge-data.json';
 
 
 const basePath = process.env.BASE_PATH ?? "";
@@ -40,10 +41,9 @@ export default defineConfig( {
 							reserved: [
 								...( () => {
 
-									const data = playerJson; // セーブデータJSON
 									const reserved = new Set<string>();
 
-									// すべてのキー名と値を再帰的に収集
+									// すべてのキー名と値を再帰的に収集（playerJson用）
 									const collectAllKeys = ( obj: any ) => {
 
 										if ( ! obj || typeof obj !== 'object' ) return;
@@ -73,7 +73,47 @@ export default defineConfig( {
 
 									};
 
-									collectAllKeys( data );
+									// animationとuniformsオブジェクト内のキー名を収集（blidgeData用）
+									const collectAnimationAndUniformKeys = ( obj: any ) => {
+
+										if ( ! obj || typeof obj !== 'object' ) return;
+
+										Object.keys( obj ).forEach( key => {
+
+											const value = obj[ key ];
+
+											// animationまたはuniformsオブジェクトの中のキーを収集
+											if ( key === 'animation' || key === 'uniforms' ) {
+
+												if ( value && typeof value === 'object' && ! Array.isArray( value ) ) {
+
+													Object.keys( value ).forEach( k => reserved.add( k ) );
+
+												}
+
+											}
+
+											// 再帰的に探索
+											if ( Array.isArray( value ) ) {
+
+												value.forEach( collectAnimationAndUniformKeys );
+
+											} else if ( typeof value === 'object' ) {
+
+												collectAnimationAndUniformKeys( value );
+
+											}
+
+										} );
+
+									};
+
+									// playerJsonは全てのキー名と文字列値を収集
+									collectAllKeys( playerJson );
+
+									// blidgeDataはanimationとuniformsのキー名のみ収集
+									collectAnimationAndUniformKeys( blidgeData );
+
 									return Array.from( reserved );
 
 								} )()
