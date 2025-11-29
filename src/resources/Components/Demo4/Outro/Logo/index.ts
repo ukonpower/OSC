@@ -11,6 +11,15 @@ const pathParam: {[key: string]: {l: number, i: string}} = {
 	_ic_eye: { l: 0, i: "w" }
 };
 
+// state2用のパラメータ
+const pathParam2: {[key: string]: {l: number, i: string}} = {
+	_sub_path: { l: 400, i: "x" },
+	_sub_circle1: { l: 0, i: "y" },
+	_sub_circle2: { l: 0, i: "y" },
+	_sub_circle3: { l: 0, i: "y" },
+	_sub_circle4: { l: 0, i: "y" }
+};
+
 export class Logo extends MXP.Component {
 
 	private svgWrap: HTMLDivElement;
@@ -37,14 +46,16 @@ export class Logo extends MXP.Component {
 </g>
 </g>
 <g id="sub">
+<g id="sub_path">
 <path d="M339.5 127.5C333.7 139.6 321.2 148 306.8 148 286.8 148 270.5 131.9 270.5 112S286.8 76 306.8 76C321.2 76 333.7 84.4 339.5 96.5" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
-<circle cx="298.5" cy="103" fill="#fff" r="4"/>
-<circle cx="286.5" cy="103" fill="#fff" r="4"/>
-<circle cx="211.5" cy="98" fill="#fff" r="4"/>
-<circle cx="223.9" cy="98" fill="#fff" r="4"/>
 <path d="M239.5 127C233.7 139.4 221.3 148 207 148S180.3 139.4 174.5 127" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
 <path d="M174.5 96L239.5 127" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
 <path d="M239.5 96C233.7 84.2 221.3 76 207 76S180.3 84.2 174.5 96" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+</g>
+<circle id="sub_circle1" cx="211.5" cy="98" fill="#fff" r="4"/>
+<circle id="sub_circle2" cx="223.9" cy="98" fill="#fff" r="4"/>
+<circle id="sub_circle3" cx="298.5" cy="103" fill="#fff" r="4"/>
+<circle id="sub_circle4" cx="286.5" cy="103" fill="#fff" r="4"/>
 <g>
 </svg>
 `;
@@ -61,7 +72,7 @@ export class Logo extends MXP.Component {
 		// 各SVG要素をMapに登録
 		this.elms = new Map();
 
-		const elmsId = [ "ic_body", "ic_yoji", "ic_mayo", "ic_eye" ];
+		const elmsId = [ "ic_body", "ic_yoji", "ic_mayo", "ic_eye", "sub_path", "sub_circle1", "sub_circle2", "sub_circle3", "sub_circle4" ];
 
 		elmsId.forEach( ( id ) => {
 
@@ -93,12 +104,10 @@ export class Logo extends MXP.Component {
 
 	}
 
-	protected updateImpl( event: MXP.ComponentUpdateEvent ): void {
+	protected updateImpl(): void {
 
 		if ( ! this.blidger ) return;
 
-		// アニメーション "_logoState" を取得
-		const anim = this.blidger.animations.get( "state" );
 		const hide = this.blidger.animations.get( "hide" );
 
 		if ( hide ) {
@@ -107,32 +116,35 @@ export class Logo extends MXP.Component {
 
 		}
 
-		if ( anim ) {
+		// アニメーション適用の共通処理
+		const applyAnim = ( anim: GLP.FCurveGroup, params: {[key: string]: {l: number, i: string}} ) => {
 
 			this.elms.forEach( ( elm, id ) => {
 
-				const param = pathParam[ "_" + id ];
+				const param = params[ "_" + id ];
 
 				if ( ! param ) return;
 
-				const len = param.l;
 				const v = ( anim.value as any )[ param.i ];
 
-				// 透明度をアニメーション値に応じて設定
 				elm.style.opacity = ( GLP.MathUtils.smoothstep( 0.0, 0.05, v ) * 100 ) + "%";
 
+				if ( param.l ) {
 
-				// パスの描画進度を設定
-				if ( len ) {
-
-					elm.style.strokeDasharray = len + "";
-					elm.style.strokeDashoffset = ( 1.0 - v ) * len + "";
+					elm.style.strokeDasharray = param.l + "";
+					elm.style.strokeDashoffset = ( 1.0 - v ) * param.l + "";
 
 				}
 
 			} );
 
-		}
+		};
+
+		const state = this.blidger.animations.get( "state" );
+		const state2 = this.blidger.animations.get( "state2" );
+
+		if ( state ) applyAnim( state, pathParam );
+		if ( state2 ) applyAnim( state2, pathParam2 );
 
 	}
 
