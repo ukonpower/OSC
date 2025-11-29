@@ -72,6 +72,15 @@ playButton.onclick = () => {
 	rootElm.style.cursor = 'none';
 	engine.play();
 
+	// ウィンドウクリックでシーク
+	window.onclick = ( e ) => {
+
+		const ratio = e.clientX / window.innerWidth;
+		const targetFrame = Math.floor( ratio * engine.frameSetting.duration );
+		engine.seek( targetFrame );
+
+	};
+
 	// アニメーション関数
 	const animate = () => {
 
