@@ -13,7 +13,83 @@ import blidgeData from './src/resources/blidge-data.json';
 
 const basePath = process.env.BASE_PATH ?? "";
 
-// player.jsonからreservedに追加するプロパティ名を抽出
+// project-dataの全てのキー名と値を再帰的に収集
+const collectProjectDataKeys = ( reserved: Set<string> ) => {
+
+	const collect = ( obj: any ) => {
+
+		if ( ! obj || typeof obj !== 'object' ) return;
+
+		Object.keys( obj ).forEach( key => {
+
+			reserved.add( key );
+
+			const value = obj[ key ];
+
+			// 文字列値も収集（コンポーネント名など）
+			if ( typeof value === 'string' ) {
+
+				reserved.add( value );
+
+			} else if ( Array.isArray( value ) ) {
+
+				value.forEach( collect );
+
+			} else if ( typeof value === 'object' ) {
+
+				collect( value );
+
+			}
+
+		} );
+
+	};
+
+	collect( playerJson );
+
+};
+
+// blidge-dataのanimation、uniforms、paramオブジェクト内のキー名を収集
+const collectBlidgeDataKeys = ( reserved: Set<string> ) => {
+
+	const collect = ( obj: any ) => {
+
+		if ( ! obj || typeof obj !== 'object' ) return;
+
+		Object.keys( obj ).forEach( key => {
+
+			const value = obj[ key ];
+
+			// animation、uniforms、paramオブジェクトの中のキーを収集
+			if ( key === 'animation' || key === 'uniforms' || key === 'param' ) {
+
+				if ( value && typeof value === 'object' && ! Array.isArray( value ) ) {
+
+					Object.keys( value ).forEach( k => reserved.add( k ) );
+
+				}
+
+			}
+
+			// 再帰的に探索
+			if ( Array.isArray( value ) ) {
+
+				value.forEach( collect );
+
+			} else if ( typeof value === 'object' ) {
+
+				collect( value );
+
+			}
+
+		} );
+
+	};
+
+	collect( blidgeData );
+
+};
+
 export default defineConfig( {
 	root: 'src',
 	publicDir: 'assets',
@@ -39,81 +115,16 @@ export default defineConfig( {
 						properties: {
 							regex: /^(?!(u[A-Z]|[A-Z_]+$|_)).*$/,
 							reserved: [
-								"distance",
+								"castShadow",
 								...( () => {
 
 									const reserved = new Set<string>();
 
-									// すべてのキー名と値を再帰的に収集（playerJson用）
-									const collectAllKeys = ( obj: any ) => {
+									// project-dataは全てのキー名と文字列値を収集
+									collectProjectDataKeys( reserved );
 
-										if ( ! obj || typeof obj !== 'object' ) return;
-
-										Object.keys( obj ).forEach( key => {
-
-											reserved.add( key );
-
-											const value = obj[ key ];
-
-											// 文字列値も収集（コンポーネント名など）
-											if ( typeof value === 'string' ) {
-
-												reserved.add( value );
-
-											} else if ( Array.isArray( value ) ) {
-
-												value.forEach( collectAllKeys );
-
-											} else if ( typeof value === 'object' ) {
-
-												collectAllKeys( value );
-
-											}
-
-										} );
-
-									};
-
-									// animationとuniformsオブジェクト内のキー名を収集（blidgeData用）
-									const collectAnimationAndUniformKeys = ( obj: any ) => {
-
-										if ( ! obj || typeof obj !== 'object' ) return;
-
-										Object.keys( obj ).forEach( key => {
-
-											const value = obj[ key ];
-
-											// animationまたはuniformsオブジェクトの中のキーを収集
-											if ( key === 'animation' || key === 'uniforms' ) {
-
-												if ( value && typeof value === 'object' && ! Array.isArray( value ) ) {
-
-													Object.keys( value ).forEach( k => reserved.add( k ) );
-
-												}
-
-											}
-
-											// 再帰的に探索
-											if ( Array.isArray( value ) ) {
-
-												value.forEach( collectAnimationAndUniformKeys );
-
-											} else if ( typeof value === 'object' ) {
-
-												collectAnimationAndUniformKeys( value );
-
-											}
-
-										} );
-
-									};
-
-									// playerJsonは全てのキー名と文字列値を収集
-									collectAllKeys( playerJson );
-
-									// blidgeDataはanimationとuniformsのキー名のみ収集
-									collectAnimationAndUniformKeys( blidgeData );
+									// blidge-dataはanimation、uniforms、paramのキー名を収集
+									collectBlidgeDataKeys( reserved );
 
 									return Array.from( reserved );
 
