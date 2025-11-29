@@ -26,19 +26,27 @@ export class Logo extends MXP.Component {
 		// SVG要素の作成
 		this.svgWrap = document.createElement( "div" );
 		this.svgWrap.innerHTML = `
-<svg width="503" height="154" viewBox="0 0 503 154" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M497.5 148C497.5 146.096 497.5 144.709 497.5 143" stroke="white" stroke-width="10" stroke-linecap="round"/>
-<circle cx="497.5" cy="129" r="5" fill="white"/>
-<path d="M339.5 131C340.762 132.856 341.5 135.099 341.5 137.514C341.5 143.894 336.345 149.078 330 149.078C323.655 149.078 318.5 143.894 318.5 137.514C318.5 135.099 319.238 132.856 320.5 131" stroke="white" stroke-width="8" stroke-linecap="round"/>
-<path d="M478.838 114C469.49 133.508 449.552 147 426.5 147C394.5 147 368.5 121 368.5 89C368.5 57 394.5 31 426.5 31C449.552 31 469.49 44.4921 478.838 64" stroke="white" stroke-width="12" stroke-linecap="round"/>
-<path d="M304.176 64C294.828 44.4921 274.89 31 251.838 31C228.786 31 208.848 44.4921 199.5 64C168.501 138.5 334.501 42.5 304.176 114C294.828 133.508 274.89 147 251.838 147C228.786 147 208.848 133.508 199.5 114" stroke="white" stroke-width="12" stroke-linecap="round"/>
-<path d="M85.2686 30.7422C117.158 30.7422 143.08 56.7857 143.08 89C143.08 121.214 117.158 147.258 85.2686 147.258C53.3796 147.258 27.4571 121.214 27.457 89C27.457 56.7857 53.3795 30.7422 85.2686 30.7422Z" stroke="white" stroke-width="12"/>
-<path d="M153.5 6L99.4767 88.7777" stroke="white" stroke-width="12" stroke-linecap="round"/>
-<path d="M4.5 94.6995C10.3715 84.9472 25.058 62.2266 39.4432 62.2266C57.4247 62.2266 42.3789 97.9253 54.8559 97.9253C67.3329 97.9253 73.486 67.1728 92.8543 65.4523" stroke="white" stroke-width="9" stroke-linecap="round"/>
-<circle cx="68.311" cy="50.1802" r="4.01611" fill="white"/>
-<circle cx="81.6997" cy="50.1802" r="4.01611" fill="white"/>
+<svg width="100%" viewBox="0 0 345 154" fill="none">
+<g>
+<path id="ic_body" d="M85.3 30.7C117.2 30.7 143.1 56.8 143.1 89S117.2 147.3 85.3 147.3 27.5 121.2 27.5 89 53.4 30.7 85.3 30.7Z" stroke="#fff" stroke-width="12"/>
+<path id="ic_yoji" d="M153.5 6L99.5 88.8" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+<path id="ic_mayo" d="M4.5 94.7C10.4 85 25.1 62.2 39.4 62.2 57.4 62.2 42.4 98 54.9 98S73.5 67.2 92.9 65.5" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+<g id="ic_eye">
+<circle cx="68.3" cy="50.2" fill="#fff" r="4"/>
+<circle cx="81.7" cy="50.2" fill="#fff" r="4"/>
+</g>
+</g>
+<g id="sub">
+<path d="M339.5 127.5C333.7 139.6 321.2 148 306.8 148 286.8 148 270.5 131.9 270.5 112S286.8 76 306.8 76C321.2 76 333.7 84.4 339.5 96.5" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+<circle cx="298.5" cy="103" fill="#fff" r="4"/>
+<circle cx="286.5" cy="103" fill="#fff" r="4"/>
+<circle cx="211.5" cy="98" fill="#fff" r="4"/>
+<circle cx="223.9" cy="98" fill="#fff" r="4"/>
+<path d="M239.5 127C233.7 139.4 221.3 148 207 148S180.3 139.4 174.5 127" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+<path d="M174.5 96L239.5 127" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+<path d="M239.5 96C233.7 84.2 221.3 76 207 76S180.3 84.2 174.5 96" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+<g>
 </svg>
-
 `;
 
 		// スタイル設定
@@ -46,14 +54,14 @@ export class Logo extends MXP.Component {
 		this.svgWrap.style.width = "20%";
 		this.svgWrap.style.top = "50%";
 		this.svgWrap.style.left = "50%";
-		this.svgWrap.style.transform = "translate(-50%,-50%)";
-		this.svgWrap.style.pointerEvents = "none";
+		this.svgWrap.style.transform = "translate(-57%,-50%)";
+		// this.svgWrap.style.pointerEvents = "none";
 		this.svgWrap.style.strokeDasharray = length + "";
 
 		// 各SVG要素をMapに登録
 		this.elms = new Map();
 
-		const elmsId = [ "ic_body", "ic_yoji", "ic_mayo", "ic_eye", "ic_name" ];
+		const elmsId = [ "ic_body", "ic_yoji", "ic_mayo", "ic_eye" ];
 
 		elmsId.forEach( ( id ) => {
 
@@ -112,6 +120,7 @@ export class Logo extends MXP.Component {
 
 				// 透明度をアニメーション値に応じて設定
 				elm.style.opacity = ( GLP.MathUtils.smoothstep( 0.0, 0.05, v ) * 100 ) + "%";
+
 
 				// パスの描画進度を設定
 				if ( len ) {
