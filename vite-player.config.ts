@@ -74,7 +74,7 @@ export default defineConfig( {
 
 									};
 
-									// animation、uniforms、paramオブジェクト内のキー名を収集（blidgeData用）
+									// animationとuniformsオブジェクト内のキー名を収集（blidgeData用）
 									const collectAnimationAndUniformKeys = ( obj: any ) => {
 
 										if ( ! obj || typeof obj !== 'object' ) return;
@@ -83,8 +83,8 @@ export default defineConfig( {
 
 											const value = obj[ key ];
 
-											// animation、uniforms、paramオブジェクトの中のキーを収集
-											if ( key === 'animation' || key === 'uniforms' || key === 'param' ) {
+											// animationまたはuniformsオブジェクトの中のキーを収集
+											if ( key === 'animation' || key === 'uniforms' ) {
 
 												if ( value && typeof value === 'object' && ! Array.isArray( value ) ) {
 
