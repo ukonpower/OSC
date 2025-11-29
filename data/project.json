@@ -31,10 +31,12 @@
 				{
 					"name": "BLidgeClient",
 					"props": {
-						"mode": "websocket",
+						"mode": "json",
 						"gltf": false,
 						"gltfPath": "/scene.glb",
-						"websocket/url": "ws://localhost:3100"
+						"websocket/url": "ws://localhost:3100",
+						"timelineSync/enabled": true,
+						"timelineSync/url": "ws://localhost:3100"
 					}
 				},
 				{
