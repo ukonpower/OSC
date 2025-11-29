@@ -29,6 +29,7 @@ export type RenderStack = {
 	forward: Entity[];
 	ui: Entity[];
 	empty: Entity[]; // Meshを持たないエンティティ
+	lightVisibility: Map<Entity, boolean>; // ライトの可視性（親要素含む）
 }
 
 // render hooks
@@ -304,6 +305,7 @@ export class Renderer extends GLP.EventEmitter {
 			shadowMap: [],
 			envMap: [],
 			empty: [],
+			lightVisibility: new Map(),
 		};
 
 		const _ = ( params: {entity: Entity, visibility: boolean} ) => {
@@ -341,9 +343,10 @@ export class Renderer extends GLP.EventEmitter {
 
 			const light = entity.getComponent( Light );
 
-			if ( light && light.enabled && visibility ) {
+			if ( light && light.enabled ) {
 
 				stack.light.push( entity );
+				stack.lightVisibility.set( entity, visibility );
 
 			}
 
@@ -477,9 +480,12 @@ export class Renderer extends GLP.EventEmitter {
 
 			if ( lightComponent ) {
 
-				this.collectLight( lightEntity, lightComponent );
+				const visibility = stack.lightVisibility.get( lightEntity ) || false;
 
-				if ( lightComponent.castShadow && lightComponent.renderTarget ) {
+				this.collectLight( lightEntity, lightComponent, visibility );
+
+				// シャドウマップ描画はvisibleがtrueのライトのみ
+				if ( lightComponent.castShadow && lightComponent.renderTarget && visibility ) {
 
 					shadowMapLightList.push( lightEntity );
 
@@ -807,14 +813,17 @@ export class Renderer extends GLP.EventEmitter {
 
 	}
 
-	private collectLight( lightEntity: Entity, lightComponent: Light ) {
+	private collectLight( lightEntity: Entity, lightComponent: Light, visibility: boolean ) {
 
 		const type = lightComponent.lightType;
+
+		// visibleがfalseの場合はcolorを(0,0,0)にする
+		const colorMultiplier = visibility ? lightComponent.intensity * Math.PI : 0;
 
 		const info: LightInfo = {
 			position: new GLP.Vector( 0.0, 0.0, 0.0, 1.0 ).applyMatrix4( lightEntity.matrixWorld ),
 			direction: new GLP.Vector( 0.0, 1.0, 0.0, 0.0 ).applyMatrix4( lightEntity.matrixWorld ).normalize(),
-			color: new GLP.Vector( lightComponent.color.x, lightComponent.color.y, lightComponent.color.z ).multiply( lightComponent.intensity * Math.PI ),
+			color: new GLP.Vector( lightComponent.color.x, lightComponent.color.y, lightComponent.color.z ).multiply( colorMultiplier ),
 			component: lightComponent,
 		};
 
