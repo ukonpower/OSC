@@ -118,7 +118,6 @@ export class Renderer extends GLP.EventEmitter {
 	// lights
 
 	private _lights: CollectedLights;
-	private _lightsUpdated: boolean;
 
 	// envmap
 
@@ -188,8 +187,6 @@ export class Renderer extends GLP.EventEmitter {
 			directional: [],
 			spot: [],
 		};
-
-		this._lightsUpdated = false;
 
 		// envmap
 
@@ -460,15 +457,11 @@ export class Renderer extends GLP.EventEmitter {
 
 		// light
 
-		const shadowMapLightList: Entity[] = [];
-		const prevLightsNum: {[key:string]: number} = {};
-
 		const lightKeys = Object.keys( this._lights );
 
 		for ( let i = 0; i < lightKeys.length; i ++ ) {
 
 			const l = lightKeys[ i ] as LightType;
-			prevLightsNum[ l ] = this._lights[ l ].length;
 			this._lights[ l ] = [];
 
 		}
@@ -484,50 +477,46 @@ export class Renderer extends GLP.EventEmitter {
 
 				this.collectLight( lightEntity, lightComponent, visibility );
 
-				// シャドウマップ描画はvisibleがtrueのライトのみ
-				if ( lightComponent.castShadow && lightComponent.renderTarget && visibility ) {
+			}
 
-					shadowMapLightList.push( lightEntity );
+		}
+
+		// ライト配列をcastShadow優先でソート
+		this._lights.directional.sort( ( a, b ) => ( a.component.castShadow ? 0 : 1 ) - ( b.component.castShadow ? 0 : 1 ) );
+		this._lights.spot.sort( ( a, b ) => ( a.component.castShadow ? 0 : 1 ) - ( b.component.castShadow ? 0 : 1 ) );
+
+		// shadowmap: ソート済みライト配列と同じ順序でシャドウマップを描画
+		const renderShadowMap = ( lights: LightInfo[] ) => {
+
+			for ( let i = 0; i < lights.length; i ++ ) {
+
+				const light = lights[ i ];
+
+				// visibleかつcastShadowがtrueのライトのみレンダリング
+				if ( light.component.castShadow && light.component.renderTarget ) {
+
+					const lightEntity = stack.light.find( e => e.getComponent( Light ) === light.component );
+
+					if ( lightEntity ) {
+
+						const visibility = stack.lightVisibility.get( lightEntity ) || false;
+
+						if ( visibility ) {
+
+							this.renderCamera( "shadowMap", lightEntity, stack.shadowMap, light.component.renderTarget, this.resolution );
+
+						}
+
+					}
 
 				}
 
 			}
 
-		}
+		};
 
-		this._lights.directional.sort( ( a, b ) => ( a.component.castShadow ? 0 : 1 ) - ( b.component.castShadow ? 0 : 1 ) );
-		this._lights.spot.sort( ( a, b ) => ( a.component.castShadow ? 0 : 1 ) - ( b.component.castShadow ? 0 : 1 ) );
-
-		this._lightsUpdated = false;
-
-		for ( let i = 0; i < lightKeys.length; i ++ ) {
-
-			const l = lightKeys[ i ] as LightType;
-
-			if ( prevLightsNum[ l ] != this._lights[ l ].length ) {
-
-				this._lightsUpdated = true;
-
-				break;
-
-			}
-
-		}
-
-		// shadowmap
-
-		for ( let i = 0; i < shadowMapLightList.length; i ++ ) {
-
-			const lightEntity = shadowMapLightList[ i ];
-			const lightComponent = lightEntity.getComponent( Light )!;
-
-			if ( lightComponent.renderTarget ) {
-
-				this.renderCamera( "shadowMap", lightEntity, stack.shadowMap, lightComponent.renderTarget, this.resolution );
-
-			}
-
-		}
+		renderShadowMap( this._lights.directional );
+		renderShadowMap( this._lights.spot );
 
 		// envmap
 
@@ -1016,7 +1005,7 @@ export class Renderer extends GLP.EventEmitter {
 
 		let program = material.programCache[ renderType ];
 
-		if ( ! program || this._lightsUpdated ) {
+		if ( ! program ) {
 
 			const defines = { ...material.defines };
 

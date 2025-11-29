@@ -39,6 +39,7 @@ export default defineConfig( {
 						properties: {
 							regex: /^(?!(u[A-Z]|[A-Z_]+$|_)).*$/,
 							reserved: [
+								"distance",
 								...( () => {
 
 									const reserved = new Set<string>();
@@ -73,7 +74,7 @@ export default defineConfig( {
 
 									};
 
-									// animationとuniformsオブジェクト内のキー名を収集（blidgeData用）
+									// animation、uniforms、paramオブジェクト内のキー名を収集（blidgeData用）
 									const collectAnimationAndUniformKeys = ( obj: any ) => {
 
 										if ( ! obj || typeof obj !== 'object' ) return;
@@ -82,8 +83,8 @@ export default defineConfig( {
 
 											const value = obj[ key ];
 
-											// animationまたはuniformsオブジェクトの中のキーを収集
-											if ( key === 'animation' || key === 'uniforms' ) {
+											// animation、uniforms、paramオブジェクトの中のキーを収集
+											if ( key === 'animation' || key === 'uniforms' || key === 'param' ) {
 
 												if ( value && typeof value === 'object' && ! Array.isArray( value ) ) {
 

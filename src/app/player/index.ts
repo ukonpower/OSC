@@ -72,12 +72,23 @@ playButton.onclick = () => {
 	rootElm.style.cursor = 'none';
 	engine.play();
 
+	let isPlaying = true;
+
 	// ウィンドウクリックでシーク
 	window.onclick = ( e ) => {
 
 		const ratio = e.clientX / window.innerWidth;
 		const targetFrame = Math.floor( ratio * engine.frameSetting.duration );
 		engine.seek( targetFrame );
+
+		// 終了していた場合は再開
+		if ( ! isPlaying ) {
+
+			isPlaying = true;
+			exitElm.style.opacity = '0';
+			animate();
+
+		}
 
 	};
 
@@ -89,6 +100,7 @@ playButton.onclick = () => {
 		if ( engine.frame.current > engine.frameSetting.duration ) {
 
 			exitElm.style.opacity = '1';
+			isPlaying = false;
 			return;
 
 		}
