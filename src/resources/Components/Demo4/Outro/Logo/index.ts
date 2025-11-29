@@ -28,18 +28,20 @@ export class Logo extends MXP.Component {
 	private svgWrap: HTMLDivElement;
 	private elms: Map<string, SVGElement>;
 	private blidger: MXP.BLidger | null;
+	private icGroup: SVGGElement | null;
 
 	constructor( params: MXP.ComponentParams ) {
 
 		super( params );
 
 		this.blidger = null;
+		this.icGroup = null;
 
 		// SVG要素の作成
 		this.svgWrap = document.createElement( "div" );
 		this.svgWrap.innerHTML = `
 <svg width="100%" viewBox="0 0 345 154" fill="none">
-<g>
+<g id="ic">
 <path id="ic_body" d="M85.3 30.7C117.2 30.7 143.1 56.8 143.1 89S117.2 147.3 85.3 147.3 27.5 121.2 27.5 89 53.4 30.7 85.3 30.7Z" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
 <path id="ic_yoji" d="M153.5 6L99.5 88.8" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
 <path id="ic_mayo" d="M4.5 94.7C10.4 85 25.1 62.2 39.4 62.2 57.4 62.2 42.4 98 54.9 98S73.5 67.2 92.9 65.5" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
@@ -89,6 +91,9 @@ export class Logo extends MXP.Component {
 
 		// BLidgerコンポーネントを取得
 		this.blidger = this.entity && this.entity.getComponent( MXP.BLidger ) || null;
+
+		// icグループの取得
+		this.icGroup = this.svgWrap.querySelector( "#ic" ) as SVGGElement;
 
 		// SVG要素をcanvasの親要素に追加
 		if ( gl.canvas instanceof HTMLCanvasElement ) {
@@ -146,6 +151,19 @@ export class Logo extends MXP.Component {
 
 		if ( state ) applyAnim( state, pathParam );
 		if ( state2 ) applyAnim( state2, pathParam2 );
+
+		// state2.wを使ってicグループを移動・回転
+		if ( state2 && this.icGroup ) {
+
+			const progress = 1.0 - state2.value.w;
+			const moveX = ( progress ) * 100; // 100%移動
+			const rotation = progress * 360; // 360度回転
+
+			// icグループの中心座標（SVG座標系）を回転の中心に設定
+			this.icGroup.style.transformOrigin = "85px 89px";
+			this.icGroup.style.transform = `translate(${moveX}px, 0) rotate(${rotation}deg)`;
+
+		}
 
 	}
 
