@@ -30,6 +30,7 @@ import { Maguro } from './Components/Demo4/Maguro/Maguro/index.ts';
 import { Sashimi } from './Components/Demo4/Maguro/Sashimi/index.ts';
 import { Music } from './Components/Demo4/Music/index.ts';
 import { Logo } from './Components/Demo4/Outro/Logo/index.ts';
+import { BreakDanceOnigiri } from './Components/Demo4/Party/BreakDanceOnigiri/index.ts';
 import { GreetingCard } from './Components/Demo4/Party/GreetingCard/index.ts';
 import { KaitenSushi } from './Components/Demo4/Party/KaitenSushi/index.ts';
 import { PartyTime } from './Components/Demo4/Party/PartyTime/index.ts';
@@ -95,6 +96,7 @@ export const COMPONENTLIST: {[key: string]: any} = {
 			Logo,
 		},
 		Party: {
+			BreakDanceOnigiri,
 			GreetingCard,
 			KaitenSushi,
 			PartyTime,
