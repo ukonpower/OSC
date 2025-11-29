@@ -13,7 +13,7 @@ LightCamera lightCamera;
 
 	#pragma loop_start NUM_LIGHT_DIR
 
-		dLight = directionalLight[ LOOP_INDEX ];
+		dLight = uDirectionalLight[ LOOP_INDEX ];
 		light.direction = dLight.direction;
 		light.color = dLight.color;
 
@@ -21,7 +21,7 @@ LightCamera lightCamera;
 
 		#if LOOP_INDEX < NUM_SHADOWMAP_DIR
 
-			shadow = getShadowSmooth( geo.position, uDirectionalLightCamera[ LOOP_INDEX ], directionalLightShadowMap[ LOOP_INDEX ], 0.0001 );
+			shadow = getShadowSmooth( geo.position, uDirectionalLightCamera[ LOOP_INDEX ], uDirectionalLightShadowMap[ LOOP_INDEX ], 0.0001 );
 
 		#else
 

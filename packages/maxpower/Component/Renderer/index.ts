@@ -1118,8 +1118,8 @@ export class Renderer extends GLP.EventEmitter {
 
 				const dLight = this._lights.directional[ i ];
 
-				program.setUniform( 'directionalLight[' + i + '].direction', '3fv', dLight.direction.getElm( 'vec3' ) );
-				program.setUniform( 'directionalLight[' + i + '].color', '3fv', dLight.color.getElm( 'vec3' ) );
+				program.setUniform( 'uDirectionalLight[' + i + '].direction', '3fv', dLight.direction.getElm( 'vec3' ) );
+				program.setUniform( 'uDirectionalLight[' + i + '].color', '3fv', dLight.color.getElm( 'vec3' ) );
 
 				if ( dLight.component.renderTarget ) {
 
@@ -1132,7 +1132,7 @@ export class Renderer extends GLP.EventEmitter {
 					program.setUniform( dc + '.viewMatrix', 'Matrix4fv', dLight.component.viewMatrix.elm );
 					program.setUniform( dc + '.projectionMatrix', 'Matrix4fv', dLight.component.projectionMatrix.elm );
 					program.setUniform( dc + '.resolution', '2fv', texture.size.getElm( "vec2" ) );
-					program.setUniform( 'directionalLightShadowMap[' + i + ']', '1i', [ texture.unit ] );
+					program.setUniform( 'uDirectionalLightShadowMap[' + i + ']', '1i', [ texture.unit ] );
 
 				}
 

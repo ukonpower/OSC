@@ -28,12 +28,12 @@ struct Light {
 
 #if NUM_LIGHT_DIR > 0 
 
-	uniform DirectionalLight directionalLight[NUM_LIGHT_DIR];
+	uniform DirectionalLight uDirectionalLight[NUM_LIGHT_DIR];
 	uniform LightCamera uDirectionalLightCamera[NUM_LIGHT_DIR];
 
 	#if NUM_SHADOWMAP_DIR > 0 
 
-	uniform sampler2D directionalLightShadowMap[NUM_SHADOWMAP_DIR];
+	uniform sampler2D uDirectionalLightShadowMap[NUM_SHADOWMAP_DIR];
 
 	#endif
 	

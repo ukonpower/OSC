@@ -1,6 +1,6 @@
 import * as GLP from 'glpower';
 
-import { ComponentParams } from '..';
+import { ComponentParams, ComponentUpdateEvent } from '..';
 import { ShadowMapCamera } from '../Camera/ShadowMapCamera';
 
 export type LightType = 'directional' | 'spot'
