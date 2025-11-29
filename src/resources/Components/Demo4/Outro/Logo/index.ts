@@ -40,7 +40,7 @@ export class Logo extends MXP.Component {
 		// SVG要素の作成
 		this.svgWrap = document.createElement( "div" );
 		this.svgWrap.innerHTML = `
-<svg width="100%" viewBox="0 0 345 154" fill="none">
+<svg width="100%" viewBox="0 -50 345 254" fill="none">
 <g id="ic">
 <path id="ic_body" d="M85.3 30.7C117.2 30.7 143.1 56.8 143.1 89S117.2 147.3 85.3 147.3 27.5 121.2 27.5 89 53.4 30.7 85.3 30.7Z" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
 <path id="ic_yoji" d="M153.5 6L99.5 88.8" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
@@ -156,7 +156,7 @@ export class Logo extends MXP.Component {
 		if ( state2 && this.icGroup ) {
 
 			const progress = 1.0 - state2.value.w;
-			const moveX = ( progress ) * 100; // 100%移動
+			const moveX = ( progress ) * 110;
 			const rotation = progress * 360; // 360度回転
 
 			// icグループの中心座標（SVG座標系）を回転の中心に設定
