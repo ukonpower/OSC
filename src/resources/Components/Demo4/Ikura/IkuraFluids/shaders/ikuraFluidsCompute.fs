@@ -61,6 +61,12 @@ void main( void ) {
 
 		velocity.xyz = vec3(0.0);
 		time = 0.0;
+
+		if( uState.x < 0.5 ) {
+
+			time = random(vUv + uTimeE + 10.0) * 1.0;
+			
+		}
 	}
 
 	// simplex noiseをvelocityに足す

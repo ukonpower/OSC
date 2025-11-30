@@ -70,7 +70,7 @@ SDFResult jaguchi( vec3 p ) {
 SDFResult laneConveyor( vec3 p ) {
 
 	vec3 laneConveyorP = p;
-	laneConveyorP.x += cos( laneConveyorP.z * 30.0 ) * 0.02;
+	laneConveyorP.x += cos( laneConveyorP.z * 30.0 ) * 0.01;
 	laneConveyorP += vec3( 0.0, 0.008, 0.0 );
 	laneConveyorP.x = mod( laneConveyorP.x + uTimeE * 0.2, 0.1 ) - 0.045;
 	float d = sdBox( laneConveyorP, vec3( 0.045, 0.005, 0.06 ) );
