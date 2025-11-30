@@ -113,7 +113,7 @@ export class SaraAudio extends MXP.Component {
 			const average = sum / count;
 
 			// 0-255の値を0-15にマッピング（表示する皿の枚数）
-			const visibleCount = Math.floor( ( ( average * 2.0 ) / 255 ) * 15 );
+			const visibleCount = Math.floor( ( ( average * 2.0 ) / 255 ) * 1.2 * 15 );
 
 			// SaraコンポーネントのuniformでVisibleCountを更新
 			const saraComponent = this.saraEntity.getComponent( Sara );
