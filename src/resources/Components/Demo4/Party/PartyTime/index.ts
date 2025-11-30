@@ -32,20 +32,7 @@ export class PartyTime extends MXP.Component {
 
 		}
 
-		// エディタフィールドの定義
-		if ( import.meta.env.DEV ) {
-
-			this.field( "isJumping", () => this.isJumping, ( v ) => this.isJumping = v );
-
-			// this.field( "speed", () => this.speed, ( v ) => this.speed = v, {
-			// 	step: 0.1,
-			// } );
-
-			// this.field( "height", () => this.height, ( v ) => this.height = v, {
-			// 	step: 0.1,
-			// } );
-
-		}
+		this.field( "isJumping", () => this.isJumping, ( v ) => this.isJumping = v );
 
 	}
 

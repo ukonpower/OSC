@@ -117,9 +117,26 @@ void main( void ) {
 	// カメラ位置からワールド空間でレイを初期化
 	#include <rm_ray_screen>
 
+	SDFResult dist;
+	bool hit = false;
 
-	// レイマーチング
-	#include <rm_loop,50,0.001,0.7>
+	for( int i = 0; i < 128; i++ ) {
+
+		if( uParty > 0.5 && i > 32 ) {
+			break;
+		}
+
+		dist = D( rayPos );
+		rayPos += dist.d * rayDir * 0.7;
+
+		if( dist.d < 0.001 ) {
+
+			hit = true;
+			break;
+
+		}
+
+	}
 
 	if( !hit ) discard;
 

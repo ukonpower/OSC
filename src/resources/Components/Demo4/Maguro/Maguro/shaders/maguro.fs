@@ -155,9 +155,26 @@ void main( void ) {
 	#include <frag_in>
 	#include <rm_ray_obj>
 
+	SDFResult dist;
+	bool hit = false;
 
+	for( int i = 0; i < 128; i++ ) {
 
-	#include <rm_loop,50,0.001,0.7>
+		if( uParty > 0.5 && i > 32 ) {
+			break;
+		}
+
+		dist = D( rayPos );
+		rayPos += dist.d * rayDir * 0.7;
+
+		if( dist.d < 0.001 ) {
+
+			hit = true;
+			break;
+
+		}
+
+	}
 
 	if( !hit ) discard;
 

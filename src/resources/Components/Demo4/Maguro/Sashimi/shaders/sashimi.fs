@@ -79,7 +79,7 @@ void main( void ) {
 
 
 	// レイマーチングループ
-	#include <rm_loop,53,0.001,0.7>
+	#include <rm_loop,64,0.001,0.7>
 
 	if( !hit ) discard;
 
