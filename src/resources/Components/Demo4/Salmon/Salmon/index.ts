@@ -16,25 +16,20 @@ export class Salmon extends MXP.Component {
 
 		super( param );
 
-		// エディタフィールドの定義
-		if ( import.meta.env.DEV ) {
+		this.field( "blockType", () => this.blockType, ( v ) => {
 
-			this.field( "blockType", () => this.blockType, ( v ) => {
+			this.blockType = v;
+			this.updateMaterialDefines();
 
-				this.blockType = v;
-				this.updateMaterialDefines();
-
-			}, {
-				format: {
-					type: "select",
-					list: [
-						{ label: "Kirimi", value: "kirimi" },
-						{ label: "Saku", value: "saku" }
-					]
-				}
-			} );
-
-		}
+		}, {
+			format: process.env.NODE_ENV === 'development' ? {
+				type: "select",
+				list: [
+					{ label: "Kirimi", value: "kirimi" },
+					{ label: "Saku", value: "saku" }
+				]
+			} : undefined
+		} );
 
 		// geometry
 
