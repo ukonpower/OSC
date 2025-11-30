@@ -110,7 +110,7 @@ if ( blidgeClient ) {
 			engine.compileShaders( ( label, loaded, total ) => {
 
 				loadingBarElm.style.transform = `scaleX(${loaded / total})`;
-				loadingTextElm.textContent = label;
+				loadingTextElm.textContent = `${loaded} / ${total}`;
 
 			} ).then( () => {
 
