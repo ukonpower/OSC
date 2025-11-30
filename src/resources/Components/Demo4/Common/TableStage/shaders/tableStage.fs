@@ -70,9 +70,10 @@ SDFResult jaguchi( vec3 p ) {
 SDFResult laneConveyor( vec3 p ) {
 
 	vec3 laneConveyorP = p;
-	laneConveyorP += vec3( 0.0, 0.0, 0.0 );
-	laneConveyorP.x = mod( laneConveyorP.x + uTimeE * 0.2, 0.1 ) - 0.05;
-	float d = sdBox( laneConveyorP, vec3( 0.045, 0.01, 0.06 ) );
+	laneConveyorP.x += cos( laneConveyorP.z * 30.0 ) * 0.02;
+	laneConveyorP += vec3( 0.0, 0.008, 0.0 );
+	laneConveyorP.x = mod( laneConveyorP.x + uTimeE * 0.2, 0.1 ) - 0.045;
+	float d = sdBox( laneConveyorP, vec3( 0.045, 0.005, 0.06 ) );
 
 	return SDFResult( d, p, MAT_CONVEYOR, vec4( p, 0.0 ) );
 }
@@ -82,8 +83,13 @@ SDFResult lane( vec3 p ) {
 	vec3 laneP = p;
 	laneP += vec3( 0.0, 0.05, 0.5 );
 	vec2 d = vec2( sdBox( laneP, vec3( 0.5, 0.2, 0.1) ), MAT_WOOD );
-	d = opAdd( d, vec2( laneConveyor( laneP + vec3( 0.0, -0.2, -0.015 ) ).d, MAT_CONVEYOR ) );
 
+	vec3 laneSubP = laneP;
+	laneSubP += vec3( 0.0, -0.2, -0.015  );
+	d.x = opSub( d.x, sdBox( laneSubP, vec3( 0.5, 0.01, 0.07 ) ) );
+
+	d = opAdd( d, vec2( laneConveyor( laneP + vec3( 0.0, -0.2, -0.015 ) ).d, MAT_CONVEYOR ) );
+	
 	vec3 topLaneP = laneP;
 	topLaneP += vec3( 0.0, -0.45, 0.0  );
 	d = opAdd( d, vec2( sdBox( topLaneP, vec3( 0.5, 0.013, 0.1) ), MAT_WOOD ) );

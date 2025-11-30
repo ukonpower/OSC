@@ -116,6 +116,7 @@ export default defineConfig( {
 							regex: /^(?!(u[A-Z]|[A-Z_]+$|_)).*$/,
 							reserved: [
 								"castShadow",
+								"isJumping",
 								...( () => {
 
 									const reserved = new Set<string>();

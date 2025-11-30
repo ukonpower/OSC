@@ -31,9 +31,7 @@
 				{
 					"name": "BLidgeClient",
 					"props": {
-						"mode": "json",
-						"gltf": false,
-						"gltfPath": "/scene.glb",
+						"mode": "websocket",
 						"websocket/url": "ws://localhost:3100"
 					}
 				},
