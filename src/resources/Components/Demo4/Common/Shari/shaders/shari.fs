@@ -84,9 +84,6 @@ void main( void ) {
 
 	// メタリック値（非金属）
 	outMetalic = 0.0;
-	
-	// outEmission = vec3(subsurfaceValue * 1.15);
-	outEmission += dot( normalize( -rayDir ), outNormal ) * 0.5;
 
 	#include <frag_out>
 
