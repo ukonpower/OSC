@@ -23,7 +23,7 @@ void main( void ) {
 	#include <vert_in>
 
 	vec3 instancePos = id2.xyz - 0.5;
-	instancePos.xyz *= vec3( 0.25, 0.2, 0.55 );
+	instancePos.xyz *= vec3( 0.225, 0.15, 0.55 );
 
 	// 回転角度を計算
 	float angleXY = id.y * TPI;
@@ -39,7 +39,7 @@ void main( void ) {
 	vTransformMatrix = translateMatrix * rotYZ * rotXY * scaleMatrix;
 
 	// マトリックスを頂点位置に適用
-	outPos = (vTransformMatrix * vec4(outPos, 1.0)).xyz;
+	outPos = (vTransformMatrix * vec4(outPos * 1.8, 1.0)).xyz;
 
 	// 法線には回転のみを適用（平行移動とスケールは法線に影響しない）
 	mat3 normMat = normalMatrix(rotYZ * rotXY);

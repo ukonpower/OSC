@@ -17,9 +17,9 @@ SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
-	vec3 scale = vec3(0.25, 0.5, 0.22) * 1.5; // x:幅、y:長さ、z:厚み
+	vec3 scale = vec3(0.25, 0.5, 0.22) * 2.0; // x:幅、y:長さ、z:厚み
 	vec3 scaled = pp / scale;
-	float sphere = sdSphere(scaled, 1.0) * min(min(scale.x, scale.y), scale.z);
+	float sphere = sdSphere(scaled, 0.8) * min(min(scale.x, scale.y), scale.z);
 
 	vec2 d = vec2(sphere, 0.0);
 
@@ -84,6 +84,9 @@ void main( void ) {
 
 	// メタリック値（非金属）
 	outMetalic = 0.0;
+	
+	// outEmission = vec3(subsurfaceValue * 1.15);
+	outEmission += dot( normalize( -rayDir ), outNormal ) * 0.5;
 
 	#include <frag_out>
 

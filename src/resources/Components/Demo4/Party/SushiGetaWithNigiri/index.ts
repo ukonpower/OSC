@@ -35,7 +35,7 @@ export class SushiGetaWithNigiri extends MXP.Component {
 
 			const sushiEntity = new MXP.Entity();
 			sushiEntity.name = "Sushi_" + i;
-			sushiEntity.position.set( startX + i * spacing, 0.1, 0 );
+			sushiEntity.position.set( startX + i * spacing, 0.12, 0 );
 			sushiEntity.euler.set( 0, - 0.5, 0 );
 			sushiEntity.scale.setScalar( 0.6 );
 			this.entity.add( sushiEntity );
