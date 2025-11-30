@@ -75,7 +75,8 @@ export class Logo extends MXP.Component {
 		// 各SVG要素をMapに登録
 		this.elms = new Map();
 
-		const elmsId = [ "ic_body", "ic_yoji", "ic_mayo", "ic_eye", "sub_path1", "sub_path2", "sub_path3", "sub_path4", "sub_circle1", "sub_circle2", "sub_circle3", "sub_circle4" ];
+		// pathParamとpathParam2からキーを取得して_を除く
+		const elmsId = [ ...Object.keys( pathParam ), ...Object.keys( pathParam2 ) ].map( k => k.slice( 1 ) );
 
 		elmsId.forEach( ( id ) => {
 
