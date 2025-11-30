@@ -1,54 +1,23 @@
 #include <common>
 #include <frag_h>
-#include <sdf>
 #include <rotate>
 #include <light>
 #include <pmrem>
 #include <noise_cyclic>
-#include <rm_h>
 
 uniform sampler2D uEnvMap;
-
-// 水球のSDF定義
-SDFResult D( vec3 p ) {
-
-	vec3 pp = p;
-
-	// 球体の基本形状
-	float d = sdSphere( pp, 0.9 );
-
-	return SDFResult(
-		d,
-		p,
-		0.0,
-		vec4(0.0)
-	);
-
-}
-
-#include <rm_normal>
 
 void main( void ) {
 
 	#include <frag_in>
-	#include <rm_ray_obj>
 
-
-
-	// レイマーチングループ
-	#include <rm_loop,64,0.01,0.8>
-
-	if( !hit ) discard;
-
-	// 法線計算
-	vec3 normal = N( rayPos, 0.01 );
+	// ジオメトリからの法線を使用
+	vec3 normal = normalize( vNormal );
 	outNormal = normal;
 
 	outRoughness = 0.1;
 	outMetalic = 0.0;
 	outColor.xyz = vec3( 0.0 );
-
-	#include <rm_out_obj>
 
 	#ifdef IS_FORWARD
 
@@ -59,6 +28,9 @@ void main( void ) {
 		// フレネル効果
 		float dnv = dot( geo.normal, geo.viewDir );
 		float ef = fresnel( dnv );
+
+		// ビュー空間の法線を使用
+		vec3 viewNormal = normalize( vViewNormal );
 
 		// 屈折効果によるシーンテクスチャのサンプリング
 		float nf = 1.0;

@@ -31,12 +31,10 @@
 				{
 					"name": "BLidgeClient",
 					"props": {
-						"mode": "json",
+						"mode": "websocket",
 						"gltf": false,
 						"gltfPath": "/scene.glb",
-						"websocket/url": "ws://localhost:3100",
-						"timelineSync/enabled": true,
-						"timelineSync/url": "ws://localhost:3100"
+						"websocket/url": "ws://localhost:3100"
 					}
 				},
 				{
@@ -180,7 +178,7 @@
 						"Position Range/rangeX": 17.249999999999964,
 						"Position Range/rangeY": 7.899999999999973,
 						"Position Range/rangeZ": 11.149999999999986,
-						"randomSeed": 11,
+						"randomSeed": 30,
 						"shaderType": "random",
 						"Movement/movementX": 0,
 						"Movement/movementY": 0
@@ -471,7 +469,7 @@
 						"Position Range/rangeX": 18.449999999999935,
 						"Position Range/rangeY": 10.049999999999974,
 						"Position Range/rangeZ": 10,
-						"randomSeed": 4,
+						"randomSeed": 9,
 						"shaderType": "random",
 						"Movement/movementX": -3.1000000000000085,
 						"Movement/movementY": -2.300000000000002

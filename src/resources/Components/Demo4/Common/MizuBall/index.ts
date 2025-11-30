@@ -15,7 +15,9 @@ export class MizuBall extends MXP.Component {
 		// geometry
 
 		const geo = new MXP.SphereGeometry( {
-			radius: 1
+			radius: 1,
+			widthSegments: 16,
+			heightSegments: 16
 		} );
 
 		// material
