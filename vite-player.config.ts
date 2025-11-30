@@ -115,6 +115,7 @@ export default defineConfig( {
 						properties: {
 							regex: /^(?!(u[A-Z]|[A-Z_]+$|_)).*$/,
 							reserved: [
+								"blockType",
 								"castShadow",
 								"isJumping",
 								...( () => {

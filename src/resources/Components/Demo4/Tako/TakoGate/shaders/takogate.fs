@@ -120,7 +120,7 @@ void main( void ) {
 	SDFResult dist;
 	bool hit = false;
 
-	for( int i = 0; i < 128; i++ ) {
+	for( int i = 0; i < 64; i++ ) {
 
 		if( uParty > 0.5 && i > 32 ) {
 			break;
