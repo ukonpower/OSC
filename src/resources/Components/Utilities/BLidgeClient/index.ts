@@ -37,12 +37,6 @@ export class BLidgeClient extends MXP.Component {
 		url: string,
 	};
 
-	// gltf path
-	/** GLTFを使用するかどうか */
-	private useGLTF: boolean;
-	/** GLTFファイルのパス */
-	private gltfPath: string;
-
 	/** reload処理のデバウンス用タイマーID */
 	private reloadTimerId: number | null;
 
@@ -67,8 +61,6 @@ export class BLidgeClient extends MXP.Component {
 			enabled: true,
 			url: "ws://localhost:3100",
 		};
-		this.useGLTF = false;
-		this.gltfPath = BASE_PATH + "/scene.glb";
 		this.reloadTimerId = null;
 		this.saveSceneTimerId = null;
 		this.connectionTimeoutId = null;
@@ -174,14 +166,14 @@ export class BLidgeClient extends MXP.Component {
 			if ( this.type == "json" ) {
 
 				// JSONデータからシーンを読み込む
-				await this.blidge.loadScene( blidgeData as unknown as MXP.BLidgeScene, this.useGLTF ? this.gltfPath : undefined );
+				await this.blidge.loadScene( blidgeData as unknown as MXP.BLidgeScene );
 
 				this.emit( "loaded" );
 
 			} else {
 
 				// WebSocketで接続してシーンを読み込む
-				this.blidge.connect( this.connection.url, this.useGLTF ? this.gltfPath : undefined );
+				this.blidge.connect( this.connection.url );
 
 				// WebSocket接続のタイムアウト処理(3秒)
 				// 接続失敗時はJSONへフォールバック
@@ -190,7 +182,7 @@ export class BLidgeClient extends MXP.Component {
 					console.warn( '[BLidgeClient] WebSocket connection timeout. Falling back to JSON...' );
 
 					// JSONからシーンを読み込む
-					await this.blidge.loadScene( blidgeData as unknown as MXP.BLidgeScene, this.useGLTF ? this.gltfPath : undefined );
+					await this.blidge.loadScene( blidgeData as unknown as MXP.BLidgeScene );
 
 					this.emit( "loaded" );
 
@@ -240,24 +232,6 @@ export class BLidgeClient extends MXP.Component {
 			}
 		} : undefined );
 
-		// GLTFを使用するかどうかのフィールド
-		this.field( "gltf", () => this.useGLTF, v => {
-
-			this.useGLTF = v;
-
-			reload();
-
-		} );
-
-		// GLTFパス設定フィールド
-		this.field( "gltfPath", () => this.gltfPath, ( v ) => {
-
-			this.gltfPath = v;
-
-			reload();
-
-		}, );
-
 		// WebSocket設定用ディレクトリ（WebSocketモード時のみ表示）
 		const ws = this.fieldDir( "websocket", { hidden: () => this.type != "websocket" } );
 		// 再接続ボタン（即座に実行）
@@ -267,24 +241,6 @@ export class BLidgeClient extends MXP.Component {
 		// WebSocket URL設定
 		ws.field( "url", () => this.connection.url, v => this.connection.url = v );
 
-		// デバッグ用：アニメーション状態を表示（読み取り専用）
-		const debug = this.fieldDir( "debug", { hidden: false } );
-
-		// 再生状態の表示
-		debug.field( "status", () => {
-
-			if ( this.animationState.scrubbing ) return "Scrubbing";
-			if ( this.animationState.playing ) return "Playing";
-			return "Stopped";
-
-		}, undefined, {
-			readOnly: true,
-		} );
-
-		// 現在のフレーム番号を表示
-		debug.field( "frame", () => this.animationState.currentFrame, undefined, {
-			readOnly: true,
-		} );
 
 		const engine = Engine.getInstance( gl );
 		engine.registerBLidgeClient( this );
