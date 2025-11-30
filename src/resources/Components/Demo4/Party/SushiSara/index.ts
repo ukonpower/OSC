@@ -134,6 +134,8 @@ export class SushiSara extends MXP.Component {
 
 			this.nigiriComponent = this.sushiEntity.addComponent( Nigiri );
 			this.nigiriComponent.sashimiType = type;
+			// SushiSaraのnigiriにはemission 1を設定
+			this.nigiriComponent.emission = 1.0;
 			// 通常サイズに戻す
 			this.sushiEntity.scale.setScalar( 1 );
 

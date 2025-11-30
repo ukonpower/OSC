@@ -14,6 +14,7 @@ uniform sampler2D uNoiseTex;
 uniform sampler2D uNoiseCyclicTex;
 
 uniform float uTimeE;
+uniform float uEmission;
 
 // 刺身のSDF定義
 SDFResult D( vec3 p ) {
@@ -120,6 +121,8 @@ void main( void ) {
 	outColor.xyz *= smoothstep( 1.5, 0.4, length( rayPos ) );
 	outRoughness = 0.2 + n2.y * 0.2;
 	outMetalic = 0.3;
+	outEmission *= 1.0 + uEmission * 3.0;
+	outEmission += outColor.xyz * 0.2;
 
 	#include <frag_out>
 

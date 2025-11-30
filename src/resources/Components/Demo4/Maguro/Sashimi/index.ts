@@ -27,6 +27,9 @@ export class Sashimi extends MXP.Component {
 				globalUniforms.resolution,
 				globalUniforms.time,
 				globalUniforms.tex,
+				{
+					uEmission: { value: 0.0, type: '1f' }
+				}
 			)
 		} );
 
@@ -102,5 +105,10 @@ export class Sashimi extends MXP.Component {
 
 	}
 
+	public set emission( value: number ) {
+
+		this.material.uniforms.uEmission.value = value;
+
+	}
 
 }

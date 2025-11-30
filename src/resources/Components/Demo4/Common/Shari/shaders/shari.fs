@@ -84,6 +84,7 @@ void main( void ) {
 
 	// メタリック値（非金属）
 	outMetalic = 0.0;
+	outEmission += 0.15;
 
 	#include <frag_out>
 
