@@ -69,7 +69,7 @@ export class Logo extends MXP.Component {
 		this.svgWrap.style.top = "50%";
 		this.svgWrap.style.left = "50%";
 		this.svgWrap.style.transform = "translate(-57%,-50%)";
-		// this.svgWrap.style.pointerEvents = "none";
+		this.svgWrap.style.pointerEvents = "none";
 		this.svgWrap.style.strokeDasharray = length + "";
 
 		// 各SVG要素をMapに登録
