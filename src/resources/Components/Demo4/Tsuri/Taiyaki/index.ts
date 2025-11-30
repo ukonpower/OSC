@@ -43,7 +43,7 @@ export class Taiyaki extends MXP.Component {
 			geometry: geo, material: mat
 		} );
 
-		// bindBlidgeUniform( this.mesh.entity, this.mesh );
+		bindBlidgeUniform( this.entity, this.mesh );
 
 		// HMR
 

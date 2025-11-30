@@ -15,16 +15,21 @@ uniform float uTime;
 uniform float uTimeE;
 uniform float uParty;
 uniform sampler2D uNoiseTex;
+uniform vec4 uState;
 
 // たいやき形状を表現するSDF関数
 SDFResult D( vec3 p ) {
 
 	vec3 pp = p;
 
+
+	float rFish = sin( -pp.x * 3.0 - 0.3 + uState.x * 30.0 ) * 0.4;
+	rFish *= uState.y;
+
 	float r = sin( -pp.x * 3.0 - 0.3 + uTimeE * 10.0 ) * 0.5;
 	r *= uParty;
 
-	pp.xz *= rotate( r );
+	pp.xz *= rotate( r + rFish );
 
 
 	pp.yz *= rotate( PI / 2.0 );
