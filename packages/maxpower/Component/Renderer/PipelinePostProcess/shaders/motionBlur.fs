@@ -47,7 +47,7 @@ vec2 getVelocity(sampler2D velTex, vec2 uv)
 
 	velocity *= uPower;
 	
-    return velocity;
+    return velocity * 0.0;
 }
 
 
