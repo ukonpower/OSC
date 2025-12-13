@@ -1,14 +1,10 @@
-# OREngine
+# OSC
 
-OREngine (オーアールエンジン) は WebGL 製の軽量 3D エンジンです。64KB Intro Demo の制作を目的としており、TypeScript で実装されています。
+SESSIONS 2025 で発表した 64KB intro demo です。
 
-![OREngine screen shot](./screenshot/OREngine.png)
+デモページ: https://ukonpower.github.io/OSC/
 
-## 特徴
-
-- コンポーネントベースの柔軟なアーキテクチャ
-- Vite を用いた高速ビルドシステム
-- React との統合や Blender 連携に対応
+![OSC screen shot](./screenshot/osc.png)
 
 ## インストール
 
@@ -26,11 +22,11 @@ npm run init
 
 #### Windows
 
-ShaderMinifier をインストール後、Path を設定します。
+ShaderMinifier をインストール後、システムの環境変数 PATH に追加します。
 
 #### macOS
 
-`shader_minifier.exe` を `/Documents/application/shader_minifier/shader_minifier.exe` に配置し、Mono をインストールします。
+`shader_minifier.exe` を `~/shader_minifier/shader_minifier.exe` に配置し、Mono をインストールします。
 
 ```bash
 brew install mono
@@ -44,29 +40,9 @@ npm run dev
 
 ## ビルド
 
-> **重要:** ビルドやテストを行う前に一度 `npm run init` を実行してサブモジュール（`packages/glpower` など）を初期化してください。
-
 ```bash
 npm run build
 ```
-
-## デモ公開 (GitHub Pages)
-
-`main` または `master` へ push すると `https://<user>.github.io/<repo>/` にデプロイされます。`develop` ブランチは `https://<user>.github.io/<repo>/develop/`、プルリクエストは `https://<user>.github.io/<repo>/pr-<番号>/` にそれぞれ配置されます。ワークフローの設定は `.github/workflows/pages.yml` にあります。
-
-デモ用のビルドでは ShaderMinifier をスキップしているため、`SKIP_SHADER_MINIFIER=true` が環境変数として渡されます。将来的に Storybook を追加した場合は `public/storybook` 以下に成果物を配置することで同じ仕組みでデプロイできます。
-
-## テスト
-
-ビルドと同様に、事前に `npm run init` を実行してサブモジュールを初期化しておく必要があります。
-
-```bash
-npm run test
-```
-
-## ドキュメント
-
-アーキテクチャの詳細やセットアップ手順、Blender との連携方法などは [`docs`](./docs/README.md) ディレクトリにまとめています。
 
 ## クレジット
 
