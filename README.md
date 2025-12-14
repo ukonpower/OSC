@@ -4,7 +4,7 @@ SESSIONS 2025 で発表した 64KB intro demo です。
 
 デモページ: https://ukonpower.github.io/OSC/
 
-![OSC screen shot](./screenshot/osc.png)
+![OSC screen shot](./screenshot/osc.jpg)
 
 ## インストール
 
