@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build --config vite-player.config.ts && node compeko.js ./dist/build/index.js ./dist/build/osc.html",
     "build:dev": "NODE_ENV=development SKIP_SHADER_MINIFIER=true vite build --mode production",
+    "build:editor": "vite build --config vite-editor.config.ts",
     "build:storybook": "storybook build",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
