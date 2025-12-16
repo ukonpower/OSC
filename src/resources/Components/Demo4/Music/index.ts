@@ -182,6 +182,7 @@ export class Music extends MXP.Component {
 		}
 
 		// DEV環境でEngineに登録（Editorがリッスン）
+
 		if ( import.meta.env.DEV ) {
 
 			const engine = Engine.getInstance( gl );
