@@ -30,6 +30,8 @@ export default defineConfig( {
 	},
 	build: {
 		outDir: '../pages/editor',
+		// エディタービルドではマングルを無効化
+		minify: false,
 		rollupOptions: {
 			input: './src/index.html'
 		}
