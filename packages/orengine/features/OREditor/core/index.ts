@@ -5,15 +5,9 @@ import { Engine } from '../../OREngine/core';
 import { FrameDebugger } from '../../OREngine/core/FrameDebugger';
 import { Keyboard, PressedKeys } from '../../OREngine/core/Keyboard';
 
+import { ScenePointer } from './ScenePointer';
+
 import { BASE_RESOLUTION } from '~/globals';
-
-let ScenePointer: any = null;
-
-if ( import.meta.env.DEV ) {
-
-	ScenePointer = await import( './ScenePointer' ).then( m => m.ScenePointer );
-
-}
 
 
 export type EditorTimelineLoop = {
@@ -108,11 +102,7 @@ export class Editor extends MXP.Serializable {
 			Scene Pointer
 		-------------------------------*/
 
-		if ( import.meta.env.DEV && ScenePointer ) {
-
-			this._scenePointer = new ScenePointer( engine, this );
-
-		}
+		this._scenePointer = new ScenePointer( engine, this );
 
 		/*-------------------------------
 			BLidge Selection
@@ -440,7 +430,7 @@ export class Editor extends MXP.Serializable {
 		this._keyBoard.dispose();
 		this._frameDebugger.dispose();
 
-		if ( import.meta.env.DEV && this._scenePointer && this._scenePointer.dispose ) {
+		if ( this._scenePointer && this._scenePointer.dispose ) {
 
 			this._scenePointer.dispose();
 

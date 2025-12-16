@@ -1,19 +1,10 @@
 import { Renderer } from '../';
 import { Geometry } from '../../../Geometry';
 import { Material } from '../../../Material';
+import { WireframeMaterial } from '../../../Material/WireframeMaterial';
 import { Mesh } from '../../Mesh';
 
 import type { RenderHookContext } from '../';
-
-// WireframeMaterialは開発環境でのみインポート
-type WireframeMaterialConstructor = new ( color?: [number, number, number] ) => Material;
-let WireframeMaterial: WireframeMaterialConstructor | undefined;
-
-if ( import.meta.env.DEV ) {
-
-	WireframeMaterial = ( await import( '../../../Material/WireframeMaterial' ) ).WireframeMaterial;
-
-}
 
 /**
  * Blenderスタイルの十字ワイヤーフレームジオメトリを作成
@@ -57,9 +48,9 @@ function createEmptyCrossGeometry(): Geometry {
  */
 export class EditorRenderer extends Renderer {
 
-	private _wireframeMaterial?: Material;
-	private _wireframeMaterialSelected?: Material;
-	private _emptyWireframeGeometry?: Geometry;
+	private _wireframeMaterial: Material;
+	private _wireframeMaterialSelected: Material;
+	private _emptyWireframeGeometry: Geometry;
 	public showWireframe: boolean = true;
 	public selectedEntityId: string | null = null;
 
@@ -67,19 +58,15 @@ export class EditorRenderer extends Renderer {
 
 		super( gl );
 
-		// ワイヤーフレームマテリアルの初期化（開発環境のみ）
-		if ( WireframeMaterial ) {
+		// ワイヤーフレームマテリアルの初期化
+		// 通常のワイヤーフレーム（黒色）
+		this._wireframeMaterial = new WireframeMaterial( [ 0.0, 0.0, 0.0 ] );
 
-			// 通常のワイヤーフレーム（黒色）
-			this._wireframeMaterial = new WireframeMaterial( [ 0.0, 0.0, 0.0 ] );
+		// 選択時のワイヤーフレーム（オレンジ色）
+		this._wireframeMaterialSelected = new WireframeMaterial( [ 1.0, 0.5, 0.0 ] );
 
-			// 選択時のワイヤーフレーム（オレンジ色）
-			this._wireframeMaterialSelected = new WireframeMaterial( [ 1.0, 0.5, 0.0 ] );
-
-			// Empty用の十字ワイヤーフレームジオメトリを作成
-			this._emptyWireframeGeometry = createEmptyCrossGeometry();
-
-		}
+		// Empty用の十字ワイヤーフレームジオメトリを作成
+		this._emptyWireframeGeometry = createEmptyCrossGeometry();
 
 		// UI描画後のフックを設定
 		this.onAfterUI = ( context: RenderHookContext ) => {
@@ -107,7 +94,7 @@ export class EditorRenderer extends Renderer {
 	 */
 	private renderWireframes( context: RenderHookContext ): void {
 
-		if ( ! this._wireframeMaterial || ! this._wireframeMaterialSelected || ! this.showWireframe ) return;
+		if ( ! this.showWireframe ) return;
 
 		const { stack, cameraEntity, camera } = context;
 
