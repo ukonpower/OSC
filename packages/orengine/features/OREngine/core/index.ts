@@ -85,8 +85,8 @@ export class Engine extends MXP.Entity {
 			Renderer
 		-------------------------------*/
 
-		// 開発環境ではEditorRendererを使用、本番環境では通常のRendererを使用
-		this._renderer = import.meta.env.DEV
+		// エディター環境ではEditorRendererを使用、それ以外では通常のRendererを使用
+		this._renderer = IS_EDITOR
 			? new MXP.EditorRenderer( gl )
 			: new MXP.Renderer( gl );
 
@@ -124,9 +124,9 @@ export class Engine extends MXP.Entity {
 
 		this._audioBuffer = null;
 
-		// shader error handler (DEV only)
+		// shader error handler (Editor only)
 
-		if ( import.meta.env.DEV ) {
+		if ( IS_EDITOR ) {
 
 			// エラー発生時のハンドラー
 			( window as any ).__glpowerShaderErrorHandler = ( error: any ) => {
@@ -558,8 +558,8 @@ export class Engine extends MXP.Entity {
 Engine.resources = new Resources();
 Engine.instances = new Map();
 
-// ShaderErrorManagerは開発環境のみで使用
-if ( import.meta.env.DEV ) {
+// ShaderErrorManagerはエディター環境のみで使用
+if ( IS_EDITOR ) {
 
 	Engine.shaderErrorManager = new ShaderErrorManager();
 

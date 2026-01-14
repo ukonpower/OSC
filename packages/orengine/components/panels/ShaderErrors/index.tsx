@@ -11,7 +11,7 @@ export const ShaderErrors = () => {
 
 	useEffect( () => {
 
-		if ( ! import.meta.env.DEV ) return;
+		if ( ! IS_EDITOR ) return;
 
 		// エラーリスナーを登録
 		const onErrorsChanged = ( newErrors: ShaderError[] ) => {

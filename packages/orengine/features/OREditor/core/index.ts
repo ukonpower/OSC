@@ -44,7 +44,7 @@ export class Editor extends MXP.Serializable {
 		this._disposed = false;
 
 		// EditorRendererの場合、ワイヤーフレーム表示をデフォルトで有効化
-		if ( import.meta.env.DEV && engine.renderer instanceof MXP.EditorRenderer ) {
+		if ( IS_EDITOR && engine.renderer instanceof MXP.EditorRenderer ) {
 
 			engine.renderer.showWireframe = true;
 
@@ -171,8 +171,8 @@ export class Editor extends MXP.Serializable {
 
 			this._selectedEntityId = v;
 
-			// EditorRendererに選択情報を同期（開発環境のみ）
-			if ( import.meta.env.DEV && this._engine.renderer instanceof MXP.EditorRenderer ) {
+			// EditorRendererに選択情報を同期
+			if ( IS_EDITOR && this._engine.renderer instanceof MXP.EditorRenderer ) {
 
 				this._engine.renderer.selectedEntityId = v;
 
@@ -180,8 +180,8 @@ export class Editor extends MXP.Serializable {
 
 		} );
 
-		// ワイヤーフレーム表示の切り替え（開発環境のみ）
-		if ( import.meta.env.DEV ) {
+		// ワイヤーフレーム表示の切り替え
+		if ( IS_EDITOR ) {
 
 			this.field( "showWireframe", () => {
 

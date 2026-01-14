@@ -28,7 +28,7 @@ export const Canvas: React.FC = () => {
 		let mousedownHandler: ( ( event: MouseEvent ) => void ) | null = null;
 		let mouseupHandler: ( ( event: MouseEvent ) => void ) | null = null;
 
-		if ( import.meta.env.DEV && editor && ( editor as any )._scenePointer ) {
+		if ( IS_EDITOR && editor && ( editor as any )._scenePointer ) {
 
 			// ドラッグとクリックを区別するため、mousedownとmouseupの位置を記録
 			let mousedownX = 0;

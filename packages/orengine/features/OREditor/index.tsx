@@ -52,10 +52,10 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 
 	}, [ props.editorData, editorContext.editor ] );
 
-	// シェーダーエラーの監視（DEV環境のみ）
+	// シェーダーエラーの監視
 	useEffect( () => {
 
-		if ( ! import.meta.env.DEV ) return;
+		if ( ! IS_EDITOR ) return;
 
 		const onErrorsChanged = ( errors: any[] ) => {
 
@@ -136,7 +136,7 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 										<EntityProperty />
 									</Panel>
 								</PanelContainer>
-								{import.meta.env.DEV && (
+								{IS_EDITOR && (
 									<PanelContainer>
 										<Panel title='Shader Errors'>
 											<ShaderErrors />
@@ -219,7 +219,7 @@ export const OREditor: React.FC<{onSave?: OREditorSaveCallback, editorData?: MXP
 										<EntityProperty />
 									</Panel>
 								</PanelContainer>
-								{import.meta.env.DEV && (
+								{IS_EDITOR && (
 									<PanelContainer>
 										<Panel title='Shader Errors'>
 											<ShaderErrors />

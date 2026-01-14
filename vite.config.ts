@@ -62,5 +62,6 @@ export default defineConfig( {
 	],
 	define: {
 		BASE_PATH: `"${basePath}"`,
+		IS_EDITOR: 'true',
 	}
 } );
